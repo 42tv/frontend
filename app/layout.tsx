@@ -4,7 +4,6 @@ import "./globals.css";
 import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
 import LeftContainer from "./_components/left-container/left-container";
-import LoginModal from "./_components/utils/modal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
