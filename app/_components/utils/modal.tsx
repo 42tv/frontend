@@ -1,19 +1,36 @@
+'use client';
 import useModalStore from "./modalStore";
 
 const Modal = () => {
-    const { isOpen, content, closeModal } = useModalStore();
+    const { isOpen, closeModal, content } = useModalStore();
 
-    if (!isOpen) return null; // Do not render if the modal is closed
+    if (!isOpen) return null;
 
     return (
         <div
             className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-            onClick={closeModal} // Close modal on background click
         >
-            <div
-                className="bg-white p-6 rounded-lg shadow-lg"
-                onClick={(e) => e.stopPropagation()} // Prevent closing when content is clicked
-            >
+            <div className="rounded-lg shadow-lg relative">
+                {/* X 버튼 */}
+                <button
+                    className="absolute w-[16px] h-[16px] top-2 right-2 flex justify-center items-center cursor-pointer z-20"
+                    onClick={closeModal}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        className="w-5 h-5 text-gray-600 hover:text-white"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
                 {content}
             </div>
         </div>

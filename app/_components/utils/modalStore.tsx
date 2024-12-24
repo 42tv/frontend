@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 interface ModalState {
     isOpen: boolean;
-    content: React.ReactNode | null; // Content to be rendered inside the modal
+    content: React.ReactNode | null;
     openModal: (content: React.ReactNode) => void;
     closeModal: () => void;
 }

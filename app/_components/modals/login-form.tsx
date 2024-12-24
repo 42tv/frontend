@@ -33,7 +33,7 @@ export default function LoginComponent() {
           className={`flex-1 py-2 text-center font-medium ${
             activeTab === 'login'
               ? 'border-b-2 border-white text-white'
-              : 'text-gray-500'
+              : 'text-gray-500 hover:text-white'
           }`}
           onClick={() => setActiveTab('login')}
         >
@@ -43,7 +43,7 @@ export default function LoginComponent() {
           className={`flex-1 py-2 text-center font-medium ${
             activeTab === 'signup'
               ? 'border-b-2 border-white text-white'
-              : 'text-gray-500'
+              : 'text-gray-500 hover:text-white'
           }`}
           onClick={() => setActiveTab('signup')}
         >

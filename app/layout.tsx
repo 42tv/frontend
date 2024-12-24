@@ -4,6 +4,7 @@ import "./globals.css";
 import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
 import LeftContainer from "./_components/left-container/left-container";
+import Modal from "./_components/utils/modal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,6 +43,7 @@ export default function RootLayout({
               height: "calc(100% - 60px)", // Toolbar 제외한 높이
             }}
           >
+            <Modal />
             {children}
             {/* <FooterContainer /> */}
           </div>
