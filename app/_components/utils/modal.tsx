@@ -1,19 +1,38 @@
-import React from "react";
+'use client';
+import useModalStore from "./modalStore";
 
-type ModalProps = {
-    isOpen: boolean;
-    children: React.ReactNode;
-};
+const Modal = () => {
+    const { isOpen, closeModal, content } = useModalStore();
 
-const Modal = ({ isOpen, children }: ModalProps) => {
-    if (!isOpen) return null; // 모달이 열리지 않았을 때 렌더링 방지
+    if (!isOpen) return null;
 
     return (
         <div
-            className="fixed top-0 left-0 w-full h-full p-8 justify-center items-center flex"
-            // onClick={onClose} // 배경 클릭 시 닫기
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
-            {children}
+            <div className="rounded-lg shadow-lg relative">
+                {/* X 버튼 */}
+                <button
+                    className="absolute w-[16px] h-[16px] top-2 right-2 flex justify-center items-center cursor-pointer z-20"
+                    onClick={closeModal}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        className="w-5 h-5 text-gray-600 hover:text-white"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+                {content}
+            </div>
         </div>
     );
 };

@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
-interface LoginComponentProps {
-  isOpen: boolean;
-  onClose: () => void; // Close callback function
-}
-
-export default function LoginComponent({ isOpen, onClose }: LoginComponentProps) {
+export default function LoginComponent() {
   const [activeTab, setActiveTab] = useState('login'); // Track the active tab
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -26,30 +21,19 @@ export default function LoginComponent({ isOpen, onClose }: LoginComponentProps)
     console.log('Signup:', { signupUserId, signupPassword, confirmPassword });
   };
 
-  if (!isOpen) {
-    return null; // Do not render the modal if it is not open
-  }
+
 
   return (
     <div
       className="max-w-md mx-auto p-5 border rounded-lg border-gray-700 bg-gray-800 relative text-left" // Added text-left class for left alignment
     >
-      {/* Close Button */}
-      <button
-        onClick={onClose} // Close the modal when clicked
-        className="absolute top-0 right-0 text-gray-400 hover:text-white w-[32px] h-[32px] text-center text-2xl"
-        aria-label="Close"
-      >
-        &times; {/* X button */}
-      </button>
-
       {/* Tabs for Login and Signup */}
       <div className="flex border-b mb-4">
         <button
           className={`flex-1 py-2 text-center font-medium ${
             activeTab === 'login'
               ? 'border-b-2 border-white text-white'
-              : 'text-gray-500'
+              : 'text-gray-500 hover:text-white'
           }`}
           onClick={() => setActiveTab('login')}
         >
@@ -59,7 +43,7 @@ export default function LoginComponent({ isOpen, onClose }: LoginComponentProps)
           className={`flex-1 py-2 text-center font-medium ${
             activeTab === 'signup'
               ? 'border-b-2 border-white text-white'
-              : 'text-gray-500'
+              : 'text-gray-500 hover:text-white'
           }`}
           onClick={() => setActiveTab('signup')}
         >
