@@ -1,12 +1,14 @@
+import Link from "next/link"
+
 export default function TabMenu() {
     const tabLists = [
         {
             name: 'Tab1',
-            link: '/info/tab1'
+            link: '/info/coin'
         },
         {
             name: 'Tab2',
-            link: '/info/tab2'
+            link: '/info/gift'
         },
         {
             name: 'Tab3',
@@ -20,7 +22,7 @@ export default function TabMenu() {
                     tabLists.map((tab, index) => {
                         return (
                             <li key={index} className="flex w-[100px] h-full items-center justify-center text-gray-300 hover:text-white">
-                                <a href={tab.link}>{tab.name}</a>
+                                <Link href={tab.link}> {tab.name} </Link>
                             </li>
                         )
                     })
