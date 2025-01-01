@@ -3,17 +3,13 @@ import Link from "next/link"
 export default function TabMenu() {
     const tabLists = [
         {
-            name: 'Tab1',
+            name: '정보 수정',
             link: '/info/coin'
         },
         {
-            name: 'Tab2',
+            name: '선물내역',
             link: '/info/gift'
         },
-        {
-            name: 'Tab3',
-            link: '/info/tab3'
-        }
     ]
     return (
         <div className="w-full h-[60px] items-center justify-center text-center">
