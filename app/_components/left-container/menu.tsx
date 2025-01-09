@@ -5,6 +5,7 @@ export default function Menu() {
     return (
         <div className="flex flex-col ">
             <NavItem icon={VideoIcon} label="전체 방송" />
+            <NavItem icon={VideoIcon} label="랭킹" />
         </div>
     )
 }
