@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import errorModalStore from '../utils/errorModalStore';
+import ErrorMessage from './error_component';
 
 export default function LoginComponent() {
+  const { openError } = errorModalStore();
   const [activeTab, setActiveTab] = useState('login'); // Track the active tab
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -17,13 +20,27 @@ export default function LoginComponent() {
     console.log('Login:', { userId, password, rememberId });
   };
 
+  function checkInputValidate(signupUserId: string, signupPassword: string, confirmPassword: string) {
+    if (!/^[a-zA-Z0-9]{4,20}$/.test(signupUserId)) {
+      openError(<ErrorMessage message="아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요." />);
+      return false;
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(signupPassword)) {
+      openError(<ErrorMessage message="비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)" />);
+      return false;
+    }
+    if (signupPassword !== confirmPassword) {
+      openError(<ErrorMessage message="비밀번호와 비밀번호 확인이 일치하지 않음" />);
+      return false;
+    }
+  }
+
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Signup:', { signupUserId, signupPassword, confirmPassword, nickname });
-    if (!/^[a-zA-Z0-9]{4,20}$/.test(signupUserId)) {
-      alert('아이디는 영어와 숫자로 이루어진 4~20글자여야 합니다.');
+    if (!checkInputValidate(signupUserId, signupPassword, confirmPassword)) {
       return;
     }
+    
   };
 
 

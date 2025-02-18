@@ -1,6 +1,5 @@
 'use client';
-
-import LoginComponent from "../../modals/login-form";
+import LoginComponent from "../../modals/login_component";
 import useModalStore from "../../utils/modalStore";
 
 export default function Login() {
@@ -9,7 +8,7 @@ export default function Login() {
     return (
         <div>
             <button 
-                className="h-[30px] hover:bg-[#434445] px-2 text-black dark:text-white rounded border-[#69696B] border"
+                className="h-[30px] hover:bg-[#434445] px-2 rounded border-[#69696B] border"
                 onClick={() => openModal(<LoginComponent />)}
             >
                 로그인
