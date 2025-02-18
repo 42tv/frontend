@@ -11,7 +11,7 @@ const Toolbar: React.FC = () => {
   
   return (
     <div>
-      <div className="fixed flex w-full h-[65px] items-center justify-between px-4 shadow-md z-50 border-white border-b-[1px]">
+      <div className="fixed flex w-full h-[65px] items-center justify-between px-4 shadow-md z-50 border-[#2b2b2b] border-b">
         <Logo />
         <div className="font-bold text-lg sm:text-xl"></div>
         <div className="flex h-full gap-4 text-center items-center">

@@ -10,6 +10,7 @@ export default function LoginComponent() {
   const [signupUserId, setSignupUserId] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [nickname, setNickname] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,9 +19,12 @@ export default function LoginComponent() {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Signup:', { signupUserId, signupPassword, confirmPassword });
+    console.log('Signup:', { signupUserId, signupPassword, confirmPassword, nickname });
+    if (!/^[a-zA-Z0-9]{4,20}$/.test(signupUserId)) {
+      alert('아이디는 영어와 숫자로 이루어진 4~20글자여야 합니다.');
+      return;
+    }
   };
-
 
 
   return (
@@ -168,6 +172,23 @@ export default function LoginComponent() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
               placeholder="비밀번호를 다시 입력하세요"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="signUpNickname"
+              className="block mb-2 text-sm font-medium text-left text-gray-300"
+            >
+              닉네임
+            </label>
+            <input
+              type="text"
+              id="signUpNickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
+              placeholder="닉네임을 입력하세요"
             />
           </div>
 
