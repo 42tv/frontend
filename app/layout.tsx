@@ -38,7 +38,7 @@ export default function RootLayout({
           <div
             className="flex flex-col absolute w-full h-full"
             style={{
-              transform: "translate(200px, 60px)", // 위치 이동
+              transform: "translate(200px, 65px)", // 위치 이동
               width: "calc(100% - 200px)", // LeftContainer 제외한 너비
               height: "calc(100% - 60px)", // Toolbar 제외한 높이
             }}

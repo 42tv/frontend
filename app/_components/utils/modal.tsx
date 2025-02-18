@@ -8,7 +8,7 @@ const Modal = () => {
 
     return (
         <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+            className="fixed inset-0 flex justify-center items-center z-50"
         >
             <div className="rounded-lg shadow-lg relative">
                 {/* X 버튼 */}
