@@ -11,7 +11,7 @@ const Toolbar: React.FC = () => {
   
   return (
     <div>
-      <div className="fixed flex w-full h-[60px] text-white items-center justify-between px-4 shadow-md z-50 border-white border-b-[1px]">
+      <div className="fixed flex w-full h-[60px] items-center justify-between px-4 shadow-md z-50 border-white border-b-[1px]">
         <Logo />
         <div className="font-bold text-lg sm:text-xl"></div>
         <div className="flex h-full gap-4 text-center items-center">
@@ -20,7 +20,7 @@ const Toolbar: React.FC = () => {
           <Login />
         </div>
         <div className="sm:hidden">
-          <button className="text-white">☰</button>
+          <button className="">☰</button>
         </div>
       </div>
     </div>

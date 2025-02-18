@@ -6,7 +6,7 @@ import Menu from './menu';
 
 const LeftContainer: React.FC = () => {
   return (
-    <div className="fixed w-[200px] h-full top-[60px] bg-gray-700 z-0">
+    <div className="fixed w-[200px] h-full top-[60px] z-0">
         <Menu />
         {/* <BookMark /> */}
         {/* <Recommend /> */}

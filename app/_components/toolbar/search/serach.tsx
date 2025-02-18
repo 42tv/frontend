@@ -1,9 +1,10 @@
+import Image from "next/image";
 import { useState } from "react";
 
 export default function Search() {
     const [searchString, setSearchString] = useState("");
     return (
-      <div className="flex flex-row absolute min-w-[100px] w-[calc(100%-660px)] max-w-[440px] left-1/2 -translate-x-1/2 border border-[#69696B] rounded-[20px] focus-within:border-blue-500">
+      <div className="flex flex-row absolute min-w-[100px] w-[calc(100%-660px)] max-w-[440px] left-1/2 -translate-x-1/2 border border-[#69696B] rounded-[5px] focus-within:border-blue-500">
         <div className="flex flex-row w-full h-[36px] rounded-l-[20px]">
           <input
             type="text"
@@ -25,8 +26,8 @@ export default function Search() {
         </div>
        
         
-        <button className="w-[30px] h-[36px] bg-[#69696B] flex items-center justify-center rounded-r-[20px]">
-          🔍
+        <button className="w-[30px] h-[36px] flex items-center justify-center rounded-r-[5px]">
+          <Image src="icons/search.svg" width={20} height={20} alt=""/>
         </button>
       </div>
     );
