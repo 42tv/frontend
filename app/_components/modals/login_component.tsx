@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import errorModalStore from '../utils/errorModalStore';
 import ErrorMessage from './error_component';
-import { singUp } from '@/app/_apis/user';
+import { login, singUp } from '@/app/_apis/user';
 
 export default function LoginComponent() {
   const { openError } = errorModalStore();
@@ -16,9 +16,15 @@ export default function LoginComponent() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login:', { userId, password, rememberId });
+  async function handleLogin() {
+    try {
+      await login(userId, password);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch(err: any) {
+      openError(<ErrorMessage message={err?.response?.data?.message} />);
+    }
+    
   };
 
   function checkInputValidate(signupUserId: string, signupPassword: string, confirmPassword: string) {
@@ -86,17 +92,15 @@ export default function LoginComponent() {
 
       {activeTab === 'login' ? (
         // Login Form
-        <form onSubmit={handleLogin}>
+        <div>
           <div className="mb-4">
             <label
-              htmlFor="userId"
               className="block mb-2 text-sm font-medium text-left text-gray-300"
             >
               아이디
             </label>
             <input
               type="text"
-              id="userId"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
@@ -106,14 +110,12 @@ export default function LoginComponent() {
 
           <div className="mb-4">
             <label
-              htmlFor="password"
               className="block mb-2 text-sm font-medium text-left text-gray-300"
             >
               비밀번호
             </label>
             <input
               type="password"
-              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
@@ -124,7 +126,6 @@ export default function LoginComponent() {
           <div className="mb-4 flex items-center">
             <input
               type="checkbox"
-              id="rememberId"
               checked={rememberId}
               onChange={(e) => setRememberId(e.target.checked)}
               className="mr-2"
@@ -137,6 +138,7 @@ export default function LoginComponent() {
           <button
             type="submit"
             className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+            onClick={handleLogin}
           >
             로그인
           </button>
@@ -149,7 +151,7 @@ export default function LoginComponent() {
               비밀번호 찾기
             </a>
           </div>
-        </form>
+        </div>
       ) : (
         // Signup Form
         <div>
