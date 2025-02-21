@@ -1,8 +1,8 @@
 'use client';
-import useModalStore from "./modalStore";
+import errorModalStore from "./errorModalStore";
 
-const Modal = () => {
-    const { isOpen, closeModal, content } = useModalStore();
+const ErrorModal = () => {
+    const { isOpen, closeModal, content } = errorModalStore();
 
     if (!isOpen) return null;
 
@@ -37,4 +37,4 @@ const Modal = () => {
     );
 };
 
-export default Modal;
+export default ErrorModal;

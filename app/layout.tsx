@@ -5,6 +5,7 @@ import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
 import LeftContainer from "./_components/left-container/left-container";
 import Modal from "./_components/utils/modal";
+import ErrorModal from "./_components/utils/errorModal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,12 +39,13 @@ export default function RootLayout({
           <div
             className="flex flex-col absolute w-full h-full"
             style={{
-              transform: "translate(200px, 60px)", // 위치 이동
+              transform: "translate(200px, 65px)", // 위치 이동
               width: "calc(100% - 200px)", // LeftContainer 제외한 너비
               height: "calc(100% - 60px)", // Toolbar 제외한 높이
             }}
           >
             <Modal />
+            <ErrorModal /> {/* 추가된 모달 */}
             {children}
             {/* <FooterContainer /> */}
           </div>

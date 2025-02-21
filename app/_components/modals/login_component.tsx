@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import errorModalStore from '../utils/errorModalStore';
+import ErrorMessage from './error_component';
+import { login, singUp } from '@/app/_apis/user';
 
 export default function LoginComponent() {
+  const { openError } = errorModalStore();
   const [activeTab, setActiveTab] = useState('login'); // Track the active tab
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -10,22 +14,57 @@ export default function LoginComponent() {
   const [signupUserId, setSignupUserId] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [nickname, setNickname] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login:', { userId, password, rememberId });
+  async function handleLogin() {
+    try {
+      await login(userId, password);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch(err: any) {
+      openError(<ErrorMessage message={err?.response?.data?.message} />);
+    }
+    
   };
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Signup:', { signupUserId, signupPassword, confirmPassword });
-  };
+  function checkInputValidate(signupUserId: string, signupPassword: string, confirmPassword: string) {
+    if (!/^[a-zA-Z0-9]{4,20}$/.test(signupUserId)) {
+      console.log("아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요.")
+      openError(<ErrorMessage message="아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요." />);
+      return false;
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(signupPassword)) {
+      console.log("비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)")
+      openError(<ErrorMessage message="비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)" />);
+      return false;
+    }
+    if (signupPassword !== confirmPassword) {
+      console.log("비밀번호와 비밀번호 확인이 일치하지 않음")
+      openError(<ErrorMessage message="비밀번호와 비밀번호 확인이 일치하지 않음" />);
+      return false;
+    }
+    return true;
+  }
 
+  async function handleSignUp() {
+    if (!checkInputValidate(signupUserId, signupPassword, confirmPassword)) {
+      return;
+    }
+    try {
+      await singUp(signupUserId, signupPassword, nickname)
+      setActiveTab('login');
+      openError(<ErrorMessage message="회원가입이 완료되었습니다." />);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (err: any) {
+      openError(<ErrorMessage message={err?.response?.data?.message} />);
+    }
+  }
 
 
   return (
     <div
-      className="max-w-md mx-auto p-5 border rounded-lg border-gray-700 bg-gray-800 relative text-left" // Added text-left class for left alignment
+      className="max-w-md mx-auto p-5 border rounded-lg border-[#2b2b2b] bg-[#2b2b2b] relative text-left" // Added text-left class for left alignment
     >
       {/* Tabs for Login and Signup */}
       <div className="flex border-b mb-4">
@@ -53,17 +92,15 @@ export default function LoginComponent() {
 
       {activeTab === 'login' ? (
         // Login Form
-        <form onSubmit={handleLogin}>
+        <div>
           <div className="mb-4">
             <label
-              htmlFor="userId"
               className="block mb-2 text-sm font-medium text-left text-gray-300"
             >
               아이디
             </label>
             <input
               type="text"
-              id="userId"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
@@ -73,14 +110,12 @@ export default function LoginComponent() {
 
           <div className="mb-4">
             <label
-              htmlFor="password"
               className="block mb-2 text-sm font-medium text-left text-gray-300"
             >
               비밀번호
             </label>
             <input
               type="password"
-              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
@@ -91,7 +126,6 @@ export default function LoginComponent() {
           <div className="mb-4 flex items-center">
             <input
               type="checkbox"
-              id="rememberId"
               checked={rememberId}
               onChange={(e) => setRememberId(e.target.checked)}
               className="mr-2"
@@ -104,6 +138,7 @@ export default function LoginComponent() {
           <button
             type="submit"
             className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+            onClick={handleLogin}
           >
             로그인
           </button>
@@ -116,58 +151,59 @@ export default function LoginComponent() {
               비밀번호 찾기
             </a>
           </div>
-        </form>
+        </div>
       ) : (
         // Signup Form
-        <form onSubmit={handleSignup}>
+        <div>
           <div className="mb-4">
-            <label
-              htmlFor="signupUserId"
-              className="block mb-2 text-sm font-medium text-left text-gray-300"
-            >
+            <label className="block mb-2 text-sm font-medium text-gray-300">
               아이디
             </label>
             <input
               type="text"
-              id="signupUserId"
               value={signupUserId}
               onChange={(e) => setSignupUserId(e.target.value)}
-              className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
+              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
               placeholder="아이디를 입력하세요"
             />
           </div>
 
           <div className="mb-4">
-            <label
-              htmlFor="signupPassword"
-              className="block mb-2 text-sm font-medium text-left text-gray-300"
-            >
+            <label className="block mb-2 text-sm font-medium text-gray-300">
               비밀번호
             </label>
             <input
               type="password"
-              id="signupPassword"
               value={signupPassword}
               onChange={(e) => setSignupPassword(e.target.value)}
-              className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
+              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
               placeholder="비밀번호를 입력하세요"
             />
           </div>
 
           <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className="block mb-2 text-sm font-medium text-left text-gray-300"
-            >
+            <label className="block mb-2 text-sm font-medium text-gray-300">
               비밀번호 확인
             </label>
             <input
               type="password"
-              id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
-              placeholder="비밀번호를 다시 입력하세요"
+              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              placeholder="비밀번호를 입력하세요"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-medium text-gray-300">
+              닉네임
+            </label>
+            <input
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              placeholder="닉네임을 입력하세요"
             />
           </div>
 
@@ -240,10 +276,11 @@ export default function LoginComponent() {
           <button
             type="submit"
             className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+            onClick={handleSignUp}
           >
             회원가입
           </button>
-        </form>
+        </div>
       )}
     </div>
   );
