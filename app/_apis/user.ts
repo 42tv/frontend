@@ -10,16 +10,18 @@ import axios from "axios";
  * @returns
  */
 export async function singUp(id: string, password: string, nickname: string) {
-  const response = await axios.post(`/api/user`, {
+  const requestBody = {
     id: id,
     password: password,
     nickname: nickname,
+  };
+  const response = await axios.post("/api/user", requestBody, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
-  // const response = await axios.get(`/api/user/info`, {
-  //   headers: {
-  //     Authorization: `Bearer ${getCookie("jwt")}`,
-  //   },
-  // });
+  console.log(response.data);
   return response.data;
 }
 
@@ -30,9 +32,25 @@ export async function singUp(id: string, password: string, nickname: string) {
  * @returns
  */
 export async function login(id: string, password: string) {
-  const response = await axios.post(`/api/auth/login`, {
-    username: id,
-    password: password,
+  const response = await axios.post(
+    `/api/auth/login`,
+    {
+      username: id,
+      password: password,
+    },
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+}
+
+export async function getInfo() {
+  const response = await axios.get("/api/user", {
+    withCredentials: true,
   });
   return response.data;
 }
