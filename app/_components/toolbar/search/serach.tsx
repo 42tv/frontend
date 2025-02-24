@@ -21,7 +21,7 @@ export default function Search() {
        
         
         <button className="w-[30px] h-[36px] flex items-center justify-center rounded-r-[5px]">
-          <Image src="icons/search.svg" width={20} height={20} alt=""/>
+          <Image src="icons/search.svg" width={20} height={20} alt="" priority={true}/>
         </button>
       </div>
     );

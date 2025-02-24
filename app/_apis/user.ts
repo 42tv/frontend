@@ -48,6 +48,10 @@ export async function login(id: string, password: string) {
   return response.data;
 }
 
+/**
+ * 기본 User 정보 가져오기
+ * @returns
+ */
 export async function getInfo() {
   const response = await axios.get("/api/user", {
     withCredentials: true,
