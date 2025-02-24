@@ -7,7 +7,7 @@ export default function Info() {
     const router = useRouter()
     
   useEffect(() => {
-    router.push('/info/gift')
+    router.push('/my/gift')
   }, []);
 
   return null; // 리다이렉트 중이므로 아무것도 렌더링하지 않음

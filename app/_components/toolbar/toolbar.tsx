@@ -38,9 +38,6 @@ const Toolbar: React.FC = () => {
             userInfo ? <ProfileIcon user={userInfo}/> : <Login />
           }
         </div>
-        <div className="sm:hidden">
-          <button className="">☰</button>
-        </div>
       </div>
     </div>
     
