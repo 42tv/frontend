@@ -11,6 +11,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        toolbarBg: "#1b1b1b", // Example color
+        contentBg: "#2b2b2b", // Example color
       },
     },
   },

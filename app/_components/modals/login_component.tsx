@@ -67,7 +67,7 @@ export default function LoginComponent() {
 
   return (
     <div
-      className="max-w-md mx-auto p-5 border rounded-lg border-[#2b2b2b] bg-[#2b2b2b] relative text-left" // Added text-left class for left alignment
+      className="max-w-md mx-auto p-5 border rounded-lg border-contentBg bg-contentBg relative text-left" // Added text-left class for left alignment
     >
       {/* Tabs for Login and Signup */}
       <div className="flex border-b mb-4">
