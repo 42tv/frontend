@@ -25,7 +25,7 @@ export default function TabMenu() {
                 {
                     tabLists.map((tab, index) => {
                         return (
-                            <li key={index} className="flex w-[100px] h-full items-center justify-center text-gray-300 hover:text-white">
+                            <li key={index} className="flex w-[100px] h-full items-center justify-center hover:text-white">
                                 <Link href={tab.link}> {tab.name} </Link>
                             </li>
                         )

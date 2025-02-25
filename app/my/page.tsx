@@ -10,5 +10,9 @@ export default function Info() {
     router.push('/my/gift')
   }, []);
 
-  return null; // 리다이렉트 중이므로 아무것도 렌더링하지 않음
+  return (
+    <div>
+      
+    </div>
+  ); // 리다이렉트 중이므로 아무것도 렌더링하지 않음
 }
