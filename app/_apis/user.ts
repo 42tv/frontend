@@ -58,3 +58,35 @@ export async function getInfo() {
   });
   return response.data;
 }
+
+/**
+ * 닉네임 업데이트
+ * @param nickname
+ * @returns
+ */
+export async function updateNickname(nickname: string) {
+  const response = await axios.put(
+    "/api/user/nickname",
+    {
+      nickname: nickname,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+export async function updatePassword(password: string, newPassword: string) {
+  const response = await axios.put(
+    "/api/user/password",
+    {
+      password: password,
+      new_password: newPassword,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}

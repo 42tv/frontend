@@ -20,7 +20,7 @@ export default function TabMenu() {
         },
     ]
     return (
-        <div className="w-full h-[60px] items-center justify-center text-center">
+        <div className="w-full h-[60px] items-center justify-center text-center mb-4">
             <ul className="flex flex-row h-full items-center text-center justify-center">
                 {
                     tabLists.map((tab, index) => {

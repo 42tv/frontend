@@ -15,7 +15,6 @@ const Toolbar: React.FC = () => {
     async function getUserInfo() {
       try {
         const response: UserResponse = await getInfo();
-        console.log(response);
         setUserInfo(response);
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

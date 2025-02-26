@@ -11,8 +11,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        // primaryBg: "",
         toolbarBg: "#1b1b1b", // Example color
         contentBg: "#2b2b2b", // Example color
+        colorFg01: "#999",
       },
     },
   },
