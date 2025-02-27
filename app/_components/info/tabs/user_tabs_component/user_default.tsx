@@ -1,6 +1,6 @@
 import { UserResponse } from "@/app/_components/utils/interfaces";
  
-export default function UserDefault({userInfo, nickname, setNickname}: { userInfo: UserResponse | null; nickname: string, setNickname: (nickname: string) => void;}) {
+export default function UserDefault({userInfo, nickname, setNickname}: { userInfo: UserResponse; nickname: string, setNickname: (nickname: string) => void;}) {
     const user_id = userInfo?.user_id;
     const phoneAuth = false;
     const sex = 'male';

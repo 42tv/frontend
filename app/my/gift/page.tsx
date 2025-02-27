@@ -1,5 +1,4 @@
 'use client'
-import InfoLayOut from "@/app/_components/info/layout";
 import { useEffect } from "react";
 // import Image from 'next/image'
 
@@ -12,8 +11,8 @@ export default function GiftTab() {
 
     }, [])
     return (
-        <InfoLayOut>
-            aa
-        </InfoLayOut>
+        <div>
+            
+        </div>
     )
 }
