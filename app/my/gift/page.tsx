@@ -1,18 +1,12 @@
 'use client'
-import { useEffect } from "react";
+import MyLayOut from "@/app/_components/info/layout";
+import GiftTab from "@/app/_components/info/tabs/gift";
 // import Image from 'next/image'
 
-export default function GiftTab() {
-    // const userData = {
-    //     profilePath: "/icons/anonymouse1.svg",
-    //     age: 20
-    // }
-    useEffect(() => {
-
-    }, [])
+export default function GiftPage() {
     return (
-        <div>
-            
-        </div>
+        <MyLayOut>
+            <GiftTab />
+        </MyLayOut>
     )
 }

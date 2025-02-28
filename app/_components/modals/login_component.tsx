@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import errorModalStore from '../utils/errorModalStore';
+import errorModalStore from '../utils/store/errorModalStore';
 import ErrorMessage from './error_component';
 import { login, singUp } from '@/app/_apis/user';
 import { useRouter } from 'next/navigation';

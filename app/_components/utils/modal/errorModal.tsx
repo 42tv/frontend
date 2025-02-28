@@ -1,5 +1,5 @@
 'use client';
-import errorModalStore from "./errorModalStore";
+import errorModalStore from "../store/errorModalStore";
 
 const ErrorModal = () => {
     const { isOpen, closeModal, content } = errorModalStore();

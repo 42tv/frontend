@@ -1,7 +1,7 @@
-import { UserResponse } from "@/app/_components/utils/interfaces";
+import useUserStore from "@/app/_components/utils/store/userStore";
  
-export default function UserDefault({userInfo, nickname, setNickname}: { userInfo: UserResponse; nickname: string, setNickname: (nickname: string) => void;}) {
-    const user_id = userInfo?.user_id;
+export default function UserDefault({inputNickname, setInputNickname} : {inputNickname: string, setInputNickname: (nickname: string) => void}) {
+    const { user_id} = useUserStore();
     const phoneAuth = false;
     const sex = 'male';
     return (
@@ -27,9 +27,9 @@ export default function UserDefault({userInfo, nickname, setNickname}: { userInf
                 <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
                     <input
                         type="text"
-                        value={nickname}
+                        value={inputNickname}
                         onChange={(e) => {
-                            setNickname(e.target.value)
+                            setInputNickname(e.target.value)
                         }}
                         className="w-full h-full px-3 py-2 text-[16px] focus-visible:outline-none rounded-lg"
                     />

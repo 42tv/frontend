@@ -3,13 +3,14 @@ import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
 import { Button } from "@mui/material";
 import { updateNickname, updatePassword } from "@/app/_apis/user";
-import { UserResponse } from "../../utils/interfaces";
-import errorModalStore from "../../utils/errorModalStore";
+import errorModalStore from "../../utils/store/errorModalStore";
 import ErrorMessage from "../../modals/error_component";
+import useUserStore from "../../utils/store/userStore";
 
-export default function UserTab({userInfo, setUserInfo} : {userInfo: UserResponse, setUserInfo: (userInfo: UserResponse) => void}) {
+export default function UserTab() {
     const { openError } = errorModalStore();
-    const [nickname, setNickname] = useState<string>("");
+    const { nickname, setNickname } = useUserStore();
+    const [inputNickname, setInputNickname] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
     const [passwordCheck, setPasswordCheck] = useState<string>("");
@@ -21,29 +22,24 @@ export default function UserTab({userInfo, setUserInfo} : {userInfo: UserRespons
     }
 
     useEffect(() => {
-        setNickname(userInfo.nickname);
-    }, [userInfo])
+        setInputNickname(nickname);
+    }, [])
     
 
     async function updateUserInfo() {
-        const isNicknameChanged = userInfo?.nickname != nickname;
+        const isNicknameChanged = nickname != inputNickname;
         const isPasswordChanged = password != "" && newPassword == passwordCheck;
         if (isNicknameChanged) {
             try {
-                const response = await updateNickname(nickname);
+                const response = await updateNickname(inputNickname);
                 if (!isPasswordChanged) {
-                    if (userInfo) {
-                        setUserInfo({
-                            ...userInfo,
-                            nickname: nickname
-                        })
-                    }
+                    setNickname(inputNickname);
                     openError(<ErrorMessage message={response.message}/>);
                 }
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             catch (e: any) {
-                setNickname(userInfo.nickname);
+                setInputNickname(nickname);
                 openError(<ErrorMessage message={e.response.data.message}/>);
                 return;
             }
@@ -64,11 +60,11 @@ export default function UserTab({userInfo, setUserInfo} : {userInfo: UserRespons
 
     return (
         <div className="flex flex-col w-full h-full">
-            <UserDefault userInfo={userInfo} nickname={nickname} setNickname={setNickname}/>
+            <UserDefault inputNickname={inputNickname} setInputNickname={setInputNickname}/>
             <PasswordChange passwordState={passwordState}/>
-            <div className="my-[70px] flex justify-center">
+            <div className="flex justify-center">
                 {
-                    (nickname != userInfo?.nickname ||  (password != ""  && newPassword != "" && newPassword == passwordCheck))
+                    (nickname != inputNickname ||  (password != ""  && newPassword != "" && newPassword == passwordCheck))
                     ? 
                     <Button 
                         className="flex items-center justify-center w-[100px]" 
