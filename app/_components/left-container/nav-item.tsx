@@ -9,12 +9,13 @@ interface NavItemProps {
 const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label }) => {
   return (
     <div
-      className={`flex w-full pl-8 items-center p-2 space-x-4 cursor-pointer 
-      bg-white dark:bg-[#121212] 
-      hover:bg-gray-400 dark:hover:bg-gray-800`}
+      className={`flex w-full h-[60px] cursor-pointer bg-white dark:bg-darkBg`}
     >
-      <Icon className="w-5 h-5" />
-      <span className="text-gray-900 dark:text-white">{label}</span>
+      <div className="flex w-full m-3 items-center justify-center space-x-4 flex-row rounded-[10px] hover:bg-gray-200 dark:hover:bg-contentBg">
+        <Icon className="w-5 h-5" />
+        <span>{label}</span>
+      </div>
+      
     </div>
   );
 };

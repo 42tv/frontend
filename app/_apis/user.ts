@@ -1,4 +1,5 @@
 import axios from "axios";
+import api from "./auto_refresh_axios";
 // import { getCookie } from "cookies-next";
 // import { headers } from "next/headers";
 
@@ -48,9 +49,45 @@ export async function login(id: string, password: string) {
   return response.data;
 }
 
+/**
+ * 기본 User 정보 가져오기
+ * @returns
+ */
 export async function getInfo() {
-  const response = await axios.get("/api/user", {
+  const response = await api.get("/api/user", {
     withCredentials: true,
   });
+  return response.data;
+}
+
+/**
+ * 닉네임 업데이트
+ * @param nickname
+ * @returns
+ */
+export async function updateNickname(nickname: string) {
+  const response = await axios.put(
+    "/api/user/nickname",
+    {
+      nickname: nickname,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+export async function updatePassword(password: string, newPassword: string) {
+  const response = await axios.put(
+    "/api/user/password",
+    {
+      password: password,
+      new_password: newPassword,
+    },
+    {
+      withCredentials: true,
+    }
+  );
   return response.data;
 }

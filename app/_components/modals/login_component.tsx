@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import errorModalStore from '../utils/errorModalStore';
+import errorModalStore from '../utils/store/errorModalStore';
 import ErrorMessage from './error_component';
 import { login, singUp } from '@/app/_apis/user';
+import { useRouter } from 'next/navigation';
 
 export default function LoginComponent() {
+  const router = useRouter()
   const { openError } = errorModalStore();
   const [activeTab, setActiveTab] = useState('login'); // Track the active tab
   const [userId, setUserId] = useState('');
@@ -19,6 +21,7 @@ export default function LoginComponent() {
   async function handleLogin() {
     try {
       await login(userId, password);
+      router.push('/live')
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch(err: any) {
@@ -64,7 +67,7 @@ export default function LoginComponent() {
 
   return (
     <div
-      className="max-w-md mx-auto p-5 border rounded-lg border-[#2b2b2b] bg-[#2b2b2b] relative text-left" // Added text-left class for left alignment
+      className="max-w-md mx-auto p-5 border rounded-lg border-contentBg bg-contentBg relative text-left" // Added text-left class for left alignment
     >
       {/* Tabs for Login and Signup */}
       <div className="flex border-b mb-4">

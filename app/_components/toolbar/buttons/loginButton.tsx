@@ -1,6 +1,6 @@
 'use client';
 import LoginComponent from "../../modals/login_component";
-import useModalStore from "../../utils/modalStore";
+import useModalStore from "../../utils/store/modalStore";
 
 export default function Login() {
     const { openModal } = useModalStore();

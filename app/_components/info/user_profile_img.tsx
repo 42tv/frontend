@@ -13,6 +13,7 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
                     alt="Picture of the author"
                     width={width}
                     height={height}
+                    priority={true}
                 />
             </div>
         </div>
