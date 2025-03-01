@@ -36,23 +36,24 @@ export default function ProfileIcon() {
         >
             {
                 profile_img ? 
-                <Image src={profile_img} width={30} height={30} alt="profile icon" /> 
+                <Image src={profile_img} width={30} height={30} alt="profile icon" priority={true}/> 
                 : 
                 <Image src="/icons/anonymouse1.svg" width={30} height={30} alt="profile icon" priority={true}/>
             }
-            {clicked && (
-                <div className="absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg shadow-md p-2 dark:bg-contentBg" onClick={handleMenuClick}>
-                    <div className="flex w-full border-b border-[#3b3b3b]">
-                        aa
-                    </div>
-                    <div className="flex w-full border-b border-[#3b3b3b]">
-                        bb
-                    </div>
-                    <div className="flex w-full border-b border-[#3b3b3b]">
-                        cc
-                    </div>
+            <div
+                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg shadow-md p-2 dark:bg-contentBg transition-opacity duration-100 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                onClick={handleMenuClick}
+            >
+                <div className="flex w-full border-b border-[#3b3b3b]">
+                    aa
                 </div>
-            )}
+                <div className="flex w-full border-b border-[#3b3b3b]">
+                    bb
+                </div>
+                <div className="flex w-full border-b border-[#3b3b3b]">
+                    cc
+                </div>
+            </div>
         </div>
     )
 }
