@@ -57,7 +57,7 @@ export default function ProfileIcon() {
             >
                 {/* 프로필 정보 */}
                 <div className="flex items-center border-b pb-3 border-gray-300 dark:border-gray-700">
-                    <Image src={profile_img || "/icons/anonymouse1.svg"} width={50} height={50} alt="profile icon" className="rounded-full" />
+                    <FiUser className="w-10 h-10 text-gray-700 dark:text-gray-300" />
                     <div className="ml-3">
                         <p className="text-lg font-semibold text-gray-800 dark:text-white">{nickname}</p>
                         <p className="text-sm text-gray-400">0개 | 0개</p>
@@ -65,7 +65,10 @@ export default function ProfileIcon() {
                 </div>
                 {/* 메뉴 리스트 */}
                 <div className="mt-3 space-y-3">
-                    <MenuItem icon={<FiUser className="text-gray-700 dark:text-gray-300" />} text="마이페이지" />
+                    <MenuItem 
+                        icon={<FiUser className="text-gray-700 dark:text-gray-300" />} 
+                        text="마이페이지" 
+                    />
                     <MenuItem icon={<FiCreditCard className="text-gray-700 dark:text-gray-300" />} text="결제내역" />
                     <MenuItem icon={<MdOutlineHistory className="text-gray-700 dark:text-gray-300" />} text="아이템내역" />
                     <MenuItem icon={<FiGift className="text-gray-700 dark:text-gray-300" />} text="선물내역" />
@@ -80,7 +83,7 @@ export default function ProfileIcon() {
 
 function MenuItem({ icon, text }: { icon: JSX.Element; text: string }) {
     return (
-        <div className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer">
+        <div className="flex items-center space-x-3 p-2 hover:bg-iconLightBg dark:hover:bg-iconDarkBg rounded-lg cursor-pointer">
             {icon}
             <span className="text-sm">{text}</span>
         </div>
