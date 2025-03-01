@@ -16,7 +16,7 @@ export default function Search() {
               setSearchString(e.target.value)
             }}
           />
-        <button className="block w-[30px] h-full flex items-center justify-center dark:bg-[#121212] rounded-r-[15px]">
+        <button className="block w-[30px] h-full flex items-center justify-center dark:bg-darkBg rounded-r-[15px]">
           <Image src="/icons/search.svg" width={20} height={20} alt="" priority={true}/>
         </button>
         </div>
