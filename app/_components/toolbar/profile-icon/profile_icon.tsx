@@ -1,8 +1,10 @@
 import Image from "next/image";
-import { UserResponse } from "../../utils/interfaces";
 import { useState, useEffect, useRef } from "react";
+import useUserStore from "../../utils/store/userStore";
 
-export default function ProfileIcon({ user }: { user: UserResponse }) {
+export default function ProfileIcon() {
+    const nickname = useUserStore((state) => state.nickname);
+    const profile_img = useUserStore((state) => state.profile_img);
     const [clicked, setClicked] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -33,10 +35,10 @@ export default function ProfileIcon({ user }: { user: UserResponse }) {
             ref={menuRef}
         >
             {
-                user.profile_img ? 
-                <Image src={user.profile_img} width={30} height={30} alt="profile icon" /> 
+                profile_img ? 
+                <Image src={profile_img} width={30} height={30} alt="profile icon" /> 
                 : 
-                <Image src="/icons/anonymouse1.svg" width={30} height={30} alt="profile icon" />
+                <Image src="/icons/anonymouse1.svg" width={30} height={30} alt="profile icon" priority={true}/>
             }
             {clicked && (
                 <div className="absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg shadow-md p-2 dark:bg-contentBg" onClick={handleMenuClick}>

@@ -6,24 +6,16 @@ import Login from './buttons/loginButton';
 import Search from './search/serach';
 import Logo from '../logo/logo';
 import ProfileIcon from './profile-icon/profile_icon';
-import { getInfo } from '@/app/_apis/user';
-import { UserResponse } from '../utils/interfaces';
+import useUserStore from '../utils/store/userStore';
 
 const Toolbar: React.FC = () => {
-  const [userInfo, setUserInfo] = React.useState<UserResponse | null>(null);
-  useEffect(() => {
-    async function getUserInfo() {
-      try {
-        const response: UserResponse = await getInfo();
-        setUserInfo(response);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      catch(e) {
-        setUserInfo(null);
-      }
-    }
-    getUserInfo();
-  }, [])
+  const fetchUser = useUserStore((state) => state.fetchUser);
+  const nickname = useUserStore((state) => state.nickname);
+  
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
 
   return (
     <div>
@@ -34,7 +26,7 @@ const Toolbar: React.FC = () => {
           <Search />
           <ToggleTheme />
           {
-            userInfo ? <ProfileIcon user={userInfo}/> : <Login />
+            nickname ? <ProfileIcon/> : <Login />
           }
         </div>
       </div>
