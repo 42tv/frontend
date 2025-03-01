@@ -21,9 +21,8 @@ const Toolbar: React.FC = () => {
     <div>
       <div className="fixed flex w-full h-[65px] items-center justify-between shadow-md z-50 border-contentBg border-b dark:bg-toolbarBg">
         <Logo width='40pt' height='40pt'/>
-        <div className="font-bold text-lg sm:text-xl"></div>
-        <div className="flex h-full gap-4 text-center items-center">
-          <Search />
+        <Search />
+        <div className="flex h-full gap-4 text-center items-center ml-auto mr-4">
           <ToggleTheme />
           {
             nickname ? <ProfileIcon/> : <Login />

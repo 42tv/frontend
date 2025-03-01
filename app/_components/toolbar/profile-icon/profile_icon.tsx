@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import useUserStore from "../../utils/store/userStore";
-import { FiGift, FiCreditCard, FiUser, FiMenu, FiSettings } from "react-icons/fi";
+import { FiGift, FiCreditCard, FiUser, FiSettings } from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
 import { FaCrown } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 
 export default function ProfileIcon() {
     const profile_img = useUserStore((state) => state.profile_img);
@@ -33,14 +34,22 @@ export default function ProfileIcon() {
 
     return (
         <div 
-            className="relative bg-white rounded-full mr-4 cursor-pointer"
+            className="relative bg-white rounded-full cursor-pointer"
             onClick={toggleClick}
             ref={menuRef}
         >
             {profile_img ? (
-                <Image src={profile_img} width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+                <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                    <Image src={profile_img} width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+                </div>
+                
             ) : (
-                <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+                <div className="w-[40px] h-[40px] flex  dark:bg-toolbarBg">
+                    <div className="flex w-full h-full rounded-full dark:hover:bg-iconDarkBg hover:bg-iconLightBg items-center justify-center">
+                        <CgProfile size={32}/>
+                    </div>
+                </div>
+                // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
             <div
                 className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg shadow-md p-2 dark:bg-contentBg transition-opacity duration-100 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
