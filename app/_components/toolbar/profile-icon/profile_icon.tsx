@@ -52,25 +52,25 @@ export default function ProfileIcon() {
                 // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
             <div
-                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg shadow-md p-2 dark:bg-contentBg transition-opacity duration-100 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-white dark:bg-contentBg border border-gray-200 dark:border-gray-700 shadow-lg p-2 transition-opacity duration-100 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={handleMenuClick}
             >
                 {/* 프로필 정보 */}
-                <div className="flex items-center border-b pb-3 border-gray-700">
+                <div className="flex items-center border-b pb-3 border-gray-300 dark:border-gray-700">
                     <Image src={profile_img || "/icons/anonymouse1.svg"} width={50} height={50} alt="profile icon" className="rounded-full" />
                     <div className="ml-3">
-                        <p className="text-lg font-semibold">{nickname}</p>
+                        <p className="text-lg font-semibold text-gray-800 dark:text-white">{nickname}</p>
                         <p className="text-sm text-gray-400">0개 | 0개</p>
                     </div>
                 </div>
                 {/* 메뉴 리스트 */}
                 <div className="mt-3 space-y-3">
-                    <MenuItem icon={<FiUser />} text="마이페이지" />
-                    <MenuItem icon={<FiCreditCard />} text="결제내역" />
-                    <MenuItem icon={<MdOutlineHistory />} text="아이템내역" />
-                    <MenuItem icon={<FiGift />} text="선물내역" />
-                    <MenuItem icon={<FaCrown />} text="VIP 시그니처" />
-                    <MenuItem icon={<FiSettings />} text="설정" />
+                    <MenuItem icon={<FiUser className="text-gray-700 dark:text-gray-300" />} text="마이페이지" />
+                    <MenuItem icon={<FiCreditCard className="text-gray-700 dark:text-gray-300" />} text="결제내역" />
+                    <MenuItem icon={<MdOutlineHistory className="text-gray-700 dark:text-gray-300" />} text="아이템내역" />
+                    <MenuItem icon={<FiGift className="text-gray-700 dark:text-gray-300" />} text="선물내역" />
+                    <MenuItem icon={<FaCrown className="text-gray-700 dark:text-gray-300" />} text="VIP 시그니처" />
+                    <MenuItem icon={<FiSettings className="text-gray-700 dark:text-gray-300" />} text="설정" />
                 </div>
             </div>
             
