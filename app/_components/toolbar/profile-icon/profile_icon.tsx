@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import useUserStore from "../../utils/store/userStore";
 import { FiGift, FiCreditCard, FiUser, FiSettings } from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
@@ -67,13 +68,34 @@ export default function ProfileIcon() {
                 <div className="mt-3 space-y-3">
                     <MenuItem 
                         icon={<FiUser className="text-gray-700 dark:text-gray-300" />} 
-                        text="마이페이지" 
+                        text="마이페이지"
+                        href="/my/info"
                     />
-                    <MenuItem icon={<FiCreditCard className="text-gray-700 dark:text-gray-300" />} text="결제내역" />
-                    <MenuItem icon={<MdOutlineHistory className="text-gray-700 dark:text-gray-300" />} text="아이템내역" />
-                    <MenuItem icon={<FiGift className="text-gray-700 dark:text-gray-300" />} text="선물내역" />
-                    <MenuItem icon={<FaCrown className="text-gray-700 dark:text-gray-300" />} text="VIP 시그니처" />
-                    <MenuItem icon={<FiSettings className="text-gray-700 dark:text-gray-300" />} text="설정" />
+                    <MenuItem 
+                        icon={<FiCreditCard className="text-gray-700 dark:text-gray-300" />} 
+                        text="결제내역" 
+                        href="/payment-history"
+                    />
+                    <MenuItem 
+                        icon={<MdOutlineHistory className="text-gray-700 dark:text-gray-300" />} 
+                        text="아이템내역" 
+                        href="/item-history"
+                    />
+                    <MenuItem 
+                        icon={<FiGift className="text-gray-700 dark:text-gray-300" />} 
+                        text="선물내역" 
+                        href="/gift-history"
+                    />
+                    <MenuItem 
+                        icon={<FaCrown className="text-gray-700 dark:text-gray-300" />} 
+                        text="VIP 시그니처" 
+                        href="/vip-signature"
+                    />
+                    <MenuItem 
+                        icon={<FiSettings className="text-gray-700 dark:text-gray-300" />} 
+                        text="설정" 
+                        href="/settings"
+                    />
                 </div>
             </div>
             
@@ -81,9 +103,18 @@ export default function ProfileIcon() {
     );
 }
 
-function MenuItem({ icon, text }: { icon: JSX.Element; text: string }) {
+function MenuItem({ icon, text, href }: { icon: JSX.Element; text: string; href: string }) {
+    const router = useRouter();
+    
+    const handleClick = () => {
+        router.push(href);
+    };
+    
     return (
-        <div className="flex items-center space-x-3 p-2 hover:bg-iconLightBg dark:hover:bg-iconDarkBg rounded-lg cursor-pointer">
+        <div 
+            className="flex items-center space-x-3 p-2 hover:bg-iconLightBg dark:hover:bg-iconDarkBg rounded-lg cursor-pointer"
+            onClick={handleClick}
+        >
             {icon}
             <span className="text-sm">{text}</span>
         </div>
