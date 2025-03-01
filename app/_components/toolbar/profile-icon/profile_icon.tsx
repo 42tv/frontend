@@ -1,10 +1,13 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import useUserStore from "../../utils/store/userStore";
+import { FiGift, FiCreditCard, FiUser, FiMenu, FiSettings } from "react-icons/fi";
+import { MdOutlineHistory } from "react-icons/md";
+import { FaCrown } from "react-icons/fa";
 
 export default function ProfileIcon() {
-    const nickname = useUserStore((state) => state.nickname);
     const profile_img = useUserStore((state) => state.profile_img);
+    const nickname = useUserStore((state) => state.nickname) || "Guest";
     const [clicked, setClicked] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -30,30 +33,47 @@ export default function ProfileIcon() {
 
     return (
         <div 
-            className="relative bg-white rounded-full mr-4"
+            className="relative bg-white rounded-full mr-4 cursor-pointer"
             onClick={toggleClick}
             ref={menuRef}
         >
-            {
-                profile_img ? 
-                <Image src={profile_img} width={30} height={30} alt="profile icon" priority={true}/> 
-                : 
-                <Image src="/icons/anonymouse1.svg" width={30} height={30} alt="profile icon" priority={true}/>
-            }
+            {profile_img ? (
+                <Image src={profile_img} width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+            ) : (
+                <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+            )}
             <div
                 className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg shadow-md p-2 dark:bg-contentBg transition-opacity duration-100 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={handleMenuClick}
             >
-                <div className="flex w-full border-b border-[#3b3b3b]">
-                    aa
+                {/* 프로필 정보 */}
+                <div className="flex items-center border-b pb-3 border-gray-700">
+                    <Image src={profile_img || "/icons/anonymouse1.svg"} width={50} height={50} alt="profile icon" className="rounded-full" />
+                    <div className="ml-3">
+                        <p className="text-lg font-semibold">{nickname}</p>
+                        <p className="text-sm text-gray-400">0개 | 0개</p>
+                    </div>
                 </div>
-                <div className="flex w-full border-b border-[#3b3b3b]">
-                    bb
-                </div>
-                <div className="flex w-full border-b border-[#3b3b3b]">
-                    cc
+                {/* 메뉴 리스트 */}
+                <div className="mt-3 space-y-3">
+                    <MenuItem icon={<FiUser />} text="마이페이지" />
+                    <MenuItem icon={<FiCreditCard />} text="결제내역" />
+                    <MenuItem icon={<MdOutlineHistory />} text="아이템내역" />
+                    <MenuItem icon={<FiGift />} text="선물내역" />
+                    <MenuItem icon={<FaCrown />} text="VIP 시그니처" />
+                    <MenuItem icon={<FiSettings />} text="설정" />
                 </div>
             </div>
+            
         </div>
-    )
+    );
+}
+
+function MenuItem({ icon, text }: { icon: JSX.Element; text: string }) {
+    return (
+        <div className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer">
+            {icon}
+            <span className="text-sm">{text}</span>
+        </div>
+    );
 }
