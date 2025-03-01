@@ -1,4 +1,5 @@
 import axios from "axios";
+import api from "./auto_refresh_axios";
 // import { getCookie } from "cookies-next";
 // import { headers } from "next/headers";
 
@@ -53,7 +54,7 @@ export async function login(id: string, password: string) {
  * @returns
  */
 export async function getInfo() {
-  const response = await axios.get("/api/user", {
+  const response = await api.get("/api/user", {
     withCredentials: true,
   });
   return response.data;
