@@ -12,12 +12,13 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         // primaryBg: "",
-        iconLightBg: "#e5e7eb", // gray-200 in default Tailwind is #e5e7eb
-        iconDarkBg: "#374151", // gray-700 in default Tailwind is #374151
-        toolbarBg: "#1b1b1b", // Example color
-        contentBg: "#2b2b2b", // Example color
-        darkBg: "#121212", // Example color
-        colorFg01: "#999",
+        textSearch: "rgba(199, 199, 199, 0.4)",
+        iconLightBg: "rgba(229, 231, 235, 0.7)",
+        iconDarkBg: "rgba(55, 65, 81, 0.7)",
+        toolbarBg: "rgba(27, 27, 27, 0.7)",
+        contentBg: "rgba(43, 43, 43, 0.7)",
+        darkBg: "rgba(18, 18, 18, 0.7)",
+        colorFg01: "rgba(153, 153, 153, 0.7)",
       },
     },
   },

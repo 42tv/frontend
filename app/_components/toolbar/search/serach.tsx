@@ -10,7 +10,7 @@ export default function Search() {
           <input
             type="text"
             placeholder="검색어를 입력하세요"
-            className="w-full h-full focus:outline-none px-2 rounded-l-[15px] text-center"
+            className="w-full h-full focus:outline-none px-2 rounded-l-[15px] pl-4 text-left text-textSearch placeholder-textSearch"
             onChange={(e) => {
               // console.log(e.target.value);
               setSearchString(e.target.value)
