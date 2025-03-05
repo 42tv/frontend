@@ -14,13 +14,13 @@ interface Props {
 export default function PasswordChange({passwordState} : Props) {
     return (
         <div className="px-20">
-            <div className="font-bold text-2xl text-colorFg01 mb-4"> 
+            <div className="font-bold text-2xl dark:text-colorFg01 mb-4"> 
                 비밀번호 변경
             </div>
             {/* 밑줄 */}
             <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
             <div className="flex flex-row h-[58px] items-center px-4">
-                <span className="w-[180px] font-medium text-colorFg01">
+                <span className="w-[180px] font-medium dark:text-colorFg01">
                     기존 비밀번호
                 </span>
                 <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
@@ -33,7 +33,7 @@ export default function PasswordChange({passwordState} : Props) {
                 </div>
             </div>
             <div className="flex flex-row h-[58px] items-center px-4">
-                <span className="w-[180px] font-medium text-colorFg01">
+                <span className="w-[180px] font-medium dark:text-colorFg01">
                     변경 비밀번호
                 </span>
                 <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
@@ -46,7 +46,7 @@ export default function PasswordChange({passwordState} : Props) {
                 </div>
             </div>
             <div className="flex flex-row h-[58px] items-center px-4">
-                <span className="w-[180px] font-medium text-colorFg01">
+                <span className="w-[180px] font-medium dark:text-colorFg01">
                     비밀번호 확인
                 </span>
                 <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">

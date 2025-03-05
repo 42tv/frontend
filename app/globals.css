@@ -4,7 +4,7 @@
 
 :root {
   --white: hsl(210 40% 98%);
-  --black: #141517;
+  --black: #080808;
   --text-color: var(--black);
 
   --background: white;

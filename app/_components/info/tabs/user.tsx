@@ -23,7 +23,7 @@ export default function UserTab() {
 
     useEffect(() => {
         setInputNickname(nickname);
-    }, [])
+    }, [nickname])
     
 
     async function updateUserInfo() {
@@ -62,7 +62,7 @@ export default function UserTab() {
         <div className="flex flex-col w-full h-full">
             <UserDefault inputNickname={inputNickname} setInputNickname={setInputNickname}/>
             <PasswordChange passwordState={passwordState}/>
-            <div className="flex justify-center">
+            <div className="flex justify-center my-10">
                 {
                     (nickname != inputNickname ||  (password != ""  && newPassword != "" && newPassword == passwordCheck))
                     ? 

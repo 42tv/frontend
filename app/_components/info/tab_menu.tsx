@@ -1,6 +1,9 @@
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export default function TabMenu() {
+    const pathname = usePathname()
+    
     const tabLists = [
         {
             name: '회원 정보',
@@ -24,9 +27,10 @@ export default function TabMenu() {
             <ul className="flex flex-row items-center text-center justify-center border-contentBg border-b py-4">
                 {
                     tabLists.map((tab, index) => {
+                        const isActive = pathname === tab.link
                         return (
-                            <li key={index} className="flex w-[100px] items-center justify-center hover:text-white">
-                                <Link href={tab.link}> {tab.name} </Link>
+                            <li key={index} className="flex w-[100px] items-center justify-center">
+                                <Link href={tab.link} className={`${isActive ? "dark:text-white" : "dark:gray-700"}`}> {tab.name} </Link>
                             </li>
                         )
                     })
