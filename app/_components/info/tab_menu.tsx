@@ -8,7 +8,7 @@ export default function TabMenu() {
         },
         {
             name: '쪽지함',
-            link: '/my/gift'
+            link: '/my/post'
         },
         {
             name: '결제 내역',
@@ -20,8 +20,8 @@ export default function TabMenu() {
         },
     ]
     return (
-        <div className="w-full h-[60px] items-center justify-center text-center my-4">
-            <ul className="flex flex-row items-center text-center justify-center">
+        <div className="w-full h-[60px] items-center justify-center text-center">
+            <ul className="flex flex-row items-center text-center justify-center border-contentBg border-b py-4">
                 {
                     tabLists.map((tab, index) => {
                         return (
