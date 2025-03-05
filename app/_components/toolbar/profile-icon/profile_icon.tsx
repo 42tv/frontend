@@ -35,7 +35,7 @@ export default function ProfileIcon() {
 
     return (
         <div 
-            className="relative bg-white rounded-full cursor-pointer"
+            className="relative rounded-full cursor-pointer"
             onClick={toggleClick}
             ref={menuRef}
         >

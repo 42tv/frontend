@@ -16,7 +16,7 @@ const refreshToken = async () => {
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("토큰 갱신 실패:", error);
+    // console.error("토큰 갱신 실패:", error);
     throw error;
   }
 };

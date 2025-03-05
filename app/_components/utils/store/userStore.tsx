@@ -40,7 +40,9 @@ const useUserStore = create<UserState>((set) => ({
         profile_img: response.profile_img,
       });
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      // Redirect to homepage if user data fetching fails
+      // window.location.href = '/';
+      console.log('Failed to fetch user:', error);
     }
   },
 }));
