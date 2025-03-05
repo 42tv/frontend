@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
 
 export default function PostTab() {
@@ -6,42 +5,21 @@ export default function PostTab() {
     return (
         <div>
             <div className="flex flex-row px-10 mx-auto h-[60px] items-center space-x-10 border-b border-contentBg">
-                <Button 
-                    disableRipple 
-                    className={`dark:hover:text-white ${activeTab === 'received' ? '' : 'text-gray-400'}`}
-                    onClick={() => setActiveTab('received')}
-                    sx={{
-                        '&:hover': {
-                            backgroundColor: 'transparent',
-                        },
-                        textTransform: 'none',
-                    }}>
+                <button 
+                    className={`dark:hover:text-white bg-transparent ${activeTab === 'received' ? 'font-semibold' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('received')}>
                     받은 메세지
-                </Button>
-                <Button 
-                    disableRipple 
-                    className={`dark:hover:text-white ${activeTab === 'send' ? '' : 'text-gray-400'}`}
-                    onClick={() => setActiveTab('send')}
-                    sx={{
-                        '&:hover': {
-                            backgroundColor: 'transparent',
-                        },
-                        textTransform: 'none',
-                    }}>
+                </button>
+                <button 
+                    className={`dark:hover:text-white bg-transparent ${activeTab === 'send' ? 'font-semibold' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('send')}>
                     보낸 메세지
-                </Button>
-                <Button 
-                    disableRipple 
-                    className={`dark:hover:text-white ${activeTab === 'ban' ? '' : 'text-gray-400'}`}
-                    onClick={() => setActiveTab('ban')}
-                    sx={{
-                        '&:hover': {
-                            backgroundColor: 'transparent',
-                        },
-                        textTransform: 'none',
-                    }}>
+                </button>
+                <button 
+                    className={`dark:hover:text-white bg-transparent ${activeTab === 'ban' ? 'font-semibold' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('ban')}>
                     차단 목록
-                </Button>
+                </button>
             </div> 
             aa
         </div>

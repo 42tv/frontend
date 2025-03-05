@@ -30,7 +30,7 @@ export default function TabMenu() {
                         const isActive = pathname === tab.link
                         return (
                             <li key={index} className="flex w-[100px] items-center justify-center">
-                                <Link href={tab.link} className={`${isActive ? "dark:text-white" : "dark:gray-700"}`}> {tab.name} </Link>
+                                <Link href={tab.link} className={`${isActive ? "font-bold" : ""}`}> {tab.name} </Link>
                             </li>
                         )
                     })
