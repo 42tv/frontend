@@ -56,13 +56,13 @@ export default function ReceiveMessage() {
                   <span className="font-semibold">
                    {posts.length}
                   </span>
-                  <span className="text-colorFg01">
+                  <span className="text-textBase">
                     건
                   </span>
                 </div>
-                <table className="w-full border-t border-b border-gray-300">
+                <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
-                        <tr className="border-b dark:border-borderButton1-dark text-center align-middle">
+                        <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
                             <th className="p-2 text-textBase-dark-bold">번호</th>
                             <th className="p-2 text-textBase-dark-bold">내용</th>
                             <th className="p-2 text-textBase-dark-bold">보낸회원</th>
@@ -72,7 +72,7 @@ export default function ReceiveMessage() {
                     </thead>
                     <tbody>
                         {currentPosts.map((post) => (
-                          <tr key={post.id} className="border-b dark:border-borderButton1-dark text-center align-middle">
+                          <tr key={post.id} className="border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
                             <td className="p-2 text-textBase">{post.id}</td>
                             <td className="p-2 text-textBase">{post.content}</td>
                             <td className="p-2 text-textBase">{post.sender}</td>
@@ -89,7 +89,7 @@ export default function ReceiveMessage() {
                             <button
                                 key={number}
                                 onClick={() => paginate(number)}
-                                className={`px-3 py-1 mx-1 rounded dark:border-borderButton1-dark relative
+                                className={`px-3 py-1 mx-1 rounded relative
                                 hover:font-semibold ${currentPage === number ? 'font-semibold' : ''}
                                 after:content-[''] after:absolute after:h-[2px] after:bg-blue-500 after:left-1/4 after:right-1/4
                                 after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
