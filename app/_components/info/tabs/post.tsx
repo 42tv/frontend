@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { LuSettings } from "react-icons/lu";
+import { MdDelete } from "react-icons/md";
+import ReceiveMessage from "./post_tabs_component/receive_message";
 
 export default function PostTab() {
     const [activeTab, setActiveTab] = useState('received');
@@ -21,7 +24,13 @@ export default function PostTab() {
                     차단 목록
                 </button>
             </div> 
-            aa
+            <div className="mb-5"/>
+            {
+                (activeTab == 'received') && (
+                    <ReceiveMessage />
+                )
+            }
+            
         </div>
     )
 }
