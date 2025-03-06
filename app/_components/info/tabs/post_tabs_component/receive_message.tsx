@@ -37,14 +37,14 @@ export default function ReceiveMessage() {
             <div className="flex flex-row my-5 mx-5 space-x-2">
                 <button 
                     className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                    border-borderLightButton1 dark:border-borderDarkButton1 hover:bg-colorFg01">
-                    <LuSettings className="text-iconDarkBg"/>
+                    border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
+                    <LuSettings className="text-iconBg-dark"/>
                     <span>설정</span>
                 </button>
                 <button 
                     className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                    border-borderLightButton1 dark:border-borderDarkButton1 hover:bg-colorFg01">
-                    <MdDelete className="text-iconDarkBg"/>
+                    border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
+                    <MdDelete className="text-iconBg-dark"/>
                     <span>삭제</span>
                 </button>
             </div>
@@ -56,28 +56,28 @@ export default function ReceiveMessage() {
                   <span className="font-semibold">
                    {posts.length}
                   </span>
-                  <span className="text-colorFg01">
+                  <span className="text-textBase">
                     건
                   </span>
                 </div>
-                <table className="w-full border-t border-b border-gray-300">
+                <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
-                        <tr className="border-b border-borderDarkButton1 text-center align-middle">
-                            <th className="relative p-2">번호</th>
-                            <th className="p-2">내용</th>
-                            <th className="p-2">보낸회원</th>
-                            <th className="p-2">보낸일</th>
-                            <th className="p-2">차단</th>
+                        <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
+                            <th className="p-2 text-textBase-dark-bold">번호</th>
+                            <th className="p-2 text-textBase-dark-bold">내용</th>
+                            <th className="p-2 text-textBase-dark-bold">보낸회원</th>
+                            <th className="p-2 text-textBase-dark-bold">보낸일</th>
+                            <th className="p-2 text-textBase-dark-bold">차단</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentPosts.map((post) => (
-                          <tr key={post.id} className="border-b border-borderDarkButton1 text-center align-middle">
-                            <td className="p-2">{post.id}</td>
-                            <td className="p-2">{post.content}</td>
-                            <td className="p-2">{post.sender}</td>
-                            <td className="p-2">{post.date}</td>
-                            <td className="p-2 text-red-500">{post.status}</td>
+                          <tr key={post.id} className="border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
+                            <td className="p-2 text-textBase">{post.id}</td>
+                            <td className="p-2 text-textBase">{post.content}</td>
+                            <td className="p-2 text-textBase">{post.sender}</td>
+                            <td className="p-2 text-textBase">{post.date}</td>
+                            <td className="p-2 text-textBase text-red-500">{post.status}</td>
                           </tr>
                         ))}
                     </tbody>
@@ -89,7 +89,7 @@ export default function ReceiveMessage() {
                             <button
                                 key={number}
                                 onClick={() => paginate(number)}
-                                className={`px-3 py-1 mx-1 rounded dark:border-borderDarkButton1 relative
+                                className={`px-3 py-1 mx-1 rounded relative
                                 hover:font-semibold ${currentPage === number ? 'font-semibold' : ''}
                                 after:content-[''] after:absolute after:h-[2px] after:bg-blue-500 after:left-1/4 after:right-1/4
                                 after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
