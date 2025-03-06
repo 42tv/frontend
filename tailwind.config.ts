@@ -12,16 +12,26 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         // primaryBg: "",
-        textLightSearch: "#BECADC",
-        textDarkSearch: "rgba(199, 199, 199, 1)",
-        iconLightBg: "rgba(229, 231, 235, 1)",
-        iconDarkBg: "rgba(55, 65, 81, 1)",
+        textSearch: {
+          DEFAULT: "rgb(189, 187, 187)",
+          dark: "rgb(117, 113, 113)",
+        },
+        iconBg: {
+          DEFAULT: "rgb(235, 229, 229)", // from iconLightBg
+          dark: "rgba(55, 65, 81, 1)", // from iconDarkBg
+        },
         toolbarBg: "rgba(27, 27, 27, 1.0)",
         contentBg: "rgba(43, 43, 43, 1)",
         darkBg: "rgba(18, 18, 18, 1)",
         colorFg01: "rgba(153, 153, 153, 1)",
-        borderLightButton1: "#d0d3da",
-        borderDarkButton1: "#444",
+        textBase: {
+          DEFAULT: "rgba(75, 75, 75, 1)",
+          dark: "rgba(153, 153, 153, 1)",
+        },
+        borderButton: {
+          DEFAULT: "#d0d3da", // from borderLightButton1
+          dark: "#444", // from borderDarkButton1
+        },
       },
     },
   },
