@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { LuSettings } from "react-icons/lu";
-import { MdDelete } from "react-icons/md";
 import ReceiveMessage from "./post_tabs_component/receive_message";
 
 export default function PostTab() {
