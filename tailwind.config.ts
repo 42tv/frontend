@@ -27,8 +27,14 @@ export default {
         textBase: {
           DEFAULT: "rgba(75, 75, 75, 1)",
           dark: "rgba(153, 153, 153, 1)",
+          bold: "rgba(50, 50, 50, 1)",
+          "dark-bold": "rgba(128, 128, 128, 1)",
         },
-        borderButton: {
+        borderButton1: {
+          DEFAULT: "#d0d3da", // from borderLightButton1
+          dark: "#444", // from borderDarkButton1
+        },
+        tableBorder: {
           DEFAULT: "#d0d3da", // from borderLightButton1
           dark: "#444", // from borderDarkButton1
         },
