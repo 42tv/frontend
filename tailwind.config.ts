@@ -42,6 +42,9 @@ export default {
           DEFAULT: "rgb(212, 214, 218)", // from borderLightButton1
           dark: "rgb(61, 61, 61)", // from borderDarkButton1
         },
+        color: {
+          darkBlue: "rgb(52, 107, 165)",
+        },
       },
     },
   },

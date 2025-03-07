@@ -1,23 +1,22 @@
 import { useState } from "react";
-import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 
 const posts = [
-    { id: 1, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 2, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-    { id: 3, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 4, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" },
-    { id: 5, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 6, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-    { id: 7, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 8, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" },
-    { id: 9, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 10, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-    { id: 11, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 12, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" }
+    { id: 1, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "읽음" },
+    { id: 2, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "읽음" },
+    { id: 3, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "읽음" },
+    { id: 4, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "읽음" },
+    { id: 5, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "읽음" },
+    { id: 6, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "읽음" },
+    { id: 7, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "읽음" },
+    { id: 8, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "읽음" },
+    { id: 9, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "읽음" },
+    { id: 10, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "읽음" },
+    { id: 11, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "읽음" },
+    { id: 12, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "읽음" }
 ];
 
-export default function ReceiveMessage() {
+export default function SendMessage() {
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 10;
     
@@ -39,12 +38,6 @@ export default function ReceiveMessage() {
                     <button 
                         className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
                         border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
-                        <LuSettings className="text-iconBg-dark"/>
-                        <span>설정</span>
-                    </button>
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
                         <MdDelete className="text-iconBg-dark"/>
                         <span>삭제</span>
                     </button>
@@ -62,7 +55,6 @@ export default function ReceiveMessage() {
                         검색
                     </button>
                 </div>
-                
             </div>
             <div className="p-4">
                 <div className="mb-2">
@@ -81,9 +73,9 @@ export default function ReceiveMessage() {
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
                             <th className="p-2 text-textBase-dark-bold">번호</th>
                             <th className="p-2 text-textBase-dark-bold">내용</th>
-                            <th className="p-2 text-textBase-dark-bold">보낸회원</th>
+                            <th className="p-2 text-textBase-dark-bold">받은회원</th>
                             <th className="p-2 text-textBase-dark-bold">보낸일</th>
-                            <th className="p-2 text-textBase-dark-bold">차단</th>
+                            <th className="p-2 text-textBase-dark-bold">상태</th>
                         </tr>
                     </thead>
                     <tbody>
