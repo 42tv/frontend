@@ -33,7 +33,7 @@ export default function ReceiveMessage() {
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);;
 
     return (
-        <div>
+        <div className="mb-20">
             <div className="flex flex-row my-5 mx-5 space-x-2">
                 <button 
                     className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
@@ -99,6 +99,11 @@ export default function ReceiveMessage() {
                         ))}
                     </div>
                 )}
+            </div>
+            <div className="flex w-full justify-center items-center mt-5">
+                <button className="w-[120px] h-[40px] bg-primary rounded-[8px]">
+                    쪽지쓰기
+                </button>
             </div>
         </div>
     )

@@ -19,7 +19,7 @@ const Toolbar: React.FC = () => {
 
   return (
     <div>
-      <div className="fixed flex w-full h-[65px] items-center justify-between shadow-md z-50 border-contentBg border-b dark:bg-toolbarBg">
+      <div className="fixed flex w-full h-[65px] items-center justify-between shadow-md z-50 border-contentBg border-b bg-white dark:bg-toolbarBg">
         <Logo width='40pt' height='40pt'/>
         <Search />
         <div className="flex h-full gap-4 text-center items-center ml-auto mr-4">
