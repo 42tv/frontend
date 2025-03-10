@@ -14,12 +14,15 @@ const posts = [
     { id: 9, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
     { id: 10, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
     { id: 11, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 12, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" }
+    { id: 12, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" },
+    { id: 13, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
+    { id: 14, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
 ];
 
 export default function ReceiveMessage() {
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 10;
+    const pageSetSize = 5; // Number of page buttons to show at once
     
     // Calculate the posts to display on current page
     const indexOfLastPost = currentPage * postsPerPage;
@@ -29,8 +32,22 @@ export default function ReceiveMessage() {
     // Calculate total pages
     const totalPages = Math.ceil(posts.length / postsPerPage);
     
+    // Calculate current page set
+    const currentSet = Math.ceil(currentPage / pageSetSize);
+    const lastSet = Math.ceil(totalPages / pageSetSize);
+    
+    // Calculate start and end page numbers for current set
+    const startPage = (currentSet - 1) * pageSetSize + 1;
+    const endPage = Math.min(currentSet * pageSetSize, totalPages);
+    
     // Page navigation functions
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);;
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    
+    // Navigate to next or previous set of pages
+    const navigateToSet = (setNumber: number) => {
+        const targetPage = (setNumber - 1) * pageSetSize + 1;
+        setCurrentPage(targetPage);
+    };
 
     return (
         <div className="mb-20">
@@ -62,7 +79,6 @@ export default function ReceiveMessage() {
                         검색
                     </button>
                 </div>
-                
             </div>
             <div className="p-4">
                 <div className="mb-2">
@@ -101,18 +117,39 @@ export default function ReceiveMessage() {
                 {/* Pagination Controls */}
                 {posts.length > postsPerPage && (
                     <div className="flex justify-center mt-6">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                        {/* Previous set button */}
+                        {currentSet > 1 && (
+                            <button
+                                onClick={() => navigateToSet(currentSet - 1)}
+                                className="mx-3 py-1 rounded"
+                            >
+                                prev
+                            </button>
+                        )}
+                        
+                        {/* Page numbers */}
+                        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(number => (
                             <button
                                 key={number}
                                 onClick={() => paginate(number)}
                                 className={`px-3 py-1 mx-1 rounded relative
-                                hover:font-semibold ${currentPage === number ? 'font-semibold' : ''}
+                                ${currentPage === number ? 'font-semibold' : ''}
                                 after:content-[''] after:absolute after:h-[2px] after:bg-blue-500 after:left-1/4 after:right-1/4
                                 after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
                             >
                                 {number}
                             </button>
                         ))}
+                        
+                        {/* Next set button */}
+                        {currentSet < lastSet && (
+                            <button
+                                onClick={() => navigateToSet(currentSet + 1)}
+                                className="mx-3 py-1 rounded"
+                            >
+                                next
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
