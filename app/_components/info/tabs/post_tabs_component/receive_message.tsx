@@ -3,26 +3,85 @@ import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 
 const posts = [
-    { id: 1, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 2, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-    { id: 3, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 4, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" },
-    { id: 5, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 6, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-    { id: 7, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 8, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" },
-    { id: 9, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 10, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-    { id: 11, content: "789789789", sender: "3", date: "25.03.06 15:19:57", status: "차단" },
-    { id: 12, content: "101010101", sender: "4", date: "25.03.06 15:19:40", status: "차단" },
-    { id: 13, content: "123123132", sender: "1", date: "25.03.06 20:33:53", status: "차단" },
-    { id: 14, content: "456456456", sender: "2", date: "25.03.06 20:18:36", status: "차단" },
-];
+    {
+      "id": 9,
+      "message": "대충 쪽지 내용1",
+      "sender": {
+        "idx": 5,
+        "userId": "3333",
+        "nickname": "3333"
+      },
+      "recipient": {
+        "idx": 4,
+        "userId": "1234",
+        "nickname": "1234"
+      },
+      "sentAt": "2025-03-10T15:12:33.468Z",
+      "readAt": null
+    },
+    {
+      "id": 10,
+      "message": "대충 쪽지 내용12",
+      "sender": {
+        "idx": 5,
+        "userId": "3333",
+        "nickname": "3333"
+      },
+      "recipient": {
+        "idx": 4,
+        "userId": "1234",
+        "nickname": "1234"
+      },
+      "sentAt": "2025-03-10T15:12:35.952Z",
+      "readAt": null
+    },
+    {
+      "id": 11,
+      "message": "대충 쪽지 내용123",
+      "sender": {
+        "idx": 5,
+        "userId": "3333",
+        "nickname": "3333"
+      },
+      "recipient": {
+        "idx": 4,
+        "userId": "1234",
+        "nickname": "1234"
+      },
+      "sentAt": "2025-03-10T15:12:37.378Z",
+      "readAt": null
+    },
+    {
+      "id": 12,
+      "message": "대충 쪽지 내용1234",
+      "sender": {
+        "idx": 5,
+        "userId": "3333",
+        "nickname": "3333"
+      },
+      "recipient": {
+        "idx": 4,
+        "userId": "1234",
+        "nickname": "1234"
+      },
+      "sentAt": "2025-03-10T15:12:39.143Z",
+      "readAt": null
+    }
+  ]
 
 export default function ReceiveMessage() {
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
+    
+    // Format the date as xxxx년 xx월 xx일 xx시 xx분
+    const formatDateFromString = (dateString: string) => {
+        const [datePart, timePart] = dateString.split("T");
+        const [year, month, day] = datePart.split("-");
+        const [hour, minute] = timePart.split(":");
+      
+        return `${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분`;
+      };
     
     // Calculate the posts to display on current page
     const indexOfLastPost = currentPage * postsPerPage;
@@ -99,17 +158,17 @@ export default function ReceiveMessage() {
                             <th className="p-2 text-textBase-dark-bold">내용</th>
                             <th className="p-2 text-textBase-dark-bold">보낸회원</th>
                             <th className="p-2 text-textBase-dark-bold">보낸일</th>
-                            <th className="p-2 text-textBase-dark-bold">차단</th>
+                            <th className="p-2 text-textBase-dark-bold">상태</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentPosts.map((post) => (
                           <tr key={post.id} className="border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
                             <td className="p-2 text-textBase">{post.id}</td>
-                            <td className="p-2 text-textBase">{post.content}</td>
-                            <td className="p-2 text-textBase">{post.sender}</td>
-                            <td className="p-2 text-textBase">{post.date}</td>
-                            <td className="p-2 text-textBase text-red-500">{post.status}</td>
+                            <td className="p-2 text-textBase">{post.message}</td>
+                            <td className="p-2 text-textBase">{post.sender.nickname}</td>
+                            <td className="p-2 text-textBase">{formatDateFromString(post.sentAt)}</td>
+                            <td className="p-2 text-textBase text-red-500">{post.readAt || "안읽음"}</td>
                           </tr>
                         ))}
                     </tbody>
