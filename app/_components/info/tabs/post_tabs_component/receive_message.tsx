@@ -1,3 +1,5 @@
+import PostDetail from "@/app/_components/modals/post_detail";
+import useModalStore from "@/app/_components/utils/store/modalStore";
 import { useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
@@ -17,7 +19,7 @@ const posts = [
         "nickname": "1234"
       },
       "sentAt": "2025-03-10T15:12:33.468Z",
-      "readAt": null
+      "readAt": "2025-03-10T15:12:33.468Z"
     },
     {
       "id": 10,
@@ -70,7 +72,9 @@ const posts = [
   ]
 
 export default function ReceiveMessage() {
+    const { openModal } = useModalStore();
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
     
@@ -80,8 +84,17 @@ export default function ReceiveMessage() {
         const [year, month, day] = datePart.split("-");
         const [hour, minute] = timePart.split(":");
       
-        return `${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분`;
-      };
+        return `${year}-${month}-${day} ${hour}:${minute}`;
+    };
+
+    const handleSelectPost = (postId: number) => {
+        setSelectedPosts(prev =>
+            prev.includes(postId)
+                ? prev.filter(id => id !== postId)
+                : [...prev, postId]
+        );
+    };
+
     
     // Calculate the posts to display on current page
     const indexOfLastPost = currentPage * postsPerPage;
@@ -107,6 +120,10 @@ export default function ReceiveMessage() {
         const targetPage = (setNumber - 1) * pageSetSize + 1;
         setCurrentPage(targetPage);
     };
+
+    function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string) {
+        openModal(<PostDetail userId={userId} nickname={nickname} message={message} sentAt={sentAt} />);
+    }
 
     return (
         <div className="mb-20">
@@ -154,7 +171,19 @@ export default function ReceiveMessage() {
                 <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <th className="p-2 text-textBase-dark-bold">번호</th>
+                            <th className="p-2 text-textBase-dark-bold">
+                                <input 
+                                    type="checkbox" 
+                                    checked={selectedPosts.length === posts.length} 
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setSelectedPosts(posts.map(post => post.id));
+                                        } else {
+                                            setSelectedPosts([]);
+                                        }
+                                    }} 
+                                />
+                            </th>
                             <th className="p-2 text-textBase-dark-bold">내용</th>
                             <th className="p-2 text-textBase-dark-bold">보낸회원</th>
                             <th className="p-2 text-textBase-dark-bold">보낸일</th>
@@ -162,15 +191,41 @@ export default function ReceiveMessage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentPosts.map((post) => (
-                          <tr key={post.id} className="border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <td className="p-2 text-textBase">{post.id}</td>
-                            <td className="p-2 text-textBase">{post.message}</td>
-                            <td className="p-2 text-textBase">{post.sender.nickname}</td>
-                            <td className="p-2 text-textBase">{formatDateFromString(post.sentAt)}</td>
-                            <td className="p-2 text-textBase text-red-500">{post.readAt || "안읽음"}</td>
-                          </tr>
-                        ))}
+                        {currentPosts.map((post) => {
+                          const isUnread = post.readAt === null;
+                          return (
+                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle ${isUnread ? 'font-semibold' : ''}`}>
+                              <td>
+                                <input 
+                                      type="checkbox" 
+                                      checked={selectedPosts.includes(post.id)} 
+                                      onChange={(e) => {
+                                          e.stopPropagation();
+                                          handleSelectPost(post.id);
+                                      }} 
+                                />
+                              </td>
+                              <td className={`flex text-center p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>
+                                <button
+                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}>
+                                    <span>
+                                        {post.message}
+                                    </span>
+                                </button>
+                              </td>
+                              <td className={`p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>
+                              <button
+                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}>
+                                    <span>
+                                        {post.sender.nickname}
+                                    </span>
+                                </button>
+                              </td>
+                              <td className={`p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>{formatDateFromString(post.sentAt)}</td>
+                              <td className={`p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>{post.readAt ? "읽음" : "안읽음"}</td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                 </table>
                 {/* Pagination Controls */}
@@ -217,8 +272,8 @@ export default function ReceiveMessage() {
                     className="w-[120px] h-[40px] rounded-[15px]
                         bg-color-darkBlue 
                         text-white
-                        hover:bg-opacity-80
-                    ">
+                        hover:bg-opacity-80"
+                >
                     쪽지 보내기
                 </button>
             </div>
