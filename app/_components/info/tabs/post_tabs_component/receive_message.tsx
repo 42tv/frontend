@@ -186,32 +186,6 @@ export default function ReceiveMessage() {
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
                             <th className="p-2 text-textBase-dark-bold">
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
-                                {/* <button
-                                    className="peer h-4 w-4 shrink-0 rounded-sm outline outline-[2px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primaryFg data-[state=checked]:text-primary-foreground data-[state=checked]:outline-primary data-[state=unchecked]:outline-colorBg_cek4"
-                                    aria-pressed={isChecked}
-                                    onClick={() => {
-                                        console.log(isChecked)
-                                        if (!isChecked) {
-                                            setIsChecked(true);
-                                            setSelectedPosts(posts.map(post => post.id));
-                                        } else {
-                                            setIsChecked(false);
-                                            setSelectedPosts([]);
-                                        }
-                                    }} 
-                                >
-                                </button> */}
-                                {/* <input 
-                                    type="checkbox" 
-                                    checked={selectedPosts.length === posts.length} 
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            setSelectedPosts(posts.map(post => post.id));
-                                        } else {
-                                            setSelectedPosts([]);
-                                        }
-                                    }} 
-                                /> */}
                             </th>
                             <th className="p-2 text-textBase-dark-bold">내용</th>
                             <th className="p-2 text-textBase-dark-bold">보낸회원</th>
@@ -222,17 +196,20 @@ export default function ReceiveMessage() {
                     <tbody>
                         {currentPosts.map((post) => {
                           return (
-                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark`}>
+                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
                               <td className="p-2 text-textBase-dark-bold">
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
-                              <td className={`flex text-center p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
-                                <button
-                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}>
-                                    <span>
-                                        {post.message}
-                                    </span>
-                                </button>
+                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
+                                  <div className="max-w-[400px] mx-auto overflow-hidden">
+                                      <button
+                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}
+                                          className="truncate block w-full text-left"
+                                          title={post.message}
+                                      >
+                                          {post.message}
+                                      </button>
+                                  </div>
                               </td>
                               <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
                               <button
