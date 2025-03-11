@@ -18,12 +18,12 @@ export default function PasswordChange({passwordState} : Props) {
                 비밀번호 변경
             </div>
             {/* 밑줄 */}
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
             <div className="flex flex-row h-[58px] items-center px-4">
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     기존 비밀번호
                 </span>
-                <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
+                <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="password"
                         value={passwordState.password}
@@ -36,7 +36,7 @@ export default function PasswordChange({passwordState} : Props) {
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     변경 비밀번호
                 </span>
-                <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
+                <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="password"
                         value={passwordState.newPassword}
@@ -49,7 +49,7 @@ export default function PasswordChange({passwordState} : Props) {
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     비밀번호 확인
                 </span>
-                <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
+                <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="password"
                         value={passwordState.passwordCheck}
@@ -58,7 +58,7 @@ export default function PasswordChange({passwordState} : Props) {
                     />
                 </div>
             </div>
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
         </div>
     )
 }

@@ -12,16 +12,43 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         // primaryBg: "",
-        textLightSearch: "#BECADC",
-        textDarkSearch: "rgba(199, 199, 199, 1)",
-        iconLightBg: "rgba(229, 231, 235, 1)",
-        iconDarkBg: "rgba(55, 65, 81, 1)",
-        toolbarBg: "rgba(27, 27, 27, 1.0)",
+        textSearch: {
+          DEFAULT: "rgba(189, 187, 187, 1)",
+          dark: "rgba(117, 113, 113, 1)",
+        },
+        iconBg: {
+          DEFAULT: "rgba(235, 229, 229, 1)", // from iconLightBg
+          dark: "rgba(55, 65, 81, 1)", // from iconDarkBg
+        },
+        toolbarBg: "rgba(27, 27, 27, 1)",
         contentBg: "rgba(43, 43, 43, 1)",
         darkBg: "rgba(18, 18, 18, 1)",
         colorFg01: "rgba(153, 153, 153, 1)",
-        borderLightButton1: "#d0d3da",
-        borderDarkButton1: "#444",
+        textBase: {
+          DEFAULT: "rgba(75, 75, 75, 1)",
+          dark: "rgba(153, 153, 153, 1)",
+          bold: "rgba(50, 50, 50, 1)",
+          "dark-bold": "rgba(128, 128, 128, 1)",
+        },
+        borderButton1: {
+          DEFAULT: "rgba(208, 211, 218, 1)", // from borderLightButton1
+          dark: "rgba(68, 68, 68, 1)", // from borderDarkButton1
+        },
+        tableBorder: {
+          DEFAULT: "rgb(173, 177, 180)", // from borderLightButton1
+          dark: "rgb(94, 92, 92)", // from borderDarkButton1
+        },
+        tableRowBorder: {
+          DEFAULT: "rgb(212, 214, 218)", // from borderLightButton1
+          dark: "rgb(61, 61, 61)", // from borderDarkButton1
+        },
+        modalBg: {
+          DEFAULT: "rgba(255, 255, 255, 1)",
+          dark: "rgba(30, 30, 30, 1)",
+        },
+        color: {
+          darkBlue: "rgb(52, 107, 165)",
+        },
       },
     },
   },

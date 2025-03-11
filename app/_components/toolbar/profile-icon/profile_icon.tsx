@@ -46,7 +46,7 @@ export default function ProfileIcon() {
                 
             ) : (
                 <div className="w-[40px] h-[40px] flex  dark:bg-toolbarBg">
-                    <div className="flex w-full h-full rounded-full dark:hover:bg-iconDarkBg hover:bg-iconLightBg items-center justify-center">
+                    <div className="flex w-full h-full rounded-full dark:hover:bg-iconBg-dark hover:bg-iconBg items-center justify-center">
                         <CgProfile size={32}/>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ function MenuItem({ icon, text, href }: { icon: JSX.Element; text: string; href:
     
     return (
         <div 
-            className="flex items-center space-x-3 p-2 hover:bg-iconLightBg dark:hover:bg-iconDarkBg rounded-lg cursor-pointer"
+            className="flex items-center space-x-3 p-2 hover:bg-iconBg dark:hover:bg-iconBg-dark rounded-lg cursor-pointer"
             onClick={handleClick}
         >
             {icon}

@@ -10,7 +10,7 @@ export default function UserDefault({inputNickname, setInputNickname} : {inputNi
             기본정보
             </div>
             {/* 밑줄 */}
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
             <p className="flex flex-row h-[58px] items-center px-4">
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     아이디
@@ -19,12 +19,12 @@ export default function UserDefault({inputNickname, setInputNickname} : {inputNi
                     {user_id}
                 </span>
             </p>
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
             <div className="flex flex-row h-[58px] items-center px-4">
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     닉네임
                 </span>
-                <div className="flex rounded-lg border border-contentBg w-[300px] h-[40px]">
+                <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="text"
                         value={inputNickname}
@@ -35,7 +35,7 @@ export default function UserDefault({inputNickname, setInputNickname} : {inputNi
                     />
                 </div>
             </div>
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
             <div className="flex flex-row h-[58px] items-center px-4">
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     본인인증
@@ -44,7 +44,7 @@ export default function UserDefault({inputNickname, setInputNickname} : {inputNi
                     {phoneAuth ? "인증완료" : "인증필요"}
                 </span>
             </div>
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
             <div className="flex flex-row h-[58px] items-center px-4">
                 <span className="w-[180px] font-medium dark:text-colorFg01">
                     성별
@@ -55,7 +55,7 @@ export default function UserDefault({inputNickname, setInputNickname} : {inputNi
                     }
                 </span>
             </div>
-            <div data-orientation="horizontal" role="none" className="shrink-0 bg-contentBg h-[1px] w-full"/>
+            <div data-orientation="horizontal" role="none" className="shrink-0 bg-tableBorder dark:border-tableBorder-dark h-[1px] w-full"/>
         </div>
     )
 }

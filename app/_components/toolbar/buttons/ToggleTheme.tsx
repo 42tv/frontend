@@ -22,13 +22,13 @@ export default function ToggleTheme() {
           {
             theme !== 'dark' ? 
             (
-              <div className="w-[36px] h-[36px] flex items-center justify-center cursor-pointer rounded-full hover:bg-gray-200 transition-colors" onClick={toggleTheme}>
+              <div className="w-[36px] h-[36px] flex items-center justify-center cursor-pointer rounded-full hover:bg-iconBg transition-colors" onClick={toggleTheme}>
                 <MdDarkMode className="w-full h-full p-1" />
               </div>
               
             ) : 
             (
-              <div className="w-[36px] h-[36px] flex items-center justify-center cursor-pointer rounded-full hover:bg-gray-700 transition-colors" onClick={toggleTheme}> 
+              <div className="w-[36px] h-[36px] flex items-center justify-center cursor-pointer rounded-full dark:hover:bg-iconBg-dark transition-colors" onClick={toggleTheme}> 
                 <MdOutlineLightMode className="w-full h-full p-1"/>   
               </div>
             )

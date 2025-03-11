@@ -36,7 +36,8 @@ export default function LoginComponent() {
       openError(<ErrorMessage message="아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요." />);
       return false;
     }
-    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(signupPassword)) {
+    console.log(signupPassword)
+    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\|-]{8,}$/.test(signupPassword)) {
       console.log("비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)")
       openError(<ErrorMessage message="비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)" />);
       return false;
