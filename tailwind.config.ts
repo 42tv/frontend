@@ -42,6 +42,10 @@ export default {
           DEFAULT: "rgb(212, 214, 218)", // from borderLightButton1
           dark: "rgb(61, 61, 61)", // from borderDarkButton1
         },
+        modalBg: {
+          DEFAULT: "rgba(255, 255, 255, 1)",
+          dark: "rgba(30, 30, 30, 1)",
+        },
         color: {
           darkBlue: "rgb(52, 107, 165)",
         },
