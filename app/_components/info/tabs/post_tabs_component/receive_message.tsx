@@ -1,4 +1,5 @@
 import PostDetail from "@/app/_components/modals/post_detail";
+import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import { useState } from "react";
 import { LuSettings } from "react-icons/lu";
@@ -74,6 +75,7 @@ const posts = [
 export default function ReceiveMessage() {
     const { openModal } = useModalStore();
     const [currentPage, setCurrentPage] = useState(1);
+    const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
@@ -125,6 +127,17 @@ export default function ReceiveMessage() {
         openModal(<PostDetail userId={userId} nickname={nickname} message={message} sentAt={sentAt} />);
     }
 
+    function handleCheckedMaster() {
+        if (!isChecked) {
+            setIsChecked(true);
+            setSelectedPosts(posts.map(post => post.id));
+        } else {
+            setIsChecked(false);
+            setSelectedPosts([]);
+        }
+        
+    }
+
     return (
         <div className="mb-20">
             <div className="flex flex-row my-5 mx-5 justify-between">
@@ -172,7 +185,23 @@ export default function ReceiveMessage() {
                     <thead>
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
                             <th className="p-2 text-textBase-dark-bold">
-                                <input 
+                                <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
+                                {/* <button
+                                    className="peer h-4 w-4 shrink-0 rounded-sm outline outline-[2px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primaryFg data-[state=checked]:text-primary-foreground data-[state=checked]:outline-primary data-[state=unchecked]:outline-colorBg_cek4"
+                                    aria-pressed={isChecked}
+                                    onClick={() => {
+                                        console.log(isChecked)
+                                        if (!isChecked) {
+                                            setIsChecked(true);
+                                            setSelectedPosts(posts.map(post => post.id));
+                                        } else {
+                                            setIsChecked(false);
+                                            setSelectedPosts([]);
+                                        }
+                                    }} 
+                                >
+                                </button> */}
+                                {/* <input 
                                     type="checkbox" 
                                     checked={selectedPosts.length === posts.length} 
                                     onChange={(e) => {
@@ -182,7 +211,7 @@ export default function ReceiveMessage() {
                                             setSelectedPosts([]);
                                         }
                                     }} 
-                                />
+                                /> */}
                             </th>
                             <th className="p-2 text-textBase-dark-bold">내용</th>
                             <th className="p-2 text-textBase-dark-bold">보낸회원</th>
@@ -192,20 +221,12 @@ export default function ReceiveMessage() {
                     </thead>
                     <tbody>
                         {currentPosts.map((post) => {
-                          const isUnread = post.readAt === null;
                           return (
-                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle ${isUnread ? 'font-semibold' : ''}`}>
-                              <td>
-                                <input 
-                                      type="checkbox" 
-                                      checked={selectedPosts.includes(post.id)} 
-                                      onChange={(e) => {
-                                          e.stopPropagation();
-                                          handleSelectPost(post.id);
-                                      }} 
-                                />
+                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark`}>
+                              <td className="p-2 text-textBase-dark-bold">
+                                <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
-                              <td className={`flex text-center p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>
+                              <td className={`flex text-center p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
                                 <button
                                     onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}>
                                     <span>
@@ -213,7 +234,7 @@ export default function ReceiveMessage() {
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>
+                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
                               <button
                                     onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}>
                                     <span>
@@ -221,8 +242,8 @@ export default function ReceiveMessage() {
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 ${isUnread ? 'text-textBase-dark-bold' : 'text-textBase'}`}>{post.readAt ? "읽음" : "안읽음"}</td>
+                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
+                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>{post.readAt ? "읽음" : "안읽음"}</td>
                             </tr>
                           );
                         })}
