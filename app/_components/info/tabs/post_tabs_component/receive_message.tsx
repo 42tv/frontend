@@ -1,84 +1,55 @@
+import { getPosts } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/modals/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 
-const posts = [
-    {
-      "id": 9,
-      "message": "대충 쪽지 내용1",
-      "sender": {
-        "idx": 5,
-        "userId": "3333",
-        "nickname": "3333"
-      },
-      "recipient": {
-        "idx": 4,
-        "userId": "1234",
-        "nickname": "1234"
-      },
-      "sentAt": "2025-03-10T15:12:33.468Z",
-      "readAt": "2025-03-10T15:12:33.468Z"
-    },
-    {
-      "id": 10,
-      "message": "대충 쪽지 내용12",
-      "sender": {
-        "idx": 5,
-        "userId": "3333",
-        "nickname": "3333"
-      },
-      "recipient": {
-        "idx": 4,
-        "userId": "1234",
-        "nickname": "1234"
-      },
-      "sentAt": "2025-03-10T15:12:35.952Z",
-      "readAt": null
-    },
-    {
-      "id": 11,
-      "message": "대충 쪽지 내용123",
-      "sender": {
-        "idx": 5,
-        "userId": "3333",
-        "nickname": "3333"
-      },
-      "recipient": {
-        "idx": 4,
-        "userId": "1234",
-        "nickname": "1234"
-      },
-      "sentAt": "2025-03-10T15:12:37.378Z",
-      "readAt": null
-    },
-    {
-      "id": 12,
-      "message": "대충 쪽지 내용1234",
-      "sender": {
-        "idx": 5,
-        "userId": "3333",
-        "nickname": "3333"
-      },
-      "recipient": {
-        "idx": 4,
-        "userId": "1234",
-        "nickname": "1234"
-      },
-      "sentAt": "2025-03-10T15:12:39.143Z",
-      "readAt": null
-    }
-  ]
+interface Post {
+    id: number;
+    message: string;
+    sender: {
+        userId: string;
+        nickname: string;
+    };
+    sentAt: string;
+    readAt: string;
+}
 
 export default function ReceiveMessage() {
     const { openModal } = useModalStore();
+    const [posts, setPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
+    
+    // Calculate the posts to display on current page
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+    
+    // Calculate total pages
+    const totalPages = Math.ceil(posts.length / postsPerPage);
+    
+    // Calculate current page set
+    const currentSet = Math.ceil(currentPage / pageSetSize);
+    const lastSet = Math.ceil(totalPages / pageSetSize);
+    
+    // Calculate start and end page numbers for current set
+    const startPage = (currentSet - 1) * pageSetSize + 1;
+    const endPage = Math.min(currentSet * pageSetSize, totalPages);
+
+    useEffect(() => {
+        async function fetchPosts() {
+            // Fetch posts from API
+            const response = await getPosts();
+            setPosts(response);
+        }
+        fetchPosts();
+    }, [])
     
     // Format the date as xxxx년 xx월 xx일 xx시 xx분
     const formatDateFromString = (dateString: string) => {
@@ -98,21 +69,7 @@ export default function ReceiveMessage() {
     };
 
     
-    // Calculate the posts to display on current page
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
     
-    // Calculate total pages
-    const totalPages = Math.ceil(posts.length / postsPerPage);
-    
-    // Calculate current page set
-    const currentSet = Math.ceil(currentPage / pageSetSize);
-    const lastSet = Math.ceil(totalPages / pageSetSize);
-    
-    // Calculate start and end page numbers for current set
-    const startPage = (currentSet - 1) * pageSetSize + 1;
-    const endPage = Math.min(currentSet * pageSetSize, totalPages);
     
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
