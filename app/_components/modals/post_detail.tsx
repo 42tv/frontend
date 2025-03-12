@@ -40,7 +40,7 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
 
   return (
     <div className="flex flex-col max-w-md w-[450px] h-[500px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
-      <h2 className="text-lg font-bold mb-2 px-1 pt-5 px-6">받은 쪽지</h2>
+      <h2 className="text-lg font-bold mb-2 px-1 pt-5 px-6">쪽지</h2>
       <div className="w-full h-[360px] pt-5 px-5 rounded-[8px] overflow-auto">
         <div className="mt-2 flex justify-between border-b-[2px] border-b-tableBorder-dark pb-[13px]">
           <div>

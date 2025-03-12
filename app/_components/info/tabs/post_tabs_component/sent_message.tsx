@@ -1,4 +1,4 @@
-import { deletePost, deletePosts, getSendPosts, readPost } from "@/app/_apis/posts";
+import { deletePost, deletePosts, getSendPosts } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/modals/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
@@ -12,6 +12,11 @@ interface Post {
         userId: string;
         nickname: string;
     };
+    recipient: {
+        idx: number;
+        userId: string;
+        nickname: string;
+      },
     is_read: boolean;
     sentAt: string;
     readAt: string;
@@ -87,17 +92,6 @@ export default function ReceiveMessage() {
      * @param postId 
      */
     async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number) {
-        try{
-            await readPost(postId);
-            setPosts(posts.map(post => post.id === postId ? {
-                ...post, 
-                readAt: new Date().toISOString(),
-                is_read: true
-            } : post));
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        catch(error) {
-        }
         openModal(
             <PostDetail 
                 userId={userId} 
@@ -189,13 +183,13 @@ export default function ReceiveMessage() {
                 <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <th className="p-2 text-textBase-dark-bold">
+                            <th className="p-2 w-[50px] text-textBase-dark-bold">
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
                             </th>
-                            <th className="p-2 text-textBase-dark-bold">내용</th>
-                            <th className="p-2 text-textBase-dark-bold">닉네임</th>
-                            <th className="p-2 text-textBase-dark-bold">날짜</th>
-                            <th className="p-2 text-textBase-dark-bold">상태</th>
+                            <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
+                            <th className="p-2 w-[200px] text-textBase-dark-bold">닉네임</th>
+                            <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
+                            <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -205,10 +199,10 @@ export default function ReceiveMessage() {
                               <td className="p-2 text-textBase-dark-bold">
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
+                              <td className={`p-2}`}>
                                   <div className="max-w-[400px] mx-auto overflow-hidden">
                                       <button
-                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}
+                                          onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id)}
                                           className="truncate block w-full text-left"
                                           title={post.message}
                                       >
@@ -216,16 +210,16 @@ export default function ReceiveMessage() {
                                       </button>
                                   </div>
                               </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
+                              <td className={`p-2}`}>
                               <button
-                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}>
+                                    onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id)}>
                                     <span>
-                                        {post.sender.nickname}
+                                        {post.recipient.nickname}
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{post.is_read ? "읽음" : "안읽음"}</td>
+                              <td className={`p-2}`}>{formatDateFromString(post.sentAt)}</td>
+                              <td className={`p-2}`}>{post.is_read ? "읽음" : "안읽음"}</td>
                             </tr>
                           );
                         })}

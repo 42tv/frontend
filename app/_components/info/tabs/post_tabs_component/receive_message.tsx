@@ -195,13 +195,13 @@ export default function ReceiveMessage() {
                 <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <th className="p-2 text-textBase-dark-bold">
+                            <th className="p-2 w-[50px] text-textBase-dark-bold">
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
                             </th>
-                            <th className="p-2 text-textBase-dark-bold">내용</th>
-                            <th className="p-2 text-textBase-dark-bold">보낸회원</th>
-                            <th className="p-2 text-textBase-dark-bold">날짜</th>
-                            <th className="p-2 text-textBase-dark-bold">상태</th>
+                            <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
+                            <th className="p-2 w-[200px] text-textBase-dark-bold">보낸회원</th>
+                            <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
+                            <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -212,7 +212,7 @@ export default function ReceiveMessage() {
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
-                                  <div className="max-w-[400px] mx-auto overflow-hidden">
+                                  <div className="pl-5 mx-auto overflow-hidden">
                                       <button
                                           onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}
                                           className="truncate block w-full text-left"
