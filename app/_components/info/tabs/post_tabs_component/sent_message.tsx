@@ -1,9 +1,8 @@
-import { deletePost, deletePosts, getPosts, getSendPosts, readPost } from "@/app/_apis/posts";
+import { deletePost, deletePosts, getSendPosts, readPost } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/modals/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import { useEffect, useState } from "react";
-import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 
 interface Post {
