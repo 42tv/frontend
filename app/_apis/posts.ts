@@ -1,13 +1,25 @@
 import api from "./auto_refresh_axios";
+
 /**
- * 회원가입 함수
- * @param id
- * @param password
- * @param nickname
+ * 받은 쪽지 가져오기
  * @returns
  */
 export async function getPosts() {
-  const response = await api.get("/api/post", {
+  const response = await api.get("/api/post?kind=receive", {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}
+
+/**
+ * 보낸 쪽지 가져오기
+ * @returns
+ */
+export async function getSendPosts() {
+  const response = await api.get("/api/post?kind=send", {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",

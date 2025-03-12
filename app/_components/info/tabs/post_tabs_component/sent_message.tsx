@@ -1,4 +1,4 @@
-import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
+import { deletePost, deletePosts, getPosts, getSendPosts, readPost } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/modals/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
@@ -46,7 +46,8 @@ export default function ReceiveMessage() {
     useEffect(() => {
         async function fetchPosts() {
             // Fetch posts from API
-            const response = await getPosts();
+            const response = await getSendPosts();
+            console.log(response)
             setPosts(response);
         }
         fetchPosts();
@@ -153,12 +154,6 @@ export default function ReceiveMessage() {
                 <div className="flex space-x-2">
                     <button 
                         className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
-                        <LuSettings className="text-iconBg-dark"/>
-                        <span>설정</span>
-                    </button>
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
                         border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01"
                         onClick={handleDeletePosts}
                     >
@@ -199,7 +194,7 @@ export default function ReceiveMessage() {
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
                             </th>
                             <th className="p-2 text-textBase-dark-bold">내용</th>
-                            <th className="p-2 text-textBase-dark-bold">보낸회원</th>
+                            <th className="p-2 text-textBase-dark-bold">닉네임</th>
                             <th className="p-2 text-textBase-dark-bold">날짜</th>
                             <th className="p-2 text-textBase-dark-bold">상태</th>
                         </tr>
