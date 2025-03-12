@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReceiveMessage from "./post_tabs_component/receive_message";
-import SendMessage from "./post_tabs_component/send_message";
+import SentMessage from "./post_tabs_component/sent_message";
 
 export default function PostTab() {
     const [activeTab, setActiveTab] = useState('received');
@@ -31,7 +31,7 @@ export default function PostTab() {
             }
             {
                 (activeTab == 'send') && (
-                    <SendMessage />
+                    <SentMessage />
                 )
             }
             
