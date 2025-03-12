@@ -1,4 +1,4 @@
-import { getPosts } from "@/app/_apis/posts";
+import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/modals/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
@@ -13,12 +13,13 @@ interface Post {
         userId: string;
         nickname: string;
     };
+    is_read: boolean;
     sentAt: string;
     readAt: string;
 }
 
 export default function ReceiveMessage() {
-    const { openModal } = useModalStore();
+    const { openModal, closeModal } = useModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
@@ -68,9 +69,6 @@ export default function ReceiveMessage() {
         );
     };
 
-    
-    
-    
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
     
@@ -80,19 +78,73 @@ export default function ReceiveMessage() {
         setCurrentPage(targetPage);
     };
 
-    function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string) {
-        openModal(<PostDetail userId={userId} nickname={nickname} message={message} sentAt={sentAt} />);
+    /**
+     * 쪽지 자세히 보기
+     * @param userId 
+     * @param nickname 
+     * @param message 
+     * @param sentAt 
+     * @param postId 
+     */
+    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number) {
+        try{
+            await readPost(postId);
+            setPosts(posts.map(post => post.id === postId ? {
+                ...post, 
+                readAt: new Date().toISOString(),
+                is_read: true
+            } : post));
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        catch(error) {
+        }
+        openModal(
+            <PostDetail 
+                userId={userId} 
+                nickname={nickname} 
+                message={message} 
+                sentAt={sentAt} 
+                postId={postId} 
+                closeModal={closeModal} 
+                deleteSinglePost={deleteSinglePost}
+        />);
+    }
+
+    /**
+     * 여러개의 쪽지 삭제
+     */
+    async function handleDeletePosts() {
+        try {
+            // Delete selected posts
+            await deletePosts(selectedPosts);
+            setPosts(posts.filter(post => !selectedPosts.includes(post.id)));
+            setSelectedPosts([]);
+            setIsChecked(false);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+        }
+    }
+
+    async function deleteSinglePost(postId: number) {
+        try {
+            await deletePost(postId);
+            // Then update the state
+            setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function handleCheckedMaster() {
         if (!isChecked) {
             setIsChecked(true);
-            setSelectedPosts(posts.map(post => post.id));
+            // Only select posts on the current page instead of all posts
+            setSelectedPosts(currentPosts.map(post => post.id));
         } else {
             setIsChecked(false);
             setSelectedPosts([]);
         }
-        
     }
 
     return (
@@ -107,7 +159,9 @@ export default function ReceiveMessage() {
                     </button>
                     <button 
                         className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
+                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01"
+                        onClick={handleDeletePosts}
+                    >
                         <MdDelete className="text-iconBg-dark"/>
                         <span>삭제</span>
                     </button>
@@ -157,10 +211,10 @@ export default function ReceiveMessage() {
                               <td className="p-2 text-textBase-dark-bold">
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
-                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
+                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
                                   <div className="max-w-[400px] mx-auto overflow-hidden">
                                       <button
-                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}
+                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}
                                           className="truncate block w-full text-left"
                                           title={post.message}
                                       >
@@ -168,16 +222,16 @@ export default function ReceiveMessage() {
                                       </button>
                                   </div>
                               </td>
-                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>
+                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
                               <button
-                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt)}>
+                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}>
                                     <span>
                                         {post.sender.nickname}
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 ${post.readAt ? '' : 'text-black dark:text-white'}`}>{post.readAt ? "읽음" : "안읽음"}</td>
+                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
+                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{post.is_read ? "읽음" : "안읽음"}</td>
                             </tr>
                           );
                         })}
