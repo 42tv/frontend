@@ -1,6 +1,16 @@
 "use client";
 
-export default function PostDetail({ nickname, userId, message, sentAt }: { nickname: string; userId: string; message: string; sentAt: string }) {
+export default function PostDetail({ nickname, userId, message, sentAt, postId, closeModal, deleteSinglePost }: 
+  { 
+    nickname: string;
+    userId: string;
+    message: string;
+    sentAt: string,
+    postId: number,
+    closeModal: () => void,
+    deleteSinglePost: (postId: number) => void
+  }
+  ) {
 
   const maskString = (str: string): string => {
       if (!str || str.length <= 3) {
@@ -26,7 +36,7 @@ export default function PostDetail({ nickname, userId, message, sentAt }: { nick
     hours = hours % 12 || 12; // 0시는 12로 변경
 
     return `${month}-${day} ${ampm} ${hours}:${minutes}`;
-}
+  }
 
   return (
     <div className="flex flex-col max-w-md w-[450px] h-[500px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
@@ -47,16 +57,19 @@ export default function PostDetail({ nickname, userId, message, sentAt }: { nick
       <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
         <button
           className={`w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark`}
+          onClick={() => {
+            deleteSinglePost(postId)
+            closeModal()
+          }}
         >
-          보내기
+          삭제
         </button>
         <button
           className={`w-full p-2 mt-2 rounded bg-color-darkBlue`}
         >
-          보내기
+          답장
         </button>
       </div>
-      
     </div>
   );
 }
