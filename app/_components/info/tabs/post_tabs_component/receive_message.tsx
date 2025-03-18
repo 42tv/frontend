@@ -1,7 +1,9 @@
 import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
+import BlockAlertComponent from "@/app/_components/modals/block_alert";
 import PostDetail from "@/app/_components/modals/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
+import popupModalStore from "@/app/_components/utils/store/popupModalStore";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
@@ -10,9 +12,15 @@ interface Post {
     id: number;
     message: string;
     sender: {
+        idx: number;
         userId: string;
         nickname: string;
     };
+    recipient: {
+        idx: number;
+        userId: string;
+        nickname: string;
+    }
     is_read: boolean;
     sentAt: string;
     readAt: string;
@@ -20,6 +28,7 @@ interface Post {
 
 export default function ReceiveMessage() {
     const { openModal, closeModal } = useModalStore();
+    const { openPopup, closePopup } = popupModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
@@ -68,6 +77,10 @@ export default function ReceiveMessage() {
                 : [...prev, postId]
         );
     };
+
+    async function requestBlockUser(blockedIdx: number) {
+        openPopup(BlockAlertComponent({ blockedIdx, blockedNickname: "test" }));
+    }
 
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -171,7 +184,7 @@ export default function ReceiveMessage() {
                         className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
                          border-borderButton1 dark:border-borderButton1-dark 
                          placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="검색어를 입력하세요"
+                        placeholder="닉네임을 입력하세요"
                     />
                     <button 
                         className="w-[80px] h-[40px] rounded-[8px] bg-color-darkBlue text-white hover:bg-opacity-80"
@@ -199,9 +212,10 @@ export default function ReceiveMessage() {
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
                             </th>
                             <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
-                            <th className="p-2 w-[200px] text-textBase-dark-bold">보낸회원</th>
+                            <th className="p-2 w-[200px] text-textBase-dark-bold">보낸 회원</th>
                             <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
                             <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
+                            <th className="p-2 w-[50px] text-textBase-dark-bold">차단</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -232,6 +246,13 @@ export default function ReceiveMessage() {
                               </td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{post.is_read ? "읽음" : "안읽음"}</td>
+                              <td className={`p-2 text-black dark:text-textBase-dark`}>
+                                <button
+                                  onClick={() => requestBlockUser(post.sender.idx)}
+                                >
+                                    차단
+                                </button>
+                              </td>
                             </tr>
                           );
                         })}

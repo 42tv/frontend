@@ -199,7 +199,7 @@ export default function ReceiveMessage() {
                               <td className="p-2 text-textBase-dark-bold">
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
-                              <td className={`p-2}`}>
+                              <td className={`p-2 `}>
                                   <div className="max-w-[400px] mx-auto overflow-hidden">
                                       <button
                                           onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id)}
@@ -210,7 +210,7 @@ export default function ReceiveMessage() {
                                       </button>
                                   </div>
                               </td>
-                              <td className={`p-2}`}>
+                              <td className={`p-2 `}>
                               <button
                                     onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id)}>
                                     <span>
@@ -218,8 +218,8 @@ export default function ReceiveMessage() {
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2}`}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2}`}>{post.is_read ? "읽음" : "안읽음"}</td>
+                              <td className={`p-2 `}>{formatDateFromString(post.sentAt)}</td>
+                              <td className={`p-2 `}>{post.is_read ? "읽음" : "안읽음"}</td>
                             </tr>
                           );
                         })}
