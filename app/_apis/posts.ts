@@ -75,3 +75,11 @@ export async function deletePosts(postIds: number[]) {
   });
   return response.data;
 }
+
+export async function sendPost(userId: string, message: string) {
+  const response = await api.post("/api/post", {
+    userId: userId,
+    message: message,
+  });
+  return response.data;
+}
