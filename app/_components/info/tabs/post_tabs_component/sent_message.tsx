@@ -1,5 +1,5 @@
 import { deletePost, deletePosts, getSendPosts } from "@/app/_apis/posts";
-import PostDetail from "@/app/_components/modals/post_detail";
+import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import { useEffect, useState } from "react";

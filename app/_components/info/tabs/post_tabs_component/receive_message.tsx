@@ -1,9 +1,10 @@
 import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
 import BlockAlertComponent from "@/app/_components/modals/block_alert";
-import PostDetail from "@/app/_components/modals/post_detail";
+import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import popupModalStore from "@/app/_components/utils/store/popupModalStore";
+import SendPost from "./send_post";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
@@ -28,7 +29,7 @@ interface Post {
 
 export default function ReceiveMessage() {
     const { openModal, closeModal } = useModalStore();
-    const { openPopup, closePopup } = popupModalStore();
+    const { openPopup } = popupModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
@@ -80,6 +81,10 @@ export default function ReceiveMessage() {
 
     async function requestBlockUser(blockedIdx: number) {
         openPopup(BlockAlertComponent({ blockedIdx, blockedNickname: "test" }));
+    }
+
+    async function openModalSendpost() {
+        openModal(<SendPost close={closeModal}/>);
     }
 
     // Page navigation functions
@@ -303,6 +308,7 @@ export default function ReceiveMessage() {
                         bg-color-darkBlue 
                         text-white
                         hover:bg-opacity-80"
+                    onClick={() => openModalSendpost()}
                 >
                     쪽지 보내기
                 </button>
