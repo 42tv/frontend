@@ -79,8 +79,13 @@ export default function ReceiveMessage() {
         );
     };
 
+    async function changePopupComponent(compoent: JSX.Element) {
+        closePopup();
+        openPopup(compoent);
+    }
+    // 차단 창 팝업으로 띄우기
     async function requestBlockUser(blockedIdx: number, blockUserId: string, blockedNickname: string) {
-        openPopup(BlockAlertComponent({ blockedIdx, blockUserId, blockedNickname, closePopup }));
+        openPopup(BlockAlertComponent({ blockedIdx, blockUserId, blockedNickname, closePopup, changePopupComponent }));
     }
 
     async function openModalSendpost() {

@@ -1,13 +1,17 @@
 import React from 'react';
 import { blockPostUser } from "@/app/_apis/posts";
+import DefaultAlertMessage from './default_alert_compoent';
 
-export default function BlockAlertComponent({ blockedIdx, blockUserId, blockedNickname, closePopup }: { blockedIdx: number, blockUserId: string, blockedNickname: string, closePopup: () => void }) {
+export default function BlockAlertComponent(
+  { blockedIdx, blockUserId, blockedNickname, closePopup, changePopupComponent }: 
+  { blockedIdx: number, blockUserId: string, blockedNickname: string, closePopup: () => void, changePopupComponent: any}) {
   async function blockUser() {
     try {
       const response = await blockPostUser(blockedIdx)
-      
+      changePopupComponent(<DefaultAlertMessage message={response.message} />)
     }
     catch(e) {
+      changePopupComponent(<DefaultAlertMessage message={e.response.data.message} />)
     }
   }
   return (
