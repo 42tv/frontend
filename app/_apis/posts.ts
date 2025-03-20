@@ -90,7 +90,21 @@ export async function sendPost(userId: string, message: string) {
   return response.data;
 }
 
+/**
+ * userIdx 유저의 쪽지 차단
+ * @param userIdx
+ * @returns
+ */
 export async function blockPostUser(userIdx: number) {
   const response = await api.post(`/api/post/block/${userIdx}`);
+  return response.data;
+}
+
+/**
+ * 자신의 쪽지 차단 리스트 가져오기
+ * @returns
+ */
+export async function getBlockedPostUser() {
+  const response = await api.get(`/api/post/block`);
   return response.data;
 }

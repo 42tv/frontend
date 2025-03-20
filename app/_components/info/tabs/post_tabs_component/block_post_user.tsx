@@ -1,9 +1,18 @@
+import { getBlockedPostUser } from "@/app/_apis/posts";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import { useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
+
+interface BlockedUser {
+    id: number;
+    blcoked: {
+        idx: number;
+        nickname: string;
+        profile_img: string;
+    }
+}
 
 export default function BlockPostUser() {
-    const [posts, setPosts] = useState<[]>([]);
+    const [blockedUser, setblockedUser] = useState<BlockedUser[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
@@ -13,10 +22,10 @@ export default function BlockPostUser() {
     // Calculate the posts to display on current page
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+    const currentPosts = blockedUser.slice(indexOfFirstPost, indexOfLastPost);
     
     // Calculate total pages
-    const totalPages = Math.ceil(posts.length / postsPerPage);
+    const totalPages = Math.ceil(blockedUser.length / postsPerPage);
     
     // Calculate current page set
     const currentSet = Math.ceil(currentPage / pageSetSize);
@@ -28,6 +37,8 @@ export default function BlockPostUser() {
 
     useEffect(() => {
         async function fetchPosts() {
+            const response = await getBlockedPostUser()
+            console.log(response)
         }
         fetchPosts();
     }, [])
@@ -77,7 +88,7 @@ export default function BlockPostUser() {
                     총 게시물 :
                   </span>
                   <span className="font-semibold">
-                   {posts.length}
+                   {blockedUser.length}
                   </span>
                   <span className="text-textBase">
                     건
@@ -94,39 +105,39 @@ export default function BlockPostUser() {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentPosts.map((post) => {
+                        {currentPosts.map((blockedUser) => {
                           return (
-                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
+                            <tr key={blockedUser.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
                               <td className="p-2 text-textBase-dark-bold">
-                                <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
+                                {/* <CheckboxButton handleClick={() => handleSelectPost(blockedUser.id)} isChecked={selectedPosts.includes(post.id)}/> */}
                               </td>
                               <td className={`p-2 `}>
                                   <div className="max-w-[400px] mx-auto overflow-hidden">
-                                      <button
+                                      {/* <button
                                           className="truncate block w-full text-left"
-                                          title={post.message}
+                                          title={blockedUser.blcoked}
                                       >
-                                          {post.message}
-                                      </button>
+                                          {blockedUser.message}
+                                      </button> */}
                                   </div>
                               </td>
                               <td className={`p-2 `}>
                               <button
                               >
                                     <span>
-                                        {post.recipient.nickname}
+                                        {/* {blockedUser.recipient.nickname} */}
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2 `}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 `}>{post.is_read ? "읽음" : "안읽음"}</td>
+                              {/* <td className={`p-2 `}>{formatDateFromString(blockedUser.blcoked.)}</td>
+                              <td className={`p-2 `}>{blockedUser.is_read ? "읽음" : "안읽음"}</td> */}
                             </tr>
                           );
                         })}
                     </tbody>
                 </table>
                 {/* Pagination Controls */}
-                {posts.length > postsPerPage && (
+                {blockedUser.length > postsPerPage && (
                     <div className="flex justify-center mt-6">
                         {/* Previous set button */}
                         {currentSet > 1 && (

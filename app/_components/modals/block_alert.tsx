@@ -10,7 +10,8 @@ export default function BlockAlertComponent(
       const response = await blockPostUser(blockedIdx)
       changePopupComponent(<DefaultAlertMessage message={response.message} />)
     }
-    catch(e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch(e: any) {
       changePopupComponent(<DefaultAlertMessage message={e.response.data.message} />)
     }
   }
