@@ -1,36 +1,9 @@
-import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
-import BlockAlertComponent from "@/app/_components/modals/block_alert";
-import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
-import useModalStore from "@/app/_components/utils/store/modalStore";
-import popupModalStore from "@/app/_components/utils/store/popupModalStore";
-import SendPost from "./send_post";
 import { useEffect, useState } from "react";
-import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 
-interface Post {
-    id: number;
-    message: string;
-    sender: {
-        idx: number;
-        userId: string;
-        nickname: string;
-    };
-    recipient: {
-        idx: number;
-        userId: string;
-        nickname: string;
-    }
-    is_read: boolean;
-    sentAt: string;
-    readAt: string;
-}
-
-export default function ReceiveMessage() {
-    const { openModal, closeModal } = useModalStore();
-    const { openPopup, closePopup } = popupModalStore();
-    const [posts, setPosts] = useState<Post[]>([]);
+export default function BlockPostUser() {
+    const [posts, setPosts] = useState<[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
@@ -55,9 +28,6 @@ export default function ReceiveMessage() {
 
     useEffect(() => {
         async function fetchPosts() {
-            // Fetch posts from API
-            const response = await getPosts();
-            setPosts(response);
         }
         fetchPosts();
     }, [])
@@ -79,14 +49,6 @@ export default function ReceiveMessage() {
         );
     };
 
-    async function requestBlockUser(blockedIdx: number, blockUserId: string, blockedNickname: string) {
-        openPopup(BlockAlertComponent({ blockedIdx, blockUserId, blockedNickname, closePopup }));
-    }
-
-    async function openModalSendpost() {
-        openModal(<SendPost close={closeModal}/>);
-    }
-
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
     
@@ -95,64 +57,6 @@ export default function ReceiveMessage() {
         const targetPage = (setNumber - 1) * pageSetSize + 1;
         setCurrentPage(targetPage);
     };
-
-    /**
-     * 쪽지 자세히 보기
-     * @param userId 
-     * @param nickname 
-     * @param message 
-     * @param sentAt 
-     * @param postId 
-     */
-    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number) {
-        try{
-            await readPost(postId);
-            setPosts(posts.map(post => post.id === postId ? {
-                ...post, 
-                readAt: new Date().toISOString(),
-                is_read: true
-            } : post));
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        catch(error) {
-        }
-        openModal(
-            <PostDetail 
-                userId={userId} 
-                nickname={nickname} 
-                message={message} 
-                sentAt={sentAt} 
-                postId={postId} 
-                closeModal={closeModal} 
-                deleteSinglePost={deleteSinglePost}
-        />);
-    }
-
-    /**
-     * 여러개의 쪽지 삭제
-     */
-    async function handleDeletePosts() {
-        try {
-            // Delete selected posts
-            await deletePosts(selectedPosts);
-            setPosts(posts.filter(post => !selectedPosts.includes(post.id)));
-            setSelectedPosts([]);
-            setIsChecked(false);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
-        }
-    }
-
-    async function deleteSinglePost(postId: number) {
-        try {
-            await deletePost(postId);
-            // Then update the state
-            setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
     function handleCheckedMaster() {
         if (!isChecked) {
@@ -167,37 +71,6 @@ export default function ReceiveMessage() {
 
     return (
         <div className="mb-20">
-            <div className="flex flex-row my-5 mx-5 justify-between">
-                <div className="flex space-x-2">
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
-                        <LuSettings className="text-iconBg-dark"/>
-                        <span>설정</span>
-                    </button>
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01"
-                        onClick={handleDeletePosts}
-                    >
-                        <MdDelete className="text-iconBg-dark"/>
-                        <span>삭제</span>
-                    </button>
-                </div>
-                <div className="flex space-x-2">
-                    <input
-                        className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
-                         border-borderButton1 dark:border-borderButton1-dark 
-                         placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="닉네임을 입력하세요"
-                    />
-                    <button 
-                        className="w-[80px] h-[40px] rounded-[8px] bg-color-darkBlue text-white hover:bg-opacity-80"
-                    >
-                        검색
-                    </button>
-                </div>
-            </div>
             <div className="p-4">
                 <div className="mb-2">
                   <span className="text-textBase">
@@ -216,11 +89,8 @@ export default function ReceiveMessage() {
                             <th className="p-2 w-[50px] text-textBase-dark-bold">
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
                             </th>
-                            <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
-                            <th className="p-2 w-[200px] text-textBase-dark-bold">보낸 회원</th>
-                            <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
-                            <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
-                            <th className="p-2 w-[50px] text-textBase-dark-bold">차단</th>
+                            <th className="p-2 w-[200px] text-textBase-dark-bold">닉네임</th>
+                            <th className="p-2 w-[140px] text-textBase-dark-bold">차단일</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -230,10 +100,9 @@ export default function ReceiveMessage() {
                               <td className="p-2 text-textBase-dark-bold">
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
-                                  <div className="pl-5 mx-auto overflow-hidden">
+                              <td className={`p-2 `}>
+                                  <div className="max-w-[400px] mx-auto overflow-hidden">
                                       <button
-                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}
                                           className="truncate block w-full text-left"
                                           title={post.message}
                                       >
@@ -241,23 +110,16 @@ export default function ReceiveMessage() {
                                       </button>
                                   </div>
                               </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
+                              <td className={`p-2 `}>
                               <button
-                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}>
+                              >
                                     <span>
-                                        {post.sender.nickname}
+                                        {post.recipient.nickname}
                                     </span>
                                 </button>
                               </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{post.is_read ? "읽음" : "안읽음"}</td>
-                              <td className={`p-2 text-black dark:text-textBase-dark`}>
-                                <button
-                                  onClick={() => requestBlockUser(post.sender.idx, post.sender.userId, post.sender.nickname)}
-                                >
-                                    차단
-                                </button>
-                              </td>
+                              <td className={`p-2 `}>{formatDateFromString(post.sentAt)}</td>
+                              <td className={`p-2 `}>{post.is_read ? "읽음" : "안읽음"}</td>
                             </tr>
                           );
                         })}
@@ -308,7 +170,6 @@ export default function ReceiveMessage() {
                         bg-color-darkBlue 
                         text-white
                         hover:bg-opacity-80"
-                    onClick={() => openModalSendpost()}
                 >
                     쪽지 보내기
                 </button>

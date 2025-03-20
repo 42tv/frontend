@@ -76,10 +76,21 @@ export async function deletePosts(postIds: number[]) {
   return response.data;
 }
 
+/**
+ * 쪽지 보내기
+ * @param userId
+ * @param message
+ * @returns
+ */
 export async function sendPost(userId: string, message: string) {
   const response = await api.post("/api/post", {
     userId: userId,
     message: message,
   });
+  return response.data;
+}
+
+export async function blockPostUser(userIdx: number) {
+  const response = await api.post(`/api/post/block/${userIdx}`);
   return response.data;
 }
