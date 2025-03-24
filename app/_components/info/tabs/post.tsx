@@ -19,7 +19,7 @@ export default function PostTab() {
                     보낸 메세지
                 </button>
                 <button 
-                    className={`${activeTab === 'ban' ? 'font-semibold text-black dark:text-white' : 'text-textBase dark:text-textBase-dark'}`}
+                    className={`${activeTab === 'block' ? 'font-semibold text-black dark:text-white' : 'text-textBase dark:text-textBase-dark'}`}
                     onClick={() => setActiveTab('block')}>
                     차단 목록
                 </button>

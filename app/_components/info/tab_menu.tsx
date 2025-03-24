@@ -29,8 +29,8 @@ export default function TabMenu() {
                     tabLists.map((tab, index) => {
                         const isActive = pathname === tab.link
                         return (
-                            <li key={index} className="flex w-[100px] items-center justify-center">
-                                <Link href={tab.link} className={`${isActive ? "font-bold" : ""}`}> {tab.name} </Link>
+                            <li key={index} className="flex w-[100px] items-center justify-center text-textBase dark:text-textBase-dark">
+                                <Link href={tab.link} className={`${isActive ? "font-bold text-dark dark:text-white" : ""}`}> {tab.name} </Link>
                             </li>
                         )
                     })

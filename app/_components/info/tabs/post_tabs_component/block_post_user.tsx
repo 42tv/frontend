@@ -1,28 +1,31 @@
-import { getBlockedPostUser } from "@/app/_apis/posts";
+import { getBlockedPostUser, unblockPostUser, unblockPostUsers } from "@/app/_apis/posts";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import { useEffect, useState } from "react";
+import { BiTrash } from "react-icons/bi";
 
 interface BlockedUser {
     id: number;
-    blcoked: {
+    blocked: {  // Fixed spelling from "blcoked" to "blocked"
         idx: number;
+        user_id: string;
         nickname: string;
         profile_img: string;
     }
+    created_at: string;
 }
 
 export default function BlockPostUser() {
-    const [blockedUser, setblockedUser] = useState<BlockedUser[]>([]);
+    const [blockedUser, setBlockedUser] = useState<BlockedUser[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
-    const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
     
     // Calculate the posts to display on current page
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = blockedUser.slice(indexOfFirstPost, indexOfLastPost);
+    const currentUsers = blockedUser.slice(indexOfFirstPost, indexOfLastPost);
     
     // Calculate total pages
     const totalPages = Math.ceil(blockedUser.length / postsPerPage);
@@ -38,10 +41,34 @@ export default function BlockPostUser() {
     useEffect(() => {
         async function fetchPosts() {
             const response = await getBlockedPostUser()
+            setBlockedUser(response)
             console.log(response)
         }
         fetchPosts();
     }, [])
+
+    async function removeBlockedUsers() {
+        try {
+            const reponse = await unblockPostUsers(selectedUsers)
+            setBlockedUser(prev => prev.filter(user => !selectedUsers.includes(user.blocked.idx)))
+            console.log(reponse)
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        catch(e) {
+        }
+
+    }
+
+    async function removeBlockedUser(userIdx: number) {
+        try {
+            const reponse = await unblockPostUser(userIdx)
+            setBlockedUser(prev => prev.filter(user => user.blocked.idx !== userIdx))
+            console.log(reponse)
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        catch(e) {
+        }
+    }
     
     // Format the date as xxxx년 xx월 xx일 xx시 xx분
     const formatDateFromString = (dateString: string) => {
@@ -52,11 +79,11 @@ export default function BlockPostUser() {
         return `${year}-${month}-${day} ${hour}:${minute}`;
     };
 
-    const handleSelectPost = (postId: number) => {
-        setSelectedPosts(prev =>
-            prev.includes(postId)
-                ? prev.filter(id => id !== postId)
-                : [...prev, postId]
+    const handleSelectPost = (userIdx: number) => {
+        setSelectedUsers(prev =>
+            prev.includes(userIdx)
+                ? prev.filter(id => id !== userIdx)
+                : [...prev, userIdx]
         );
     };
 
@@ -73,10 +100,10 @@ export default function BlockPostUser() {
         if (!isChecked) {
             setIsChecked(true);
             // Only select posts on the current page instead of all posts
-            setSelectedPosts(currentPosts.map(post => post.id));
+            setSelectedUsers(currentUsers.map(user => user.blocked.idx));
         } else {
             setIsChecked(false);
-            setSelectedPosts([]);
+            setSelectedUsers([]);
         }
     }
 
@@ -102,35 +129,28 @@ export default function BlockPostUser() {
                             </th>
                             <th className="p-2 w-[200px] text-textBase-dark-bold">닉네임</th>
                             <th className="p-2 w-[140px] text-textBase-dark-bold">차단일</th>
+                            <th className="p-2 w-[50px] text-textBase-dark-bold">삭제</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentPosts.map((blockedUser) => {
+                        {currentUsers.map((user) => {
                           return (
-                            <tr key={blockedUser.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
+                            <tr key={user.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
                               <td className="p-2 text-textBase-dark-bold">
-                                {/* <CheckboxButton handleClick={() => handleSelectPost(blockedUser.id)} isChecked={selectedPosts.includes(post.id)}/> */}
+                                <CheckboxButton handleClick={() => handleSelectPost(user.blocked.idx)} isChecked={selectedUsers.includes(user.blocked.idx)}/>
                               </td>
                               <td className={`p-2 `}>
-                                  <div className="max-w-[400px] mx-auto overflow-hidden">
-                                      {/* <button
-                                          className="truncate block w-full text-left"
-                                          title={blockedUser.blcoked}
-                                      >
-                                          {blockedUser.message}
-                                      </button> */}
-                                  </div>
+                                <span>
+                                    {user.blocked.nickname + "(" + user.blocked.user_id + ")"}
+                                </span>
                               </td>
-                              <td className={`p-2 `}>
-                              <button
-                              >
-                                    <span>
-                                        {/* {blockedUser.recipient.nickname} */}
-                                    </span>
-                                </button>
+                              <td className={`p-2 `}>{formatDateFromString(user.created_at)}</td>
+                              <td className={`p-2 h-[41px] flex justify-center items-center`}>
+                                <BiTrash 
+                                    className="text-xl cursor-pointer hover:text-red-500 transition-colors"
+                                    onClick={() => removeBlockedUser(user.blocked.idx)}
+                                />
                               </td>
-                              {/* <td className={`p-2 `}>{formatDateFromString(blockedUser.blcoked.)}</td>
-                              <td className={`p-2 `}>{blockedUser.is_read ? "읽음" : "안읽음"}</td> */}
                             </tr>
                           );
                         })}
@@ -181,8 +201,9 @@ export default function BlockPostUser() {
                         bg-color-darkBlue 
                         text-white
                         hover:bg-opacity-80"
+                    onClick={() => removeBlockedUsers()}
                 >
-                    쪽지 보내기
+                    차단 해제
                 </button>
             </div>
         </div>

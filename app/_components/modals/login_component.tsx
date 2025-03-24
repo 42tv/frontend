@@ -21,7 +21,7 @@ export default function LoginComponent() {
   async function handleLogin() {
     try {
       await login(userId, password);
-      router.push('/live')
+      router.push('/live');
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch(err: any) {
@@ -122,6 +122,11 @@ export default function LoginComponent() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleLogin();
+                }
+              }}
               className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
               placeholder="비밀번호를 입력하세요"
             />

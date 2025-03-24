@@ -96,7 +96,7 @@ export async function sendPost(userId: string, message: string) {
  * @returns
  */
 export async function blockPostUser(userIdx: number) {
-  const response = await api.post(`/api/post/block/${userIdx}`);
+  const response = await api.post(`/api/post/block/user/${userIdx}`);
   return response.data;
 }
 
@@ -105,6 +105,25 @@ export async function blockPostUser(userIdx: number) {
  * @returns
  */
 export async function getBlockedPostUser() {
-  const response = await api.get(`/api/post/block`);
+  const response = await api.get(`/api/post/block/user`);
+  return response.data;
+}
+
+/**
+ * 차단된 유저 쪽지 차단 해제
+ * @param userIdx
+ * @returns
+ */
+export async function unblockPostUser(userIdx: number) {
+  const response = await api.delete(`/api/post/block/user/${userIdx}`);
+  return response.data;
+}
+
+export async function unblockPostUsers(userIdxs: number[]) {
+  const response = await api.delete(`/api/post/block/user`, {
+    data: {
+      blockedUserIdxs: userIdxs,
+    },
+  });
   return response.data;
 }

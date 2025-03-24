@@ -50,6 +50,21 @@ export async function login(id: string, password: string) {
 }
 
 /**
+ * 로그아웃
+ * @returns
+ */
+export async function logout() {
+  const response = await axios.post(
+    "/api/auth/logout",
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+/**
  * 기본 User 정보 가져오기
  * @returns
  */
