@@ -6,6 +6,8 @@ import { FiGift, FiCreditCard, FiUser, FiSettings } from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
 import { FaCrown } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
+import { BiLogOut } from "react-icons/bi";
+import { logout } from "@/app/_apis/user";
 
 export default function ProfileIcon() {
     const profile_img = useUserStore((state) => state.profile_img);
@@ -19,6 +21,17 @@ export default function ProfileIcon() {
 
     function handleMenuClick(event: React.MouseEvent) {
         event.stopPropagation(); // 메뉴 내부 클릭 시 이벤트 전파 중단
+    }
+
+    async function handleLogout() {
+        try {
+            await logout();
+            window.location.href = "/";
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        catch(e) {
+            
+        }
     }
 
     useEffect(() => {
@@ -96,6 +109,14 @@ export default function ProfileIcon() {
                         text="설정" 
                         href="/settings"
                     />
+                    <div 
+                        className="flex items-center space-x-3 p-2 hover:bg-iconBg dark:hover:bg-iconBg-dark rounded-lg cursor-pointer"
+                        onClick={() => handleLogout()}
+                    >
+                        <BiLogOut className="text-gray-700 dark:text-gray-300" />
+                        <span className="text-sm">{"로그아웃"}</span>
+                    </div>
+                    
                 </div>
             </div>
             

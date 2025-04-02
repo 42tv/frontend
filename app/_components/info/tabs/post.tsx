@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReceiveMessage from "./post_tabs_component/receive_message";
 import SentMessage from "./post_tabs_component/sent_message";
+import BlockPostUser from "./post_tabs_component/block_post_user";
 
 export default function PostTab() {
     const [activeTab, setActiveTab] = useState('received');
@@ -18,8 +19,8 @@ export default function PostTab() {
                     보낸 메세지
                 </button>
                 <button 
-                    className={`${activeTab === 'ban' ? 'font-semibold text-black dark:text-white' : 'text-textBase dark:text-textBase-dark'}`}
-                    onClick={() => setActiveTab('ban')}>
+                    className={`${activeTab === 'block' ? 'font-semibold text-black dark:text-white' : 'text-textBase dark:text-textBase-dark'}`}
+                    onClick={() => setActiveTab('block')}>
                     차단 목록
                 </button>
             </div> 
@@ -32,6 +33,11 @@ export default function PostTab() {
             {
                 (activeTab == 'send') && (
                     <SentMessage />
+                )
+            }
+            {
+                (activeTab == 'block') && (
+                    <BlockPostUser />
                 )
             }
             

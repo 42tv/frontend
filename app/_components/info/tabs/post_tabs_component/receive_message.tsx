@@ -1,7 +1,10 @@
 import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
-import PostDetail from "@/app/_components/modals/post_detail";
+import BlockAlertComponent from "@/app/_components/modals/block_alert";
+import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
+import popupModalStore from "@/app/_components/utils/store/popupModalStore";
+import SendPost from "./send_post";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
@@ -10,9 +13,15 @@ interface Post {
     id: number;
     message: string;
     sender: {
+        idx: number;
         userId: string;
         nickname: string;
     };
+    recipient: {
+        idx: number;
+        userId: string;
+        nickname: string;
+    }
     is_read: boolean;
     sentAt: string;
     readAt: string;
@@ -20,6 +29,7 @@ interface Post {
 
 export default function ReceiveMessage() {
     const { openModal, closeModal } = useModalStore();
+    const { openPopup, closePopup } = popupModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
@@ -68,6 +78,19 @@ export default function ReceiveMessage() {
                 : [...prev, postId]
         );
     };
+
+    async function changePopupComponent(compoent: JSX.Element) {
+        closePopup();
+        openPopup(compoent);
+    }
+    // 차단 창 팝업으로 띄우기
+    async function requestBlockUser(blockedIdx: number, blockUserId: string, blockedNickname: string) {
+        openPopup(BlockAlertComponent({ blockedIdx, blockUserId, blockedNickname, closePopup, changePopupComponent }));
+    }
+
+    async function openModalSendpost() {
+        openModal(<SendPost close={closeModal}/>);
+    }
 
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -171,7 +194,7 @@ export default function ReceiveMessage() {
                         className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
                          border-borderButton1 dark:border-borderButton1-dark 
                          placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="검색어를 입력하세요"
+                        placeholder="닉네임을 입력하세요"
                     />
                     <button 
                         className="w-[80px] h-[40px] rounded-[8px] bg-color-darkBlue text-white hover:bg-opacity-80"
@@ -195,13 +218,14 @@ export default function ReceiveMessage() {
                 <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
                         <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <th className="p-2 text-textBase-dark-bold">
+                            <th className="p-2 w-[50px] text-textBase-dark-bold">
                                 <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
                             </th>
-                            <th className="p-2 text-textBase-dark-bold">내용</th>
-                            <th className="p-2 text-textBase-dark-bold">보낸회원</th>
-                            <th className="p-2 text-textBase-dark-bold">날짜</th>
-                            <th className="p-2 text-textBase-dark-bold">상태</th>
+                            <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
+                            <th className="p-2 w-[200px] text-textBase-dark-bold">보낸 회원</th>
+                            <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
+                            <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
+                            <th className="p-2 w-[50px] text-textBase-dark-bold">차단</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -212,7 +236,7 @@ export default function ReceiveMessage() {
                                 <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
                               </td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>
-                                  <div className="max-w-[400px] mx-auto overflow-hidden">
+                                  <div className="pl-5 mx-auto overflow-hidden">
                                       <button
                                           onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}
                                           className="truncate block w-full text-left"
@@ -232,6 +256,13 @@ export default function ReceiveMessage() {
                               </td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{formatDateFromString(post.sentAt)}</td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-black dark:text-white'}`}>{post.is_read ? "읽음" : "안읽음"}</td>
+                              <td className={`p-2 text-black dark:text-textBase-dark`}>
+                                <button
+                                  onClick={() => requestBlockUser(post.sender.idx, post.sender.userId, post.sender.nickname)}
+                                >
+                                    차단
+                                </button>
+                              </td>
                             </tr>
                           );
                         })}
@@ -282,6 +313,7 @@ export default function ReceiveMessage() {
                         bg-color-darkBlue 
                         text-white
                         hover:bg-opacity-80"
+                    onClick={() => openModalSendpost()}
                 >
                     쪽지 보내기
                 </button>

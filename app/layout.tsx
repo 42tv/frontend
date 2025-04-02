@@ -6,6 +6,7 @@ import { ThemeProvider } from "./_components/theme-provider";
 import LeftContainer from "./_components/left-container/left-container";
 import Modal from "./_components/utils/modal/modal";
 import ErrorModal from "./_components/utils/modal/errorModal";
+import PopupModal from "./_components/utils/modal/popupModal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,6 +37,9 @@ export default function RootLayout({
         <ThemeProvider >
           <LeftContainer />
           <Toolbar />
+          <Modal />
+          <ErrorModal /> {/* 추가된 모달 */}
+          <PopupModal />
           <div
             className="flex flex-col absolute w-full h-full"
             style={{
@@ -44,8 +48,6 @@ export default function RootLayout({
               height: "calc(100% - 60px)", // Toolbar 제외한 높이
             }}
           >
-            <Modal />
-            <ErrorModal /> {/* 추가된 모달 */}
             {children}
             {/* <FooterContainer /> */}
           </div>
