@@ -3,17 +3,13 @@ import DefaultAlertMessage from '@/app/_components/modals/default_alert_compoent
 import popupModalStore from '@/app/_components/utils/store/popupModalStore';
 import React, { useEffect } from 'react';
 
-export default function SendPost( { close, userId } : {close: () => void, userId?: string } ) {
+export default function SendPost( { close, userId = '' } : {close: () => void, userId: string } ) {
   const [receiverId, setReceiverId] = React.useState('');
-  const [idEditable, setIdEditable] = React.useState(true);
   const [message, setMessage] = React.useState('');
   const { openPopup } = popupModalStore();
 
   useEffect(() => {
-    if (userId) { 
-      setIdEditable(false);
-    }
-    setReceiverId(userId ?? '');
+    setReceiverId(userId);
   }, [])
 
   async function requestSendPost() {
@@ -39,7 +35,6 @@ export default function SendPost( { close, userId } : {close: () => void, userId
             placeholder='받는 사람 아이디'
             className="w-full bg-modalBg dark:bg-modalBg-dark focus:outline-none overflow-hidden"
             onChange={(e) => setReceiverId(e.target.value)}
-            disabled={!idEditable}
             value={receiverId}
           >
           </input>
