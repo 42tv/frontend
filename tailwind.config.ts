@@ -20,7 +20,10 @@ export default {
           DEFAULT: "rgba(235, 229, 229, 1)", // from iconLightBg
           dark: "rgba(55, 65, 81, 1)", // from iconDarkBg
         },
-        toolbarBg: "rgba(27, 27, 27, 1)",
+        toolbarBg: {
+          DEFAULT: "rgba(255,255,255,1)",
+          dark: "rgba(27, 27, 27, 1)",
+        },
         contentBg: "rgba(43, 43, 43, 1)",
         darkBg: "rgba(18, 18, 18, 1)",
         colorFg01: "rgba(153, 153, 153, 1)",

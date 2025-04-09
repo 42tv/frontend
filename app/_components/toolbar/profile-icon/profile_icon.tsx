@@ -57,7 +57,7 @@ export default function ProfileIcon() {
                 </div>
                 
             ) : (
-                <div className="w-[40px] h-[40px] flex  dark:bg-toolbarBg">
+                <div className="w-[40px] h-[40px] flex  dark:bg-toolbarBg-dark">
                     <div className="flex w-full h-full rounded-full dark:hover:bg-iconBg-dark hover:bg-iconBg items-center justify-center">
                         <CgProfile size={32}/>
                     </div>
