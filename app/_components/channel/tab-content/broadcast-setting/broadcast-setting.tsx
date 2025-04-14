@@ -1,22 +1,45 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { reCreateStreamKey } from "@/app/_apis/ivs";
-import { useState } from "react";
+import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
+import ErrorMessage from "@/app/_components/modals/error_component";
+import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import { useEffect, useState } from "react";
 import { FiCopy, FiEye, FiEyeOff, FiCheck } from "react-icons/fi";
 
 export default function BroadcastSettings() {
-  const [streamKey, setStreamKey] = useState("sk-12312312");
-  const [serverUrl, setServerUrl] = useState("rtmp://rtmp.pandalive.co.kr:1935/app");
-  const [broadcastTitle, setBroadcastTitle] = useState("test");
+  const [streamKey, setStreamKey] = useState("");
+  const [serverUrl, setServerUrl] = useState("");
+  const [title, setTitle] = useState("test");
   const [showStreamKey, setShowStreamKey] = useState(false);
-  const [isAdultBroadcast, setIsAdultBroadcast] = useState(false);
-  const [hasPassword, setHasPassword] = useState(false);
-  const [broadcastPassword, setBroadcastPassword] = useState("");
-  const [isFanBroadcast, setIsFanBroadcast] = useState(false);
-  const [fanBroadcastLevel, setFanBroadcastLevel] = useState("브론즈");
+  const [isAdult, setIsAdult] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isFanClub, setIsFanClub] = useState(false);
+  const [fanLevel, setFanLevel] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [copiedText, setCopiedText] = useState("");
+  const { openError } = errorModalStore();
   const iconSize = 25;
+
+  useEffect(() => {
+    async function fetchBroadcastSetting() {
+      try {
+        const response = await getBroadcastSetting();
+        setStreamKey(response.ivs.stream_key);
+        setServerUrl(response.ivs.ingest_endpoint);
+        setTitle(response.broadcastSetting.title);
+        setIsAdult(response.broadcastSetting.is_adult);
+        setIsPrivate(response.broadcastSetting.is_pw);
+        setPassword(response.broadcastSetting.password ?? '');
+        setIsFanClub(response.broadcastSetting.is_fan);
+        setFanLevel(response.broadcastSetting.fan_level);
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching broadcast settings:", error);
+      }
+    }
+    fetchBroadcastSetting();
+  }, [])
 
   const toggleStreamKeyVisibility = () => {
     setShowStreamKey(!showStreamKey);
@@ -44,10 +67,12 @@ export default function BroadcastSettings() {
       const response = await reCreateStreamKey();
       setStreamKey(response.streamKey);
       setCopiedText("스트림키가 변경되었습니다")
+      setShowStreamKey(true);
       setShowToast(true);  
       // Hide toast after 2 seconds
       setTimeout(() => {
         setShowToast(false);
+        setShowStreamKey(false);
       }, 2000);
       
       console.log(response);
@@ -55,6 +80,37 @@ export default function BroadcastSettings() {
     catch(e) {
       console.error(e);
     }
+  }
+
+  function validateValues() {
+    if (title.length < 1 || title.length > 30) {
+      openError(<ErrorMessage message="방송 제목은 1자 이상 30자 이하로 입력해주세요" />);
+      return false;
+    }
+    if (isPrivate && (password.length < 4 || password.length > 8)) {
+      openError(<ErrorMessage message="비밀번호는 4~8글자로 설정해주세요" />);
+      return false;
+    }
+    if (isFanClub && (fanLevel < 1 || fanLevel > 5)) {
+      openError(<ErrorMessage message="팬 레벨은 1~5입니다" />);
+      return false;
+    }
+    return true;
+  }
+
+  async function handleSave() {
+    if (!validateValues()) {
+      return;
+    }
+    try {
+      await updateBroadcastSetting(title, isAdult, isPrivate, isFanClub, fanLevel, password)
+    }
+    catch(e) {
+      openError(<ErrorMessage message="유효하지 않은 설정입니다" />);
+      console.error(e);
+    }
+    
+
   }
 
   return (
@@ -125,8 +181,8 @@ export default function BroadcastSettings() {
           <div className="flex w-full h-[40px] border items-center border-1 px-2 py-1 rounded-md space-x-3">
             <input 
               type="text"
-              value={broadcastTitle} 
-              onChange={(e) => setBroadcastTitle(e.target.value)}
+              value={title} 
+              onChange={(e) => setTitle(e.target.value)}
               className="flex w-full focus:outline-none"
               placeholder="방송 제목을 입력해주세요"
             />
@@ -145,8 +201,8 @@ export default function BroadcastSettings() {
             <input 
               type="checkbox"
               id="adultBroadcast"
-              checked={isAdultBroadcast}
-              onChange={(e) => setIsAdultBroadcast(e.target.checked)}
+              checked={isAdult}
+              onChange={(e) => setIsAdult(e.target.checked)}
               className="h-4 w-4 focus:outline-none"
             />
           </div>
@@ -161,27 +217,27 @@ export default function BroadcastSettings() {
             <input 
               type="checkbox"
               id="fanBroadcast"
-              checked={isFanBroadcast}
-              onChange={(e) => setIsFanBroadcast(e.target.checked)}
+              checked={isFanClub}
+              onChange={(e) => setIsFanClub(e.target.checked)}
               className="h-4 w-4 focus:outline-none"
             />
           </div>
-          {isFanBroadcast && (
+          {isFanClub && (
             <div className="flex items-center ml-4 space-x-3">
               {[
-                {value: '브론즈', label: '브론즈'}, 
-                {value: '실버', label: '실버'}, 
-                {value: '골드', label: '골드'}, 
-                {value: '플레티넘', label: '플레티넘'}, 
-                {value: '다이아', label: '다이아'}
+                {value: 1, label: '브론즈'}, 
+                {value: 2, label: '실버'}, 
+                {value: 3, label: '골드'}, 
+                {value: 4, label: '플레티넘'}, 
+                {value: 5, label: '다이아'}
               ].map((level) => (
                 <label key={level.value} className="flex items-center">
                   <input
                     type="radio"
                     name="fanBroadcastLevel"
                     value={level.value}
-                    checked={fanBroadcastLevel === level.value}
-                    onChange={(e) => setFanBroadcastLevel(e.target.value)}
+                    checked={fanLevel === level.value}
+                    onChange={(e) => setFanLevel(parseInt(e.target.value))}
                     className="h-4 w-4 mr-1 focus:outline-none"
                   />
                   <span>{level.label}</span>
@@ -200,18 +256,18 @@ export default function BroadcastSettings() {
             <input 
               type="checkbox"
               id="hasPassword"
-              checked={hasPassword}
-              onChange={(e) => setHasPassword(e.target.checked)}
+              checked={isPrivate}
+              onChange={(e) => setIsPrivate(e.target.checked)}
               className="h-4 w-4 focus:outline-none"
             />
           </div>
           <div className="flex col-span-4 items-center ml-4 space-x-2 h-full">
-            {hasPassword ? (
+            {isPrivate ? (
               <div className="flex h-[40px] border items-center border-1 px-2 py-1 rounded-md">
                 <input 
-                  type="password"
-                  value={broadcastPassword}
-                  onChange={(e) => setBroadcastPassword(e.target.value)}
+                  type="text"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-40 focus:outline-none"
                   placeholder="비밀번호 입력"
                 />
@@ -228,25 +284,7 @@ export default function BroadcastSettings() {
         <button 
           className="bg-color-darkBlue hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-md transition-colors"
           onClick={() => {
-            // Handle saving broadcast settings
-            console.log('Saving broadcast settings:', {
-              streamKey,
-              serverUrl,
-              broadcastTitle,
-              isAdultBroadcast,
-              isFanBroadcast,
-              fanBroadcastLevel,
-              hasPassword,
-              broadcastPassword
-            });
-            // Here you would typically make an API call to save the settings
-            
-            // Show success toast
-            setCopiedText("설정");
-            setShowToast(true);
-            setTimeout(() => {
-              setShowToast(false);
-            }, 2000);
+            handleSave();
           }}
         >
           저장하기

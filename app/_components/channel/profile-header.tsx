@@ -1,14 +1,16 @@
 // components/ProfileHeader.tsx
 import React from "react";
+import Image from "next/image";
 
 const ProfileHeader = () => {
   return (
     <div className="flex items-center space-x-4 mb-6">
       <div className="w-16 h-16 bg-gray-700 rounded-full">
-        <img
-          src="/images/profile.png"
+        <Image
+          src="/icons/anonymouse1.svg"
           alt="Profile"
-          className="w-full h-full rounded-full object-cover"
+          width={64}
+          height={64}
         />
       </div>
       <div>

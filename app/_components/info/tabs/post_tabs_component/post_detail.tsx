@@ -40,7 +40,9 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
   }
 
   async function handleResponsePost() {
-    responsePost ?? responsePost(userId);
+    if (responsePost) {
+      responsePost(userId);
+    }
   }
 
   return (

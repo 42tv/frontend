@@ -93,6 +93,12 @@ export async function updateNickname(nickname: string) {
   return response.data;
 }
 
+/**
+ * 비밀번호 변경
+ * @param password
+ * @param newPassword
+ * @returns
+ */
 export async function updatePassword(password: string, newPassword: string) {
   const response = await axios.put(
     "/api/user/password",
@@ -104,5 +110,51 @@ export async function updatePassword(password: string, newPassword: string) {
       withCredentials: true,
     }
   );
+  return response.data;
+}
+
+/**
+ * 방송 설정 업데이트
+ * @param title
+ * @param isAdult
+ * @param isPrivate
+ * @param isFanClub
+ * @param fanLevel
+ * @param password
+ * @returns
+ */
+export async function updateBroadcastSetting(
+  title: string,
+  isAdult: boolean,
+  isPrivate: boolean,
+  isFanClub: boolean,
+  fanLevel: number,
+  password: string
+) {
+  const response = await axios.put(
+    "/api/user/broadcast-setting",
+    {
+      title: title,
+      isAdult: isAdult,
+      isPrivate: isPrivate,
+      isFanClub: isFanClub,
+      fanLevel: fanLevel,
+      password: password,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+/**
+ * 방송 설정 가져오기
+ * @returns
+ */
+export async function getBroadcastSetting() {
+  const response = await api.get("/api/user/broadcast-setting", {
+    withCredentials: true,
+  });
   return response.data;
 }
