@@ -2,12 +2,11 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import useUserStore from "../../utils/store/userStore";
-import { FiGift, FiCreditCard, FiUser, FiSettings } from "react-icons/fi";
-import { MdOutlineHistory } from "react-icons/md";
-import { FaCrown } from "react-icons/fa";
+import { FiUser, FiSettings } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { logout } from "@/app/_apis/user";
+import { GrChannel } from "react-icons/gr";
 
 export default function ProfileIcon() {
     const profile_img = useUserStore((state) => state.profile_img);
@@ -58,7 +57,7 @@ export default function ProfileIcon() {
                 </div>
                 
             ) : (
-                <div className="w-[40px] h-[40px] flex  dark:bg-toolbarBg">
+                <div className="w-[40px] h-[40px] flex  dark:bg-toolbarBg-dark">
                     <div className="flex w-full h-full rounded-full dark:hover:bg-iconBg-dark hover:bg-iconBg items-center justify-center">
                         <CgProfile size={32}/>
                     </div>
@@ -85,24 +84,9 @@ export default function ProfileIcon() {
                         href="/my/info"
                     />
                     <MenuItem 
-                        icon={<FiCreditCard className="text-gray-700 dark:text-gray-300" />} 
-                        text="결제내역" 
-                        href="/payment-history"
-                    />
-                    <MenuItem 
-                        icon={<MdOutlineHistory className="text-gray-700 dark:text-gray-300" />} 
-                        text="아이템내역" 
-                        href="/item-history"
-                    />
-                    <MenuItem 
-                        icon={<FiGift className="text-gray-700 dark:text-gray-300" />} 
-                        text="선물내역" 
-                        href="/gift-history"
-                    />
-                    <MenuItem 
-                        icon={<FaCrown className="text-gray-700 dark:text-gray-300" />} 
-                        text="VIP 시그니처" 
-                        href="/vip-signature"
+                        icon={<GrChannel className="text-gray-700 dark:text-gray-300" />} 
+                        text="채널" 
+                        href="/channel"
                     />
                     <MenuItem 
                         icon={<FiSettings className="text-gray-700 dark:text-gray-300" />} 

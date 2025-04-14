@@ -92,6 +92,11 @@ export default function ReceiveMessage() {
         openModal(<SendPost close={closeModal}/>);
     }
 
+    async function responsePost(userId: string) {
+        closeModal();
+        openModal(<SendPost close={closeModal} userId={userId}/>);
+    }
+
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
     
@@ -130,6 +135,7 @@ export default function ReceiveMessage() {
                 postId={postId} 
                 closeModal={closeModal} 
                 deleteSinglePost={deleteSinglePost}
+                responsePost={responsePost}
         />);
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-export default function PostDetail({ nickname, userId, message, sentAt, postId, closeModal, deleteSinglePost }: 
+export default function PostDetail({ nickname, userId, message, sentAt, postId, closeModal, deleteSinglePost, responsePost }: 
   { 
     nickname: string;
     userId: string;
@@ -8,7 +8,8 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     sentAt: string,
     postId: number,
     closeModal: () => void,
-    deleteSinglePost: (postId: number) => void
+    deleteSinglePost: (postId: number) => void,
+    responsePost?: (userId: string) => void
   }
   ) {
 
@@ -38,6 +39,12 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     return `${month}-${day} ${ampm} ${hours}:${minutes}`;
   }
 
+  async function handleResponsePost() {
+    if (responsePost) {
+      responsePost(userId);
+    }
+  }
+
   return (
     <div className="flex flex-col max-w-md w-[450px] h-[500px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
       <h2 className="text-lg font-bold mb-2 px-1 pt-5 px-6">쪽지</h2>
@@ -64,11 +71,16 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
         >
           삭제
         </button>
-        <button
-          className={`w-full p-2 mt-2 rounded bg-color-darkBlue`}
-        >
-          답장
-        </button>
+        {
+          responsePost && (
+            <button
+              className={`w-full p-2 mt-2 rounded bg-color-darkBlue`}
+              onClick={() => handleResponsePost()}
+            >
+              답장
+            </button>
+          )
+        }
       </div>
     </div>
   );

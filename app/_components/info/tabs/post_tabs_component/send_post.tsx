@@ -1,12 +1,16 @@
 import { sendPost } from '@/app/_apis/posts';
 import DefaultAlertMessage from '@/app/_components/modals/default_alert_compoent';
 import popupModalStore from '@/app/_components/utils/store/popupModalStore';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-export default function SendPost( { close } : {close: () => void} ) {
+export default function SendPost( { close, userId = '' } : {close: () => void, userId: string } ) {
   const [receiverId, setReceiverId] = React.useState('');
   const [message, setMessage] = React.useState('');
   const { openPopup } = popupModalStore();
+
+  useEffect(() => {
+    setReceiverId(userId);
+  }, [])
 
   async function requestSendPost() {
     try {
