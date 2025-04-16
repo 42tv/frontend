@@ -1,8 +1,10 @@
 'use client';
+import { ErrorResponse } from "@/app/_apis/interfaces";
 import { reCreateStreamKey } from "@/app/_apis/ivs";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { FiCopy, FiEye, FiEyeOff, FiCheck } from "react-icons/fi";
 
@@ -76,9 +78,10 @@ export default function BroadcastSettings() {
       }, 2000);
       console.log(response);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    catch(e: any) {
-      openError(<ErrorMessage message={e.response.data.message} />);
+    catch(e) {
+      if (axios.isAxiosError<ErrorResponse>(e)) {
+        openError(<ErrorMessage message={e.response!.data.message} />);
+      }
     }
   }
 
