@@ -1,4 +1,5 @@
 'use client';
+import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { reCreateStreamKey } from "@/app/_apis/ivs";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import ErrorMessage from "@/app/_components/modals/error_component";
@@ -74,11 +75,12 @@ export default function BroadcastSettings() {
         setShowToast(false);
         setShowStreamKey(false);
       }, 2000);
-      
       console.log(response);
     }
     catch(e) {
-      console.error(e);
+      const message = getApiErrorMessage(e);
+      openError(<ErrorMessage message={message} />);
+
     }
   }
 
