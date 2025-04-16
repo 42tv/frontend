@@ -81,7 +81,7 @@ export async function getInfo() {
  * @returns
  */
 export async function updateNickname(nickname: string) {
-  const response = await axios.put(
+  const response = await axios.patch(
     "/api/user/nickname",
     {
       nickname: nickname,
@@ -100,7 +100,7 @@ export async function updateNickname(nickname: string) {
  * @returns
  */
 export async function updatePassword(password: string, newPassword: string) {
-  const response = await axios.put(
+  const response = await axios.patch(
     "/api/user/password",
     {
       password: password,
