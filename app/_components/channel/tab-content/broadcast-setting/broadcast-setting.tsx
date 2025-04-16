@@ -1,10 +1,9 @@
 'use client';
-import { ErrorResponse } from "@/app/_apis/interfaces";
+import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { reCreateStreamKey } from "@/app/_apis/ivs";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
-import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { FiCopy, FiEye, FiEyeOff, FiCheck } from "react-icons/fi";
 
@@ -79,9 +78,9 @@ export default function BroadcastSettings() {
       console.log(response);
     }
     catch(e) {
-      if (axios.isAxiosError<ErrorResponse>(e)) {
-        openError(<ErrorMessage message={e.response!.data.message} />);
-      }
+      const message = getApiErrorMessage(e);
+      openError(<ErrorMessage message={message} />);
+
     }
   }
 
