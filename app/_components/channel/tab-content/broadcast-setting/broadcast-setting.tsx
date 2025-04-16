@@ -74,11 +74,11 @@ export default function BroadcastSettings() {
         setShowToast(false);
         setShowStreamKey(false);
       }, 2000);
-      
       console.log(response);
     }
-    catch(e) {
-      console.error(e);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch(e: any) {
+      openError(<ErrorMessage message={e.response.data.message} />);
     }
   }
 
