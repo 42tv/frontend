@@ -158,3 +158,20 @@ export async function getBroadcastSetting() {
   });
   return response.data;
 }
+
+/**
+ * Upload a profile image to the server
+ * @param imageFile The image file to upload
+ * @returns A promise that resolves with the uploaded image URL
+ */
+export async function uploadProfileImage(
+  imageFile: File
+): Promise<{ imageUrl: string }> {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  const response = await api.post("/api/user/profile", formData, {
+    withCredentials: true,
+  });
+  return response.data;
+}
