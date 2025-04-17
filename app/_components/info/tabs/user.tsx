@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
 import { Button } from "@mui/material";
@@ -9,7 +9,7 @@ import useUserStore from "../../utils/store/userStore";
 
 export default function UserTab() {
     const { openError } = errorModalStore();
-    const { nickname, setNickname } = useUserStore();
+    const { nickname, setNickname} = useUserStore();
     const [inputNickname, setInputNickname] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -20,11 +20,6 @@ export default function UserTab() {
         newPassword, setNewPassword,
         passwordCheck, setPasswordCheck
     }
-
-    useEffect(() => {
-        setInputNickname(nickname);
-    }, [nickname])
-    
 
     async function updateUserInfo() {
         const isNicknameChanged = nickname != inputNickname;
