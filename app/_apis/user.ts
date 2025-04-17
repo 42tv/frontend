@@ -81,7 +81,7 @@ export async function getInfo() {
  * @returns
  */
 export async function updateNickname(nickname: string) {
-  const response = await axios.put(
+  const response = await axios.patch(
     "/api/user/nickname",
     {
       nickname: nickname,
@@ -100,7 +100,7 @@ export async function updateNickname(nickname: string) {
  * @returns
  */
 export async function updatePassword(password: string, newPassword: string) {
-  const response = await axios.put(
+  const response = await axios.patch(
     "/api/user/password",
     {
       password: password,
@@ -154,6 +154,23 @@ export async function updateBroadcastSetting(
  */
 export async function getBroadcastSetting() {
   const response = await api.get("/api/user/broadcast-setting", {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * Upload a profile image to the server
+ * @param imageFile The image file to upload
+ * @returns A promise that resolves with the uploaded image URL
+ */
+export async function uploadProfileImage(
+  imageFile: File
+): Promise<{ imageUrl: string }> {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  const response = await api.post("/api/user/profile", formData, {
     withCredentials: true,
   });
   return response.data;
