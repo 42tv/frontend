@@ -5,7 +5,7 @@ import { UserResponse } from '../interfaces';
 interface UserState extends UserResponse {
   setUser: (user: UserResponse) => void;
   setNickname: (newNickname: string) => void;
-  updateProfileImg: (newProfileImg: string) => void;
+  setProfileImg: (newProfileImg: string) => void;
   fetchUser: () => Promise<void>;
 }
 
@@ -26,7 +26,7 @@ const useUserStore = create<UserState>((set) => ({
     nickname: newNickname,
   })),
   
-  updateProfileImg: (newProfileImg) => set(() => ({
+  setProfileImg: (newProfileImg) => set(() => ({
     profile_img: newProfileImg,
   })),
   
