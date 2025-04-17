@@ -2,9 +2,13 @@ import Image from 'next/image'
 import { useState, useRef } from 'react'
 import { uploadProfileImage } from '@/app/_apis/user';
 import useUserStore from '../utils/store/userStore';
+import errorModalStore from '../utils/store/errorModalStore';
+import DefaultAlertMessage from '../modals/default_alert_compoent';
+import { getApiErrorMessage } from '@/app/_apis/interfaces';
 
 export default function UserProfileImg({profilePath, width, height} : {profilePath: string, width: number, height: number}) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const {openError} = errorModalStore()
     const [uploading, setUploading] = useState(false);
     const { setProfileImg } = useUserStore();
 
@@ -23,12 +27,9 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
             const data = await uploadProfileImage(file);
             setProfileImg(data.imageUrl);
             console.log(data);
-            
-            // 여기서 상위 컴포넌트에 알려주는 코드를 추가할 수 있습니다 (필요하다면)
-            
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            alert('이미지 업로드에 실패했습니다.');
+        } catch (e) {
+            const message = getApiErrorMessage(e);
+            openError(<DefaultAlertMessage message={message} />);
         } finally {
             setUploading(false);
         }
