@@ -1,4 +1,4 @@
-import { getInfo } from '@/app/_apis/user';
+import { getLoginInfo } from '@/app/_apis/user';
 import { create } from 'zustand';
 import { UserResponse } from '../interfaces';
 
@@ -32,17 +32,16 @@ const useUserStore = create<UserState>((set) => ({
   
   fetchUser: async () => {
     try {
-      const response = await getInfo();
+      const response = await getLoginInfo();
+      console.log(response)
       set({
-        idx: response.idx,
-        user_id: response.user_id,
-        nickname: response.nickname,
-        profile_img: response.profile_img,
+        idx: response.user.idx,
+        user_id: response.user.user_id,
+        nickname: response.user.nickname,
+        profile_img: response.user.profile_img,
       });
-    } catch (error) {
-      // Redirect to homepage if user data fetching fails
-      // window.location.href = '/';
-      console.log('Failed to fetch user:', error);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
     }
   },
 }));
