@@ -64,23 +64,23 @@ export async function logout() {
   return response.data;
 }
 
-// export async function getLoginInfo() {
-//   const response = await api.get("/api/auth/login_info", {
-//     withCredentials: true,
-//   });
-//   return response.data;
-// }
-
-/**
- * 기본 User 정보 가져오기
- * @returns
- */
-export async function getInfo() {
-  const response = await api.get("/api/user", {
+export async function getLoginInfo() {
+  const response = await api.get("/api/auth/login_info", {
     withCredentials: true,
   });
   return response.data;
 }
+
+// /**
+//  * 기본 User 정보 가져오기
+//  * @returns
+//  */
+// export async function getInfo() {
+//   const response = await api.get("/api/user", {
+//     withCredentials: true,
+//   });
+//   return response.data;
+// }
 
 /**
  * 닉네임 업데이트
