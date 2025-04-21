@@ -1,4 +1,5 @@
 import React from 'react';
+import IvsPlayer from '../IvsPlayer'; // IvsPlayer 컴포넌트 가져오기
 
 interface StreamData {
     streamUrl: string;
@@ -19,9 +20,8 @@ interface StreamPlayerProps {
 const StreamPlayer: React.FC<StreamPlayerProps> = ({ streamData, userData }) => {
     return (
         <div className="aspect-video bg-black flex items-center justify-center text-white">
-            {/* TODO: 실제 비디오 플레이어 구현 (예: ReactPlayer, IVS Player SDK) */}
-            <span>Video Player Placeholder</span>
-            {/* streamData.streamUrl을 사용하여 플레이어 설정 */}
+            {/* IvsPlayer 컴포넌트를 사용하여 비디오 스트림 재생 */}
+            <IvsPlayer streamUrl={streamData.streamUrl} />
         </div>
     );
 };
