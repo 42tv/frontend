@@ -1,38 +1,89 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   streamUrl: string;
 };
 
+// IVS Player 타입 정의 (필요한 경우 더 구체적으로 정의)
+interface IVSPlayer {
+  create(options: any): any;
+  isPlayerSupported: boolean;
+  PlayerEventType: {
+    ERROR: string;
+    QUALITY_CHANGED: string;
+  };
+  PlayerState: {
+    PLAYING: string;
+    PAUSED: string;
+    ENDED: string;
+  };
+}
+
 const IvsPlayer = ({ streamUrl }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<any | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(1); // 볼륨 상태 (0 ~ 1)
+  const [currentQuality, setCurrentQuality] = useState<string | null>(null); // 현재 화질 상태
 
   useEffect(() => {
     const videoElement = videoRef.current;
+    let playerInstance: any = null;
 
     if (videoElement) {
       const initPlayer = async () => {
         try {
-          // amazon-ivs-player 모듈 동적 가져오기
-          const IVSPlayer = await import('amazon-ivs-player');
-          const { create, isPlayerSupported } = IVSPlayer;
+          const IVSPlayerModule = (await import('amazon-ivs-player')) as unknown as IVSPlayer;
+          const { create, isPlayerSupported, PlayerEventType, PlayerState } = IVSPlayerModule;
 
-          // 변경: isPlayerSupported를 함수 호출 대신 속성으로 확인
-          // 참고: WebAssembly 파일이 /public/ivs/에 있는지 확인하세요.
           if (isPlayerSupported && videoRef.current) {
-            // 변경: create 함수에 wasm 경로 제공
-            const playerInstance = create({
-               wasmWorker: '/ivs/amazon-ivs-wasmworker.min.js',
-               wasmBinary: '/ivs/amazon-ivs-wasmworker.min.wasm',
+            playerInstance = create({
+              wasmWorker: '/ivs/amazon-ivs-wasmworker.min.js',
+              wasmBinary: '/ivs/amazon-ivs-wasmworker.min.wasm',
             });
-            playerRef.current = playerInstance; // 정리 액세스를 위해 ref에 저장
-            playerInstance.attachHTMLVideoElement(videoRef.current); // 최신 ref 값 사용
-            // streamUrl = "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8";
+            streamUrl = "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8"
+            playerRef.current = playerInstance;
+            playerInstance.attachHTMLVideoElement(videoRef.current);
             playerInstance.load(streamUrl);
             playerInstance.play();
+            setIsPlaying(true);
+
+            playerInstance.setVolume(volume);
+            playerInstance.setMuted(false);
+
+            const onPlaying = () => {
+              console.log('Player State - PLAYING');
+              setIsPlaying(true);
+            };
+            const onPaused = () => {
+              console.log('Player State - PAUSED');
+              setIsPlaying(false);
+            };
+            const onEnded = () => {
+              console.log('Player State - ENDED');
+              setIsPlaying(false);
+            };
+            const onError = (err: any) => {
+              console.error('Player Event - ERROR:', err);
+            };
+            const onQualityChanged = (quality: any) => {
+              console.log('Player Event - QUALITY_CHANGED:', quality);
+              setCurrentQuality(`${quality.height}p`);
+            };
+
+            playerInstance.addEventListener(PlayerState.PLAYING, onPlaying);
+            playerInstance.addEventListener(PlayerState.PAUSED, onPaused);
+            playerInstance.addEventListener(PlayerState.ENDED, onEnded);
+            playerInstance.addEventListener(PlayerEventType.ERROR, onError);
+            playerInstance.addEventListener(PlayerEventType.QUALITY_CHANGED, onQualityChanged);
+
+            const initialQuality = playerInstance.getQuality();
+            if (initialQuality) {
+              setCurrentQuality(`${initialQuality.height}p`);
+            }
           } else if (!isPlayerSupported) {
             console.warn('IVS Player is not supported in this browser.');
           }
@@ -43,26 +94,107 @@ const IvsPlayer = ({ streamUrl }: Props) => {
       initPlayer();
     }
 
-    // 정리 함수: 컴포넌트가 마운트 해제되거나 streamUrl이 변경될 때 실행
     return () => {
-      if (playerRef.current) {
+      const currentPlayer = playerRef.current;
+      if (currentPlayer) {
         console.log("Cleaning up IVS Player");
-        playerRef.current.pause();
-        playerRef.current.delete();
+        currentPlayer.pause();
+        currentPlayer.delete();
         playerRef.current = null;
+        setIsPlaying(false);
+        setCurrentQuality(null);
       }
     };
   }, [streamUrl]);
 
+  const handlePlayPause = () => {
+    if (playerRef.current) {
+      if (isPlaying) {
+        playerRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        playerRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  const handleMuteToggle = () => {
+    if (playerRef.current) {
+      const newMuted = !isMuted;
+      playerRef.current.setMuted(newMuted);
+      setIsMuted(newMuted);
+    }
+  };
+
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (playerRef.current) {
+      const newVolume = parseFloat(event.target.value);
+      playerRef.current.setVolume(newVolume);
+      setVolume(newVolume);
+      if (newVolume > 0 && isMuted) {
+        playerRef.current.setMuted(false);
+        setIsMuted(false);
+      }
+    }
+  };
+
   return (
-    <video
-      ref={videoRef}
-      controls
-      autoPlay
-      playsInline
-      style={{ width: '100%', borderRadius: '8px' }}
-    />
+    <div style={{ position: 'relative', width: '100%', backgroundColor: '#000' }}>
+      <video
+        ref={videoRef}
+        playsInline
+        style={{ width: '100%', borderRadius: '8px', display: 'block' }}
+      />
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        color: 'white',
+        opacity: 1,
+        transition: 'opacity 0.3s ease',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <button onClick={handlePlayPause} style={buttonStyle}>
+            {isPlaying ? 'Pause' : 'Play'}
+          </button>
+          <button onClick={handleMuteToggle} style={buttonStyle}>
+            {isMuted ? 'Unmute' : 'Mute'}
+          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={isMuted ? 0 : volume}
+            onChange={handleVolumeChange}
+            style={{ cursor: 'pointer', width: '80px' }}
+            disabled={isMuted}
+          />
+        </div>
+        <div>
+          {currentQuality && (
+            <span style={{ fontSize: '0.9em' }}>{currentQuality}</span>
+          )}
+        </div>
+      </div>
+    </div>
   );
+};
+
+const buttonStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: 'white',
+  cursor: 'pointer',
+  padding: '5px',
+  fontSize: '1em',
 };
 
 export default IvsPlayer;
