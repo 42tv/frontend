@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { FaPlay, FaPause, FaVolumeMute, FaVolumeUp } from 'react-icons/fa'; // 아이콘 가져오기
 
 type Props = {
   streamUrl: string;
@@ -142,33 +144,20 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', backgroundColor: '#000' }}>
+    <div className="relative w-full bg-black">
       <video
         ref={videoRef}
         playsInline
         muted // muted 속성 추가
-        style={{ width: '100%', borderRadius: '8px', display: 'block' }}
+        className="w-full rounded-lg block"
       />
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        padding: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        color: 'white',
-        opacity: 1,
-        transition: 'opacity 0.3s ease',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <button onClick={handlePlayPause} style={buttonStyle}>
-            {isPlaying ? 'Pause' : 'Play'}
+      <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2.5 flex items-center justify-between text-white opacity-100 transition-opacity duration-300 ease-in-out">
+        <div className="flex items-center gap-4">
+          <button onClick={handlePlayPause} className="bg-transparent border-none text-white cursor-pointer p-1 text-xl"> {/* 아이콘 크기 조절을 위해 text-xl 추가 */}
+            {isPlaying ? <FaPause /> : <FaPlay />}
           </button>
-          <button onClick={handleMuteToggle} style={buttonStyle}>
-            {isMuted ? 'Unmute' : 'Mute'}
+          <button onClick={handleMuteToggle} className="bg-transparent border-none text-white cursor-pointer p-1 text-xl"> {/* 아이콘 크기 조절을 위해 text-xl 추가 */}
+            {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
           </button>
           <input
             type="range"
@@ -177,27 +166,18 @@ const IvsPlayer = ({ streamUrl }: Props) => {
             step="0.05"
             value={isMuted ? 0 : volume}
             onChange={handleVolumeChange}
-            style={{ cursor: 'pointer', width: '80px' }}
+            className="cursor-pointer w-20 accent-white disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isMuted}
           />
         </div>
         <div>
           {currentQuality && (
-            <span style={{ fontSize: '0.9em' }}>{currentQuality}</span>
+            <span className="text-sm">{currentQuality}</span>
           )}
         </div>
       </div>
     </div>
   );
-};
-
-const buttonStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'white',
-  cursor: 'pointer',
-  padding: '5px',
-  fontSize: '1em',
 };
 
 export default IvsPlayer;
