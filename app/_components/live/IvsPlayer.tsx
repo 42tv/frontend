@@ -25,7 +25,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<any | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true); // 초기값을 true로 변경
   const [volume, setVolume] = useState(1); // 볼륨 상태 (0 ~ 1)
   const [currentQuality, setCurrentQuality] = useState<string | null>(null); // 현재 화질 상태
 
@@ -44,15 +44,17 @@ const IvsPlayer = ({ streamUrl }: Props) => {
               wasmWorker: '/ivs/amazon-ivs-wasmworker.min.js',
               wasmBinary: '/ivs/amazon-ivs-wasmworker.min.wasm',
             });
-            streamUrl = "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8"
             playerRef.current = playerInstance;
+            streamUrl = "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8"
             playerInstance.attachHTMLVideoElement(videoRef.current);
             playerInstance.load(streamUrl);
             playerInstance.play();
-            setIsPlaying(true);
+            setIsPlaying(true); // play() 호출 후 즉시 true로 설정
 
+            // 볼륨 및 음소거 상태 설정 (play 이후)
             playerInstance.setVolume(volume);
-            playerInstance.setMuted(false);
+            playerInstance.setMuted(false); // 음소거 해제 시도
+            setIsMuted(false); // 내부 상태도 동기화
 
             const onPlaying = () => {
               console.log('Player State - PLAYING');
@@ -144,6 +146,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
       <video
         ref={videoRef}
         playsInline
+        muted // muted 속성 추가
         style={{ width: '100%', borderRadius: '8px', display: 'block' }}
       />
       <div style={{
