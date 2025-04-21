@@ -32,7 +32,7 @@ export default function LivePage() {
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-2xl font-bold mb-6">Live Streams</h1>
             {lives.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]"> {/* <--- 이 부분을 수정 */}
                     {lives.map((live, index) => ( // Pass live and index to the new component
                        <LiveStreamCard key={`${live.user_idx}-${live.start_time}`} live={live} index={index} />
                     ))}
