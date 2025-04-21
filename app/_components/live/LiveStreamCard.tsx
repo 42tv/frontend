@@ -3,10 +3,12 @@ import Image from "next/image";
 import { FiHeart, FiUser } from 'react-icons/fi'; // react-icons에서 아이콘 가져오기
 import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가져오기
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
+import Link from 'next/link'; // Link 컴포넌트 추가
 
 // Define interfaces for the data structure (moved from page.tsx)
 interface User {
     idx: number;
+    user_id: string;
     nickname: string;
     profile_img: string;
 }
@@ -74,7 +76,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     }, [live.start_time]); // start_time이 변경될 경우에만 재계산 (실제로는 거의 없음)
 
     return (
-        <div key={`${live.user_idx}-${live.start_time}`} className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full">
+        <Link href={`/live/${live.user.user_id}`} className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full cursor-pointer"> {/* Link 추가 및 className 이동, cursor-pointer 추가 */}
             <div className="relative w-full aspect-[16/9]">
                 <Image
                     src={live.thumbnail || DEFAULT_PLACEHOLDER_IMAGE_URL}
@@ -107,7 +109,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 
