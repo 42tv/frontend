@@ -20,6 +20,7 @@ interface IVSPlayer {
     PLAYING: string;
     PAUSED: string;
     ENDED: string;
+    READY: string;
   };
 }
 
@@ -27,7 +28,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<any | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1); // 볼륨 상태 (0 ~ 1)
   const [currentQuality, setCurrentQuality] = useState<string | null>(null); // 현재 화질 상태
 
@@ -56,6 +57,13 @@ const IvsPlayer = ({ streamUrl }: Props) => {
               console.log('Player State - PLAYING');
               setIsPlaying(true);
             };
+            const onReady = () => {
+              console.log('Player State - READY');
+              // 플레이어가 준비되면 재생 시도
+              if (playerRef.current) {
+                playerRef.current.play()
+              }
+            };
             const onPaused = () => {
               console.log('Player State - PAUSED');
               setIsPlaying(false);
@@ -73,6 +81,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
             };
 
             playerInstance.addEventListener(PlayerState.PLAYING, onPlaying);
+            playerInstance.addEventListener(PlayerState.READY, onReady);
             playerInstance.addEventListener(PlayerState.PAUSED, onPaused);
             playerInstance.addEventListener(PlayerState.ENDED, onEnded);
             playerInstance.addEventListener(PlayerEventType.ERROR, onError);
@@ -157,7 +166,6 @@ const IvsPlayer = ({ streamUrl }: Props) => {
       <video
         ref={videoRef}
         playsInline
-        autoPlay
         className="w-full rounded-lg block"
       />
       <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2.5 flex items-center justify-between text-white opacity-100 transition-opacity duration-300 ease-in-out">
