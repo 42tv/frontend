@@ -26,16 +26,17 @@ interface IVSPlayer {
 const IvsPlayer = ({ streamUrl }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<any | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // 초기값을 true로 변경
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(1); // 볼륨 상태 (0 ~ 1)
   const [currentQuality, setCurrentQuality] = useState<string | null>(null); // 현재 화질 상태
 
   useEffect(() => {
     const videoElement = videoRef.current;
     let playerInstance: any = null;
+    let playTimeout: NodeJS.Timeout | null = null; // setTimeout ID 저장 변수 추가
 
-    if (videoElement) {
+    if (videoElement && streamUrl) { // streamUrl 유효성 검사 추가
       const initPlayer = async () => {
         try {
           const IVSPlayerModule = (await import('amazon-ivs-player')) as unknown as IVSPlayer;
@@ -47,17 +48,10 @@ const IvsPlayer = ({ streamUrl }: Props) => {
               wasmBinary: '/ivs/amazon-ivs-wasmworker.min.wasm',
             });
             playerRef.current = playerInstance;
-            streamUrl = "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8"
+
             playerInstance.attachHTMLVideoElement(videoRef.current);
-            playerInstance.load(streamUrl);
-            playerInstance.play();
-            setIsPlaying(true); // play() 호출 후 즉시 true로 설정
 
-            // 볼륨 및 음소거 상태 설정 (play 이후)
-            playerInstance.setVolume(volume);
-            playerInstance.setMuted(false); // 음소거 해제 시도
-            setIsMuted(false); // 내부 상태도 동기화
-
+            // 이벤트 리스너 먼저 등록
             const onPlaying = () => {
               console.log('Player State - PLAYING');
               setIsPlaying(true);
@@ -84,6 +78,18 @@ const IvsPlayer = ({ streamUrl }: Props) => {
             playerInstance.addEventListener(PlayerEventType.ERROR, onError);
             playerInstance.addEventListener(PlayerEventType.QUALITY_CHANGED, onQualityChanged);
 
+            // 스트림 로드 및 재생 시도
+            playerInstance.load(streamUrl);
+            playerInstance.setVolume(volume); // 볼륨 설정
+            playerInstance.setMuted(isMuted); // 초기 음소거 상태 설정
+
+            // 1초 후에 재생 시작
+            playTimeout = setTimeout(() => {
+              if (playerRef.current) { // 컴포넌트 언마운트 또는 플레이어 정리 시 예외 처리
+                playerRef.current.play();
+              }
+            }, 3000);
+
             const initialQuality = playerInstance.getQuality();
             if (initialQuality) {
               setCurrentQuality(`${initialQuality.height}p`);
@@ -99,6 +105,9 @@ const IvsPlayer = ({ streamUrl }: Props) => {
     }
 
     return () => {
+      if (playTimeout) {
+        clearTimeout(playTimeout); // setTimeout 클리어
+      }
       const currentPlayer = playerRef.current;
       if (currentPlayer) {
         console.log("Cleaning up IVS Player");
@@ -148,7 +157,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
       <video
         ref={videoRef}
         playsInline
-        muted // muted 속성 추가
+        autoPlay
         className="w-full rounded-lg block"
       />
       <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2.5 flex items-center justify-between text-white opacity-100 transition-opacity duration-300 ease-in-out">
