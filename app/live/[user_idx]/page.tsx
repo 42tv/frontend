@@ -11,7 +11,7 @@ export default function LivePage({ params }: LivePageProps) {
     // TODO: user_idx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const user_idx = params.user_idx;
     const streamData = { // 임시 데이터
-        streamUrl: "", // 실제 스트림 URL 필요
+        streamUrl: "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8", // 실제 스트림 URL 필요
         title: `User ${user_idx}'s Live Stream`,
         description: "Welcome to the stream!",
     };
