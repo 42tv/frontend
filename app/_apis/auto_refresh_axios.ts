@@ -34,6 +34,7 @@ api.interceptors.response.use(
         delete originalRequest.headers["cookie"];
         return api(originalRequest);
       } catch (error) {
+        window.location.href = "/live"; // 로그인 페이지 경로로 변경하세요.
         return Promise.reject(error);
       }
     }
