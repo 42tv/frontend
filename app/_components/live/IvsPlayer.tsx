@@ -20,7 +20,7 @@ interface IVSPlayer {
     PLAYING: string;
     PAUSED: string;
     ENDED: string;
-    READY: string;
+    READY: string; // READY 상태 추가
   };
 }
 
@@ -35,7 +35,6 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   useEffect(() => {
     const videoElement = videoRef.current;
     let playerInstance: any = null;
-    let playTimeout: NodeJS.Timeout | null = null; // setTimeout ID 저장 변수 추가
 
     if (videoElement && streamUrl) { // streamUrl 유효성 검사 추가
       const initPlayer = async () => {
@@ -53,16 +52,16 @@ const IvsPlayer = ({ streamUrl }: Props) => {
             playerInstance.attachHTMLVideoElement(videoRef.current);
 
             // 이벤트 리스너 먼저 등록
-            const onPlaying = () => {
-              console.log('Player State - PLAYING');
-              setIsPlaying(true);
-            };
             const onReady = () => {
               console.log('Player State - READY');
               // 플레이어가 준비되면 재생 시도
               if (playerRef.current) {
-                playerRef.current.play()
+                playerRef.current.play();
               }
+            };
+            const onPlaying = () => {
+              console.log('Player State - PLAYING');
+              setIsPlaying(true);
             };
             const onPaused = () => {
               console.log('Player State - PAUSED');
@@ -80,24 +79,17 @@ const IvsPlayer = ({ streamUrl }: Props) => {
               setCurrentQuality(`${quality.height}p`);
             };
 
+            playerInstance.addEventListener(PlayerState.READY, onReady); // READY 이벤트 리스너 추가
             playerInstance.addEventListener(PlayerState.PLAYING, onPlaying);
-            playerInstance.addEventListener(PlayerState.READY, onReady);
             playerInstance.addEventListener(PlayerState.PAUSED, onPaused);
             playerInstance.addEventListener(PlayerState.ENDED, onEnded);
             playerInstance.addEventListener(PlayerEventType.ERROR, onError);
             playerInstance.addEventListener(PlayerEventType.QUALITY_CHANGED, onQualityChanged);
 
-            // 스트림 로드 및 재생 시도
+            // 스트림 로드
             playerInstance.load(streamUrl);
             playerInstance.setVolume(volume); // 볼륨 설정
             playerInstance.setMuted(isMuted); // 초기 음소거 상태 설정
-
-            // 1초 후에 재생 시작
-            playTimeout = setTimeout(() => {
-              if (playerRef.current) { // 컴포넌트 언마운트 또는 플레이어 정리 시 예외 처리
-                playerRef.current.play();
-              }
-            }, 3000);
 
             const initialQuality = playerInstance.getQuality();
             if (initialQuality) {
@@ -114,9 +106,6 @@ const IvsPlayer = ({ streamUrl }: Props) => {
     }
 
     return () => {
-      if (playTimeout) {
-        clearTimeout(playTimeout); // setTimeout 클리어
-      }
       const currentPlayer = playerRef.current;
       if (currentPlayer) {
         console.log("Cleaning up IVS Player");
