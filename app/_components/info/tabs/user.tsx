@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
 import { Button } from "@mui/material";
-import { updateNickname, updatePassword } from "@/app/_apis/user";
+import { getInfo, updateNickname, updatePassword } from "@/app/_apis/user";
 import errorModalStore from "../../utils/store/errorModalStore";
 import ErrorMessage from "../../modals/error_component";
-import useUserStore from "../../utils/store/userStore";
 
 export default function UserTab() {
     const { openError } = errorModalStore();
-    const { nickname, setNickname} = useUserStore();
+    const [nickname, setNickname ] = useState<string>("");
     const [inputNickname, setInputNickname] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -20,6 +19,19 @@ export default function UserTab() {
         newPassword, setNewPassword,
         passwordCheck, setPasswordCheck
     }
+
+    useEffect(() => {
+        async function fetchUserInfo() {
+            try {
+                const response = await getInfo();
+                setNickname(response.nickname);
+                setInputNickname(response.nickname);
+            } catch (error) {
+                console.error("Error fetching user info:", error);
+            }
+        }
+        fetchUserInfo();
+    }, []);
 
     async function updateUserInfo() {
         const isNicknameChanged = nickname != inputNickname;
