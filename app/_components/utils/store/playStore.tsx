@@ -6,7 +6,7 @@ interface PlayState extends PlayResponse {
 }
 
 const usePlayStore = create<PlayState>((set) => ({
-    playback_url: "", // Add the missing playback_url property
+    playback_url: null, // Add the missing playback_url property
     setPlaybackUrl: (playback_url: string | null) => set(() => ({ playback_url  })), // Set the playback URL
 }));
 

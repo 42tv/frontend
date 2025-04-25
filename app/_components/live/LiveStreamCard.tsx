@@ -83,8 +83,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
             const response = await requestPlay(live.user.user_id)
             setPlaybackUrl(response.playback_url);
             router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동
-
-            console.log(response);
+            
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
