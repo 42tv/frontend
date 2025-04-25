@@ -3,7 +3,8 @@ import Image from "next/image";
 import { FiHeart, FiUser } from 'react-icons/fi'; // react-icons에서 아이콘 가져오기
 import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가져오기
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
-import Link from 'next/link'; // Link 컴포넌트 추가
+import { requestPlay } from "@/app/_apis/live";
+import usePlayStore from "../utils/store/playStore";
 
 // Define interfaces for the data structure (moved from page.tsx)
 interface User {
@@ -38,6 +39,7 @@ interface LiveStreamCardProps {
 
 export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     const [elapsedTime, setElapsedTime] = useState(''); // 경과 시간 상태 추가
+    const { setPlaybackUrl } = usePlayStore()
 
     // Helper function to format large numbers
     const formatCount = (count: number): string => {
@@ -70,13 +72,27 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
         return `${formattedHours}:${formattedMinutes}`;
     };
 
+    async function handlePlay() {
+        try {
+            const response = await requestPlay();
+            setPlaybackUrl(response.playback_url);
+            console.log(response);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        catch(e) {
+        }
+    }
+
     // Calculate elapsed time on component mount
     useEffect(() => {
         setElapsedTime(formatElapsedTime(live.start_time));
     }, [live.start_time]); // start_time이 변경될 경우에만 재계산 (실제로는 거의 없음)
 
     return (
-        <Link href={`/live/${live.user.user_id}`} className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full cursor-pointer"> {/* Link 추가 및 className 이동, cursor-pointer 추가 */}
+        <div 
+            className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full cursor-pointer"
+            onClick={() => handlePlay()}
+        > {/* Link 추가 및 className 이동, cursor-pointer 추가 */}
             <div className="relative w-full aspect-[16/9]">
                 <Image
                     src={live.thumbnail || DEFAULT_PLACEHOLDER_IMAGE_URL}
@@ -109,7 +125,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                     </div>
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }
 

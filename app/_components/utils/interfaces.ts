@@ -4,3 +4,7 @@ export interface UserResponse {
   nickname: string;
   profile_img: string;
 }
+
+export interface PlayResponse {
+  playback_url: string | null;
+}

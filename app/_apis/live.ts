@@ -9,3 +9,13 @@ export async function getLiveList() {
   });
   return response.data;
 }
+
+export async function requestPlay() {
+  const response = await api.post("/api/play", {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}
