@@ -10,9 +10,13 @@ export async function getLiveList() {
   return response.data;
 }
 
-export async function requestPlay() {
+export async function requestPlay(streamId: string, password?: string) {
   const response = await api.post("/api/play", {
     withCredentials: true,
+    data: {
+      stream_id: streamId,
+      password: password,
+    },
     headers: {
       "Content-Type": "application/json",
     },

@@ -84,8 +84,14 @@ export async function deletePosts(postIds: number[]) {
  */
 export async function sendPost(userId: string, message: string) {
   const response = await api.post("/api/post", {
-    userId: userId,
-    message: message,
+    data: {
+      userId: userId,
+      message: message,
+    },
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   return response.data;
 }
@@ -96,7 +102,13 @@ export async function sendPost(userId: string, message: string) {
  * @returns
  */
 export async function blockPostUser(userIdx: number) {
-  const response = await api.post(`/api/post/block/user/${userIdx}`);
+  const response = await api.post(`/api/post/block/user/${userIdx}`, {
+    data: {},
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return response.data;
 }
 
@@ -105,7 +117,13 @@ export async function blockPostUser(userIdx: number) {
  * @returns
  */
 export async function getBlockedPostUser() {
-  const response = await api.get(`/api/post/block/user`);
+  const response = await api.get(`/api/post/block/user`, {
+    data: {},
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return response.data;
 }
 
@@ -115,7 +133,13 @@ export async function getBlockedPostUser() {
  * @returns
  */
 export async function unblockPostUser(userIdx: number) {
-  const response = await api.delete(`/api/post/block/user/${userIdx}`);
+  const response = await api.delete(`/api/post/block/user/${userIdx}`, {
+    data: {},
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return response.data;
 }
 
@@ -123,6 +147,10 @@ export async function unblockPostUsers(userIdxs: number[]) {
   const response = await api.delete(`/api/post/block/user`, {
     data: {
       blockedUserIdxs: userIdxs,
+    },
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
     },
   });
   return response.data;

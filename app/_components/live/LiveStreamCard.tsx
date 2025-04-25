@@ -5,6 +5,10 @@ import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가�
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
 import { requestPlay } from "@/app/_apis/live";
 import usePlayStore from "../utils/store/playStore";
+import errorModalStore from "../utils/store/errorModalStore";
+import ErrorMessage from "../modals/error_component";
+import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
 
 // Define interfaces for the data structure (moved from page.tsx)
 interface User {
@@ -39,7 +43,9 @@ interface LiveStreamCardProps {
 
 export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     const [elapsedTime, setElapsedTime] = useState(''); // 경과 시간 상태 추가
+    const { openError } = errorModalStore()
     const { setPlaybackUrl } = usePlayStore()
+    const router = useRouter(); // useRouter 훅 사용
 
     // Helper function to format large numbers
     const formatCount = (count: number): string => {
@@ -74,12 +80,16 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
 
     async function handlePlay() {
         try {
-            const response = await requestPlay();
+            const response = await requestPlay(live.user.user_id)
             setPlaybackUrl(response.playback_url);
+            router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동
+
             console.log(response);
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
+            const message = getApiErrorMessage(e);
+            openError(<ErrorMessage message={message} />);
         }
     }
 

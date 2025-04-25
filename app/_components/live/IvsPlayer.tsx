@@ -116,7 +116,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
         setCurrentQuality(null);
       }
     };
-  }, [streamUrl]);
+  }, []);
 
   const handlePlayPause = () => {
     if (playerRef.current) {
