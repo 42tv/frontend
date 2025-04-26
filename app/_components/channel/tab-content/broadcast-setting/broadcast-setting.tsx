@@ -133,7 +133,8 @@ export default function BroadcastSettings() {
             <label className="w-[100px]">스트림키</label>
         </div>
         <div className="flex col-span-4 items-center space-x-2">
-            <div className="flex w-full h-[40px] border items-center border-1 px-2 py-1 rounded-md space-x-3">
+            <div 
+              className="flex w-full h-[40px] border items-center border-1 px-2 py-1 rounded-md space-x-3">
               <input 
                 type={showStreamKey ? "text" : "password"} 
                 value={streamKey} 
@@ -141,11 +142,11 @@ export default function BroadcastSettings() {
                 className="flex w-full focus:outline-none"
               />
               {showStreamKey ? (
-                <FiEyeOff size={iconSize} onClick={toggleStreamKeyVisibility} className="cursor-pointer" />
+                <FiEyeOff title="감추기" size={iconSize} onClick={toggleStreamKeyVisibility} className="cursor-pointer" />
               ) : (
-                <FiEye size={iconSize} onClick={toggleStreamKeyVisibility} className="cursor-pointer" />
+                <FiEye title="보이기" size={iconSize} onClick={toggleStreamKeyVisibility} className="cursor-pointer" />
               )}
-              <FiCopy size={iconSize} onClick={() => copyToClipboard(streamKey, "스트림키 복사")} className="cursor-pointer" />
+              <FiCopy title="복사하기" size={iconSize} onClick={() => copyToClipboard(streamKey, "스트림키 복사")} className="cursor-pointer" />
             </div>
         </div>
         <div className="flex col-span-1 justify-center items-center">
@@ -169,7 +170,7 @@ export default function BroadcastSettings() {
               readOnly 
               className="flex w-full focus:outline-none"
             />
-            <FiCopy size={iconSize} onClick={() => copyToClipboard(serverUrl, "서버URL 복사")} className="cursor-pointer" />
+            <FiCopy title="복사하기" size={iconSize} onClick={() => copyToClipboard(serverUrl, "서버URL 복사")} className="cursor-pointer" />
           </div>
         </div>
       </div>

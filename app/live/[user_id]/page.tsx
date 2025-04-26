@@ -7,6 +7,9 @@ import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, use } from "react"; // 'use' 제거
+import { FiBookmark, FiMail } from "react-icons/fi";
+import { GiPresent } from "react-icons/gi";
+import { MdFilePresent, MdOutlineRecommend, MdRecommend } from "react-icons/md";
 
 interface LivePageProps {
     user_id: string;
@@ -63,10 +66,29 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                <div className="p-4 border-t border-gray-700 flex-shrink-0"> {/* flex-shrink-0 추가 */}
+                {/* 스트림 정보 영역 */}
+                <div className="p-4 border-t border-gray-700 flex items-center justify-between flex-shrink-0">
+                  {/* 텍스트 정보 */}
+                  <div>
                     <h2 className="text-xl font-semibold">{streamData.title}</h2>
                     <p className="text-sm text-gray-400">{userData.nickname}</p>
-                    {/* TODO: 시청자 수, 좋아요 수 등 추가 정보 */}
+                  </div>
+
+                  {/* 아이콘 영역 */}
+                  <div className="flex items-center space-x-4 text-gray-400 text-xl">
+                    <button title="북마크">
+                      <FiBookmark />
+                    </button>
+                    <button title="쪽지">
+                      <FiMail />
+                    </button>
+                    <button title="좋아요">
+                      <MdOutlineRecommend />
+                    </button>
+                    <button title="선물">
+                      <GiPresent/>
+                    </button>
+                    </div>
                 </div>
             </div>
              {/* 채팅 영역 컨테이너 */}

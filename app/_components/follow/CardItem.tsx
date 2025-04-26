@@ -51,7 +51,8 @@ const CardItem: React.FC<CardItemProps> = ({
         alt={title}
         fill // fill prop 추가
         style={{ objectFit: 'cover' }} // object-cover 스타일 적용
-        className="rounded-t-lg" // 상단 모서리 둥글게 처리 (선택 사항)
+        className="object-cover rounded-t-lg" // 상단 모서리 둥글게 처리 (선택 사항)
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       />
     </div>
     <div className="p-2">
