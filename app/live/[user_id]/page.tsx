@@ -7,9 +7,10 @@ import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, use } from "react"; // 'use' 제거
+import { AiOutlineLike } from "react-icons/ai";
 import { FiBookmark, FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
-import { MdFilePresent, MdOutlineRecommend, MdRecommend } from "react-icons/md";
+import { MdOutlineRecommend } from "react-icons/md";
 
 interface LivePageProps {
     user_id: string;
@@ -75,17 +76,19 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                   </div>
 
                   {/* 아이콘 영역 */}
-                  <div className="flex items-center space-x-4 text-gray-400 text-xl">
-                    <button title="북마크">
+                  <div className="flex items-center space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
+                    <button 
+                        title="북마크" 
+                        className="hover:text-white transition-colors duration-200">
                       <FiBookmark />
                     </button>
-                    <button title="쪽지">
+                    <button title="쪽지" className="hover:text-white transition-colors duration-200">
                       <FiMail />
                     </button>
-                    <button title="좋아요">
-                      <MdOutlineRecommend />
+                    <button title="좋아요" className="hover:text-white transition-colors duration-200">
+                      <AiOutlineLike/>
                     </button>
-                    <button title="선물">
+                    <button title="선물" className="hover:text-white transition-colors duration-200">
                       <GiPresent/>
                     </button>
                     </div>
