@@ -10,7 +10,6 @@ import { useEffect, useState, use } from "react"; // 'use' 제거
 import { AiOutlineLike } from "react-icons/ai";
 import { FiBookmark, FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
-import { MdOutlineRecommend } from "react-icons/md";
 
 interface LivePageProps {
     user_id: string;
