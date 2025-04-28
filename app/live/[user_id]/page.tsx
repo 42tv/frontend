@@ -1,6 +1,7 @@
 'use client';
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { requestPlay } from "@/app/_apis/live";
+import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
 import Chat from "@/app/_components/live/stream/Chat";
 import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import ErrorMessage from "@/app/_components/modals/error_component";
@@ -8,8 +9,9 @@ import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, use } from "react"; // 'use' 제거
 import { AiOutlineLike } from "react-icons/ai";
-import { FiBookmark, FiMail } from "react-icons/fi";
+import { FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
+import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 
 interface LivePageProps {
     user_id: string;
@@ -17,6 +19,7 @@ interface LivePageProps {
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playback_url, setPlaybackUrl} = usePlayStore();
+    const [isBookmarked, setIsBookmarked] = useState(false);
     const {openError} = errorModalStore();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [streamUrl, setStreamUrl] = useState<string>("");
@@ -33,6 +36,22 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         profileImageUrl: "/placeholder.png", // 실제 프로필 이미지 URL 필요
     };
 
+    async function toggleBookmark() {
+        try {
+            if (isBookmarked) {
+                await requestDeleteBookMark(user_id);
+            }
+            else {
+                await requestCreateBookMark(user_id);
+            }
+            setIsBookmarked(!isBookmarked);
+        }
+        catch (e) {
+            const message = getApiErrorMessage(e);
+            openError(<ErrorMessage message={message} />);
+        }
+    }
+
     useEffect(() => {
         async function fetchStreamUrl() {
             console.log("playback_url:", playback_url);
@@ -46,6 +65,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     console.log("Response:", response);
                     if (response && response.playback_url) { // 응답 및 playback_url 확인
                         setStreamUrl(response.playback_url);
+                        setIsBookmarked(response.is_bookmarked);
                     } else {
                          console.error("Invalid response structure:", response);
                     }
@@ -78,8 +98,10 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                   <div className="flex items-center space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
                     <button 
                         title="북마크" 
-                        className="hover:text-white transition-colors duration-200">
-                      <FiBookmark />
+                        className="hover:text-white transition-colors duration-200"
+                        onClick={() => { toggleBookmark();}}
+                    >
+                      {isBookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
                     </button>
                     <button title="쪽지" className="hover:text-white transition-colors duration-200">
                       <FiMail />

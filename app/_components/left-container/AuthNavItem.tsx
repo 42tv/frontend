@@ -29,7 +29,7 @@ const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) =>
       className={`flex w-full h-[60px] cursor-pointer bg-white dark:bg-darkBg`}
     >
       <div className="flex w-full m-3 items-center justify-start space-x-4 flex-row rounded-[10px] hover:bg-gray-200 dark:hover:bg-contentBg">
-        <Icon className="ml-5 w-5 h-5" />
+        <Icon className="ml-7 w-5 h-5" />
         <span>{label}</span>
       </div>
     </div>

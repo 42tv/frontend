@@ -16,7 +16,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, href }) => { // hr
       >
         {/* justify-center를 justify-start로 변경하고 px-4 추가 */}
         <div className="flex w-full m-3 items-center justify-start space-x-4 flex-row rounded-[10px] hover:bg-gray-200 dark:hover:bg-contentBg">
-        <Icon className="ml-5 w-5 h-5" />
+        <Icon className="ml-7 w-5 h-5" />
         <span>{label}</span>
       </div>
       </div>

@@ -64,6 +64,10 @@ export async function logout() {
   return response.data;
 }
 
+/**
+ * login_info
+ * @returns
+ */
 export async function getLoginInfo() {
   const response = await api.get("/api/auth/login_info", {
     withCredentials: true,
@@ -167,9 +171,9 @@ export async function getBroadcastSetting() {
 }
 
 /**
- * Upload a profile image to the server
- * @param imageFile The image file to upload
- * @returns A promise that resolves with the uploaded image URL
+ * 프로필 이미지 업로드
+ * @param imageFile
+ * @returns
  */
 export async function uploadProfileImage(
   imageFile: File
@@ -178,6 +182,36 @@ export async function uploadProfileImage(
   formData.append("image", imageFile);
 
   const response = await api.post("/api/user/profile", formData, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * 북마크 요청
+ * @param user_id
+ * @returns
+ */
+export async function requestCreateBookMark(user_id: string) {
+  const response = await api.post(
+    `/api/user/bookmark`,
+    {
+      user_id: user_id,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+/**
+ * 북마크 제거 요청
+ * @param user_id
+ * @returns
+ */
+export async function requestDeleteBookMark(user_id: string) {
+  const response = await api.delete(`/api/user/bookmark/${user_id}`, {
     withCredentials: true,
   });
   return response.data;
