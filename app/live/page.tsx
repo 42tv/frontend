@@ -29,10 +29,10 @@ export default function LivePage() {
     }, []);
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 overflow-x-hidden">
             <h1 className="text-2xl font-bold mb-6">Live Streams</h1>
             {lives.length > 0 ? (
-                <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]"> {/* <--- 이 부분을 수정 */}
+                <div className="grid gap-4 grid-cols-4 lg:grid-cols-5"> {/* <--- grid-cols-4 lg:grid-cols-5 로 수정 */}
                     {lives.map((live, index) => ( // Pass live and index to the new component
                        <LiveStreamCard key={`${live.user_idx}-${live.start_time}`} live={live} index={index} />
                     ))}
