@@ -216,3 +216,14 @@ export async function requestDeleteBookMark(user_id: string) {
   });
   return response.data;
 }
+
+/**
+ * 북마크리스트 요청
+ * @returns
+ */
+export async function requestBookmarkList() {
+  const response = await api.get("/api/user/bookmark", {
+    withCredentials: true,
+  });
+  return response.data;
+}

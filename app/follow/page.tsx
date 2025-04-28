@@ -1,29 +1,55 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // useEffect 임포트
 import TabNav from '../_components/follow/TabNav';
 import ToggleSwitch from '../_components/follow/ToggleSwitch';
 import CardGrid from '../_components/follow/CardGrid';
 import { FiEdit } from 'react-icons/fi';
+import { requestBookmarkList } from '../_apis/user';
+import { CardData } from '../_components/utils/interfaces';
 
-const TABS = ['FAN','BOOKMARK'];
+const TABS = ['FAN', 'BOOKMARK'];
 
-const dummyData = [
-  { id: 1, title: '열혈팬 11위', subtitle: '리나∙', isLive: false },
-  { id: 2, title: '열혈팬 100위', subtitle: '퀸도희♡', isLive: false },
-  { id: 3, title: '열혈팬 117위', subtitle: '다락♡', isLive: false },
-  { id: 4, title: '열혈팬 120위', subtitle: '홈초콜ↄ', isLive: true },
-  // ... 더미 아이템 추가
-];
+// CardData 인터페이스 정의 (CardGrid와 일치시키거나 공유)
 
-export default function HomePage() {
+
+export default function FollowPage() {
   const [activeTab, setActiveTab] = useState(TABS[0]);
   const [showLiveOnly, setShowLiveOnly] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태 추가
-  const [selectedItems, setSelectedItems] = useState<number[]>([]); // 선택된 아이템 ID 배열 상태 추가
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [cardData, setCardData] = useState<CardData[]>([]); // API 데이터 상태
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const [error, setError] = useState<string | null>(null); // 에러 상태 추가
 
-  const filtered = showLiveOnly
-    ? dummyData.filter(item => item.isLive)
-    : dummyData;
+  // API 호출 함수
+  const fetchData = async (tab: string) => {
+    setIsLoading(true);
+    setError(null); // 이전 에러 초기화
+    try {
+      if (tab == "BOOKMARK") {
+        const response = await requestBookmarkList();
+        setCardData(response.lists); // API 응답 데이터 설정
+        console.log(response);
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      console.error("Failed to fetch data:", e);
+      setError(`데이터를 불러오는 데 실패했습니다: ${e.message}`);
+      setCardData([]); // 에러 발생 시 데이터 초기화
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // activeTab이 변경될 때 데이터 다시 불러오기
+  useEffect(() => {
+    fetchData(activeTab);
+  }, [activeTab]);
+
+  // 필터링 로직 (cardData 사용)
+  const filteredData = showLiveOnly
+    ? cardData.filter(item => item.is_live)
+    : cardData;
 
   // 아이템 선택/해제 핸들러
   const handleItemSelect = (id: number) => {
@@ -34,26 +60,13 @@ export default function HomePage() {
     );
   };
 
-  const handleEditToggle = () => {
+  const handleEditToggle = async () => { // async 추가
     if (isEditing) {
-      // 편집 완료 시 로직
       console.log('Selected items:', selectedItems);
-      // TODO: 백엔드 API 호출 로직 추가
-      // 예시:
-      // try {
-      //   await fetch('/api/follow/edit', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify({ selectedIds: selectedItems, tab: activeTab }),
-      //   });
-      //   // 성공 처리
-      // } catch (error) {
-      //   // 에러 처리
-      // }
       setIsEditing(false);
+      setSelectedItems([]); // 완료 후 선택 해제
     } else {
-      // 편집 시작 시 로직
-      setSelectedItems([]); // 편집 시작 시 선택 상태 초기화
+      setSelectedItems([]);
       setIsEditing(true);
     }
   };
@@ -64,12 +77,14 @@ export default function HomePage() {
       <TabNav tabs={TABS} active={activeTab} onChange={setActiveTab} />
       {/* 통계 & 토글 */}
       <div className="flex items-center justify-between mt-4">
-        <div className='flex flex-row space-x-2 items-center'> {/* items-center 추가 */}
-            <span>전체 {dummyData.length} | 숨김 86 | </span>
-            {/* 편집 버튼 클릭 핸들러 및 텍스트 변경 */}
+        <div className='flex flex-row space-x-2 items-center'>
+            {/* 로딩 상태 아닐 때만 전체 개수 표시 */}
+            {!isLoading && <span>전체 {cardData.length} | 숨김 86 | </span>}
+            {/* 편집 버튼 */}
             <button
-              className='flex flex-row items-center space-x-1 dark:text-textBase-dark dark:hover:text-white' // 아이콘과 텍스트 간격 조정 및 스타일 추가
+              className='flex flex-row items-center space-x-1 dark:text-textBase-dark dark:hover:text-white'
               onClick={handleEditToggle}
+              disabled={isLoading} // 로딩 중 비활성화
             >
               <FiEdit/>
               <span>{isEditing ? '완료' : '편집'}</span>
@@ -78,13 +93,20 @@ export default function HomePage() {
         <ToggleSwitch checked={showLiveOnly} onChange={setShowLiveOnly} />
       </div>
 
-      {/* 카드 그리드 - isEditing, selectedItems, onItemSelect props 전달 */}
-      <CardGrid
-        items={filtered}
-        isEditing={isEditing}
-        selectedItems={selectedItems}
-        onItemSelect={handleItemSelect}
-      />
+      {/* 로딩 및 에러 처리 */}
+      {isLoading ? (
+        <div className="text-center mt-8">로딩 중...</div>
+      ) : error ? (
+        <div className="text-center mt-8 text-red-500">{error}</div>
+      ) : (
+        /* 카드 그리드 - filteredData 전달 */
+        <CardGrid
+          items={filteredData}
+          isEditing={isEditing}
+          selectedItems={selectedItems}
+          onItemSelect={handleItemSelect}
+        />
+      )}
     </div>
   );
 }

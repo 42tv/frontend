@@ -5,7 +5,6 @@ import Image from 'next/image'; // Image 컴포넌트 임포트
 interface CardItemProps {
   imageUrl: string;
   title: string;
-  subtitle: string;
   isLive?: boolean;
   isEditing: boolean; // isEditing prop 추가
   isSelected: boolean; // isSelected prop 추가
@@ -15,7 +14,6 @@ interface CardItemProps {
 const CardItem: React.FC<CardItemProps> = ({
   imageUrl,
   title,
-  subtitle,
   isLive = false,
   isEditing, // isEditing prop 받기
   isSelected, // isSelected prop 받기
@@ -45,9 +43,9 @@ const CardItem: React.FC<CardItemProps> = ({
       </span>
     )}
     {/* Image 컴포넌트 사용 */}
-    <div className="relative w-full h-36"> {/* Image fill 사용을 위한 부모 요소 */}
+    <div className="relative w-full h-36 border-white border"> {/* Image fill 사용을 위한 부모 요소 */}
       <Image
-        src={imageUrl}
+        src={imageUrl || '/icons/anonymouse1.svg'} // 기본 이미지 URL 설정
         alt={title}
         fill // fill prop 추가
         style={{ objectFit: 'cover' }} // object-cover 스타일 적용
@@ -57,7 +55,6 @@ const CardItem: React.FC<CardItemProps> = ({
     </div>
     <div className="p-2">
       <h3 className="text-white text-sm font-semibold">{title}</h3>
-      <p className="text-gray-400 text-xs">{subtitle}</p>
     </div>
   </div>
 );
