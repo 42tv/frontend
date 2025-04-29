@@ -28,7 +28,8 @@ export default function FollowPage() {
     try {
       if (tab == "BOOKMARK") {
         const response = await requestBookmarkList();
-        setCardData(response.lists); // API 응답 데이터 설정
+        const multipledLives = Array.from({length: 20}).flatMap(() => response.lists);
+        setCardData(multipledLives); // API 응답 데이터 설정
         console.log(response);
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

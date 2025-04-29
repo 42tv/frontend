@@ -99,7 +99,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
 
     return (
         <div 
-            className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full cursor-pointer"
+            className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full cursor-pointer min-w-[275px]" // max-w-[275px] 제거
             onClick={() => handlePlay()}
         > {/* Link 추가 및 className 이동, cursor-pointer 추가 */}
             <div className="relative w-full aspect-[16/9]">
@@ -130,7 +130,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                             <FiHeart className="h-3 w-3 mr-0.5" />
                             {formatCount(live.like_cnt)}
                         </span>
-                        <span className="text-xs text-gray-500 mr-2 flex-shrink-0">{elapsedTime}</span>
+                        <span className="text-xs text-gray-500 flex-shrink-0">{elapsedTime}</span>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
@@ -7,17 +6,6 @@ import LeftContainer from "./_components/left-container/left-container";
 import Modal from "./_components/utils/modal/modal";
 import ErrorModal from "./_components/utils/modal/errorModal";
 import PopupModal from "./_components/utils/modal/popupModal";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,16 +20,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen`}
+        className={`antialiased flex flex-col h-screen`}
       >
         <ThemeProvider>
           <Toolbar />
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex flex-1">
             <LeftContainer />
             <Modal />
             <ErrorModal />
             <PopupModal />
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-x-auto">
               {children}
               {/* <FooterContainer /> */}
             </div>

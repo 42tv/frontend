@@ -21,8 +21,9 @@ const CardItem: React.FC<CardItemProps> = ({
 }) => (
   // group 클래스 추가하여 하위 요소에서 group-hover 사용 가능하게 함
   // 편집 모드일 때만 onClick 핸들러 활성화
+  // w-[250px] 추가
   <div
-    className={`relative rounded-lg overflow-hidden group ${isEditing ? 'cursor-pointer' : ''}`}
+    className={`flex flex-col relative rounded-lg overflow-hidden group ${isEditing ? 'cursor-pointer' : ''} w-[250px] `} // 배경색 및 flex-col 추가
     onClick={isEditing ? onClick : undefined} // 편집 모드일 때만 클릭 가능
   >
     {/* 편집 모드일 때만 보이는 오버레이 */}
@@ -43,18 +44,20 @@ const CardItem: React.FC<CardItemProps> = ({
       </span>
     )}
     {/* Image 컴포넌트 사용 */}
-    <div className="relative w-full h-36 border-white border"> {/* Image fill 사용을 위한 부모 요소 */}
+    {/* h-36 대신 aspect-[16/9] 사용 */}
+    <div className="relative w-full aspect-[16/9]"> {/* Image fill 사용을 위한 부모 요소 */}
       <Image
         src={imageUrl || '/icons/anonymouse1.svg'} // 기본 이미지 URL 설정
         alt={title}
         fill // fill prop 추가
         style={{ objectFit: 'cover' }} // object-cover 스타일 적용
-        className="object-cover rounded-t-lg" // 상단 모서리 둥글게 처리 (선택 사항)
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        className="object-cover" // rounded-t-lg 제거 (부모에서 overflow-hidden 처리)
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" // sizes 최적화
       />
     </div>
-    <div className="p-2">
-      <h3 className="text-white text-sm font-semibold">{title}</h3>
+    <div className="pt-2"> {/* flex-grow 추가 */}
+      {/* truncate 추가 */}
+      <h3 className="truncate">{title}</h3>
     </div>
   </div>
 );
