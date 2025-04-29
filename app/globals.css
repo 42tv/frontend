@@ -30,18 +30,22 @@
   --primary-foreground: 222.2 47.4% 11.2%;
 }
 
-/* 전체 레이아웃 설정 */
-.grid-rows-layout {
-  grid-template-rows: 60px 1fr 40px; /* 상단 60px, 메인 컨텐츠(가변 높이), 하단 40px */
+/* 전체 레이아웃 설정 - 제거 또는 주석 처리 */
+/* .grid-rows-layout {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: 60px 1fr 40px;
 }
 
 .grid-cols-layout {
-  grid-template-columns: 200px 1fr; /* 왼쪽 메뉴 200px, 메인 컨텐츠 */
-}
+  display: grid;
+  grid-template-columns: 200px 1fr;
+} */
 
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: hidden; /* 브라우저 기본 스크롤 숨김 */
 }

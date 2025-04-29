@@ -32,27 +32,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen`}
       >
-        <ThemeProvider >
-          <LeftContainer />
+        <ThemeProvider>
           <Toolbar />
-          <Modal />
-          <ErrorModal /> {/* 추가된 모달 */}
-          <PopupModal />
-          <div
-            className="flex flex-col absolute w-full h-full"
-            style={{
-              transform: "translate(200px, 65px)", // 위치 이동
-              width: "calc(100% - 200px)", // LeftContainer 제외한 너비
-              height: "calc(100% - 60px)", // Toolbar 제외한 높이
-            }}
-          >
-            {children}
-            {/* <FooterContainer /> */}
+          <div className="flex flex-1 overflow-hidden">
+            <LeftContainer />
+            <Modal />
+            <ErrorModal />
+            <PopupModal />
+            <div className="flex-1 overflow-auto">
+              {children}
+              {/* <FooterContainer /> */}
+            </div>
           </div>
         </ThemeProvider>
-        
       </body>
     </html>
   );

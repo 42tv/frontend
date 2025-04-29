@@ -6,7 +6,8 @@ import Menu from './menu';
 
 const LeftContainer: React.FC = () => {
   return (
-    <div className="fixed w-[200px] h-full top-[65px] border-r border-contentBg">
+    // fixed 제거, w-[200px] h-full 유지, border-r 추가
+    <div className="w-[200px] h-full border-r border-contentBg flex-shrink-0"> {/* flex-shrink-0 추가 */}
         <Menu />
         {/* <BookMark /> */}
         {/* <Recommend /> */}

@@ -18,19 +18,16 @@ const Toolbar: React.FC = () => {
     }, []);
 
   return (
-    <div>
-      <div className="fixed flex w-full h-[65px] items-center justify-between shadow-md z-50 border-contentBg border-b bg-white dark:bg-toolbarBg-dark bg-toolbarBg">
-        <Logo width='40pt' height='40pt'/>
-        <Search />
-        <div className="flex h-full gap-4 text-center items-center ml-auto mr-4">
-          <ToggleTheme />
-          {
-            nickname ? <ProfileIcon/> : <Login />
-          }
-        </div>
+    <div className="flex w-full h-[65px] items-center justify-between shadow-md border-contentBg border-b bg-white dark:bg-toolbarBg-dark bg-toolbarBg flex-shrink-0">
+      <Logo width='40pt' height='40pt'/>
+      <Search />
+      <div className="flex h-full gap-4 text-center items-center ml-auto mr-4">
+        <ToggleTheme />
+        {
+          nickname ? <ProfileIcon/> : <Login />
+        }
       </div>
     </div>
-    
   );
 };
 
