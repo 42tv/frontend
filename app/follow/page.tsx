@@ -17,7 +17,8 @@ export default function FollowPage() {
   const [showLiveOnly, setShowLiveOnly] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [cardData, setCardData] = useState<CardData[]>([]); // API 데이터 상태
+  const [bookmarkedCards, setBookmarkedCards] = useState<CardData[]>([]); // API 데이터 상태
+  const [fanCards, setFanCards] = useState<CardData[]>([]); // API 데이터 상태
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
   const [error, setError] = useState<string | null>(null); // 에러 상태 추가
 
@@ -26,17 +27,20 @@ export default function FollowPage() {
     setIsLoading(true);
     setError(null); // 이전 에러 초기화
     try {
-      if (tab == "BOOKMARK") {
+      if (tab == "BOOKMARK" && bookmarkedCards.length == 0) {
         const response = await requestBookmarkList();
         const multipledLives = Array.from({length: 20}).flatMap(() => response.lists);
-        setCardData(multipledLives); // API 응답 데이터 설정
+        setBookmarkedCards(multipledLives); // API 응답 데이터 설정
         console.log(response);
+      }
+      else if (tab == "FAN" && fanCards.length == 0) {
+        setFanCards([])
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error("Failed to fetch data:", e);
       setError(`데이터를 불러오는 데 실패했습니다: ${e.message}`);
-      setCardData([]); // 에러 발생 시 데이터 초기화
+      setBookmarkedCards([]); // 에러 발생 시 데이터 초기화
     } finally {
       setIsLoading(false);
     }
@@ -48,9 +52,10 @@ export default function FollowPage() {
   }, [activeTab]);
 
   // 필터링 로직 (cardData 사용)
-  const filteredData = showLiveOnly
-    ? cardData.filter(item => item.is_live)
-    : cardData;
+  const filteredBookmarkedCards = showLiveOnly ? 
+    bookmarkedCards.filter(item => item.is_live) : bookmarkedCards;
+  const filteredFanCards = showLiveOnly ?
+    fanCards.filter(item => item.is_live) : fanCards;
 
   // 아이템 선택/해제 핸들러
   const handleItemSelect = (id: number) => {
@@ -80,7 +85,7 @@ export default function FollowPage() {
       <div className="flex items-center justify-between mt-4">
         <div className='flex flex-row space-x-2 items-center'>
             {/* 로딩 상태 아닐 때만 전체 개수 표시 */}
-            {!isLoading && <span>전체 {cardData.length} | 숨김 86 | </span>}
+            {!isLoading && <span>전체 {bookmarkedCards.length} | 숨김 86 | </span>}
             {/* 편집 버튼 */}
             <button
               className='flex flex-row items-center space-x-1 dark:text-textBase-dark dark:hover:text-white'
@@ -102,7 +107,7 @@ export default function FollowPage() {
       ) : (
         /* 카드 그리드 - filteredData 전달 */
         <CardGrid
-          items={filteredData}
+          items={activeTab == "BOOKMARK" ? filteredBookmarkedCards : filteredFanCards}
           isEditing={isEditing}
           selectedItems={selectedItems}
           onItemSelect={handleItemSelect}
