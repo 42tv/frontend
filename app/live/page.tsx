@@ -1,26 +1,20 @@
 'use client';
 import { useEffect, useState } from "react";
 import LiveStreamCard, { Live } from "../_components/live/LiveStreamCard";
+import { getLiveList } from "../_apis/live";
 
 export default function LivePage() {
-    const [lives, setLives] = useState<Live[]>([]); // State to store live streams
+    const [lives, setLives] = useState<Live[]>([]);
 
     useEffect(() => {
         async function fetchLiveList() {
             try {
-                const response = await fetch("/api/live", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                });
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                const data = await response.json();
-                // Assuming the API returns the structure { lives: Live[] }
-                setLives(data.lives); // Set the fetched lives into state
+                const response = await getLiveList();
+                const fetchedLives = response.lives;
+
+                const multipliedLives = Array.from({ length: 5 }).flatMap(() => fetchedLives);
+                // const multipliedLives = [fetchedLives[0]]
+                setLives(multipliedLives);
             } catch (error) {
                 console.error("Error fetching live list:", error);
             }
@@ -29,12 +23,12 @@ export default function LivePage() {
     }, []);
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="p-4">
             <h1 className="text-2xl font-bold mb-6">Live Streams</h1>
             {lives.length > 0 ? (
-                <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]"> {/* <--- 이 부분을 수정 */}
-                    {lives.map((live, index) => ( // Pass live and index to the new component
-                       <LiveStreamCard key={`${live.user_idx}-${live.start_time}`} live={live} index={index} />
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(275px,1fr))] gap-4 justify-start">
+                    {lives.map((live, index) => (
+                        <LiveStreamCard key={`${live.user_idx}-${live.start_time}-${index}`} live={live} index={index} />
                     ))}
                 </div>
             ) : (

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
@@ -7,17 +6,6 @@ import LeftContainer from "./_components/left-container/left-container";
 import Modal from "./_components/utils/modal/modal";
 import ErrorModal from "./_components/utils/modal/errorModal";
 import PopupModal from "./_components/utils/modal/popupModal";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,27 +20,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`antialiased flex flex-col h-screen`}
       >
-        <ThemeProvider >
-          <LeftContainer />
+        <ThemeProvider>
           <Toolbar />
-          <Modal />
-          <ErrorModal /> {/* 추가된 모달 */}
-          <PopupModal />
-          <div
-            className="flex flex-col absolute w-full h-full"
-            style={{
-              transform: "translate(200px, 65px)", // 위치 이동
-              width: "calc(100% - 200px)", // LeftContainer 제외한 너비
-              height: "calc(100% - 60px)", // Toolbar 제외한 높이
-            }}
-          >
-            {children}
-            {/* <FooterContainer /> */}
+          <div className="flex flex-1">
+            <LeftContainer />
+            <Modal />
+            <ErrorModal />
+            <PopupModal />
+            <div className="flex-1 overflow-x-auto">
+              {children}
+              {/* <FooterContainer /> */}
+            </div>
           </div>
         </ThemeProvider>
-        
       </body>
     </html>
   );
