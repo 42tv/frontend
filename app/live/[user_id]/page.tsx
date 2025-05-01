@@ -24,7 +24,6 @@ interface LivePageProps {
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
     const [playDataState, setPlayDataState] = useState<PlayResponse>();
-    const [isBookmarked, setIsBookmarked] = useState(false);
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,13 +43,17 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     async function toggleBookmark() {
         try {
-            if (isBookmarked) {
+            console.log(playDataState?.is_bookmarked)
+            if (playDataState?.is_bookmarked) {
                 await requestDeleteBookMark(user_id);
             }
             else {
                 await requestCreateBookMark(user_id);
             }
-            setIsBookmarked(!isBookmarked);
+            setPlayDataState({
+                ...playDataState,
+                is_bookmarked: !playDataState?.is_bookmarked,
+            })
         }
         catch (e) {
             const message = getApiErrorMessage(e);
@@ -65,6 +68,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     useEffect(() => {
         async function fetchStreamUrl() {
+            console.log(playData);
             console.log("playback_url:", playData?.playback_url);
             if (playData?.playback_url) {
                 setPlayDataState({
@@ -121,7 +125,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         className="hover:text-white transition-colors duration-200"
                         onClick={() => { toggleBookmark();}}
                     >
-                      {isBookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
+                      {playDataState?.is_bookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
                     </button>
                     <button 
                         title="쪽지" 
