@@ -14,13 +14,16 @@ import { AiOutlineLike } from "react-icons/ai";
 import { FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
+import Image from 'next/image'; 
+import { PlayResponse } from "@/app/_components/utils/interfaces";
 
 interface LivePageProps {
     user_id: string;
 }
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
-    const {playback_url, setPlaybackUrl} = usePlayStore();
+    const {playData} = usePlayStore();
+    const [playDataState, setPlayDataState] = useState<PlayResponse>();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
@@ -62,21 +65,21 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     useEffect(() => {
         async function fetchStreamUrl() {
-            console.log("playback_url:", playback_url);
-            if (playback_url) {
-                setStreamUrl(playback_url);
-                setPlaybackUrl(null); // playback_url 사용 후 초기화
+            console.log("playback_url:", playData?.playback_url);
+            if (playData?.playback_url) {
+                setPlayDataState({
+                    playback_url: playData.playback_url,
+                    title: playData.title,
+                    is_bookmarked: playData.is_bookmarked,
+                    profile_img: playData.profile_img,
+                    nickname: playData.nickname,
+                })
             }
             else {
                 try {
                     const response = await requestPlay(user_id);
                     console.log("Response:", response);
-                    if (response && response.playback_url) { // 응답 및 playback_url 확인
-                        setStreamUrl(response.playback_url);
-                        setIsBookmarked(response.is_bookmarked);
-                    } else {
-                         console.error("Invalid response structure:", response);
-                    }
+                    setPlayDataState(response);
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
@@ -94,12 +97,21 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                {/* 스트림 정보 영역 */}
                 <div className="p-4 border-t border-gray-700 flex items-center justify-between flex-shrink-0">
                   {/* 텍스트 정보 */}
                   <div>
                     <h2 className="text-xl font-semibold">{streamData.title}</h2>
-                    <p className="text-sm text-gray-400">{userData.nickname}</p>
+                    <div className="flex flex-row items-center">
+                        <Image
+                            src={playDataState?.profile_img || "/icons/anonymouse1.svg"} // 기본 이미지 경로
+                            alt="프로필 이미지"
+                            width={50}
+                            height={50}
+                            className="rounded-lg mt-2"
+                        />
+                        <p className="text-sm text-gray-400">{userData.nickname}</p>
+                    </div>
+                    
                   </div>
 
                   {/* 아이콘 영역 */}

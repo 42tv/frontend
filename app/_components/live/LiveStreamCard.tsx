@@ -9,29 +9,9 @@ import errorModalStore from "../utils/store/errorModalStore";
 import ErrorMessage from "../modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
+import { Live } from "../utils/interfaces";
 
-// Define interfaces for the data structure (moved from page.tsx)
-interface User {
-    idx: number;
-    user_id: string;
-    nickname: string;
-    profile_img: string;
-}
 
-export interface Live { // Export the interface
-    user_idx: number;
-    thumbnail: string;
-    start_time: string;
-    title: string;
-    is_adult: boolean;
-    is_pw: boolean;
-    is_fan: boolean;
-    fan_level: number;
-    play_cnt: number;
-    like_cnt: number;
-    user: User;
-    viewerCount: number;
-}
 
 // Define a default placeholder image URL (moved from page.tsx)
 const DEFAULT_PLACEHOLDER_IMAGE_URL = "/placeholder.png"; // Adjust path as needed
@@ -44,7 +24,7 @@ interface LiveStreamCardProps {
 export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     const [elapsedTime, setElapsedTime] = useState(''); // 경과 시간 상태 추가
     const { openError } = errorModalStore()
-    const { setPlaybackUrl } = usePlayStore()
+    const { setPlayData } = usePlayStore()
     const router = useRouter(); // useRouter 훅 사용
 
     // Helper function to format large numbers
@@ -81,7 +61,8 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     async function handlePlay() {
         try {
             const response = await requestPlay(live.user.user_id)
-            setPlaybackUrl(response.playback_url);
+            setPlayData(response);
+
             router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동
             
         }
@@ -92,10 +73,9 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
         }
     }
 
-    // Calculate elapsed time on component mount
     useEffect(() => {
         setElapsedTime(formatElapsedTime(live.start_time));
-    }, [live.start_time]); // start_time이 변경될 경우에만 재계산 (실제로는 거의 없음)
+    }, []);
 
     return (
         <div 
@@ -105,7 +85,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
             <div className="relative w-full aspect-[16/9]">
                 <Image
                     src={live.thumbnail || DEFAULT_PLACEHOLDER_IMAGE_URL}
-                    alt={live.title}
+                    alt={live.user.broadcastSetting.title || "Live Stream Thumbnail"}
                     fill // Use fill prop
                     className="object-cover" 
                     priority={index < 4} // Prioritize first few images (adjust as needed)
@@ -113,7 +93,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                 />
             </div>
             <div className="pt-3 flex flex-col flex-grow"> 
-                <h3 className="truncate text-gray-200">{live.title}</h3> 
+                <h3 className="truncate text-gray-200">{live.user.broadcastSetting.title}</h3> 
                 <div className="flex items-center text-sm text-gray-400"> 
                     <span className="truncate flex-grow min-w-0 mr-2">{live.user.nickname}</span>
                     {/* Display viewer, play, and like counts */}

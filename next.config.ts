@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**", // 필요에 따라 경로를 더 구체적으로 지정할 수 있습니다.
       },
+      {
+        protocol: "https",
+        hostname: "632c5f96112a.ap-northeast-2.playback.live-video.net",
+        port: "",
+        pathname: "/**", // 필요에 따라 경로를 더 구체적으로 지정할 수 있습니다.
+      },
     ],
   },
   async rewrites() {

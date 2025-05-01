@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from "react";
-import LiveStreamCard, { Live } from "../_components/live/LiveStreamCard";
+import LiveStreamCard from "../_components/live/LiveStreamCard";
 import { getLiveList } from "../_apis/live";
+import { Live } from "../_components/utils/interfaces";
 
 export default function LivePage() {
     const [lives, setLives] = useState<Live[]>([]);
@@ -28,7 +29,7 @@ export default function LivePage() {
             {lives.length > 0 ? (
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(275px,1fr))] gap-4 justify-start">
                     {lives.map((live, index) => (
-                        <LiveStreamCard key={`${live.user_idx}-${live.start_time}-${index}`} live={live} index={index} />
+                        <LiveStreamCard key={index} live={live} index={index} />
                     ))}
                 </div>
             ) : (
