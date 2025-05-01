@@ -2,10 +2,12 @@
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { requestPlay } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
+import SendPost from "@/app/_components/info/tabs/post_tabs_component/send_post";
 import Chat from "@/app/_components/live/stream/Chat";
 import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, use } from "react"; // 'use' 제거
 import { AiOutlineLike } from "react-icons/ai";
@@ -20,6 +22,7 @@ interface LivePageProps {
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playback_url, setPlaybackUrl} = usePlayStore();
     const [isBookmarked, setIsBookmarked] = useState(false);
+    const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [streamUrl, setStreamUrl] = useState<string>("");
@@ -50,6 +53,11 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             const message = getApiErrorMessage(e);
             openError(<ErrorMessage message={message} />);
         }
+    }
+
+    async function handleSendPost() {
+        console.log(user_id);
+        openModal(<SendPost close={closeModal} userId={(await params).user_id}/>);
     }
 
     useEffect(() => {
@@ -103,7 +111,13 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     >
                       {isBookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
                     </button>
-                    <button title="쪽지" className="hover:text-white transition-colors duration-200">
+                    <button 
+                        title="쪽지" 
+                        className="hover:text-white transition-colors duration-200"
+                        onClick={() => {
+                            handleSendPost();
+                        }}
+                    >
                       <FiMail />
                     </button>
                     <button title="좋아요" className="hover:text-white transition-colors duration-200">

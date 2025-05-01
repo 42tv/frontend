@@ -83,11 +83,11 @@ export async function deletePosts(postIds: number[]) {
  * @returns
  */
 export async function sendPost(userId: string, message: string) {
-  const response = await api.post("/api/post", {
-    data: {
-      userId: userId,
-      message: message,
-    },
+  const requestBody = {
+    userId: userId,
+    message: message,
+  };
+  const response = await api.post("/api/post", requestBody, {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
