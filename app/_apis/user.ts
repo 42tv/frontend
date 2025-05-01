@@ -227,3 +227,16 @@ export async function requestBookmarkList() {
   });
   return response.data;
 }
+
+/**
+ * 북마크 배열로 삭제
+ * @param ids
+ * @returns
+ */
+export async function deleteMultiBookmakrs(ids: number[]) {
+  const response = await api.delete("/api/user/bookmarks", {
+    withCredentials: true,
+    data: { ids: ids },
+  });
+  return response.data;
+}

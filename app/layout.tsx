@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`antialiased flex flex-col h-screen`}
+        className={`antialiased flex flex-col h-screen overflow-x-auto overflow-y-auto`}
       >
         <ThemeProvider>
           <Toolbar />
