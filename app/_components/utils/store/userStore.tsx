@@ -14,6 +14,7 @@ const useUserStore = create<UserState>((set) => ({
   user_id: '',
   nickname: '',
   profile_img: '',
+  is_guest: true,
   
   setUser: (user: User) => set({
     idx: user.idx,
@@ -39,6 +40,7 @@ const useUserStore = create<UserState>((set) => ({
         user_id: response.user.user_id,
         nickname: response.user.nickname,
         profile_img: response.user.profile_img,
+        is_guest: response.is_guest
       });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {

@@ -16,6 +16,8 @@ import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import Image from 'next/image'; 
 import { PlayData } from "@/app/_components/utils/interfaces";
+import useUserStore from "@/app/_components/utils/store/userStore";
+import LoginComponent from "@/app/_components/modals/login_component";
 
 interface LivePageProps {
     user_id: string;
@@ -23,6 +25,7 @@ interface LivePageProps {
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
+    const {is_guest} = useUserStore();
     const [playDataState, setPlayDataState] = useState<PlayData>();
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
@@ -44,6 +47,11 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         if (!playDataState) {
             console.error("playDataState is undefined, cannot toggle bookmark.");
             return; 
+        }
+        // 게스트라면 로그인 컴포넌트
+        if (is_guest) {
+            openModal(<LoginComponent />)
+            return;
         }
 
         try {
@@ -67,7 +75,11 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }
 
     async function handleSendPost() {
-        console.log(user_id);
+        // 게스트라면 로그인 컴포넌트
+        if (is_guest) {
+            openModal(<LoginComponent />)
+            return;
+        }
         openModal(<SendPost close={closeModal} userId={(await params).user_id}/>);
     }
 

@@ -4,6 +4,7 @@ export interface User {
   user_id: string | null;
   nickname: string | null;
   profile_img: string | null;
+  is_guest: boolean;
 }
 
 export interface Channel {
