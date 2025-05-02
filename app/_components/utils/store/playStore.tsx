@@ -1,13 +1,22 @@
 import { create } from 'zustand';
-import { PlayResponse } from '../interfaces';
+import { PlayData } from '../interfaces';
 
-interface PlayState extends PlayResponse {
-  setPlaybackUrl: (playBack_url: string | null) => void;
+interface PlayState {
+  playData: PlayData | null;
+  setPlayData: (playData: PlayData) => void;
 }
 
 const usePlayStore = create<PlayState>((set) => ({
-    playback_url: null, // Add the missing playback_url property
-    setPlaybackUrl: (playback_url: string | null) => set(() => ({ playback_url  })), // Set the playback URL
+    playData: null,
+    setPlayData: (playDataResponse: PlayData) => set({
+        playData: {
+            playback_url: playDataResponse.playback_url,
+            title: playDataResponse.title,
+            is_bookmarked: playDataResponse.is_bookmarked,
+            profile_img: playDataResponse.profile_img,
+            nickname: playDataResponse.nickname,
+        }
+    }),
 }));
 
 export default usePlayStore;

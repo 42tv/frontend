@@ -65,7 +65,7 @@ export default function ProfileIcon() {
                 // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
             <div
-                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-white dark:bg-contentBg border border-gray-200 dark:border-gray-700 shadow-lg p-2 transition-opacity duration-100 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-white dark:bg-contentBg border border-gray-200 dark:border-gray-700 shadow-lg p-2 transition-opacity duration-100 z-10 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={handleMenuClick}
             >
                 {/* 프로필 정보 */}

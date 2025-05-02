@@ -2,24 +2,29 @@
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { requestPlay } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
+import SendPost from "@/app/_components/info/tabs/post_tabs_component/send_post";
 import Chat from "@/app/_components/live/stream/Chat";
 import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, use } from "react"; // 'use' 제거
 import { AiOutlineLike } from "react-icons/ai";
 import { FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
+import Image from 'next/image'; 
+import { PlayData } from "@/app/_components/utils/interfaces";
 
 interface LivePageProps {
     user_id: string;
 }
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
-    const {playback_url, setPlaybackUrl} = usePlayStore();
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const {playData} = usePlayStore();
+    const [playDataState, setPlayDataState] = useState<PlayData>();
+    const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [streamUrl, setStreamUrl] = useState<string>("");
@@ -37,14 +42,25 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     };
 
     async function toggleBookmark() {
+        // playDataState가 undefined이면 함수를 종료합니다.
+        if (!playDataState) {
+            console.error("playDataState is undefined, cannot toggle bookmark.");
+            return; 
+        }
+
         try {
-            if (isBookmarked) {
+            console.log(playDataState.is_bookmarked) // playDataState가 존재하므로 안전하게 접근 가능
+            if (playDataState.is_bookmarked) {
                 await requestDeleteBookMark(user_id);
             }
             else {
                 await requestCreateBookMark(user_id);
             }
-            setIsBookmarked(!isBookmarked);
+            // playDataState가 존재하므로 안전하게 스프레드 가능
+            setPlayDataState({
+                ...playDataState,
+                is_bookmarked: !playDataState.is_bookmarked,
+            })
         }
         catch (e) {
             const message = getApiErrorMessage(e);
@@ -52,23 +68,29 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         }
     }
 
+    async function handleSendPost() {
+        console.log(user_id);
+        openModal(<SendPost close={closeModal} userId={(await params).user_id}/>);
+    }
+
     useEffect(() => {
         async function fetchStreamUrl() {
-            console.log("playback_url:", playback_url);
-            if (playback_url) {
-                setStreamUrl(playback_url);
-                setPlaybackUrl(null); // playback_url 사용 후 초기화
+            console.log(playData);
+            console.log("playback_url:", playData?.playback_url);
+            if (playData?.playback_url) {
+                setPlayDataState({
+                    playback_url: playData.playback_url,
+                    title: playData.title,
+                    is_bookmarked: playData.is_bookmarked,
+                    profile_img: playData.profile_img,
+                    nickname: playData.nickname,
+                })
             }
             else {
                 try {
                     const response = await requestPlay(user_id);
                     console.log("Response:", response);
-                    if (response && response.playback_url) { // 응답 및 playback_url 확인
-                        setStreamUrl(response.playback_url);
-                        setIsBookmarked(response.is_bookmarked);
-                    } else {
-                         console.error("Invalid response structure:", response);
-                    }
+                    setPlayDataState(response);
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
@@ -86,12 +108,21 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                {/* 스트림 정보 영역 */}
                 <div className="p-4 border-t border-gray-700 flex items-center justify-between flex-shrink-0">
                   {/* 텍스트 정보 */}
                   <div>
                     <h2 className="text-xl font-semibold">{streamData.title}</h2>
-                    <p className="text-sm text-gray-400">{userData.nickname}</p>
+                    <div className="flex flex-row items-center">
+                        <Image
+                            src={playDataState?.profile_img || "/icons/anonymouse1.svg"} // 기본 이미지 경로
+                            alt="프로필 이미지"
+                            width={50}
+                            height={50}
+                            className="rounded-lg mt-2"
+                        />
+                        <p className="text-sm text-gray-400">{userData.nickname}</p>
+                    </div>
+                    
                   </div>
 
                   {/* 아이콘 영역 */}
@@ -101,9 +132,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         className="hover:text-white transition-colors duration-200"
                         onClick={() => { toggleBookmark();}}
                     >
-                      {isBookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
+                      {playDataState?.is_bookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
                     </button>
-                    <button title="쪽지" className="hover:text-white transition-colors duration-200">
+                    <button 
+                        title="쪽지" 
+                        className="hover:text-white transition-colors duration-200"
+                        onClick={() => {
+                            handleSendPost();
+                        }}
+                    >
                       <FiMail />
                     </button>
                     <button title="좋아요" className="hover:text-white transition-colors duration-200">
