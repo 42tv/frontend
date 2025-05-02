@@ -118,25 +118,24 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                <div className="p-4 border-t border-gray-700 flex items-center justify-between flex-shrink-0">
-                  {/* 텍스트 정보 */}
-                  <div>
-                    <h2 className="text-xl font-semibold">{streamData.title}</h2>
-                    <div className="flex flex-row items-center">
-                        <Image
-                            src={playDataState?.profile_img || "/icons/anonymouse1.svg"} // 기본 이미지 경로
-                            alt="프로필 이미지"
-                            width={50}
-                            height={50}
-                            className="rounded-lg mt-2"
-                        />
-                        <p className="text-sm text-gray-400">{userData.nickname}</p>
-                    </div>
-                    
+                <div className="flex flex-row w-full p-4 border-t border-gray-700 flex items-center flex-shrink-0 space-x-4">
+                  {/* 프로필 이미지 영역 */}
+                  <div className="flex items-center justify-center space-x-2 min-w-[60px]">
+                    <Image
+                        src={playDataState?.profile_img || "/icons/anonymouse1.svg"} // 기본 이미지 경로
+                        alt="프로필 이미지"
+                        width={60}
+                        height={60}
+                        className="rounded-full"
+                    />
                   </div>
-
+                  {/* 설명 텍스트 영역 */}
+                  <div className="flex w-full flex-col">
+                    <h2 className="text-xl font-semibold">{streamData.title}</h2>
+                    <p className="text-gray-400">{playData?.nickname}</p>
+                  </div>
                   {/* 아이콘 영역 */}
-                  <div className="flex items-center space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
+                  <div className="flex items-center justify-end space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
                     <button 
                         title="북마크" 
                         className="hover:text-white transition-colors duration-200"
