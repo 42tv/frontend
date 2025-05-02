@@ -15,7 +15,7 @@ import { FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import Image from 'next/image'; 
-import { PlayResponse } from "@/app/_components/utils/interfaces";
+import { PlayData } from "@/app/_components/utils/interfaces";
 
 interface LivePageProps {
     user_id: string;
@@ -23,7 +23,7 @@ interface LivePageProps {
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
-    const [playDataState, setPlayDataState] = useState<PlayResponse>();
+    const [playDataState, setPlayDataState] = useState<PlayData>();
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,17 +42,24 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     };
 
     async function toggleBookmark() {
+        // playDataState가 undefined이면 함수를 종료합니다.
+        if (!playDataState) {
+            console.error("playDataState is undefined, cannot toggle bookmark.");
+            return; 
+        }
+
         try {
-            console.log(playDataState?.is_bookmarked)
-            if (playDataState?.is_bookmarked) {
+            console.log(playDataState.is_bookmarked) // playDataState가 존재하므로 안전하게 접근 가능
+            if (playDataState.is_bookmarked) {
                 await requestDeleteBookMark(user_id);
             }
             else {
                 await requestCreateBookMark(user_id);
             }
+            // playDataState가 존재하므로 안전하게 스프레드 가능
             setPlayDataState({
                 ...playDataState,
-                is_bookmarked: !playDataState?.is_bookmarked,
+                is_bookmarked: !playDataState.is_bookmarked,
             })
         }
         catch (e) {
