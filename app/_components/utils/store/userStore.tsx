@@ -1,9 +1,9 @@
 import { getLoginInfo } from '@/app/_apis/user';
 import { create } from 'zustand';
-import { UserResponse } from '../interfaces';
+import { User } from '../interfaces';
 
-interface UserState extends UserResponse {
-  setUser: (user: UserResponse) => void;
+interface UserState extends User {
+  setUser: (user: User) => void;
   setNickname: (newNickname: string) => void;
   setProfileImg: (newProfileImg: string) => void;
   fetchUser: () => Promise<void>;
@@ -15,7 +15,7 @@ const useUserStore = create<UserState>((set) => ({
   nickname: '',
   profile_img: '',
   
-  setUser: (user: UserResponse) => set({
+  setUser: (user: User) => set({
     idx: user.idx,
     user_id: user.user_id,
     nickname: user.nickname,

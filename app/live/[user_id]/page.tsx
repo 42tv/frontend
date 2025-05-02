@@ -26,8 +26,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [playDataState, setPlayDataState] = useState<PlayData>();
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [streamUrl, setStreamUrl] = useState<string>("");
 
     // TODO: user_idx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const user_id = use(params).user_id;
