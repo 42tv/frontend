@@ -9,29 +9,10 @@ import errorModalStore from "../utils/store/errorModalStore";
 import ErrorMessage from "../modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
+import { Live } from "../utils/interfaces";
+import { formatElapsedTime } from "../utils/utils";
 
-// Define interfaces for the data structure (moved from page.tsx)
-interface User {
-    idx: number;
-    user_id: string;
-    nickname: string;
-    profile_img: string;
-}
 
-export interface Live { // Export the interface
-    user_idx: number;
-    thumbnail: string;
-    start_time: string;
-    title: string;
-    is_adult: boolean;
-    is_pw: boolean;
-    is_fan: boolean;
-    fan_level: number;
-    play_cnt: number;
-    like_cnt: number;
-    user: User;
-    viewerCount: number;
-}
 
 // Define a default placeholder image URL (moved from page.tsx)
 const DEFAULT_PLACEHOLDER_IMAGE_URL = "/placeholder.png"; // Adjust path as needed
@@ -44,7 +25,7 @@ interface LiveStreamCardProps {
 export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     const [elapsedTime, setElapsedTime] = useState(''); // 경과 시간 상태 추가
     const { openError } = errorModalStore()
-    const { setPlaybackUrl } = usePlayStore()
+    const { setPlayData } = usePlayStore()
     const router = useRouter(); // useRouter 훅 사용
 
     // Helper function to format large numbers
@@ -58,30 +39,11 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
         return count.toString();
     };
 
-    // Helper function to format elapsed time as HH:MM
-    const formatElapsedTime = (startTime: string): string => {
-        const start = new Date(startTime);
-        const now = new Date();
-        const diffMs = now.getTime() - start.getTime();
-
-        // Handle cases where start time might be in the future slightly due to clock differences
-        if (diffMs < 0) return '00:00';
-
-        const totalMinutes = Math.floor(diffMs / (1000 * 60));
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-
-        // Format hours and minutes to always have two digits
-        const formattedHours = String(hours).padStart(2, '0');
-        const formattedMinutes = String(minutes).padStart(2, '0');
-
-        return `${formattedHours}:${formattedMinutes}`;
-    };
-
     async function handlePlay() {
         try {
             const response = await requestPlay(live.user.user_id)
-            setPlaybackUrl(response.playback_url);
+            setPlayData(response);
+
             router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동
             
         }
@@ -92,10 +54,9 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
         }
     }
 
-    // Calculate elapsed time on component mount
     useEffect(() => {
         setElapsedTime(formatElapsedTime(live.start_time));
-    }, [live.start_time]); // start_time이 변경될 경우에만 재계산 (실제로는 거의 없음)
+    }, []);
 
     return (
         <div 
@@ -105,7 +66,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
             <div className="relative w-full aspect-[16/9]">
                 <Image
                     src={live.thumbnail || DEFAULT_PLACEHOLDER_IMAGE_URL}
-                    alt={live.title}
+                    alt={live.user.broadcastSetting.title || "Live Stream Thumbnail"}
                     fill // Use fill prop
                     className="object-cover" 
                     priority={index < 4} // Prioritize first few images (adjust as needed)
@@ -113,21 +74,30 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                 />
             </div>
             <div className="pt-3 flex flex-col flex-grow"> 
-                <h3 className="truncate text-gray-200">{live.title}</h3> 
+                <h3 className="truncate text-gray-200">{live.user.broadcastSetting.title}</h3> 
                 <div className="flex items-center text-sm text-gray-400"> 
                     <span className="truncate flex-grow min-w-0 mr-2">{live.user.nickname}</span>
                     {/* Display viewer, play, and like counts */}
                     <div className="flex items-center text-xs text-gray-500 space-x-2 flex-shrink-0">
                         <span className="flex items-center">
-                            <FiUser className="h-3 w-3 mr-0.5" />
+                            <FiUser 
+                                className="h-3 w-3 mr-0.5" 
+                                title="시청자"
+                            />
                             {formatCount(live.viewerCount)}
                         </span>
                         <span className="flex items-center">
-                            <BsPlayFill className="h-3 w-3 mr-0.5" />
+                            <BsPlayFill 
+                                className="h-3 w-3 mr-0.5" 
+                                title="재생"
+                            />
                             {formatCount(live.play_cnt)}
                         </span>
                         <span className="flex items-center">
-                            <FiHeart className="h-3 w-3 mr-0.5" />
+                            <FiHeart 
+                                className="h-3 w-3 mr-0.5" 
+                                title="추천"
+                            />
                             {formatCount(live.like_cnt)}
                         </span>
                         <span className="text-xs text-gray-500 flex-shrink-0">{elapsedTime}</span>

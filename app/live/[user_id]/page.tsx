@@ -2,27 +2,35 @@
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { requestPlay } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
+import SendPost from "@/app/_components/info/tabs/post_tabs_component/send_post";
 import Chat from "@/app/_components/live/stream/Chat";
 import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
-import { useEffect, useState, use } from "react"; // 'use' 제거
-import { AiOutlineLike } from "react-icons/ai";
-import { FiMail } from "react-icons/fi";
+import { useEffect, useState, use } from "react";
+import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
+import { FiHeart, FiMail, FiUser } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
+import Image from 'next/image'; 
+import { PlayData } from "@/app/_components/utils/interfaces";
+import useUserStore from "@/app/_components/utils/store/userStore";
+import LoginComponent from "@/app/_components/modals/login_component";
+import { formatElapsedTime } from "@/app/_components/utils/utils";
 
 interface LivePageProps {
     user_id: string;
 }
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
-    const {playback_url, setPlaybackUrl} = usePlayStore();
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const {playData} = usePlayStore();
+    const {is_guest} = useUserStore();
+    const [playDataState, setPlayDataState] = useState<PlayData>();
+    const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
+    const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [streamUrl, setStreamUrl] = useState<string>("");
 
     // TODO: user_idx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const user_id = use(params).user_id;
@@ -37,14 +45,30 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     };
 
     async function toggleBookmark() {
+        // playDataState가 undefined이면 함수를 종료합니다.
+        if (!playDataState) {
+            console.error("playDataState is undefined, cannot toggle bookmark.");
+            return; 
+        }
+        // 게스트라면 로그인 컴포넌트
+        if (is_guest) {
+            openModal(<LoginComponent />)
+            return;
+        }
+
         try {
-            if (isBookmarked) {
+            console.log(playDataState.is_bookmarked) // playDataState가 존재하므로 안전하게 접근 가능
+            if (playDataState.is_bookmarked) {
                 await requestDeleteBookMark(user_id);
             }
             else {
                 await requestCreateBookMark(user_id);
             }
-            setIsBookmarked(!isBookmarked);
+            // playDataState가 존재하므로 안전하게 스프레드 가능
+            setPlayDataState({
+                ...playDataState,
+                is_bookmarked: !playDataState.is_bookmarked,
+            })
         }
         catch (e) {
             const message = getApiErrorMessage(e);
@@ -52,23 +76,36 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         }
     }
 
+    async function handleSendPost() {
+        // 게스트라면 로그인 컴포넌트
+        if (is_guest) {
+            openModal(<LoginComponent />)
+            return;
+        }
+        openModal(<SendPost close={closeModal} userId={(await params).user_id}/>);
+    }
+
     useEffect(() => {
         async function fetchStreamUrl() {
-            console.log("playback_url:", playback_url);
-            if (playback_url) {
-                setStreamUrl(playback_url);
-                setPlaybackUrl(null); // playback_url 사용 후 초기화
+            console.log(playData);
+            console.log("playback_url:", playData?.playback_url);
+            if (playData?.playback_url) {
+                setPlayDataState({
+                    playback_url: playData.playback_url,
+                    title: playData.title,
+                    is_bookmarked: playData.is_bookmarked,
+                    profile_img: playData.profile_img,
+                    nickname: playData.nickname,
+                    play_cnt: playData.play_cnt,
+                    like_cnt: playData.like_cnt,
+                    start_time: playData.start_time,
+                })
             }
             else {
                 try {
                     const response = await requestPlay(user_id);
                     console.log("Response:", response);
-                    if (response && response.playback_url) { // 응답 및 playback_url 확인
-                        setStreamUrl(response.playback_url);
-                        setIsBookmarked(response.is_bookmarked);
-                    } else {
-                         console.error("Invalid response structure:", response);
-                    }
+                    setPlayDataState(response);
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
@@ -80,30 +117,86 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         fetchStreamUrl();
     }, []); // 의존성 배열 업데이트
 
+    // 경과 시간 업데이트를 위한 useEffect 추가
+    useEffect(() => {
+        if (!playDataState?.start_time) {
+            setElapsedTime(''); // 시작 시간이 없으면 초기화
+            return;
+        }
+        // 초기 경과 시간 설정
+        setElapsedTime(formatElapsedTime(playDataState.start_time));
+
+        // 1분마다 경과 시간 업데이트
+        const intervalId = setInterval(() => {
+            setElapsedTime(formatElapsedTime(playDataState.start_time));
+        }, 60000); // 60000ms = 1분
+        
+        // 컴포넌트 언마운트 시 인터벌 정리
+        return () => clearInterval(intervalId);
+    }, [playDataState?.start_time]); // start_time이 변경될 때마다 실행
+
     return (
         <div className="flex flex-row w-full h-full"> {/* 헤더 높이 제외한 전체 높이 */}
             <div className="flex flex-col flex-1">
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                {/* 스트림 정보 영역 */}
-                <div className="p-4 border-t border-gray-700 flex items-center justify-between flex-shrink-0">
-                  {/* 텍스트 정보 */}
-                  <div>
-                    <h2 className="text-xl font-semibold">{streamData.title}</h2>
-                    <p className="text-sm text-gray-400">{userData.nickname}</p>
+                <div className="flex flex-row w-full p-4 border-t border-gray-700 flex items-center flex-shrink-0 space-x-4">
+                  {/* 프로필 이미지 영역 */}
+                  <div className="flex items-center justify-center space-x-2 min-w-[60px]">
+                    <Image
+                        src={playDataState?.profile_img || "/icons/anonymouse1.svg"} // 기본 이미지 경로
+                        alt="프로필 이미지"
+                        width={60}
+                        height={60}
+                        className="rounded-full"
+                    />
                   </div>
-
+                  {/* 설명 텍스트 영역 */}
+                  <div className="flex w-full flex-col">
+                    <h2 className="text-xl font-semibold">{playData?.title}</h2>
+                    <p className="text-gray-400">{playData?.nickname}</p>
+                    <div className="flex items-center space-x-4 text-gray-400 text-sm mt-1">
+                        <span className="flex items-center space-x-1">
+                            <FiUser 
+                                title="시청자"
+                            />
+                            <span>{playDataState?.play_cnt ?? 0}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                            <FiHeart 
+                                title="추천"
+                            />
+                            <span>{playDataState?.play_cnt ?? 0}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                            <MdOutlineBookmark 
+                                title="북마크"
+                            />
+                            <span>{playDataState?.like_cnt ?? 0}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                            <AiOutlineClockCircle />
+                            <span>{elapsedTime}</span> {/* 상태 변수 사용 */}
+                        </span>
+                    </div>
+                  </div>
                   {/* 아이콘 영역 */}
-                  <div className="flex items-center space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
+                  <div className="flex items-center justify-end space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
                     <button 
                         title="북마크" 
                         className="hover:text-white transition-colors duration-200"
                         onClick={() => { toggleBookmark();}}
                     >
-                      {isBookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
+                      {playDataState?.is_bookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
                     </button>
-                    <button title="쪽지" className="hover:text-white transition-colors duration-200">
+                    <button 
+                        title="쪽지" 
+                        className="hover:text-white transition-colors duration-200"
+                        onClick={() => {
+                            handleSendPost();
+                        }}
+                    >
                       <FiMail />
                     </button>
                     <button title="좋아요" className="hover:text-white transition-colors duration-200">
