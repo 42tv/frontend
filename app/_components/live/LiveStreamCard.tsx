@@ -10,6 +10,7 @@ import ErrorMessage from "../modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
 import { Live } from "../utils/interfaces";
+import { formatElapsedTime } from "../utils/utils";
 
 
 
@@ -36,26 +37,6 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
             return (count / 1000).toFixed(1) + '천';
         }
         return count.toString();
-    };
-
-    // Helper function to format elapsed time as HH:MM
-    const formatElapsedTime = (startTime: string): string => {
-        const start = new Date(startTime);
-        const now = new Date();
-        const diffMs = now.getTime() - start.getTime();
-
-        // Handle cases where start time might be in the future slightly due to clock differences
-        if (diffMs < 0) return '00:00';
-
-        const totalMinutes = Math.floor(diffMs / (1000 * 60));
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-
-        // Format hours and minutes to always have two digits
-        const formattedHours = String(hours).padStart(2, '0');
-        const formattedMinutes = String(minutes).padStart(2, '0');
-
-        return `${formattedHours}:${formattedMinutes}`;
     };
 
     async function handlePlay() {
@@ -99,15 +80,24 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                     {/* Display viewer, play, and like counts */}
                     <div className="flex items-center text-xs text-gray-500 space-x-2 flex-shrink-0">
                         <span className="flex items-center">
-                            <FiUser className="h-3 w-3 mr-0.5" />
+                            <FiUser 
+                                className="h-3 w-3 mr-0.5" 
+                                title="시청자"
+                            />
                             {formatCount(live.viewerCount)}
                         </span>
                         <span className="flex items-center">
-                            <BsPlayFill className="h-3 w-3 mr-0.5" />
+                            <BsPlayFill 
+                                className="h-3 w-3 mr-0.5" 
+                                title="재생"
+                            />
                             {formatCount(live.play_cnt)}
                         </span>
                         <span className="flex items-center">
-                            <FiHeart className="h-3 w-3 mr-0.5" />
+                            <FiHeart 
+                                className="h-3 w-3 mr-0.5" 
+                                title="추천"
+                            />
                             {formatCount(live.like_cnt)}
                         </span>
                         <span className="text-xs text-gray-500 flex-shrink-0">{elapsedTime}</span>

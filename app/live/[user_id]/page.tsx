@@ -10,14 +10,15 @@ import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, use } from "react"; // 'use' 제거
-import { AiOutlineLike } from "react-icons/ai";
-import { FiMail } from "react-icons/fi";
+import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
+import { FiHeart, FiMail, FiUser } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import Image from 'next/image'; 
 import { PlayData } from "@/app/_components/utils/interfaces";
 import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
+import { formatElapsedTime } from "@/app/_components/utils/utils";
 
 interface LivePageProps {
     user_id: string;
@@ -94,6 +95,9 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     is_bookmarked: playData.is_bookmarked,
                     profile_img: playData.profile_img,
                     nickname: playData.nickname,
+                    play_cnt: playData.play_cnt,
+                    like_cnt: playData.like_cnt,
+                    start_time: playData.start_time,
                 })
             }
             else {
@@ -131,8 +135,32 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                   </div>
                   {/* 설명 텍스트 영역 */}
                   <div className="flex w-full flex-col">
-                    <h2 className="text-xl font-semibold">{streamData.title}</h2>
+                    <h2 className="text-xl font-semibold">{playData?.title}</h2>
                     <p className="text-gray-400">{playData?.nickname}</p>
+                    <div className="flex items-center space-x-4 text-gray-400 text-sm mt-1">
+                        <span className="flex items-center space-x-1">
+                            <FiUser 
+                                title="시청자"
+                            />
+                            <span>{playDataState?.play_cnt ?? 0}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                            <FiHeart 
+                                title="추천"
+                            />
+                            <span>{playDataState?.play_cnt ?? 0}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                            <MdOutlineBookmark 
+                                title="북마크"
+                            />
+                            <span>{playDataState?.like_cnt ?? 0}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                            <AiOutlineClockCircle />
+                            <span>{formatElapsedTime(playDataState?.start_time || null)}</span>
+                        </span>
+                    </div>
                   </div>
                   {/* 아이콘 영역 */}
                   <div className="flex items-center justify-end space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
