@@ -18,7 +18,7 @@ import Image from 'next/image';
 import { PlayData } from "@/app/_components/utils/interfaces";
 import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
-import { formatElapsedTime } from "@/app/_components/utils/utils";
+import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
 
 interface LivePageProps {
     user_id: string;
@@ -124,12 +124,12 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             return;
         }
         // 초기 경과 시간 설정
-        setElapsedTime(formatElapsedTime(playDataState.start_time));
+        setElapsedTime(formatElapsedTimeBySeconds(playDataState.start_time));
 
-        // 1분마다 경과 시간 업데이트
+        // 1초마다 경과 시간 업데이트
         const intervalId = setInterval(() => {
-            setElapsedTime(formatElapsedTime(playDataState.start_time));
-        }, 60000); // 60000ms = 1분
+            setElapsedTime(formatElapsedTimeBySeconds(playDataState.start_time));
+        }, 1000); // 1000ms = 1초
         
         // 컴포넌트 언마운트 시 인터벌 정리
         return () => clearInterval(intervalId);
