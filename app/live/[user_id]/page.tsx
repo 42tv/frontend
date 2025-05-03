@@ -9,7 +9,7 @@ import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
-import { useEffect, useState, use } from "react"; // 'use' 제거
+import { useEffect, useState, use } from "react";
 import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
 import { FiHeart, FiMail, FiUser } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
@@ -28,6 +28,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
     const {is_guest} = useUserStore();
     const [playDataState, setPlayDataState] = useState<PlayData>();
+    const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
@@ -116,6 +117,24 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         fetchStreamUrl();
     }, []); // 의존성 배열 업데이트
 
+    // 경과 시간 업데이트를 위한 useEffect 추가
+    useEffect(() => {
+        if (!playDataState?.start_time) {
+            setElapsedTime(''); // 시작 시간이 없으면 초기화
+            return;
+        }
+        // 초기 경과 시간 설정
+        setElapsedTime(formatElapsedTime(playDataState.start_time));
+
+        // 1분마다 경과 시간 업데이트
+        const intervalId = setInterval(() => {
+            setElapsedTime(formatElapsedTime(playDataState.start_time));
+        }, 60000); // 60000ms = 1분
+        
+        // 컴포넌트 언마운트 시 인터벌 정리
+        return () => clearInterval(intervalId);
+    }, [playDataState?.start_time]); // start_time이 변경될 때마다 실행
+
     return (
         <div className="flex flex-row w-full h-full"> {/* 헤더 높이 제외한 전체 높이 */}
             <div className="flex flex-col flex-1">
@@ -158,7 +177,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         </span>
                         <span className="flex items-center space-x-1">
                             <AiOutlineClockCircle />
-                            <span>{formatElapsedTime(playDataState?.start_time || null)}</span>
+                            <span>{elapsedTime}</span> {/* 상태 변수 사용 */}
                         </span>
                     </div>
                   </div>
