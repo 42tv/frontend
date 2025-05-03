@@ -15,6 +15,9 @@ const usePlayStore = create<PlayState>((set) => ({
             is_bookmarked: playDataResponse.is_bookmarked,
             profile_img: playDataResponse.profile_img,
             nickname: playDataResponse.nickname,
+            play_cnt: playDataResponse.play_cnt,
+            like_cnt: playDataResponse.like_cnt,
+            start_time: playDataResponse.start_time,
         }
     }),
 }));
