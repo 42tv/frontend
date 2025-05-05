@@ -19,6 +19,7 @@ import { PlayData } from "@/app/_components/utils/interfaces";
 import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
 import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
+import { Socket, io } from "socket.io-client";
 
 interface LivePageProps {
     user_id: string;
@@ -86,10 +87,22 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }
 
     useEffect(() => {
+        const tmp: Socket = io("ws://222.97.9.229:3000/chat", {
+            withCredentials: true,
+            transports: ['websocket'],
+        });
+        return () => {
+            console.log('WS disconnect')
+            tmp.off('room-join')
+            tmp.off('room-leave')
+            tmp.off('hart-event')
+            tmp.disconnect()
+        }
+    }, [])
+
+    useEffect(() => {
         async function fetchStreamUrl() {
-            console.log(playData);
-            console.log("playback_url:", playData?.playback_url);
-            if (playData?.playback_url) {
+            if (playData) {
                 setPlayDataState({
                     playback_url: playData.playback_url,
                     title: playData.title,
@@ -105,14 +118,24 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 try {
                     const response = await requestPlay(user_id);
                     console.log("Response:", response);
-                    setPlayDataState(response);
+                    setPlayDataState({
+                        playback_url: response.playback_url,
+                        title: response.title,
+                        is_bookmarked: response.is_bookmarked,
+                        profile_img: response.profile_img,
+                        nickname: response.nickname,
+                        play_cnt: response.play_cnt,
+                        like_cnt: response.like_cnt,
+                        start_time: response.start_time,
+                    });
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
                     openError(<ErrorMessage message={message} />);
-                    
                 }
             }
+            console.log(playData);
+            console.log("playback_url:", playData?.playback_url);
         }
         fetchStreamUrl();
     }, []); // 의존성 배열 업데이트
@@ -154,8 +177,8 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                   </div>
                   {/* 설명 텍스트 영역 */}
                   <div className="flex w-full flex-col">
-                    <h2 className="text-xl font-semibold">{playData?.title}</h2>
-                    <p className="text-gray-400">{playData?.nickname}</p>
+                    <h2 className="text-xl font-semibold">{playDataState?.title}</h2> {/* playData -> playDataState */}
+                    <p className="text-gray-400">{playDataState?.nickname}</p> {/* playData -> playDataState */}
                     <div className="flex items-center space-x-4 text-gray-400 text-sm mt-1">
                         <span className="flex items-center space-x-1">
                             <FiUser 
