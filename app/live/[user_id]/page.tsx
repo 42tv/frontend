@@ -143,18 +143,22 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             console.log("playback_url:", playData?.playback_url);
         }
         fetchStreamUrl();
-    }, []); // 의존성 배열 업데이트
+    }, []);
 
     useEffect(() => {
-        socket?.on('room-join', (...args) => {
-        })
-        return () => {
-            console.log('WS disconnect')
-            socket?.off('room-join')
-            socket?.disconnect()
-            setSocket(null); // 컴포넌트 언마운트 시 소켓 상태 null로 설정
+        if (!socket) {
+            return;
         }
-    }, [socket])
+        const handleRoomJoin = (...args: any[]) => {
+        };
+        socket.on('room-join', handleRoomJoin);
+        return () => {
+            socket.off('room-join', handleRoomJoin);
+            socket.disconnect();
+            console.log('Socket: Disconnected.');
+            setSocket(null);
+        };
+    }, [socket]);
 
     // 경과 시간 업데이트를 위한 useEffect 추가
     useEffect(() => {
