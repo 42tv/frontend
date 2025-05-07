@@ -76,6 +76,7 @@ export interface PlayData {
   play_cnt: number;
   like_cnt: number;
   start_time: string;
+  play_token: string;
 }
 
 export interface CardData {

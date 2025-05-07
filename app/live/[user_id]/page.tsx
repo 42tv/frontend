@@ -30,6 +30,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {is_guest} = useUserStore();
     const [playDataState, setPlayDataState] = useState<PlayData>();
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
+    const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
@@ -87,20 +88,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }
 
     useEffect(() => {
-        const tmp: Socket = io("ws://222.97.9.229:3000/chat", {
-            withCredentials: true,
-            transports: ['websocket'],
-        });
-        return () => {
-            console.log('WS disconnect')
-            tmp.off('room-join')
-            tmp.off('room-leave')
-            tmp.off('hart-event')
-            tmp.disconnect()
-        }
-    }, [])
-
-    useEffect(() => {
         async function fetchStreamUrl() {
             if (playData) {
                 setPlayDataState({
@@ -112,7 +99,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     play_cnt: playData.play_cnt,
                     like_cnt: playData.like_cnt,
                     start_time: playData.start_time,
+                    play_token: playData.play_token,
                 })
+                const newSocket: Socket = io("ws://222.97.9.229:3000/chat", {
+                    withCredentials: true,
+                    auth: {
+                        token: `Bearer ${playData.play_token}`,
+                    },
+                    transports: ['websocket'],
+                });
+                setSocket(newSocket); // 소켓 상태 설정
             }
             else {
                 try {
@@ -127,7 +123,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         play_cnt: response.play_cnt,
                         like_cnt: response.like_cnt,
                         start_time: response.start_time,
+                        play_token: response.play_token,
                     });
+                    const newSocket: Socket = io("ws://222.97.9.229:3000/chat", {
+                        withCredentials: true,
+                        auth: {
+                            token: `Bearer ${response.play_token}`,
+                        },
+                        transports: ['websocket'],
+                    });
+                    setSocket(newSocket); // 소켓 상태 설정
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
@@ -139,6 +144,17 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         }
         fetchStreamUrl();
     }, []); // 의존성 배열 업데이트
+
+    useEffect(() => {
+        socket?.on('room-join', (...args) => {
+        })
+        return () => {
+            console.log('WS disconnect')
+            socket?.off('room-join')
+            socket?.disconnect()
+            setSocket(null); // 컴포넌트 언마운트 시 소켓 상태 null로 설정
+        }
+    }, [socket])
 
     // 경과 시간 업데이트를 위한 useEffect 추가
     useEffect(() => {

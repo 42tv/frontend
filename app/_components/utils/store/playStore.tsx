@@ -18,6 +18,7 @@ const usePlayStore = create<PlayState>((set) => ({
             play_cnt: playDataResponse.play_cnt,
             like_cnt: playDataResponse.like_cnt,
             start_time: playDataResponse.start_time,
+            play_token: playDataResponse.play_token,
         }
     }),
 }));
