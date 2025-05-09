@@ -22,7 +22,7 @@ import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
 import { Socket, io } from "socket.io-client";
 
 interface LivePageProps {
-    user_id: string;
+    broadcasterId: string;
 }
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
@@ -34,15 +34,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
-    // TODO: user_idx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
-    const user_id = use(params).user_id;
+    // TODO: broadcasterIdx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
+    const broadcasterId = use(params).broadcasterId;
     const streamData = { // 임시 데이터
         streamUrl: "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8", // 실제 스트림 URL 필요
-        title: `User ${user_id}'s Live Stream`,
+        title: `User ${broadcasterId}'s Live Stream`,
         description: "Welcome to the stream!",
     };
     const userData = { // 임시 데이터
-        nickname: `User ${user_id}`,
+        nickname: `User ${broadcasterId}`,
         profileImageUrl: "/placeholder.png", // 실제 프로필 이미지 URL 필요
     };
 
@@ -61,10 +61,10 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         try {
             console.log(playDataState.is_bookmarked) // playDataState가 존재하므로 안전하게 접근 가능
             if (playDataState.is_bookmarked) {
-                await requestDeleteBookMark(user_id);
+                await requestDeleteBookMark(broadcasterId);
             }
             else {
-                await requestCreateBookMark(user_id);
+                await requestCreateBookMark(broadcasterId);
             }
             // playDataState가 존재하므로 안전하게 스프레드 가능
             setPlayDataState({
@@ -84,7 +84,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             openModal(<LoginComponent />)
             return;
         }
-        openModal(<SendPost close={closeModal} userId={(await params).user_id}/>);
+        openModal(<SendPost close={closeModal} userId={(await params).broadcasterId}/>);
     }
 
     useEffect(() => {
@@ -112,7 +112,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             }
             else {
                 try {
-                    const response = await requestPlay(user_id);
+                    const response = await requestPlay(broadcasterId);
                     console.log("Response:", response);
                     setPlayDataState({
                         playback_url: response.playback_url,
@@ -255,7 +255,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              <div className="w-80 border-l border-gray-700 flex flex-col">
                 {/* 채팅 컴포넌트 래퍼 - 세로 공간을 채우도록 flex-1 추가 */}
                 <div className="flex-1 min-h-0"> {/* flex-1 및 min-h-0 추가 */}
-                    <Chat user_id={user_id} /> {/* Chat 컴포넌트가 부모를 채운다고 가정 */}
+                    <Chat broadcasterId={broadcasterId} /> {/* Chat 컴포넌트가 부모를 채운다고 가정 */}
                 </div>
             </div>
         </div>

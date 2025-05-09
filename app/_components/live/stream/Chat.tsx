@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 interface ChatProps {
-    user_id: string; // 스트리머 식별 (채팅방 구분을 위해)
+    broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
 }
 
 interface Message {
@@ -12,7 +12,7 @@ interface Message {
     timestamp: number;
 }
 
-const Chat: React.FC<ChatProps> = ({ user_id }) => {
+const Chat: React.FC<ChatProps> = ({ broadcasterId }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
@@ -32,7 +32,7 @@ const Chat: React.FC<ChatProps> = ({ user_id }) => {
         return () => {
             // WebSocket 연결 해제 로직...
         };
-    }, [user_id]);
+    }, [broadcasterId]);
 
     // 새 메시지 수신 시 스크롤 맨 아래로 이동
     useEffect(() => {
