@@ -24,3 +24,17 @@ export async function requestPlay(streamId: string, password?: string) {
   });
   return response.data;
 }
+
+export async function reqeustChat(broadcastId: string, message: string) {
+  const requestBody = {
+    broadcaster_id: broadcastId,
+    message: message,
+  };
+  const response = await axios.post("/api/chat", requestBody, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}
