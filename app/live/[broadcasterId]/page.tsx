@@ -255,7 +255,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              <div className="w-80 border-l border-gray-700 flex flex-col">
                 {/* 채팅 컴포넌트 래퍼 - 세로 공간을 채우도록 flex-1 추가 */}
                 <div className="flex-1 min-h-0"> {/* flex-1 및 min-h-0 추가 */}
-                    <Chat broadcasterId={broadcasterId} /> {/* Chat 컴포넌트가 부모를 채운다고 가정 */}
+                    <Chat broadcasterId={broadcasterId} socket={socket} /> {/* Chat 컴포넌트가 부모를 채운다고 가정 */}
                 </div>
             </div>
         </div>

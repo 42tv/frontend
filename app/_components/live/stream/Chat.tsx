@@ -1,8 +1,11 @@
 'use client';
+import { reqeustChat } from '@/app/_apis/live';
 import React, { useState, useEffect, useRef } from 'react';
+import { Socket } from 'socket.io-client'; // Socket 타입 import
 
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
+    socket: Socket | null; // socket prop 추가
 }
 
 interface Message {
@@ -12,47 +15,36 @@ interface Message {
     timestamp: number;
 }
 
-const Chat: React.FC<ChatProps> = ({ broadcasterId }) => {
+const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
 
-    // TODO: WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
+    // WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
     useEffect(() => {
-        // 임시 메시지 (테스트용)
-        setMessages([
-            { id: '1', sender: 'User1', text: '안녕하세요!', timestamp: Date.now() - 5000 },
-            { id: '2', sender: 'User2', text: '반갑습니다~', timestamp: Date.now() - 3000 },
-            { id: '3', sender: 'User1', text: '채팅 테스트 중입니다.', timestamp: Date.now() - 1000 },
-        ]);
+        if (socket) {
+            const handleChatMessage = (message: any) => {
+                console.log(message);
+                setMessages(prevMessages => [...prevMessages, message]);
+            };
+            socket.on('chat', handleChatMessage);
 
-        // WebSocket 연결 로직...
-        // ws.onmessage = (event) => { ... setMessages(...) }
-
-        return () => {
-            // WebSocket 연결 해제 로직...
-        };
-    }, [broadcasterId]);
+            return () => {
+                socket.off('chat', handleChatMessage);
+            };
+        }
+    }, [socket]);
 
     // 새 메시지 수신 시 스크롤 맨 아래로 이동
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newMessage.trim() === '') return;
 
-        // TODO: WebSocket으로 메시지 전송 로직
-        console.log('Sending message:', newMessage);
-        // 임시로 로컬 상태에 추가 (실제로는 서버 응답 후 추가)
-        const tempMessage: Message = {
-            id: Date.now().toString(), // 임시 ID
-            sender: 'CurrentUser', // TODO: 실제 사용자 닉네임 사용
-            text: newMessage,
-            timestamp: Date.now(),
-        };
-        setMessages(prev => [...prev, tempMessage]);
+        await reqeustChat(broadcasterId, newMessage); // 서버에 메시지 전송
 
         setNewMessage(''); // 입력 필드 초기화
     };
