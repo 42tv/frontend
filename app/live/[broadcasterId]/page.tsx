@@ -101,7 +101,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     start_time: playData.start_time,
                     play_token: playData.play_token,
                 })
-                const newSocket: Socket = io("ws://222.97.9.229:3000/chat", {
+                const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                     withCredentials: true,
                     auth: {
                         token: `Bearer ${playData.play_token}`,
@@ -125,7 +125,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         start_time: response.start_time,
                         play_token: response.play_token,
                     });
-                    const newSocket: Socket = io("ws://222.97.9.229:3000/chat", {
+                    const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                         withCredentials: true,
                         auth: {
                             token: `Bearer ${response.play_token}`,

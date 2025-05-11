@@ -28,7 +28,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<any | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(1); // 볼륨 상태 (0 ~ 1)
   const [currentQuality, setCurrentQuality] = useState<string | null>(null); // 현재 화질 상태
 
