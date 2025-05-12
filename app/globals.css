@@ -49,3 +49,7 @@ body {
   height: 100%;
   overflow: hidden; /* 브라우저 기본 스크롤 숨김 */
 }
+
+input {
+  background-color: transparent;
+}

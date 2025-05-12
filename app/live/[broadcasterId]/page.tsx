@@ -9,7 +9,7 @@ import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
 import { FiHeart, FiMail, FiUser } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
@@ -31,6 +31,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [playDataState, setPlayDataState] = useState<PlayData>();
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
+    const socketRef = useRef<Socket | null>(null); // 소켓 상태를 위한 ref 추가
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
@@ -86,6 +87,11 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         }
         openModal(<SendPost close={closeModal} userId={(await params).broadcasterId}/>);
     }
+
+    // Keep socketRef updated with the current socket state
+    useEffect(() => {
+        socketRef.current = socket;
+    }, [socket]);
 
     useEffect(() => {
         async function fetchStreamUrl() {
@@ -143,22 +149,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             console.log("playback_url:", playData?.playback_url);
         }
         fetchStreamUrl();
-    }, []);
-
-    useEffect(() => {
-        if (!socket) {
-            return;
-        }
-        const handleRoomJoin = (...args: any[]) => {
-        };
-        socket.on('room-join', handleRoomJoin);
+        
         return () => {
-            socket.off('room-join', handleRoomJoin);
-            socket.disconnect();
-            console.log('Socket: Disconnected.');
-            setSocket(null);
+            // Use socketRef.current for cleanup to ensure the latest socket instance is used
+            if (socketRef.current) {
+                console.log('Socket: Disconnecting (via ref).');
+                socketRef.current.disconnect();
+                setSocket(null); // Clear the socket state
+            }
         };
-    }, [socket]);
+    }, [broadcasterId, playData, openError]); // Adjusted dependencies
 
     // 경과 시간 업데이트를 위한 useEffect 추가
     useEffect(() => {
