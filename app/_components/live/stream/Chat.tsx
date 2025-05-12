@@ -2,6 +2,8 @@
 import { reqeustChat } from '@/app/_apis/live';
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
+import useModalStore from '../../utils/store/modalStore';
+import LoginComponent from '../../modals/login_component';
 
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
@@ -10,15 +12,15 @@ interface ChatProps {
 
 interface Message {
     id: string;
-    sender: string;
-    text: string;
-    timestamp: number;
+    nickname: string;
+    message: string;
 }
 
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
+    const {openModal} = useModalStore()
 
     // WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
     useEffect(() => {
@@ -44,8 +46,12 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
         e.preventDefault();
         if (newMessage.trim() === '') return;
 
-        await reqeustChat(broadcasterId, newMessage); // 서버에 메시지 전송
-
+        try {
+            await reqeustChat(broadcasterId, newMessage); // 서버에 메시지 전송
+        }
+        catch (e: any) {
+            openModal(<LoginComponent />)
+        }
         setNewMessage(''); // 입력 필드 초기화
     };
 
@@ -61,8 +67,8 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
             <div className="flex-1 overflow-y-auto p-3 space-y-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {messages.map((msg) => (
                     <div key={msg.id} className="text-sm">
-                        <span className="font-semibold mr-1">{msg.sender}:</span>
-                        <span className="break-words">{msg.text}</span>
+                        <span className="font-semibold mr-1">{msg.nickname}:</span>
+                        <span className="break-words">{msg.message}</span>
                     </div>
                 ))}
                 <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}

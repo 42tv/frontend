@@ -69,7 +69,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                     alt={live.user.broadcastSetting.title || "Live Stream Thumbnail"}
                     fill // Use fill prop
                     className="object-cover" 
-                    priority={index < 4} // Prioritize first few images (adjust as needed)
+                    priority={true} // Prioritize first few images (adjust as needed)
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
             </div>
