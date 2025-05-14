@@ -32,6 +32,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
     const socketRef = useRef<Socket | null>(null); // 소켓 상태를 위한 ref 추가
+    const hasConnectedRef = useRef(false);
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
@@ -95,6 +96,9 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     useEffect(() => {
         async function fetchStreamUrl() {
+            if (hasConnectedRef.current) return;
+                console.log("AAA")
+                hasConnectedRef.current = true;
             if (playData) {
                 setPlayDataState({
                     playback_url: playData.playback_url,
@@ -107,6 +111,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     start_time: playData.start_time,
                     play_token: playData.play_token,
                 })
+                console.log("first")
                 const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                     withCredentials: true,
                     auth: {
@@ -131,6 +136,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         start_time: response.start_time,
                         play_token: response.play_token,
                     });
+                    console.log("seconds")
                     const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                         withCredentials: true,
                         auth: {
@@ -149,16 +155,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             console.log("playback_url:", playData?.playback_url);
         }
         fetchStreamUrl();
-        
+
         return () => {
             // Use socketRef.current for cleanup to ensure the latest socket instance is used
             if (socketRef.current) {
                 console.log('Socket: Disconnecting (via ref).');
                 socketRef.current.disconnect();
-                setSocket(null); // Clear the socket state
             }
+            setSocket(null); // Clear the socket state
         };
-    }, [broadcasterId, playData, openError]); // Adjusted dependencies
+    }, []); // Adjusted dependencies
 
     // 경과 시간 업데이트를 위한 useEffect 추가
     useEffect(() => {

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FiHeart, FiUser } from 'react-icons/fi'; // react-icons에서 아이콘 가져오기
 import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가져오기
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
-import { requestPlay } from "@/app/_apis/live";
+import { requestLobyPlay } from "@/app/_apis/live";
 import usePlayStore from "../utils/store/playStore";
 import errorModalStore from "../utils/store/errorModalStore";
 import ErrorMessage from "../modals/error_component";
@@ -41,7 +41,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
 
     async function handlePlay() {
         try {
-            const response = await requestPlay(live.user.user_id)
+            const response = await requestLobyPlay(live.user.user_id)
             setPlayData(response);
 
             router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동

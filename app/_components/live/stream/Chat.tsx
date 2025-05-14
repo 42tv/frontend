@@ -65,8 +65,8 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
             {/* 메시지 목록 */}
             {/* Add classes: [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] */}
             <div className="flex-1 overflow-y-auto p-3 space-y-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {messages.map((msg) => (
-                    <div key={msg.id} className="text-sm">
+                {messages.map((msg, index) => (
+                    <div key={index} className="text-sm">
                         <span className="font-semibold mr-1">{msg.nickname}:</span>
                         <span className="break-words">{msg.message}</span>
                     </div>
