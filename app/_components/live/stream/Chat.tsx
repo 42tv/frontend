@@ -11,9 +11,9 @@ interface ChatProps {
 }
 
 interface Message {
-    id: string;
-    nickname: string;
-    message: string;
+    chatter_idx: number;
+    chatter_nickname: string;
+    chatter_message: string;
 }
 
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
@@ -68,8 +68,8 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
             <div className="flex-1 overflow-y-auto p-3 space-y-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {messages.map((msg, index) => (
                     <div key={index} className="text-sm">
-                        <span className="font-semibold mr-1">{msg.nickname}:</span>
-                        <span className="break-words">{msg.message}</span>
+                        <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
+                        <span className="break-words">{msg.chatter_message}</span>
                     </div>
                 ))}
                 <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}

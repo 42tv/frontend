@@ -20,6 +20,7 @@ import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
 import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
 import { Socket, io } from "socket.io-client";
+import { useRouter } from "next/navigation";
 
 interface LivePageProps {
     broadcasterId: string;
@@ -34,6 +35,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const socketRef = useRef<Socket | null>(null); // 최신 소켓 인스턴스 추적을 위한 ref 추가
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
+    const router = useRouter();
 
     // TODO: broadcasterIdx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const broadcasterId = use(params).broadcasterId;
@@ -109,7 +111,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     },
                     transports: ['websocket'],
                 });
-                console.log(newSocket)
                 setSocket(newSocket); // 소켓 상태 설정
                 socketRef.current = newSocket; // ref에 최신 소켓 저장
             }
@@ -135,7 +136,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         },
                         transports: ['websocket'],
                     });
-                    console.log(newSocket)
                     setSocket(newSocket); // 소켓 상태 설정
                     socketRef.current = newSocket; // ref에 최신 소켓 저장
                 }
@@ -154,6 +154,17 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             setSocket(null); // 소켓 상태 초기화
         };
     }, []); // Adjusted dependencies
+
+    useEffect(() => {
+        socketRef.current?.on('duplicate', () => {
+            openError(<ErrorMessage message="다른 기기에서 접속하였습니다" />);
+            router.push('/'); // 홈으로 리다이렉트
+        })
+        
+        return () => {
+            socketRef.current?.off('duplicate'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
+        }
+    }, [socketRef.current]); // socketRef.current가 변경될 때마다 실행
 
     // 경과 시간 업데이트를 위한 useEffect 추가
     useEffect(() => {
