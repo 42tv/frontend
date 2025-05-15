@@ -31,6 +31,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
+    const socketRef = useRef<Socket | null>(null); // 최신 소켓 인스턴스 추적을 위한 ref 추가
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
@@ -87,11 +88,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         openModal(<SendPost close={closeModal} userId={(await params).broadcasterId}/>);
     }
 
-    // Keep socketRef updated with the current socket state
-    // useEffect(() => {
-    //     socketRef.current = socket;
-    // }, [socket]);
-
     useEffect(() => {
         async function fetchStreamUrl() {
             if (playData) {
@@ -115,6 +111,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 });
                 console.log(newSocket)
                 setSocket(newSocket); // 소켓 상태 설정
+                socketRef.current = newSocket; // ref에 최신 소켓 저장
             }
             else {
                 try {
@@ -140,6 +137,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     });
                     console.log(newSocket)
                     setSocket(newSocket); // 소켓 상태 설정
+                    socketRef.current = newSocket; // ref에 최신 소켓 저장
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
@@ -150,9 +148,10 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         fetchStreamUrl();
 
         return () => {
-            // Use socketRef.current for cleanup to ensure the latest socket instance is used
-            socket?.disconnect();
-            setSocket(null); // Clear the socket state
+            // ref를 사용해 최신 소켓 인스턴스를 해제
+            socketRef.current?.disconnect();
+            socketRef.current = null;
+            setSocket(null); // 소켓 상태 초기화
         };
     }, []); // Adjusted dependencies
 
