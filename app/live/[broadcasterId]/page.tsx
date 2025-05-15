@@ -28,11 +28,9 @@ interface LivePageProps {
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
     const {is_guest} = useUserStore();
-    const [playDataState, setPlayDataState] = useState<PlayData>();
+    const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
-    const socketRef = useRef<Socket | null>(null); // 소켓 상태를 위한 ref 추가
-    const hasConnectedRef = useRef(false);
     const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
 
@@ -90,15 +88,12 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }
 
     // Keep socketRef updated with the current socket state
-    useEffect(() => {
-        socketRef.current = socket;
-    }, [socket]);
+    // useEffect(() => {
+    //     socketRef.current = socket;
+    // }, [socket]);
 
     useEffect(() => {
         async function fetchStreamUrl() {
-            if (hasConnectedRef.current) return;
-                console.log("AAA")
-                hasConnectedRef.current = true;
             if (playData) {
                 setPlayDataState({
                     playback_url: playData.playback_url,
@@ -111,7 +106,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     start_time: playData.start_time,
                     play_token: playData.play_token,
                 })
-                console.log("first")
                 const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                     withCredentials: true,
                     auth: {
@@ -119,6 +113,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     },
                     transports: ['websocket'],
                 });
+                console.log(newSocket)
                 setSocket(newSocket); // 소켓 상태 설정
             }
             else {
@@ -136,7 +131,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         start_time: response.start_time,
                         play_token: response.play_token,
                     });
-                    console.log("seconds")
                     const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                         withCredentials: true,
                         auth: {
@@ -144,6 +138,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         },
                         transports: ['websocket'],
                     });
+                    console.log(newSocket)
                     setSocket(newSocket); // 소켓 상태 설정
                 }
                 catch(e) {
@@ -151,17 +146,12 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     openError(<ErrorMessage message={message} />);
                 }
             }
-            console.log(playData);
-            console.log("playback_url:", playData?.playback_url);
         }
         fetchStreamUrl();
 
         return () => {
             // Use socketRef.current for cleanup to ensure the latest socket instance is used
-            if (socketRef.current) {
-                console.log('Socket: Disconnecting (via ref).');
-                socketRef.current.disconnect();
-            }
+            socket?.disconnect();
             setSocket(null); // Clear the socket state
         };
     }, []); // Adjusted dependencies

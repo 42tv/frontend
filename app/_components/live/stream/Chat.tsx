@@ -24,6 +24,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
 
     // WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
     useEffect(() => {
+        console.log("this is chat component:", socket);
         if (socket) {
             const handleChatMessage = (message: any) => {
                 console.log(message);
