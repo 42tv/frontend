@@ -176,11 +176,11 @@ const IvsPlayer = ({ streamUrl }: Props) => {
             disabled={isMuted}
           />
         </div>
-        <div>
+        {/* <div>
           {currentQuality && (
             <span className="text-sm">{currentQuality}</span>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
