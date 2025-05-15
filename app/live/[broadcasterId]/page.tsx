@@ -185,12 +185,12 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }, [playDataState?.start_time]); // start_time이 변경될 때마다 실행
 
     return (
-        <div className="flex flex-row w-full h-full"> {/* 헤더 높이 제외한 전체 높이 */}
+        <div className="flex flex-row w-full h-full">
             <div className="flex flex-col flex-1">
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                <div className="flex flex-row w-full p-4 border-t border-gray-700 flex items-center flex-shrink-0 space-x-4">
+                <div className="flex flex-row w-full p-4 border-t border-gray-700 flex items-center space-x-4">
                   {/* 프로필 이미지 영역 */}
                   <div className="flex items-center justify-center space-x-2 min-w-[60px]">
                     <Image
@@ -203,8 +203,8 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                   </div>
                   {/* 설명 텍스트 영역 */}
                   <div className="flex w-full flex-col">
-                    <h2 className="text-xl font-semibold">{playDataState?.title}</h2> {/* playData -> playDataState */}
-                    <p className="text-gray-400">{playDataState?.nickname}</p> {/* playData -> playDataState */}
+                    <h2 className="text-xl font-semibold">{playDataState?.title}</h2>
+                    <p className="text-gray-400">{playDataState?.nickname}</p>
                     <div className="flex items-center space-x-4 text-gray-400 text-sm mt-1">
                         <span className="flex items-center space-x-1">
                             <FiUser 
@@ -231,7 +231,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     </div>
                   </div>
                   {/* 아이콘 영역 */}
-                  <div className="flex items-center justify-end space-x-4 text-gray-400 text-2xl"> {/* text-xl -> text-2xl */}
+                  <div className="flex items-center justify-end space-x-4 text-gray-400 text-2xl">
                     <button 
                         title="북마크" 
                         className="hover:text-white transition-colors duration-200"
@@ -254,14 +254,13 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     <button title="선물" className="hover:text-white transition-colors duration-200">
                       <GiPresent/>
                     </button>
-                    </div>
+                  </div>
                 </div>
             </div>
              {/* 채팅 영역 컨테이너 */}
-             <div className="w-80 border-l border-gray-700 flex flex-col">
-                {/* 채팅 컴포넌트 래퍼 - 세로 공간을 채우도록 flex-1 추가 */}
-                <div className="flex-1 min-h-0"> {/* flex-1 및 min-h-0 추가 */}
-                    <Chat broadcasterId={broadcasterId} socket={socket} /> {/* Chat 컴포넌트가 부모를 채운다고 가정 */}
+             <div className="flex flex-col h-full w-80 border-l border-gray-700 overflow-auto">
+                <div className="flex-1 h-full">
+                    <Chat broadcasterId={broadcasterId} socket={socket} />
                 </div>
             </div>
         </div>

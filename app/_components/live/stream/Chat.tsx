@@ -16,11 +16,180 @@ interface Message {
     chatter_message: string;
 }
 
+const dummy_messages: Message[] = [
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },{
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+    {
+        chatter_idx: 1,
+        chatter_nickname: 'user1',
+        chatter_message: '안녕하세요!',
+    },
+
+]
+
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
     const {openModal} = useModalStore()
+    
 
     // WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
     useEffect(() => {
@@ -36,6 +205,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
                 socket.off('chat', handleChatMessage);
             };
         }
+        setMessages(dummy_messages) // 더미 메시지로 초기화
     }, [socket]);
 
     // 새 메시지 수신 시 스크롤 맨 아래로 이동
@@ -58,21 +228,22 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
 
     return (
         <div className="flex flex-col h-full bg-gray-800 text-white">
-            {/* 채팅 헤더 */}
+            {/* 채팅 헤더 - 고정 */}
             <div className="p-3 border-b border-gray-700 text-center font-semibold">
                 채팅
             </div>
 
-            {/* 메시지 목록 */}
-            {/* Add classes: [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {messages.map((msg, index) => (
-                    <div key={index} className="text-sm">
-                        <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
-                        <span className="break-words">{msg.chatter_message}</span>
-                    </div>
-                ))}
-                <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}
+            {/* 메시지 목록 - 스크롤 가능 영역 */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="p-3 space-y-2">
+                    {messages.map((msg, index) => (
+                        <div key={index} className="text-sm">
+                            <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
+                            <span className="break-words">{msg.chatter_message}</span>
+                        </div>
+                    ))}
+                    <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}
+                </div>
             </div>
 
             {/* 메시지 입력 */}
