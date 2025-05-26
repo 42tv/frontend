@@ -29,7 +29,7 @@ export default {
         colorFg01: "rgba(153, 153, 153, 1)",
         textBase: {
           DEFAULT: "rgba(75, 75, 75, 1)",
-          dark: "rgba(153, 153, 153, 1)",
+          dark: "rgb(139, 141, 143)",
           bold: "rgba(50, 50, 50, 1)",
           "dark-bold": "rgba(128, 128, 128, 1)",
         },

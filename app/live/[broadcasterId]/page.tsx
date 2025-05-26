@@ -156,13 +156,13 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }, []); // Adjusted dependencies
 
     useEffect(() => {
-        socketRef.current?.on('duplicate', () => {
+        socketRef.current?.on('duplicate_connection', () => {
             openError(<ErrorMessage message="다른 기기에서 접속하였습니다" />);
             router.push('/'); // 홈으로 리다이렉트
         })
         
         return () => {
-            socketRef.current?.off('duplicate'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
+            socketRef.current?.off('duplicate_connection'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
         }
     }, [socketRef.current]); // socketRef.current가 변경될 때마다 실행
 
@@ -204,9 +204,9 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                   {/* 설명 텍스트 영역 */}
                   <div className="flex w-full flex-col">
                     <h2 className="text-xl font-semibold">{playDataState?.title}</h2>
-                    <p className="text-gray-400">{playDataState?.nickname}</p>
-                    <div className="flex items-center space-x-4 text-gray-400 text-sm mt-1">
-                        <span className="flex items-center space-x-1">
+                    <p className="dark:text-textBase-dark text-textBase">{playDataState?.nickname}</p>
+                    <div className="flex items-center space-x-4 dark:text-textBase-dark text-textBase text-sm mt-1">
+                        <span className="flex items-center space-x-1 ">
                             <FiUser 
                                 title="시청자"
                             />
