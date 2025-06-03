@@ -52,3 +52,16 @@ export async function reqeustChat(broadcastId: string, message: string) {
   });
   return response.data;
 }
+
+export async function requestLike(broadcasterIdx: string) {
+  const requestBody = {
+    broadcaster_idx: broadcasterIdx,
+  };
+  const response = await api.post("/api/live/like", requestBody, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}

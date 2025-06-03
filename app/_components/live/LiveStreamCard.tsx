@@ -11,6 +11,7 @@ import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
 import { Live } from "../utils/interfaces";
 import { formatElapsedTime } from "../utils/utils";
+import { AiOutlineLike } from "react-icons/ai";
 
 
 
@@ -94,7 +95,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                             {formatCount(live.play_cnt)}
                         </span>
                         <span className="flex items-center">
-                            <FiHeart 
+                            <AiOutlineLike 
                                 className="h-3 w-3 mr-0.5" 
                                 title="추천"
                             />

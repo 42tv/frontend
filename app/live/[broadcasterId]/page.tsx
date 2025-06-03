@@ -1,6 +1,6 @@
 'use client';
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
-import { requestPlay } from "@/app/_apis/live";
+import { requestPlay, requestLike } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
 import SendPost from "@/app/_components/info/tabs/post_tabs_component/send_post";
 import Chat from "@/app/_components/live/stream/Chat";
@@ -10,7 +10,7 @@ import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, useRef, use } from "react";
-import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
+import { AiOutlineClockCircle, AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { FiHeart, FiMail, FiUser } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
@@ -88,6 +88,31 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             return;
         }
         openModal(<SendPost close={closeModal} userId={(await params).broadcasterId}/>);
+    }
+
+    async function handleLike() {
+        // 게스트라면 로그인 컴포넌트
+        if (is_guest) {
+            openModal(<LoginComponent />)
+            return;
+        }
+
+        if (!playDataState) return;
+
+        try {
+            const response = await requestLike(playDataState.broadcaster_idx);
+            console.log("Like response:", response);
+            // Update like count if the API returns it
+            if (response.like_cnt !== undefined) {
+                setPlayDataState({
+                    ...playDataState,
+                    like_cnt: response.like_cnt,
+                });
+            }
+        } catch (e) {
+            const message = getApiErrorMessage(e);
+            openError(<ErrorMessage message={message} />);
+        }
     }
 
     useEffect(() => {
@@ -220,10 +245,10 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                             <span>{playDataState?.play_cnt ?? 0}</span>
                         </span>
                         <span className="flex items-center space-x-1">
-                            <FiHeart 
+                            <AiOutlineLike 
                                 title="추천"
                             />
-                            <span>{playDataState?.play_cnt ?? 0}</span>
+                            <span>{playDataState?.like_cnt ?? 0}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                             <MdOutlineBookmark 
@@ -255,7 +280,11 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     >
                       <FiMail />
                     </button>
-                    <button title="좋아요" className="hover:text-white transition-colors duration-200">
+                    <button 
+                        title="좋아요" 
+                        className="hover:text-white transition-colors duration-200"
+                        onClick={handleLike}
+                    >
                       <AiOutlineLike/>
                     </button>
                     <button title="선물" className="hover:text-white transition-colors duration-200">
