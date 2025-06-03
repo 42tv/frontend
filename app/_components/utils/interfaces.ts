@@ -68,6 +68,9 @@ export interface Live {
 }
 
 export interface PlayData {
+  broadcaster_idx: string;
+  broadcaster_id: string;
+  broadcaster_nickname: string;
   playback_url: string;
   title: string;
   is_bookmarked: boolean;

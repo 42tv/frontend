@@ -10,6 +10,9 @@ const usePlayStore = create<PlayState>((set) => ({
     playData: null,
     setPlayData: (playDataResponse: PlayData) => set({
         playData: {
+            broadcaster_idx: playDataResponse.broadcaster_idx,
+            broadcaster_id: playDataResponse.broadcaster_id,
+            broadcaster_nickname: playDataResponse.broadcaster_nickname,
             playback_url: playDataResponse.playback_url,
             title: playDataResponse.title,
             is_bookmarked: playDataResponse.is_bookmarked,

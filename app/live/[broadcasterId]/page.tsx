@@ -93,7 +93,11 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     useEffect(() => {
         async function fetchStreamUrl() {
             if (playData) {
+                console.log(playData);
                 setPlayDataState({
+                    broadcaster_idx: playData.broadcaster_idx,
+                    broadcaster_id: playData.broadcaster_id,
+                    broadcaster_nickname: playData.broadcaster_nickname,
                     playback_url: playData.playback_url,
                     title: playData.title,
                     is_bookmarked: playData.is_bookmarked,
@@ -119,6 +123,9 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     const response = await requestPlay(broadcasterId);
                     console.log("Response:", response);
                     setPlayDataState({
+                        broadcaster_idx: response.broadcaster_idx,
+                        broadcaster_id: response.broadcaster_id,
+                        broadcaster_nickname: response.broadcaster_nickname,
                         playback_url: response.playback_url,
                         title: response.title,
                         is_bookmarked: response.is_bookmarked,
