@@ -76,6 +76,7 @@ export interface PlayData {
   is_bookmarked: boolean;
   profile_img: string;
   nickname: string;
+  viewer_cnt: number;
   play_cnt: number;
   like_cnt: number;
   start_time: string;

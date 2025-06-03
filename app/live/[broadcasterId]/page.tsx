@@ -21,6 +21,7 @@ import LoginComponent from "@/app/_components/modals/login_component";
 import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
 import { Socket, io } from "socket.io-client";
 import { useRouter } from "next/navigation";
+import { BsPlayFill } from "react-icons/bs";
 
 interface LivePageProps {
     broadcasterId: string;
@@ -128,6 +129,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     is_bookmarked: playData.is_bookmarked,
                     profile_img: playData.profile_img,
                     nickname: playData.nickname,
+                    viewer_cnt: playData.viewer_cnt,
                     play_cnt: playData.play_cnt,
                     like_cnt: playData.like_cnt,
                     start_time: playData.start_time,
@@ -156,6 +158,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         is_bookmarked: response.is_bookmarked,
                         profile_img: response.profile_img,
                         nickname: response.nickname,
+                        viewer_cnt: response.viewer_cnt,
                         play_cnt: response.play_cnt,
                         like_cnt: response.like_cnt,
                         start_time: response.start_time,
@@ -192,9 +195,18 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             openError(<ErrorMessage message="다른 기기에서 접속하였습니다" />);
             router.push('/'); // 홈으로 리다이렉트
         })
-        
+        socketRef.current?.on('viewer_count', (data) => {
+            setPlayDataState((prevState) => {
+                if (!prevState) return null; // 이전 상태가 없으면 null 반환
+                return {
+                    ...prevState,
+                    viewer_cnt: data.viewer_cnt, // 서버로부터 받은 play_cnt 업데이트
+                };
+            });
+        })
         return () => {
             socketRef.current?.off('duplicate_connection'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
+            socketRef.current?.off('play_count_update'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
         }
     }, [socketRef.current]); // socketRef.current가 변경될 때마다 실행
 
@@ -242,7 +254,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                             <FiUser 
                                 title="시청자"
                             />
-                            <span>{playDataState?.play_cnt ?? 0}</span>
+                            <span>{playDataState?.viewer_cnt ?? 0}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                             <AiOutlineLike 
