@@ -28,7 +28,9 @@ export default function LoginComponent() {
       await fetchUser();
       closeModal();
 
-      router.push('/live');
+      if (!window.location.pathname.startsWith('/live')) {
+        router.push('/live');
+      }
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch(err: any) {

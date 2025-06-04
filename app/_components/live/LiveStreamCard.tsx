@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FiHeart, FiUser } from 'react-icons/fi'; // react-icons에서 아이콘 가져오기
 import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가져오기
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
-import { requestPlay } from "@/app/_apis/live";
+import { requestLobyPlay } from "@/app/_apis/live";
 import usePlayStore from "../utils/store/playStore";
 import errorModalStore from "../utils/store/errorModalStore";
 import ErrorMessage from "../modals/error_component";
@@ -11,6 +11,7 @@ import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
 import { Live } from "../utils/interfaces";
 import { formatElapsedTime } from "../utils/utils";
+import { AiOutlineLike } from "react-icons/ai";
 
 
 
@@ -41,7 +42,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
 
     async function handlePlay() {
         try {
-            const response = await requestPlay(live.user.user_id)
+            const response = await requestLobyPlay(live.user.user_id)
             setPlayData(response);
 
             router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동
@@ -69,7 +70,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                     alt={live.user.broadcastSetting.title || "Live Stream Thumbnail"}
                     fill // Use fill prop
                     className="object-cover" 
-                    priority={index < 4} // Prioritize first few images (adjust as needed)
+                    priority={true} // Prioritize first few images (adjust as needed)
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
             </div>
@@ -94,11 +95,11 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                             {formatCount(live.play_cnt)}
                         </span>
                         <span className="flex items-center">
-                            <FiHeart 
+                            <AiOutlineLike 
                                 className="h-3 w-3 mr-0.5" 
                                 title="추천"
                             />
-                            {formatCount(live.like_cnt)}
+                            {formatCount(live.recommend_cnt)}
                         </span>
                         <span className="text-xs text-gray-500 flex-shrink-0">{elapsedTime}</span>
                     </div>

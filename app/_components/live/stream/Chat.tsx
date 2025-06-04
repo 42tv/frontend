@@ -1,79 +1,133 @@
 'use client';
+import { reqeustChat } from '@/app/_apis/live';
 import React, { useState, useEffect, useRef } from 'react';
+import { Socket } from 'socket.io-client'; // Socket 타입 import
+import useModalStore from '../../utils/store/modalStore';
+import LoginComponent from '../../modals/login_component';
 
 interface ChatProps {
-    user_id: string; // 스트리머 식별 (채팅방 구분을 위해)
+    broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
+    socket: Socket | null; // socket prop 추가
 }
 
-interface Message {
-    id: string;
-    sender: string;
-    text: string;
-    timestamp: number;
+type MessageType = 'chat' | 'donation' | 'recommend';
+
+interface BaseMessage {
+  id?: string;
+  type: MessageType;
+  timestamp?: number;
 }
 
-const Chat: React.FC<ChatProps> = ({ user_id }) => {
+interface ChatMessage extends BaseMessage {
+  type: 'chat';
+  chatter_idx: number;
+  chatter_nickname: string;
+  chatter_message: string;
+}
+
+interface DonationMessage extends BaseMessage {
+  type: 'donation';
+  amount: number;
+  donor_nickname: string;
+  message?: string;
+}
+
+interface RecommendMessage extends BaseMessage {
+  type: 'recommend';
+  recommender_nickname: string;
+}
+
+type Message = ChatMessage | DonationMessage | RecommendMessage;
+
+const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
+    const {openModal} = useModalStore()
+    
+    const handleChatMessage = (message: ChatMessage) => {
+        console.log('Chat message received:', message);
+        setMessages(prevMessages => [...prevMessages, message]);
+    };
+    
+    // const handleDonationMessage = (message: DonationMessage) => {
+    //     console.log('Donation message received:', message);
+    //     setMessages(prevMessages => [...prevMessages, message]);
+    // };
+    
+    const handleRecommendMessage = (message: RecommendMessage) => {
+        console.log('Recommendation message received:', message);
+        setMessages(prevMessages => [...prevMessages, message]);
+    };
 
-    // TODO: WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
     useEffect(() => {
-        // 임시 메시지 (테스트용)
-        setMessages([
-            { id: '1', sender: 'User1', text: '안녕하세요!', timestamp: Date.now() - 5000 },
-            { id: '2', sender: 'User2', text: '반갑습니다~', timestamp: Date.now() - 3000 },
-            { id: '3', sender: 'User1', text: '채팅 테스트 중입니다.', timestamp: Date.now() - 1000 },
-        ]);
+        console.log("this is chat component:", socket);
+        if (socket) {
+            socket.on('chat', handleChatMessage);
+            // socket.on('donation', handleDonationMessage);
+            socket.on('recommend', handleRecommendMessage);
 
-        // WebSocket 연결 로직...
-        // ws.onmessage = (event) => { ... setMessages(...) }
-
-        return () => {
-            // WebSocket 연결 해제 로직...
-        };
-    }, [user_id]);
+            return () => {
+                socket.off('chat', handleChatMessage);
+                // socket.off('donation', handleDonationMessage);
+                socket.off('recommend', handleRecommendMessage);
+            };
+        }
+    }, [socket]);
 
     // 새 메시지 수신 시 스크롤 맨 아래로 이동
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newMessage.trim() === '') return;
 
-        // TODO: WebSocket으로 메시지 전송 로직
-        console.log('Sending message:', newMessage);
-        // 임시로 로컬 상태에 추가 (실제로는 서버 응답 후 추가)
-        const tempMessage: Message = {
-            id: Date.now().toString(), // 임시 ID
-            sender: 'CurrentUser', // TODO: 실제 사용자 닉네임 사용
-            text: newMessage,
-            timestamp: Date.now(),
-        };
-        setMessages(prev => [...prev, tempMessage]);
-
+        try {
+            await reqeustChat(broadcasterId, newMessage); // 서버에 메시지 전송
+        }
+        catch (e: any) {
+            openModal(<LoginComponent />)
+        }
         setNewMessage(''); // 입력 필드 초기화
     };
 
     return (
         <div className="flex flex-col h-full bg-gray-800 text-white">
-            {/* 채팅 헤더 */}
+            {/* 채팅 헤더 - 고정 */}
             <div className="p-3 border-b border-gray-700 text-center font-semibold">
                 채팅
             </div>
 
-            {/* 메시지 목록 */}
-            {/* Add classes: [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {messages.map((msg) => (
-                    <div key={msg.id} className="text-sm">
-                        <span className="font-semibold mr-1">{msg.sender}:</span>
-                        <span className="break-words">{msg.text}</span>
-                    </div>
-                ))}
-                <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}
+            {/* 메시지 목록 - 스크롤 가능 영역 */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="p-3 space-y-2">
+                    {messages.map((msg, index) => (
+                        <div key={index} className="text-sm">
+                            {msg.type === 'chat' && (
+                                <>
+                                    <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
+                                    <span className="break-words">{msg.chatter_message}</span>
+                                </>
+                            )}
+                            {msg.type === 'donation' && (
+                                <div className="text-green-400">
+                                    <span className="font-semibold">{msg.donor_nickname}</span>님이 {msg.amount}을 후원했습니다!
+                                    {msg.message && (
+                                        <div className="ml-2 italic">{msg.message}</div>
+                                    )}
+                                </div>
+                            )}
+                            {msg.type === 'recommend' && (
+                                <div className="italic text-yellow-400">
+                                    <span className="font-semibold">{msg.recommender_nickname}</span>님이 추천했습니다!
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                    <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}
+                </div>
             </div>
 
             {/* 메시지 입력 */}

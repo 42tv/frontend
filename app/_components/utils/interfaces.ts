@@ -56,7 +56,7 @@ export interface Live {
   thumbnail: string;
   start_time: string;
   play_cnt: number;
-  like_cnt: number;
+  recommend_cnt: number;
   user: {
     idx: number;
     user_id: string;
@@ -68,14 +68,19 @@ export interface Live {
 }
 
 export interface PlayData {
+  broadcaster_idx: string;
+  broadcaster_id: string;
+  broadcaster_nickname: string;
   playback_url: string;
   title: string;
   is_bookmarked: boolean;
   profile_img: string;
   nickname: string;
+  viewer_cnt: number;
   play_cnt: number;
   like_cnt: number;
   start_time: string;
+  play_token: string;
 }
 
 export interface CardData {

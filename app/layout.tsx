@@ -24,12 +24,12 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Toolbar />
-          <div className="flex flex-1">
+          <div className="flex flex-1 pt-[65px] overflow-auto">
             <LeftContainer />
             <Modal />
             <ErrorModal />
             <PopupModal />
-            <div className="flex-1 overflow-x-auto">
+            <div className="flex-1 overflow-x-auto overflow-y-auto">
               {children}
               {/* <FooterContainer /> */}
             </div>
