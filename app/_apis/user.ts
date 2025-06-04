@@ -240,3 +240,44 @@ export async function deleteMultiBookmakrs(ids: number[]) {
   });
   return response.data;
 }
+
+/**
+ * 블랙리스트에 사용자 추가
+ * @param user_id
+ * @returns
+ */
+export async function addToBlacklist(user_id: string) {
+  const response = await api.post(
+    `/api/user/blacklist`,
+    {
+      user_id: user_id,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+/**
+ * 블랙리스트에서 사용자 제거
+ * @param user_id
+ * @returns
+ */
+export async function removeFromBlacklist(user_id: string) {
+  const response = await api.delete(`/api/user/blacklist/${user_id}`, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * 블랙리스트 목록 조회
+ * @returns
+ */
+export async function getBlacklist() {
+  const response = await api.get("/api/user/blacklist", {
+    withCredentials: true,
+  });
+  return response.data;
+}

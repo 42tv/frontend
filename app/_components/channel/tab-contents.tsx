@@ -56,22 +56,7 @@ export const FanRankContent = () => {
   );
 };
 
-export const BlacklistContent = () => {
-  return (
-    <div className="bg-gray-800 p-6 rounded-lg">
-      <h3 className="font-bold text-xl mb-4">블랙리스트</h3>
-      <div className="space-y-2">
-        <div className="bg-gray-700 p-4 rounded flex justify-between items-center">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-gray-600 rounded-full mr-3"></div>
-            <p>사용자1</p>
-          </div>
-          <button className="bg-red-500 text-white px-3 py-1 rounded text-sm">해제</button>
-        </div>
-      </div>
-    </div>
-  );
-};
+export { BlacklistContent } from "./blacklist-content";
 
 export const ClipsContent = () => {
   return (
