@@ -10,11 +10,34 @@ interface ChatProps {
     socket: Socket | null; // socket prop 추가
 }
 
-interface Message {
-    chatter_idx: number;
-    chatter_nickname: string;
-    chatter_message: string;
+type MessageType = 'chat' | 'donation' | 'recommendation';
+
+interface BaseMessage {
+  id?: string;
+  type: MessageType;
+  timestamp?: number;
 }
+
+interface ChatMessage extends BaseMessage {
+  type: 'chat';
+  chatter_idx: number;
+  chatter_nickname: string;
+  chatter_message: string;
+}
+
+interface DonationMessage extends BaseMessage {
+  type: 'donation';
+  amount: number;
+  donor_nickname: string;
+  message?: string;
+}
+
+interface RecommendMessage extends BaseMessage {
+  type: 'recommendation';
+  recommender_nickname: string;
+}
+
+type Message = ChatMessage | DonationMessage | RecommendMessage;
 
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
@@ -22,8 +45,18 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
     const {openModal} = useModalStore()
     
-    const handleChatMessage = (message: any) => {
-        console.log(message);
+    const handleChatMessage = (message: ChatMessage) => {
+        console.log('Chat message received:', message);
+        setMessages(prevMessages => [...prevMessages, message]);
+    };
+    
+    // const handleDonationMessage = (message: DonationMessage) => {
+    //     console.log('Donation message received:', message);
+    //     setMessages(prevMessages => [...prevMessages, message]);
+    // };
+    
+    const handleRecommendMessage = (message: RecommendMessage) => {
+        console.log('Recommendation message received:', message);
         setMessages(prevMessages => [...prevMessages, message]);
     };
 
@@ -31,9 +64,13 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
         console.log("this is chat component:", socket);
         if (socket) {
             socket.on('chat', handleChatMessage);
+            // socket.on('donation', handleDonationMessage);
+            socket.on('recommendation', handleRecommendMessage);
 
             return () => {
                 socket.off('chat', handleChatMessage);
+                // socket.off('donation', handleDonationMessage);
+                socket.off('recommendation', handleRecommendMessage);
             };
         }
     }, [socket]);
@@ -68,8 +105,25 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
                 <div className="p-3 space-y-2">
                     {messages.map((msg, index) => (
                         <div key={index} className="text-sm">
-                            <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
-                            <span className="break-words">{msg.chatter_message}</span>
+                            {msg.type === 'chat' && (
+                                <>
+                                    <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
+                                    <span className="break-words">{msg.chatter_message}</span>
+                                </>
+                            )}
+                            {msg.type === 'donation' && (
+                                <div className="text-green-400">
+                                    <span className="font-semibold">{msg.donor_nickname}</span>님이 {msg.amount}을 후원했습니다!
+                                    {msg.message && (
+                                        <div className="ml-2 italic">{msg.message}</div>
+                                    )}
+                                </div>
+                            )}
+                            {msg.type === 'recommendation' && (
+                                <div className="italic text-yellow-400">
+                                    <span className="font-semibold">{msg.recommender_nickname}</span>님이 추천했습니다!
+                                </div>
+                            )}
                         </div>
                     ))}
                     <div ref={messagesEndRef} /> {/* 스크롤 타겟 */}

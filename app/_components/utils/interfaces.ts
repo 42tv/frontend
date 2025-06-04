@@ -56,7 +56,7 @@ export interface Live {
   thumbnail: string;
   start_time: string;
   play_cnt: number;
-  like_cnt: number;
+  recommend_cnt: number;
   user: {
     idx: number;
     user_id: string;

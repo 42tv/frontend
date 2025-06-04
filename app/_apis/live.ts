@@ -57,7 +57,7 @@ export async function requestLike(broadcasterIdx: string) {
   const requestBody = {
     broadcaster_idx: broadcasterIdx,
   };
-  const response = await api.post("/api/live/like", requestBody, {
+  const response = await api.post("/api/live/recommend", requestBody, {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",

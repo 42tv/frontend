@@ -99,7 +99,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                                 className="h-3 w-3 mr-0.5" 
                                 title="추천"
                             />
-                            {formatCount(live.like_cnt)}
+                            {formatCount(live.recommend_cnt)}
                         </span>
                         <span className="text-xs text-gray-500 flex-shrink-0">{elapsedTime}</span>
                     </div>
