@@ -10,7 +10,7 @@ interface ChatProps {
     socket: Socket | null; // socket prop 추가
 }
 
-type MessageType = 'chat' | 'donation' | 'recommendation';
+type MessageType = 'chat' | 'donation' | 'recommend';
 
 interface BaseMessage {
   id?: string;
@@ -33,7 +33,7 @@ interface DonationMessage extends BaseMessage {
 }
 
 interface RecommendMessage extends BaseMessage {
-  type: 'recommendation';
+  type: 'recommend';
   recommender_nickname: string;
 }
 
@@ -65,12 +65,12 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
         if (socket) {
             socket.on('chat', handleChatMessage);
             // socket.on('donation', handleDonationMessage);
-            socket.on('recommendation', handleRecommendMessage);
+            socket.on('recommend', handleRecommendMessage);
 
             return () => {
                 socket.off('chat', handleChatMessage);
                 // socket.off('donation', handleDonationMessage);
-                socket.off('recommendation', handleRecommendMessage);
+                socket.off('recommend', handleRecommendMessage);
             };
         }
     }, [socket]);
@@ -119,7 +119,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
                                     )}
                                 </div>
                             )}
-                            {msg.type === 'recommendation' && (
+                            {msg.type === 'recommend' && (
                                 <div className="italic text-yellow-400">
                                     <span className="font-semibold">{msg.recommender_nickname}</span>님이 추천했습니다!
                                 </div>

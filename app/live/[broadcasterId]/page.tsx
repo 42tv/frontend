@@ -91,7 +91,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         openModal(<SendPost close={closeModal} userId={(await params).broadcasterId}/>);
     }
 
-    async function handleLike() {
+    async function handleRecommend() {
         // 게스트라면 로그인 컴포넌트
         if (is_guest) {
             openModal(<LoginComponent />)
@@ -295,7 +295,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     <button 
                         title="좋아요" 
                         className="hover:text-white transition-colors duration-200"
-                        onClick={handleLike}
+                        onClick={handleRecommend}
                     >
                       <AiOutlineLike/>
                     </button>
