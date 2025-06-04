@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { addToBlacklist, removeMultipleFromBlacklist, getBlacklist } from "../../_apis/user";
 import errorModalStore from "../../_components/utils/store/errorModalStore";
+import { getApiErrorMessage } from "@/app/_apis/interfaces";
 
 interface BlacklistUser {
   user_idx: number;
@@ -27,7 +28,7 @@ export const BlacklistContent = () => {
       console.log(response.lists);
       setBlacklist(response.lists || []);
     } catch (error) {
-      openError("블랙리스트 목록을 불러오는데 실패했습니다.");
+      console.log(error);
     }
   };
 
@@ -38,7 +39,6 @@ export const BlacklistContent = () => {
   // 블랙리스트에 사용자 추가
   const handleAddUser = async () => {
     if (!searchTerm.trim()) {
-      openError("사용자 ID 또는 닉네임을 입력해주세요.");
       return;
     }
 
@@ -49,10 +49,9 @@ export const BlacklistContent = () => {
       await fetchBlacklist();
       openError("사용자가 블랙리스트에 추가되었습니다.");
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        openError("존재하지 않는 사용자입니다.");
-      } else if (error.response?.status === 409) {
-        openError("이미 블랙리스트에 추가된 사용자입니다.");
+      const message = getApiErrorMessage(error)
+      if (message) {
+        openError(message);
       } else {
         openError("블랙리스트 추가에 실패했습니다.");
       }
