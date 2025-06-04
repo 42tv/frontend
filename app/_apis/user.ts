@@ -250,7 +250,7 @@ export async function addToBlacklist(user_id: string) {
   const response = await api.post(
     `/api/user/blacklist`,
     {
-      user_id: user_id,
+      blocked_user_id: user_id,
     },
     {
       withCredentials: true,
@@ -265,9 +265,25 @@ export async function addToBlacklist(user_id: string) {
  * @returns
  */
 export async function removeFromBlacklist(user_id: string) {
-  const response = await api.delete(`/api/user/blacklist/${user_id}`, {
-    withCredentials: true,
-  });
+  const response = await api.delete(`/api/user/blacklist`,
+    {
+      withCredentials: true,
+      data: { blocked_user_id: user_id },
+    });
+  return response.data;
+}
+
+/**
+ * 여러 사용자를 블랙리스트에서 한 번에 제거
+ * @param user_ids 제거할 사용자 ID 배열
+ * @returns
+ */
+export async function removeMultipleFromBlacklist(user_ids: string[]) {
+  const response = await api.delete(`/api/user/blacklists`,
+    {
+      withCredentials: true,
+      data: { blocked_user_ids: user_ids },
+    });
   return response.data;
 }
 
