@@ -176,6 +176,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 }
                 catch(e) {
                     const message = getApiErrorMessage(e);
+                    router.push('/live'); // 홈으로 리다이렉트
                     openError(<ErrorMessage message={message} />);
                 }
             }
@@ -206,7 +207,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         })
         return () => {
             socketRef.current?.off('duplicate_connection'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
-            socketRef.current?.off('play_count_update'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
+            socketRef.current?.off('viewer_count'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
         }
     }, [socketRef.current]); // socketRef.current가 변경될 때마다 실행
 
