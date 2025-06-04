@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { addToBlacklist, removeFromBlacklist, getBlacklist } from "../../_apis/user";
+import { addToBlacklist, removeMultipleFromBlacklist, getBlacklist } from "../../_apis/user";
 import errorModalStore from "../../_components/utils/store/errorModalStore";
 
 interface BlacklistUser {
-  id: string;
+  user_idx: number;
+  user_id: string;
   nickname: string;
-  createdAt: string;
+  profile_img: string;
+  blocked_at: string;
 }
 
 export const BlacklistContent = () => {
@@ -22,7 +24,8 @@ export const BlacklistContent = () => {
   const fetchBlacklist = async () => {
     try {
       const response = await getBlacklist();
-      setBlacklist(response.data || []);
+      console.log(response.lists);
+      setBlacklist(response.lists || []);
     } catch (error) {
       openError("블랙리스트 목록을 불러오는데 실패했습니다.");
     }
@@ -71,7 +74,7 @@ export const BlacklistContent = () => {
 
     setIsLoading(true);
     try {
-      await Promise.all(selectedUsers.map(userId => removeFromBlacklist(userId)));
+      await removeMultipleFromBlacklist(selectedUsers);
       setSelectedUsers([]);
       await fetchBlacklist();
       openError("선택한 사용자들이 블랙리스트에서 제거되었습니다.");
@@ -85,7 +88,7 @@ export const BlacklistContent = () => {
   // 체크박스 전체 선택/해제
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedUsers(blacklist.map(user => user.id));
+      setSelectedUsers(blacklist.map(user => user.user_id));
     } else {
       setSelectedUsers([]);
     }
@@ -107,61 +110,30 @@ export const BlacklistContent = () => {
 
   return (
     <div className="bg-gray-900 min-h-screen">
-      {/* 탭 메뉴 */}
-      <div className="flex border-b border-gray-700">
-        <button
-          onClick={() => setActiveTab("temporary")}
-          className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === "temporary"
-              ? "text-white border-b-2 border-blue-500"
-              : "text-gray-400 hover:text-white"
-          }`}
-        >
-          1일 정지
-        </button>
-        <button
-          onClick={() => setActiveTab("permanent")}
-          className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === "permanent"
-              ? "text-white border-b-2 border-blue-500"
-              : "text-gray-400 hover:text-white"
-          }`}
-        >
-          영구 정지
-        </button>
-      </div>
-
       <div className="p-6">
         {/* 검색 섹션 */}
         <div className="flex gap-4 mb-6">
           <button
-            className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
+            onClick={handleAddUser}
+            disabled={isLoading}
+            className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
           >
             추가
           </button>
-          <div className="flex-1 flex gap-2">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddUser()}
-              placeholder="아이디 · 닉네임"
-              className="flex-1 bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
-              disabled={isLoading}
-            />
-            <button
-              onClick={handleAddUser}
-              disabled={isLoading}
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
-            >
-              검색
-            </button>
-          </div>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddUser()}
+            placeholder="회원 아이디"
+            className="flex-1 bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
+            disabled={isLoading}
+          />
         </div>
 
         {/* 총 개시물 표시 */}
         <div className="mb-4 text-gray-400">
-          총 개시물: <span className="text-white">{blacklist.length}건</span>
+          차단 회원: <span className="text-white">{blacklist.length}명</span>
         </div>
 
         {/* 테이블 */}
@@ -177,8 +149,8 @@ export const BlacklistContent = () => {
                     className="w-4 h-4"
                   />
                 </th>
-                <th className="text-left p-4 text-gray-400 font-medium">번호</th>
-                <th className="text-left p-4 text-gray-400 font-medium">제재회원</th>
+                <th className="w-20 text-left p-4 text-gray-400 font-medium">이미지</th>
+                <th className="text-left p-4 text-gray-400 font-medium">닉네임(아이디)</th>
                 <th className="text-left p-4 text-gray-400 font-medium">제재일</th>
               </tr>
             </thead>
@@ -200,26 +172,35 @@ export const BlacklistContent = () => {
                   </td>
                 </tr>
               ) : (
-                blacklist.map((user, index) => (
-                  <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-750">
+                blacklist.map((user) => (
+                  <tr key={user.user_id} className="border-b border-gray-700 hover:bg-gray-750">
                     <td className="p-4">
                       <input
                         type="checkbox"
-                        checked={selectedUsers.includes(user.id)}
-                        onChange={(e) => handleSelectUser(user.id, e.target.checked)}
+                        checked={selectedUsers.includes(user.user_id)}
+                        onChange={(e) => handleSelectUser(user.user_id, e.target.checked)}
                         className="w-4 h-4"
                       />
                     </td>
-                    <td className="p-4">{index + 1}</td>
                     <td className="p-4">
-                      <div>
-                        <p className="font-medium">{user.nickname || user.id}</p>
-                        {user.nickname && (
-                          <p className="text-sm text-gray-400">ID: {user.id}</p>
+                      <div className="w-12 h-12 rounded-full overflow-hidden">
+                        {user.profile_img ? (
+                          <img 
+                            src={user.profile_img} 
+                            alt={`${user.nickname || user.user_id}의 프로필`} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                            <span className="text-gray-300 text-xs">No IMG</span>
+                          </div>
                         )}
                       </div>
                     </td>
-                    <td className="p-4 text-gray-400">{formatDate(user.createdAt)}</td>
+                    <td className="p-4">
+                      <p className="font-medium">{`${user.nickname} (${user.user_id})`|| ''}</p>
+                    </td>
+                    <td className="p-4 text-gray-400">{formatDate(user.blocked_at)}</td>
                   </tr>
                 ))
               )}
