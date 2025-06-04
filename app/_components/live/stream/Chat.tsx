@@ -22,15 +22,14 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
     const {openModal} = useModalStore()
     
+    const handleChatMessage = (message: any) => {
+        console.log(message);
+        setMessages(prevMessages => [...prevMessages, message]);
+    };
 
-    // WebSocket 연결 설정 및 메시지 수신/발신 로직 구현
     useEffect(() => {
         console.log("this is chat component:", socket);
         if (socket) {
-            const handleChatMessage = (message: any) => {
-                console.log(message);
-                setMessages(prevMessages => [...prevMessages, message]);
-            };
             socket.on('chat', handleChatMessage);
 
             return () => {
