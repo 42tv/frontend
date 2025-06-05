@@ -79,6 +79,7 @@ export interface PlayData {
   viewer_cnt: number;
   play_cnt: number;
   recommend_cnt: number;
+  bookmark_cnt: number;
   start_time: string;
   play_token: string;
 }

@@ -129,6 +129,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     is_bookmarked: playData.is_bookmarked,
                     profile_img: playData.profile_img,
                     nickname: playData.nickname,
+                    bookmark_cnt: playData.bookmark_cnt,
                     viewer_cnt: playData.viewer_cnt,
                     play_cnt: playData.play_cnt,
                     recommend_cnt: playData.recommend_cnt,
@@ -158,6 +159,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         is_bookmarked: response.is_bookmarked,
                         profile_img: response.profile_img,
                         nickname: response.nickname,
+                        bookmark_cnt: response.bookmark_cnt,
                         viewer_cnt: response.viewer_cnt,
                         play_cnt: response.play_cnt,
                         recommend_cnt: response.recommend_cnt,
@@ -267,7 +269,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                             <MdOutlineBookmark 
                                 title="북마크"
                             />
-                            <span>{playDataState?.recommend_cnt ?? 0}</span>
+                            <span>{playDataState?.bookmark_cnt ?? 0}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                             <AiOutlineClockCircle />

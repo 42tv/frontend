@@ -21,6 +21,7 @@ const usePlayStore = create<PlayState>((set) => ({
             viewer_cnt: playDataResponse.viewer_cnt,
             play_cnt: playDataResponse.play_cnt,
             recommend_cnt: playDataResponse.recommend_cnt,
+            bookmark_cnt: playDataResponse.bookmark_cnt,
             start_time: playDataResponse.start_time,
             play_token: playDataResponse.play_token,
         }
