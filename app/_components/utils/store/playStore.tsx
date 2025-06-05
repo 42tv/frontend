@@ -19,7 +19,7 @@ const usePlayStore = create<PlayState>((set) => ({
             profile_img: playDataResponse.profile_img,
             nickname: playDataResponse.nickname,
             play_cnt: playDataResponse.play_cnt,
-            like_cnt: playDataResponse.like_cnt,
+            recommend_cnt: playDataResponse.recommend_cnt,
             start_time: playDataResponse.start_time,
             play_token: playDataResponse.play_token,
         }

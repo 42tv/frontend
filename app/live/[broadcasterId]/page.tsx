@@ -104,10 +104,10 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             const response = await requestLike(playDataState.broadcaster_idx);
             console.log("Like response:", response);
             // Update like count if the API returns it
-            if (response.like_cnt !== undefined) {
+            if (response.recommend_cnt !== undefined) {
                 setPlayDataState({
                     ...playDataState,
-                    like_cnt: response.like_cnt,
+                    recommend_cnt: response.recommend_cnt,
                 });
             }
         } catch (e) {
@@ -131,7 +131,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     nickname: playData.nickname,
                     viewer_cnt: playData.viewer_cnt,
                     play_cnt: playData.play_cnt,
-                    like_cnt: playData.like_cnt,
+                    recommend_cnt: playData.recommend_cnt,
                     start_time: playData.start_time,
                     play_token: playData.play_token,
                 })
@@ -160,7 +160,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         nickname: response.nickname,
                         viewer_cnt: response.viewer_cnt,
                         play_cnt: response.play_cnt,
-                        like_cnt: response.like_cnt,
+                        recommend_cnt: response.recommend_cnt,
                         start_time: response.start_time,
                         play_token: response.play_token,
                     });
@@ -261,13 +261,13 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                             <AiOutlineLike 
                                 title="추천"
                             />
-                            <span>{playDataState?.like_cnt ?? 0}</span>
+                            <span>{playDataState?.recommend_cnt ?? 0}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                             <MdOutlineBookmark 
                                 title="북마크"
                             />
-                            <span>{playDataState?.like_cnt ?? 0}</span>
+                            <span>{playDataState?.recommend_cnt ?? 0}</span>
                         </span>
                         <span className="flex items-center space-x-1">
                             <AiOutlineClockCircle />

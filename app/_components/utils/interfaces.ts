@@ -38,7 +38,7 @@ export interface Stream {
   title: string | null;
   start_time: string | null;
   play_cnt: number | null;
-  like_cnt: number | null;
+  recommend_cnt: number | null;
 }
 
 export interface Post {
@@ -78,7 +78,7 @@ export interface PlayData {
   nickname: string;
   viewer_cnt: number;
   play_cnt: number;
-  like_cnt: number;
+  recommend_cnt: number;
   start_time: string;
   play_token: string;
 }
