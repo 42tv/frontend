@@ -1,5 +1,6 @@
 import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
 import BlockAlertComponent from "@/app/_components/modals/block_alert";
+import MessageSettingsModal from "@/app/_components/modals/message_settings_modal";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
@@ -77,6 +78,10 @@ export default function ReceiveMessage() {
                 ? prev.filter(id => id !== postId)
                 : [...prev, postId]
         );
+    };
+
+    const handleOpenSettings = () => {
+        openModal(<MessageSettingsModal closeModal={closeModal} />);
     };
 
     async function changePopupComponent(compoent: JSX.Element) {
@@ -182,7 +187,9 @@ export default function ReceiveMessage() {
                 <div className="flex space-x-2">
                     <button 
                         className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01">
+                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01"
+                        onClick={handleOpenSettings}
+                    >
                         <LuSettings className="text-iconBg-dark"/>
                         <span>설정</span>
                     </button>
