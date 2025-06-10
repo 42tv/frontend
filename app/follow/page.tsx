@@ -10,7 +10,7 @@ export default function FollowPage() {
   const [activeTab, setActiveTab] = useState(TABS[0]);
 
   return (
-    <div className="p-6 dark:bg-contentbg min-h-screen">
+    <div className="p-6 bg-background dark:bg-background-dark min-h-screen">
       <h1 className="text-2xl font-bold mb-4">PICK</h1>
       <TabNav tabs={TABS} active={activeTab} onChange={setActiveTab} />
 

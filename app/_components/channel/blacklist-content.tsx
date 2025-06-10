@@ -108,14 +108,14 @@ export const BlacklistContent = () => {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen">
+    <div className="bg-bg-primary dark:bg-bg-primary-dark min-h-screen">
       <div className="p-6">
         {/* 검색 섹션 */}
         <div className="flex gap-4 mb-6">
           <button
             onClick={handleAddUser}
             disabled={isLoading}
-            className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-bg-tertiary dark:bg-bg-tertiary-dark text-text-primary dark:text-text-primary-dark rounded hover:bg-bg-hover dark:hover:bg-bg-hover-dark disabled:bg-text-muted disabled:cursor-not-allowed transition-colors"
           >
             추가
           </button>
@@ -125,21 +125,21 @@ export const BlacklistContent = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddUser()}
             placeholder="회원 아이디"
-            className="flex-1 bg-gray-800 text-white px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
+            className="flex-1 bg-bg-secondary dark:bg-bg-secondary-dark text-text-primary dark:text-text-primary-dark px-4 py-2 rounded border border-border-primary dark:border-border-primary-dark focus:outline-none focus:border-primary"
             disabled={isLoading}
           />
         </div>
 
         {/* 총 개시물 표시 */}
-        <div className="mb-4 text-gray-400">
-          차단 회원: <span className="text-white">{blacklist.length}명</span>
+        <div className="mb-4 text-text-muted dark:text-text-muted-dark">
+          차단 회원: <span className="text-text-primary dark:text-text-primary-dark">{blacklist.length}명</span>
         </div>
 
         {/* 테이블 */}
-        <div className="bg-gray-800 rounded overflow-hidden">
+        <div className="bg-bg-secondary dark:bg-bg-secondary-dark rounded overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-700">
+              <tr className="border-b border-border-secondary dark:border-border-secondary-dark">
                 <th className="w-12 p-4">
                   <input
                     type="checkbox"
@@ -148,9 +148,9 @@ export const BlacklistContent = () => {
                     className="w-4 h-4"
                   />
                 </th>
-                <th className="w-20 text-left p-4 text-gray-400 font-medium">이미지</th>
-                <th className="text-left p-4 text-gray-400 font-medium">닉네임(아이디)</th>
-                <th className="text-left p-4 text-gray-400 font-medium">제재일</th>
+                <th className="w-20 text-left p-4 text-text-muted dark:text-text-muted-dark font-medium">이미지</th>
+                <th className="text-left p-4 text-text-muted dark:text-text-muted-dark font-medium">닉네임(아이디)</th>
+                <th className="text-left p-4 text-text-muted dark:text-text-muted-dark font-medium">제재일</th>
               </tr>
             </thead>
             <tbody>
@@ -166,13 +166,13 @@ export const BlacklistContent = () => {
                           <path d="M 30 60 Q 50 50 70 60" stroke="#2D3748" strokeWidth="3" fill="none"/>
                         </svg>
                       </div>
-                      <p className="text-gray-400">강퇴내역이 없습니다.</p>
+                      <p className="text-text-muted dark:text-text-muted-dark">강퇴내역이 없습니다.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 blacklist.map((user) => (
-                  <tr key={user.user_id} className="border-b border-gray-700 hover:bg-gray-750">
+                  <tr key={user.user_id} className="border-b border-border-secondary dark:border-border-secondary-dark hover:bg-bg-hover dark:hover:bg-bg-hover-dark">
                     <td className="p-4">
                       <input
                         type="checkbox"
@@ -190,8 +190,8 @@ export const BlacklistContent = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                            <span className="text-gray-300 text-xs">No IMG</span>
+                          <div className="w-full h-full bg-bg-tertiary dark:bg-bg-tertiary-dark flex items-center justify-center">
+                            <span className="text-text-muted dark:text-text-muted-dark text-xs">No IMG</span>
                           </div>
                         )}
                       </div>
@@ -199,7 +199,7 @@ export const BlacklistContent = () => {
                     <td className="p-4">
                       <p className="font-medium">{`${user.nickname} (${user.user_id})`|| ''}</p>
                     </td>
-                    <td className="p-4 text-gray-400">{formatDate(user.blocked_at)}</td>
+                    <td className="p-4 text-text-muted dark:text-text-muted-dark">{formatDate(user.blocked_at)}</td>
                   </tr>
                 ))
               )}
@@ -213,7 +213,7 @@ export const BlacklistContent = () => {
             <button
               onClick={handleRemoveSelected}
               disabled={isLoading || selectedUsers.length === 0}
-              className="px-8 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
+              className="px-8 py-2 bg-bg-tertiary dark:bg-bg-tertiary-dark text-text-primary dark:text-text-primary-dark rounded hover:bg-bg-hover dark:hover:bg-bg-hover-dark disabled:bg-text-muted disabled:text-text-secondary disabled:cursor-not-allowed transition-colors"
             >
               해제
             </button>

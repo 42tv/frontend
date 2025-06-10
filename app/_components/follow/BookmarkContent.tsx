@@ -82,7 +82,7 @@ export default function BookmarkContent() {
         <div className='flex flex-row space-x-2 items-center'>
           {!isLoading && <span>전체 {cards.length}</span>} {/* 숨김 개수는 예시 */}
           <button
-            className='flex flex-row items-center space-x-1 dark:text-textBase-dark dark:hover:text-white'
+            className='flex flex-row items-center space-x-1 dark:text-textBase-dark dark:hover:text-text-primary-dark'
             onClick={handleEditToggle}
             disabled={isLoading}
           >
@@ -100,7 +100,7 @@ export default function BookmarkContent() {
       {isLoading ? (
         <div className="text-center mt-8">북마크 로딩 중...</div>
       ) : error ? (
-        <div className="text-center mt-8 text-red-500">{error}</div>
+        <div className="text-center mt-8 text-error dark:text-error-dark">{error}</div>
       ) : (
         <CardGrid
           items={filteredBookmarkedCards}

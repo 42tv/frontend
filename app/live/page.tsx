@@ -25,7 +25,7 @@ export default function LivePage() {
     }, []);
 
     return (
-        <div className="p-4">
+        <div className="p-4 bg-background dark:bg-background-dark min-h-screen">
             <h1 className="text-2xl font-bold mb-6">Live Streams</h1>
             {lives.length > 0 ? (
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(275px,1fr))] gap-4 justify-start">
@@ -34,7 +34,7 @@ export default function LivePage() {
                     ))}
                 </div>
             ) : (
-                <p className="text-center text-gray-500">No live streams available right now.</p>
+                <p className="text-center text-text-secondary dark:text-text-secondary-dark">No live streams available right now.</p>
             )}
         </div>
     );

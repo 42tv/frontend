@@ -24,13 +24,13 @@ export default function TabMenu() {
     ]
     return (
         <div className="w-full h-[60px] items-center justify-center text-center">
-            <ul className="flex flex-row items-center text-center justify-center border-contentBg border-b py-4">
+            <ul className="flex flex-row items-center text-center justify-center border-border-primary dark:border-border-primary-dark border-b py-4">
                 {
                     tabLists.map((tab, index) => {
                         const isActive = pathname === tab.link
                         return (
-                            <li key={index} className="flex w-[100px] items-center justify-center text-textBase dark:text-textBase-dark">
-                                <Link href={tab.link} className={`${isActive ? "font-bold text-dark dark:text-white" : ""}`}> {tab.name} </Link>
+                            <li key={index} className="flex w-[100px] items-center justify-center text-text-secondary dark:text-text-secondary-dark">
+                                <Link href={tab.link} className={`${isActive ? "font-bold text-text-primary dark:text-text-primary-dark" : "hover:text-text-primary dark:hover:text-text-primary-dark"} transition-colors`}> {tab.name} </Link>
                             </li>
                         )
                     })

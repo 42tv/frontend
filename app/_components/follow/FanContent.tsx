@@ -58,7 +58,7 @@ export default function FanContent() {
       {isLoading ? (
         <div className="text-center mt-8">팬 로딩 중...</div>
       ) : error ? (
-        <div className="text-center mt-8 text-red-500">{error}</div>
+        <div className="text-center mt-8 text-error dark:text-error-dark">{error}</div>
       ) : (
         <CardGrid
           items={filteredFanCards}

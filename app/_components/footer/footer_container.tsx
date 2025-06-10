@@ -4,8 +4,8 @@ export default function FooterContainer() {
             <div className="flex flex-col w-full justify-center items-center text-sm leading-6 p-5">
                 <div className="flex flex-row text-center">
                     <p className="mb-2">
-                        <a href="/privacy-policy" className="text-gray-600 hover:text-gray-800 transition-colors mr-2">개인정보처리방침</a> | 
-                        <a href="/terms-of-service" className="text-gray-600 hover:text-gray-800 transition-colors ml-2">이용약관</a>
+                        <a href="/privacy-policy" className="text-text-secondary hover:text-text-primary transition-colors mr-2">개인정보처리방침</a> | 
+                        <a href="/terms-of-service" className="text-text-secondary hover:text-text-primary transition-colors ml-2">이용약관</a>
                     </p>
                 </div>
               

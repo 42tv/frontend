@@ -162,7 +162,7 @@ export default function ReceiveMessage() {
                         placeholder="검색어를 입력하세요"
                     />
                     <button 
-                        className="w-[80px] h-[40px] rounded-[8px] bg-color-darkBlue text-white hover:bg-opacity-80"
+                        className="w-[80px] h-[40px] rounded-[8px] bg-primary text-primary-foreground hover:bg-primary-hover"
                     >
                         검색
                     </button>
@@ -245,7 +245,7 @@ export default function ReceiveMessage() {
                                 onClick={() => paginate(number)}
                                 className={`px-3 py-1 mx-1 rounded relative
                                 ${currentPage === number ? 'font-semibold' : ''}
-                                after:content-[''] after:absolute after:h-[2px] after:bg-blue-500 after:left-1/4 after:right-1/4
+                                after:content-[''] after:absolute after:h-[2px] after:bg-primary after:left-1/4 after:right-1/4
                                 after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
                             >
                                 {number}
@@ -268,7 +268,7 @@ export default function ReceiveMessage() {
                 <button 
                     className="w-[120px] h-[40px] rounded-[15px]
                         bg-color-darkBlue 
-                        text-white
+                        text-primary-foreground
                         hover:bg-opacity-80"
                 >
                     쪽지 보내기
