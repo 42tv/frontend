@@ -65,31 +65,31 @@ export default function ProfileIcon() {
                 // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
             <div
-                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-white dark:bg-contentBg border border-gray-200 dark:border-gray-700 shadow-lg p-2 transition-opacity duration-100 z-10 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-bg-primary dark:bg-contentBg border border-border-primary dark:border-border-primary-dark shadow-lg p-2 transition-opacity duration-100 z-10 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={handleMenuClick}
             >
                 {/* 프로필 정보 */}
-                <div className="flex items-center border-b pb-3 border-gray-300 dark:border-gray-700">
-                    <FiUser className="w-10 h-10 text-gray-700 dark:text-gray-300" />
+                <div className="flex items-center border-b pb-3 border-border-secondary dark:border-border-secondary-dark">
+                    <FiUser className="w-10 h-10 text-icon-primary dark:text-icon-primary-dark" />
                     <div className="ml-3">
-                        <p className="text-lg font-semibold text-gray-800 dark:text-white">{nickname}</p>
-                        <p className="text-sm text-gray-400">0개 | 0개</p>
+                        <p className="text-lg font-semibold text-text-primary dark:text-text-primary-dark">{nickname}</p>
+                        <p className="text-sm text-text-muted dark:text-text-muted-dark">0개 | 0개</p>
                     </div>
                 </div>
                 {/* 메뉴 리스트 */}
                 <div className="mt-3 space-y-3">
                     <MenuItem 
-                        icon={<FiUser className="text-gray-700 dark:text-gray-300" />} 
+                        icon={<FiUser className="text-icon-primary dark:text-icon-primary-dark" />} 
                         text="마이페이지"
                         href="/my/info"
                     />
                     <MenuItem 
-                        icon={<GrChannel className="text-gray-700 dark:text-gray-300" />} 
+                        icon={<GrChannel className="text-icon-primary dark:text-icon-primary-dark" />} 
                         text="채널" 
                         href="/channel"
                     />
                     <MenuItem 
-                        icon={<FiSettings className="text-gray-700 dark:text-gray-300" />} 
+                        icon={<FiSettings className="text-icon-primary dark:text-icon-primary-dark" />} 
                         text="설정" 
                         href="/settings"
                     />
@@ -97,7 +97,7 @@ export default function ProfileIcon() {
                         className="flex items-center space-x-3 p-2 hover:bg-iconBg dark:hover:bg-iconBg-dark rounded-lg cursor-pointer"
                         onClick={() => handleLogout()}
                     >
-                        <BiLogOut className="text-gray-700 dark:text-gray-300" />
+                        <BiLogOut className="text-icon-primary dark:text-icon-primary-dark" />
                         <span className="text-sm">{"로그아웃"}</span>
                     </div>
                     

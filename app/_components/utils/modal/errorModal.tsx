@@ -22,7 +22,7 @@ const ErrorModal = () => {
                         viewBox="0 0 24 24"
                         strokeWidth="2"
                         stroke="currentColor"
-                        className="w-5 h-5 text-gray-600 hover:text-white"
+                        className="w-5 h-5 text-text-tertiary hover:text-text-primary transition-colors"
                     >
                         <path
                             strokeLinecap="round"

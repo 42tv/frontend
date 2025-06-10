@@ -20,13 +20,15 @@ const ChannelNav = () => {
   const pathname = usePathname();
   
   return (
-    <div className="flex w-full space-x-6 border-b border-gray-700 pb-2 mb-8 overflow-x-auto">
+    <div className="flex w-full space-x-6 border-b border-border-secondary dark:border-border-secondary-dark pb-2 mb-8 overflow-x-auto">
       {tabRoutes.map((tab) => (
         <Link
           key={tab.name}
           href={tab.path}
-          className={`text-gray-300 hover:text-white font-medium pb-2 ${
-            pathname === tab.path ? "text-white border-b-2 border-white" : ""
+          className={`text-text-secondary dark:text-text-secondary-dark hover:text-text-primary dark:hover:text-text-primary-dark font-medium pb-2 ${
+            pathname === tab.path 
+              ? "text-text-primary dark:text-text-primary-dark border-b-2 border-primary" 
+              : "hover:border-b-2 hover:border-gray-300 dark:hover:border-gray-600"
           }`}
         >
           {tab.name}

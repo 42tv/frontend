@@ -26,9 +26,9 @@ const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) =>
   return (
     <div
       onClick={handleClick}
-      className={`flex w-full h-[60px] cursor-pointer bg-white dark:bg-darkBg`}
+      className={`flex w-full h-[60px] cursor-pointer bg-background dark:bg-background-dark`}
     >
-      <div className="flex w-full m-3 items-center justify-start space-x-4 flex-row rounded-[10px] hover:bg-gray-200 dark:hover:bg-contentBg">
+      <div className="flex w-full m-3 items-center justify-start space-x-4 flex-row rounded-[10px] hover:bg-bg-hover dark:hover:bg-bg-hover-dark">
         <Icon className="ml-7 w-5 h-5" />
         <span>{label}</span>
       </div>

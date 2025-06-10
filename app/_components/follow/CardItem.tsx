@@ -29,9 +29,9 @@ const CardItem: React.FC<CardItemProps> = ({
     {/* 편집 모드일 때만 보이는 오버레이 */}
     {isEditing && (
       <div className={`absolute inset-0 bg-black flex items-center justify-center transition-opacity duration-200 z-10 ${isSelected ? 'bg-opacity-50 opacity-100' : 'bg-opacity-0 group-hover:bg-opacity-50 opacity-0 group-hover:opacity-100'}`}>
-        <div className={`bg-white rounded-full w-8 h-8 flex items-center justify-center ${isSelected ? '' : 'opacity-0 group-hover:opacity-100'}`}>
+        <div className={`bg-bg-primary rounded-full w-8 h-8 flex items-center justify-center ${isSelected ? '' : 'opacity-0 group-hover:opacity-100'}`}>
           {/* 선택 상태에 따라 아이콘 색상 변경 */}
-          <FaCheck className={`${isSelected ? 'text-green-500' : 'text-gray-400'} text-lg`} />
+          <FaCheck className={`${isSelected ? 'text-success' : 'text-text-muted'} text-lg`} />
         </div>
       </div>
     )}
@@ -39,7 +39,7 @@ const CardItem: React.FC<CardItemProps> = ({
     {/* 기존 LIVE 배지 */}
     {/* 편집 모드 중이거나 라이브 상태일 때 표시 */}
     {isLive && !isEditing && (
-      <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded z-10">
+      <span className="absolute top-2 left-2 bg-error text-primary-foreground text-xs px-2 py-1 rounded z-10">
         LIVE
       </span>
     )}

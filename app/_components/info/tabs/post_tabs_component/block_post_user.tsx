@@ -147,7 +147,7 @@ export default function BlockPostUser() {
                               <td className={`p-2 `}>{formatDateFromString(user.created_at)}</td>
                               <td className={`p-2 h-[41px] flex justify-center items-center`}>
                                 <BiTrash 
-                                    className="text-xl cursor-pointer hover:text-red-500 transition-colors"
+                                    className="text-xl cursor-pointer hover:text-error transition-colors"
                                     onClick={() => removeBlockedUser(user.blocked.idx)}
                                 />
                               </td>
@@ -176,7 +176,7 @@ export default function BlockPostUser() {
                                 onClick={() => paginate(number)}
                                 className={`px-3 py-1 mx-1 rounded relative
                                 ${currentPage === number ? 'font-semibold' : ''}
-                                after:content-[''] after:absolute after:h-[2px] after:bg-blue-500 after:left-1/4 after:right-1/4
+                                after:content-[''] after:absolute after:h-[2px] after:bg-primary after:left-1/4 after:right-1/4
                                 after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
                             >
                                 {number}
@@ -199,7 +199,7 @@ export default function BlockPostUser() {
                 <button 
                     className="w-[120px] h-[40px] rounded-[15px]
                         bg-color-darkBlue 
-                        text-white
+                        text-primary-foreground
                         hover:bg-opacity-80"
                     onClick={() => removeBlockedUsers()}
                 >

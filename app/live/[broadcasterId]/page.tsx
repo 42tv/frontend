@@ -237,7 +237,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 {/* 스트림 플레이어 영역 */}
                 <StreamPlayer streamData={streamData} userData={userData} />
                 {/* 스트림 정보 영역 */}
-                <div className="flex flex-row w-full p-4 border-t border-gray-700 flex items-center space-x-4">
+                <div className="flex flex-row w-full p-4 border-t border-border-secondary dark:border-border-secondary-dark flex items-center space-x-4">
                   {/* 프로필 이미지 영역 */}
                   <div className="flex items-center justify-center space-x-2 min-w-[60px]">
                     <Image
@@ -278,17 +278,17 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     </div>
                   </div>
                   {/* 아이콘 영역 */}
-                  <div className="flex items-center justify-end space-x-4 text-gray-400 text-2xl">
+                  <div className="flex items-center justify-end space-x-4 text-text-muted dark:text-text-muted-dark text-2xl">
                     <button 
                         title="북마크" 
-                        className="hover:text-white transition-colors duration-200"
+                        className="hover:text-text-primary dark:hover:text-text-primary-dark transition-colors duration-200"
                         onClick={() => { toggleBookmark();}}
                     >
                       {playDataState?.is_bookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />} {/* 조건부 렌더링 */}
                     </button>
                     <button 
                         title="쪽지" 
-                        className="hover:text-white transition-colors duration-200"
+                        className="hover:text-text-primary dark:hover:text-text-primary-dark transition-colors duration-200"
                         onClick={() => {
                             handleSendPost();
                         }}
@@ -297,19 +297,19 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     </button>
                     <button 
                         title="좋아요" 
-                        className="hover:text-white transition-colors duration-200"
+                        className="hover:text-text-primary dark:hover:text-text-primary-dark transition-colors duration-200"
                         onClick={handleRecommend}
                     >
                       <AiOutlineLike/>
                     </button>
-                    <button title="선물" className="hover:text-white transition-colors duration-200">
+                    <button title="선물" className="hover:text-text-primary dark:hover:text-text-primary-dark transition-colors duration-200">
                       <GiPresent/>
                     </button>
                   </div>
                 </div>
             </div>
              {/* 채팅 영역 컨테이너 */}
-             <div className="flex flex-col h-full w-80 border-l border-gray-700 overflow-auto">
+             <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
                 <div className="flex-1 h-full">
                     <Chat broadcasterId={broadcasterId} socket={socket} />
                 </div>
