@@ -119,7 +119,7 @@ export default function BroadcastSettings() {
     <div className="flex flex-col w-full p-4 max-w-3xl relative">
       {/* Toast notification - always in DOM but visibility controlled by opacity */}
       <div 
-        className={`fixed top-4 right-4 bg-green-100 border text-green-700 px-4 py-2 rounded flex items-center shadow-md transition-opacity duration-300 ${
+        className={`fixed top-4 right-4 bg-success-bg dark:bg-success-bg-dark border text-success dark:text-success-dark px-4 py-2 rounded flex items-center shadow-md transition-opacity duration-300 ${
           showToast ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -134,7 +134,7 @@ export default function BroadcastSettings() {
         </div>
         <div className="flex col-span-4 items-center space-x-2">
             <div 
-              className="flex w-full h-[40px] border items-center border-1 px-2 py-1 rounded-md space-x-3">
+              className="flex w-full h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md space-x-3">
               <input 
                 type={showStreamKey ? "text" : "password"} 
                 value={streamKey} 
@@ -151,7 +151,7 @@ export default function BroadcastSettings() {
         </div>
         <div className="flex col-span-1 justify-center items-center">
           <button 
-            className="border px-2 py-1 rounded-md"
+            className="border border-border-primary dark:border-border-primary-dark px-2 py-1 rounded-md hover:bg-bg-hover dark:hover:bg-bg-hover-dark transition-colors"
             onClick={() => reissueStreamKey()}
           >
             재발급
@@ -163,7 +163,7 @@ export default function BroadcastSettings() {
             <label className="w-[100px]">서버URL</label>
         </div>
         <div className="flex col-span-5 items-center space-x-2">
-          <div className="flex w-full h-[40px] border items-center border-1 px-2 py-1 rounded-md space-x-3">
+          <div className="flex w-full h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md space-x-3">
             <input 
               type="text"
               value={serverUrl} 
@@ -181,7 +181,7 @@ export default function BroadcastSettings() {
             <label className="w-[100px]">방송제목</label>
         </div>
         <div className="flex col-span-5 items-center space-x-2">
-          <div className="flex w-full h-[40px] border items-center border-1 px-2 py-1 rounded-md space-x-3">
+          <div className="flex w-full h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md space-x-3">
             <input 
               type="text"
               value={title} 
@@ -266,7 +266,7 @@ export default function BroadcastSettings() {
           </div>
           <div className="flex col-span-4 items-center ml-4 space-x-2 h-full">
             {isPrivate ? (
-              <div className="flex h-[40px] border items-center border-1 px-2 py-1 rounded-md">
+              <div className="flex h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md">
                 <input 
                   type="text"
                   value={password}
@@ -285,7 +285,7 @@ export default function BroadcastSettings() {
       {/* Save Button */}
       <div className="flex justify-start my-4">
         <button 
-          className="bg-color-darkBlue hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-md transition-colors"
+          className="bg-primary hover:bg-primary-hover text-primary-foreground font-bold py-2 px-6 rounded-md transition-colors"
           onClick={() => {
             handleSave();
           }}

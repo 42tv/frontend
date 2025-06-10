@@ -11,11 +11,11 @@ export default function MessageSettingsModal({ closeModal }: MessageSettingsModa
 
     const grades = [
         { key: '123123', label: '123123', color: 'bg-pink-500' },
-        { key: '다이아', label: '다이아', color: 'bg-purple-500' },
+        { key: '다이아', label: '다이아', color: 'bg-gray-600' },
         { key: '골드', label: '골드', color: 'bg-orange-500' },
-        { key: '실버', label: '실버', color: 'bg-blue-400' },
-        { key: '브론즈', label: '브론즈', color: 'bg-yellow-600' },
-        { key: '제한없음', label: '제한없음', color: 'bg-gray-500' },
+        { key: '실버', label: '실버', color: 'bg-primary' },
+        { key: '브론즈', label: '브론즈', color: 'bg-warning' },
+        { key: '제한없음', label: '제한없음', color: 'bg-text-tertiary' },
     ];
 
     const handleGradeToggle = (gradeKey: string) => {
@@ -88,13 +88,13 @@ export default function MessageSettingsModal({ closeModal }: MessageSettingsModa
                 <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
                     <button
                         onClick={handleApply}
-                        className="w-full p-2 mt-2 rounded bg-color-darkBlue text-white"
+                        className="w-full p-2 mt-2 rounded bg-primary text-primary-foreground"
                     >
                         적용
                     </button>
                     <button
                         onClick={handleCancel}
-                        className="w-full p-2 mt-2 rounded bg-textBase dark:bg-textBase-dark text-white"
+                        className="w-full p-2 mt-2 rounded bg-text-secondary dark:bg-text-secondary-dark text-primary-foreground"
                     >
                         취소
                     </button>

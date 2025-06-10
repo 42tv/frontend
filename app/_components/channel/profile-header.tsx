@@ -10,7 +10,7 @@ const ProfileHeader = () => {
 
   return (
     <div className="flex items-center space-x-4 mb-6">
-      <div className="w-16 h-16 bg-gray-700 rounded-full overflow-hidden"> {/* overflow-hidden 추가 */}
+      <div className="w-16 h-16 bg-bg-tertiary dark:bg-bg-tertiary-dark rounded-full overflow-hidden"> {/* overflow-hidden 추가 */}
         <Image
           // 스토어에서 가져온 profile_img를 사용합니다.
           src={profile_img || "/icons/anonymouse1.svg"} // 기본값 제공
@@ -22,7 +22,7 @@ const ProfileHeader = () => {
       </div>
       <div>
         <h1 className="text-2xl font-bold">밤새는 킬러 4203</h1>
-        <p className="text-sm text-gray-400">팬 0명 · 랭킹 0위</p>
+        <p className="text-sm text-text-muted dark:text-text-muted-dark">팬 0명 · 랭킹 0위</p>
       </div>
     </div>
   );

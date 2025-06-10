@@ -80,12 +80,12 @@ export default function LoginComponent() {
       className="max-w-md mx-auto p-5 border rounded-lg border-contentBg bg-contentBg relative text-left" // Added text-left class for left alignment
     >
       {/* Tabs for Login and Signup */}
-      <div className="flex border-b mb-4">
+      <div className="flex border-b border-border mb-4">
         <button
           className={`flex-1 py-2 text-center font-medium ${
             activeTab === 'login'
-              ? 'border-b-2 border-white text-white'
-              : 'text-gray-500 hover:text-white'
+              ? 'border-b-2 border-primary text-text-primary'
+              : 'text-text-secondary hover:text-text-primary'
           }`}
           onClick={() => setActiveTab('login')}
         >
@@ -94,8 +94,8 @@ export default function LoginComponent() {
         <button
           className={`flex-1 py-2 text-center font-medium ${
             activeTab === 'signup'
-              ? 'border-b-2 border-white text-white'
-              : 'text-gray-500 hover:text-white'
+              ? 'border-b-2 border-primary text-text-primary'
+              : 'text-text-secondary hover:text-text-primary'
           }`}
           onClick={() => setActiveTab('signup')}
         >
@@ -108,7 +108,7 @@ export default function LoginComponent() {
         <div>
           <div className="mb-4">
             <label
-              className="block mb-2 text-sm font-medium text-left text-gray-300"
+              className="block mb-2 text-sm font-medium text-left text-text-secondary"
             >
               아이디
             </label>
@@ -116,14 +116,14 @@ export default function LoginComponent() {
               type="text"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
+              className="w-full p-2 border rounded focus:outline-none focus:ring border-border bg-input text-text-primary focus:ring-primary"
               placeholder="아이디를 입력하세요"
             />
           </div>
 
           <div className="mb-4">
             <label
-              className="block mb-2 text-sm font-medium text-left text-gray-300"
+              className="block mb-2 text-sm font-medium text-left text-text-secondary"
             >
               비밀번호
             </label>
@@ -136,7 +136,7 @@ export default function LoginComponent() {
                   handleLogin();
                 }
               }}
-              className="w-full p-2 border rounded focus:outline-none focus:ring border-gray-600 bg-gray-700 text-white focus:ring-blue-500"
+              className="w-full p-2 border rounded focus:outline-none focus:ring border-border bg-input text-text-primary focus:ring-primary"
               placeholder="비밀번호를 입력하세요"
             />
           </div>
@@ -148,24 +148,24 @@ export default function LoginComponent() {
               onChange={(e) => setRememberId(e.target.checked)}
               className="mr-2"
             />
-            <label htmlFor="rememberId" className="text-gray-300">
+            <label htmlFor="rememberId" className="text-text-secondary">
               아이디 저장
             </label>
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+            className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary"
             onClick={handleLogin}
           >
             로그인
           </button>
 
           <div className="mt-4 text-center">
-            <a href="#" className="mr-4 hover:underline text-blue-400">
+            <a href="#" className="mr-4 hover:underline text-primary">
               아이디 찾기
             </a>
-            <a href="#" className="hover:underline text-blue-400">
+            <a href="#" className="hover:underline text-primary">
               비밀번호 찾기
             </a>
           </div>
@@ -174,53 +174,53 @@ export default function LoginComponent() {
         // Signup Form
         <div>
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-300">
+            <label className="block mb-2 text-sm font-medium text-text-secondary">
               아이디
             </label>
             <input
               type="text"
               value={signupUserId}
               onChange={(e) => setSignupUserId(e.target.value)}
-              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              className="w-full p-2 border rounded bg-input text-text-primary border-border focus:ring-primary"
               placeholder="아이디를 입력하세요"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-300">
+            <label className="block mb-2 text-sm font-medium text-text-secondary">
               비밀번호
             </label>
             <input
               type="password"
               value={signupPassword}
               onChange={(e) => setSignupPassword(e.target.value)}
-              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              className="w-full p-2 border rounded bg-input text-text-primary border-border focus:ring-primary"
               placeholder="비밀번호를 입력하세요"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-300">
+            <label className="block mb-2 text-sm font-medium text-text-secondary">
               비밀번호 확인
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              className="w-full p-2 border rounded bg-input text-text-primary border-border focus:ring-primary"
               placeholder="비밀번호를 입력하세요"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-300">
+            <label className="block mb-2 text-sm font-medium text-text-secondary">
               닉네임
             </label>
             <input
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              className="w-full p-2 border rounded bg-input text-text-primary border-border focus:ring-primary"
               placeholder="닉네임을 입력하세요"
             />
           </div>
@@ -239,7 +239,7 @@ export default function LoginComponent() {
                 }}
                 className="mr-2"
               />
-              <label htmlFor="agreeAll" className="text-gray-300 font-semibold">
+              <label htmlFor="agreeAll" className="text-text-primary font-semibold">
                 전체 동의
               </label>
             </div>
@@ -251,7 +251,7 @@ export default function LoginComponent() {
                   id="agreeTerms"
                   className="mr-2"
                 />
-                <label htmlFor="agreeTerms" className="text-gray-300">
+                <label htmlFor="agreeTerms" className="text-text-secondary">
                   [필수] 이용약관 동의
                 </label>
               </div>
@@ -262,7 +262,7 @@ export default function LoginComponent() {
                   id="agreePrivacy"
                   className="mr-2"
                 />
-                <label htmlFor="agreePrivacy" className="text-gray-300">
+                <label htmlFor="agreePrivacy" className="text-text-secondary">
                   [필수] 개인정보 수집 및 이용 동의
                 </label>
               </div>
@@ -273,7 +273,7 @@ export default function LoginComponent() {
                   id="agreeDelegate"
                   className="mr-2"
                 />
-                <label htmlFor="agreeDelegate" className="text-gray-300">
+                <label htmlFor="agreeDelegate" className="text-text-secondary">
                   [필수] 개인정보 처리 위탁 동의
                 </label>
               </div>
@@ -284,7 +284,7 @@ export default function LoginComponent() {
                   id="agreeAge"
                   className="mr-2"
                 />
-                <label htmlFor="agreeAge" className="text-gray-300">
+                <label htmlFor="agreeAge" className="text-text-secondary">
                   [필수] 만 14세 이상 동의
                 </label>
               </div>
@@ -293,7 +293,7 @@ export default function LoginComponent() {
               
           <button
             type="submit"
-            className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
+            className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary"
             onClick={handleSignUp}
           >
             회원가입

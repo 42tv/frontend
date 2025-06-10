@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const EmptyContent = () => {
   return (
-    <div className="flex flex-col items-center text-center text-gray-400 mt-20">
+    <div className="flex flex-col items-center text-center text-text-muted dark:text-text-muted-dark mt-20">
       <Image
         src="/images/empty_character.png"
         alt="Empty Character"

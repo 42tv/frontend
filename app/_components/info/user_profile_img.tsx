@@ -52,7 +52,7 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
             {/* Upload button */}
             <button 
                 onClick={handleUploadClick}
-                className="absolute bottom-0 right-1/2 translate-x-10 translate-y-1 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md transition-colors"
+                className="absolute bottom-0 right-1/2 translate-x-10 translate-y-1 bg-primary hover:bg-primary-hover text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md transition-colors"
                 title="프로필 이미지 변경"
                 disabled={uploading}
             >

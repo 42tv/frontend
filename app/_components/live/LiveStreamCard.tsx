@@ -75,11 +75,11 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                 />
             </div>
             <div className="pt-3 flex flex-col flex-grow"> 
-                <h3 className="truncate text-gray-200">{live.user.broadcastSetting.title}</h3> 
-                <div className="flex items-center text-sm text-gray-400"> 
+                <h3 className="truncate text-text-primary dark:text-text-primary-dark">{live.user.broadcastSetting.title}</h3> 
+                <div className="flex items-center text-sm text-text-muted dark:text-text-muted-dark"> 
                     <span className="truncate flex-grow min-w-0 mr-2">{live.user.nickname}</span>
                     {/* Display viewer, play, and like counts */}
-                    <div className="flex items-center text-xs text-gray-500 space-x-2 flex-shrink-0">
+                    <div className="flex items-center text-xs text-text-secondary dark:text-text-secondary-dark space-x-2 flex-shrink-0">
                         <span className="flex items-center">
                             <FiUser 
                                 className="h-3 w-3 mr-0.5" 
@@ -101,7 +101,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                             />
                             {formatCount(live.recommend_cnt)}
                         </span>
-                        <span className="text-xs text-gray-500 flex-shrink-0">{elapsedTime}</span>
+                        <span className="text-xs text-text-secondary dark:text-text-secondary-dark flex-shrink-0">{elapsedTime}</span>
                     </div>
                 </div>
             </div>

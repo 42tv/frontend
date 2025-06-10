@@ -94,9 +94,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-gray-800 text-white">
+        <div className="flex flex-col h-full bg-bg-secondary dark:bg-bg-secondary-dark text-text-primary dark:text-text-primary-dark">
             {/* 채팅 헤더 - 고정 */}
-            <div className="p-3 border-b border-gray-700 text-center font-semibold">
+            <div className="p-3 border-b border-border-secondary dark:border-border-secondary-dark text-center font-semibold">
                 채팅
             </div>
 
@@ -112,7 +112,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
                                 </>
                             )}
                             {msg.type === 'donation' && (
-                                <div className="text-green-400">
+                                <div className="text-success dark:text-success-dark">
                                     <span className="font-semibold">{msg.donor_nickname}</span>님이 {msg.amount}을 후원했습니다!
                                     {msg.message && (
                                         <div className="ml-2 italic">{msg.message}</div>
@@ -120,7 +120,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
                                 </div>
                             )}
                             {msg.type === 'recommend' && (
-                                <div className="italic text-yellow-400">
+                                <div className="italic text-warning dark:text-warning-dark">
                                     <span className="font-semibold">{msg.recommender_nickname}</span>님이 추천했습니다!
                                 </div>
                             )}
@@ -131,18 +131,18 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
             </div>
 
             {/* 메시지 입력 */}
-            <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-700 flex">
+            <form onSubmit={handleSendMessage} className="p-3 border-t border-border-secondary dark:border-border-secondary-dark flex">
                 <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="메시지 입력..."
-                    className="flex-1 bg-gray-700 border border-gray-600 rounded-l px-2 py-1 focus:outline-none focus:border-blue-500 text-sm"
+                    className="flex-1 bg-bg-tertiary dark:bg-bg-tertiary-dark border border-border-primary dark:border-border-primary-dark rounded-l px-2 py-1 focus:outline-none focus:border-primary text-sm text-text-primary dark:text-text-primary-dark"
                     // TODO: 로그인 상태 확인 후 disabled 처리
                 />
                 <button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-r text-sm font-semibold"
+                    className="bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-1 rounded-r text-sm font-semibold"
                     // TODO: 로그인 상태 확인 후 disabled 처리
                 >
                     전송
