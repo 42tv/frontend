@@ -47,11 +47,11 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
     // Helper function to assign colors based on rank (0 = highest rank)
     const getColorByRank = (rank: number, totalLevels: number) => {
         const colors = [
-            'bg-purple-600',   // 1등 - 보라색 (최고 등급)
-            '#FFC9D5',         // 2등 - 플래티넘 색상 (#FFD4B9)
-            'bg-yellow-600',     // 3등 - 은색
-            'bg-gray-300',   // 4등 - 동색
-            'bg-gray-500',     // 5등 - 파란색
+            '#9333EA',         // 1등 - 보라색 (bg-purple-600)
+            '#FFC9D5',         // 2등 - 플래티넘 색상 (이미 hex)
+            '#CA8A04',         // 3등 - 노란색 (bg-yellow-600)
+            '#D1D5DB',         // 4등 - 회색 (bg-gray-300)
+            '#6B7280',         // 5등 - 진한 회색 (bg-gray-500)
         ];
         
         // If there are more levels than colors, cycle through colors
