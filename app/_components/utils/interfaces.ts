@@ -97,4 +97,5 @@ export interface FanLevel {
   id: number;
   name: string;
   min_donation: number;
+  color: string;
 }

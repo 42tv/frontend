@@ -314,13 +314,17 @@ export async function getFanLevels() {
  * @param id 레벨 ID
  * @param name 레벨 이름
  * @param min_donation 최소 후원 금액
+ * @param color 배경 색상 (선택사항)
  * @returns
  */
-export async function updateFanLevel(id: number, name: string, min_donation: number) {
-  const response = await api.put(`/api/fan-level/${id}`, {
+export async function updateFanLevel(id: number, name: string, min_donation: number, color: string) {
+  const requestBody: { name: string; min_donation: number; color?: string } = {
     name: name,
     min_donation: min_donation,
-  }, {
+    color: color,
+  };
+
+  const response = await api.put(`/api/fan-level/${id}`, requestBody, {
     withCredentials: true,
   });
   return response.data;
