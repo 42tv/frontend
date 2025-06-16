@@ -39,7 +39,7 @@ export const StatsContent = () => {
 export { FanRankContent } from "./tab-content/fan-rank/fan-rank-content";
 export { default as BroadcastSettings } from "./tab-content/broadcast-setting/broadcast-setting";
 
-export { BlacklistContent } from "./blacklist-content";
+export { BlacklistManager as BlacklistContent } from "./tab-content/black-list";
 
 export const ClipsContent = () => {
   return (
