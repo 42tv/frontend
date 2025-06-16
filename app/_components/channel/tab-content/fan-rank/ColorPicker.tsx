@@ -1,6 +1,8 @@
 'use client';
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { HexColorPicker } from "react-colorful";
+import { ColorPreview } from "./ColorPreview";
+import { HexInputField } from "./HexInputField";
 
 interface ColorPickerProps {
   levelId: number;
@@ -29,15 +31,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   onCancel,
   onHexInputChange
 }) => {
-  const hexInputRef = useRef<HTMLInputElement>(null);
-
-  // hexInput 상태가 변경되거나 colorPicker가 열릴 때 포커스 설정
-  useEffect(() => {
-    if (colorPickerOpen === levelId && hexInputRef.current) {
-      hexInputRef.current.focus();
-    }
-  }, [hexInput, colorPickerOpen, levelId]);
-
   if (colorPickerOpen !== levelId) return null;
 
   const displayColor = previewLevelId === levelId && previewColor ? previewColor : currentColor;
@@ -60,64 +53,23 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             />
             
             {/* HEX 입력 필드 */}
-            <div className="mt-4">
-              <label htmlFor="hex-input" className="block text-xs text-gray-400 mb-2 font-medium">HEX 색상 코드</label>
-              <div className="flex items-center bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus-within:border-blue-500 transition-colors">
-                <span className="text-gray-300 font-mono text-sm mr-1">#</span>
-                <input
-                  id="hex-input"
-                  ref={hexInputRef}
-                  type="text"
-                  value={hexInput}
-                  onChange={onHexInputChange}
-                  placeholder="000000"
-                  maxLength={6}
-                  className="bg-transparent border-none outline-none text-white font-mono text-sm flex-1 uppercase placeholder-gray-500"
-                  style={{ fontFamily: 'monospace' }}
-                />
-              </div>
-            </div>
+            <HexInputField 
+              hexInput={hexInput}
+              onHexInputChange={onHexInputChange}
+              isOpen={colorPickerOpen === levelId}
+            />
           </div>
         </div>
 
         {/* 색상 비교 및 미리보기 영역 */}
         <div className="flex flex-col gap-4 min-w-[200px]">
           {/* 색상 비교 */}
-          <div className="bg-gray-750 p-4 rounded-lg border border-gray-600">
-            <div className="text-sm text-gray-400 mb-3 font-medium">미리보기</div>
-            <div className="flex items-center justify-center gap-4">
-              {/* 현재 색상 */}
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xs text-gray-400 font-medium">현재</span>
-                <button
-                  onClick={() => onColorPreview(levelId, currentColor)}
-                  className="w-16 h-16 rounded-xl border-2 border-gray-600 shadow-lg hover:border-gray-400 transition-colors cursor-pointer"
-                  style={{ backgroundColor: currentColor }}
-                  title="현재 색상으로 되돌리기"
-                />
-                <span className="text-xs text-gray-300 font-mono">{currentColor.toUpperCase()}</span>
-              </div>
-              
-              {/* 화살표 */}
-              <div className="text-gray-400 text-2xl">→</div>
-              
-              {/* 새 색상 */}
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xs text-yellow-400 font-medium">새 색상</span>
-                <div 
-                  className={`w-16 h-16 rounded-xl border-2 shadow-lg ${
-                    hasPreview ? 'border-yellow-400' : 'border-gray-600'
-                  }`}
-                  style={{ backgroundColor: displayColor }}
-                />
-                <span className={`text-xs font-mono ${
-                  hasPreview ? 'text-yellow-300' : 'text-gray-300'
-                }`}>
-                  {displayColor.toUpperCase()}
-                </span>
-              </div>
-            </div>
-          </div>
+          <ColorPreview 
+            currentColor={currentColor}
+            displayColor={displayColor}
+            hasPreview={!!hasPreview}
+            onResetToCurrentColor={() => onColorPreview(levelId, currentColor)}
+          />
 
           {/* 확인/취소 버튼 */}
           <div className="flex flex-col gap-3">

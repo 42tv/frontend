@@ -6,6 +6,7 @@ import { ColorPicker } from "./ColorPicker";
 interface FanLevelItemProps {
   level: FanLevel;
   index: number;
+  originalColor: string;
   previewLevelId: number | null;
   previewColor: string | null;
   colorPickerOpen: number | null;
@@ -23,6 +24,7 @@ interface FanLevelItemProps {
 export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   level,
   index,
+  originalColor,
   previewLevelId,
   previewColor,
   colorPickerOpen,
@@ -41,8 +43,8 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
     ? previewColor 
     : (colorState ? colorState.color : level.color);
 
-  // 색상이 원본과 다른지 확인
-  const hasColorChange = colorState && colorState.color !== level.color;
+  // 색상이 원본과 다른지 확인 (원본 색상과 비교)
+  const hasColorChange = colorState && colorState.color !== originalColor;
 
   return (
     <div className="bg-gray-800 dark:bg-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors flex items-center gap-4 relative">
@@ -89,7 +91,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <input
-          type="number"
+          type="text"
           value={level.min_donation}
           onChange={(e) => {
             const newValue = parseInt(e.target.value) || 0;

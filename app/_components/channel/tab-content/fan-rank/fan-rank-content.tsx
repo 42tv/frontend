@@ -3,9 +3,12 @@ import React, { useState, useEffect } from "react";
 import { FanLevel } from "@/app/_components/utils/interfaces";
 import { getFanLevels, updateFanLevel } from "@/app/_apis/user";
 import { FanLevelItem } from "./FanLevelItem";
+import { FanRankHeader } from "./FanRankHeader";
+import { BulkUpdateButton } from "./BulkUpdateButton";
 
 export const FanRankContent = () => {
   const [fanLevels, setFanLevels] = useState<FanLevel[]>([]);
+  const [originalFanLevels, setOriginalFanLevels] = useState<FanLevel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [colorPickerOpen, setColorPickerOpen] = useState<number | null>(null);
@@ -29,10 +32,13 @@ export const FanRankContent = () => {
         // 바깥 클릭 시 취소와 같은 동작 수행
         if (colorPickerOpen !== null) {
           const currentLevel = fanLevels.find(level => level.id === colorPickerOpen);
+          const colorState = colorStates[colorPickerOpen];
+          
           if (currentLevel) {
-            // 원본 색상으로 되돌리기
-            setPreviewColor(currentLevel.color);
-            setHexInput(currentLevel.color.replace('#', ''));
+            // 변경된 색상이 있으면 그것으로 되돌리고, 없으면 원본 색상으로 되돌리기
+            const resetColor = colorState ? colorState.color : currentLevel.color;
+            setPreviewColor(resetColor);
+            setHexInput(resetColor.replace('#', ''));
           }
         }
         setColorPickerOpen(null);
@@ -45,7 +51,7 @@ export const FanRankContent = () => {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [colorPickerOpen, fanLevels]);
+  }, [colorPickerOpen, fanLevels, colorStates]);
 
   const loadFanLevels = async () => {
     try {
@@ -53,6 +59,7 @@ export const FanRankContent = () => {
       const response = await getFanLevels();
       console.log(response);
       setFanLevels(response);
+      setOriginalFanLevels(JSON.parse(JSON.stringify(response))); // 깊은 복사로 원본 저장
       // 초기 색상 상태 설정
       const initialColorStates: Record<number, { color: string; hexInput: string }> = {};
       response.forEach((level: FanLevel) => {
@@ -71,8 +78,8 @@ export const FanRankContent = () => {
     }
   };
 
-  // 등급 수정
-  const handleUpdate = async (id: number, name?: string, minDonation?: number, color?: string) => {
+  // 등급 수정 (로컬 상태만 업데이트)
+  const handleUpdate = (id: number, name?: string, minDonation?: number, color?: string) => {
     const levelToUpdate = fanLevels.find(level => level.id === id);
     if (!levelToUpdate) return;
 
@@ -85,12 +92,24 @@ export const FanRankContent = () => {
       return;
     }
 
-    try {
-      await updateFanLevel(id, updateName, updateMinDonation, updateColor);
-      await loadFanLevels();
-    } catch (err) {
-      console.error('팬 등급 수정 실패:', err);
-      alert('팬 등급 수정에 실패했습니다.');
+    // 로컬 상태 업데이트
+    setFanLevels(prevLevels => 
+      prevLevels.map(level => 
+        level.id === id 
+          ? { ...level, name: updateName, min_donation: updateMinDonation, color: updateColor }
+          : level
+      )
+    );
+
+    // 색상이 변경된 경우 colorStates도 업데이트
+    if (color !== undefined) {
+      setColorStates(prev => ({
+        ...prev,
+        [id]: {
+          color: updateColor,
+          hexInput: updateColor.replace('#', '')
+        }
+      }));
     }
   };
 
@@ -101,11 +120,14 @@ export const FanRankContent = () => {
     
     if (isOpening) {
       const currentLevel = fanLevels.find(level => level.id === levelId);
+      const colorState = colorStates[levelId];
+      
       if (currentLevel) {
-        // 현재 원본 색상으로 시작
-        setPreviewColor(currentLevel.color);
+        // 변경된 색상이 있으면 그것을 사용하고, 없으면 원본 색상 사용
+        const startColor = colorState ? colorState.color : currentLevel.color;
+        setPreviewColor(startColor);
         setPreviewLevelId(levelId);
-        setHexInput(currentLevel.color.replace('#', ''));
+        setHexInput(startColor.replace('#', ''));
       }
     } else {
       setPreviewColor(null);
@@ -134,6 +156,15 @@ export const FanRankContent = () => {
           hexInput: previewColor.replace('#', '')
         }
       }));
+      
+      // fanLevels 상태도 업데이트하여 UI에 반영
+      setFanLevels(prevLevels => 
+        prevLevels.map(level => 
+          level.id === previewLevelId 
+            ? { ...level, color: previewColor }
+            : level
+        )
+      );
     }
     setColorPickerOpen(null);
     setPreviewColor(null);
@@ -144,10 +175,13 @@ export const FanRankContent = () => {
   const handleColorCancel = () => {
     if (previewLevelId !== null) {
       const currentLevel = fanLevels.find(level => level.id === previewLevelId);
+      const colorState = colorStates[previewLevelId];
+      
       if (currentLevel) {
-        // 원본 색상으로 되돌리기
-        setPreviewColor(currentLevel.color);
-        setHexInput(currentLevel.color.replace('#', ''));
+        // 변경된 색상이 있으면 그것으로 되돌리고, 없으면 원본 색상으로 되돌리기
+        const resetColor = colorState ? colorState.color : currentLevel.color;
+        setPreviewColor(resetColor);
+        setHexInput(resetColor.replace('#', ''));
       }
     }
     setColorPickerOpen(null);
@@ -171,19 +205,24 @@ export const FanRankContent = () => {
   // 모든 레벨 일괄 업데이트 함수
   const handleBulkUpdate = async () => {
     if (isUpdating) return;
-    
-    const confirmation = confirm('모든 팬 등급의 색상과 필요개수를 업데이트하시겠습니까?');
-    if (!confirmation) return;
 
     setIsUpdating(true);
     try {
-      // 개별 업데이트 API 호출
+      // 모든 레벨에 대해 변경사항 확인 후 업데이트
       for (const level of fanLevels) {
+        const originalLevel = originalFanLevels.find(orig => orig.id === level.id);
         const colorState = colorStates[level.id];
-        const updateColor = colorState ? colorState.color : level.color;
         
-        // 색상이 변경된 경우에만 업데이트
-        if (colorState && colorState.color !== level.color) {
+        if (!originalLevel) continue;
+        
+        // 변경사항이 있는지 확인
+        const hasColorChange = colorState && colorState.color !== originalLevel.color;
+        const hasMinDonationChange = level.min_donation !== originalLevel.min_donation;
+        const hasNameChange = level.name !== originalLevel.name;
+        
+        // 변경사항이 있는 경우에만 업데이트
+        if (hasColorChange || hasMinDonationChange || hasNameChange) {
+          const updateColor = colorState ? colorState.color : level.color;
           await updateFanLevel(level.id, level.name, level.min_donation, updateColor);
         }
       }
@@ -198,41 +237,40 @@ export const FanRankContent = () => {
     }
   };
 
-  // 후원 금액 기준으로 내림차순 정렬
-  const sortedLevels = [...fanLevels].sort((a, b) => b.min_donation - a.min_donation);
-
-  // 변경사항이 있는지 확인
+  // 변경사항이 있는지 확인 (색상 변경 또는 min_donation 변경)
   const hasChanges = fanLevels.some(level => {
+    const originalLevel = originalFanLevels.find(orig => orig.id === level.id);
     const colorState = colorStates[level.id];
-    return colorState && colorState.color !== level.color;
+    
+    if (!originalLevel) return false;
+    
+    // 색상 변경 확인
+    const hasColorChange = colorState && colorState.color !== originalLevel.color;
+    
+    // min_donation 변경 확인
+    const hasMinDonationChange = level.min_donation !== originalLevel.min_donation;
+    
+    // 이름 변경 확인
+    const hasNameChange = level.name !== originalLevel.name;
+    
+    return hasColorChange || hasMinDonationChange || hasNameChange;
   });
 
   return (
     <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-xl text-white">팬 등급 관리</h3>
-        <button
-          onClick={handleBulkUpdate}
-          disabled={isUpdating || !hasChanges}
-          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
-            isUpdating || !hasChanges
-              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
-          }`}
-        >
-          {isUpdating ? '업데이트 중...' : '전체 적용'}
-        </button>
-      </div>
+      <FanRankHeader title="팬 등급 관리" />
 
       <div className="space-y-3">
         {/* 기존 등급 목록 */}
-        {sortedLevels.map((level, index) => {
+        {fanLevels.map((level, index) => {
           const currentColorState = colorStates[level.id];
+          const originalLevel = originalFanLevels.find(orig => orig.id === level.id);
           return (
             <FanLevelItem
               key={level.id}
               level={level}
               index={index}
+              originalColor={originalLevel?.color || level.color}
               previewLevelId={previewLevelId}
               previewColor={previewColor}
               colorPickerOpen={colorPickerOpen}
@@ -249,13 +287,21 @@ export const FanRankContent = () => {
           );
         })}
       </div>
+      
+      {/* 전체 적용 버튼 */}
+      <BulkUpdateButton 
+        onBulkUpdate={handleBulkUpdate}
+        isUpdating={isUpdating}
+        hasChanges={hasChanges}
+      />
 
-      {sortedLevels.length > 0 && (
-        <div className="mt-6 text-sm text-gray-400">
-          * 등급은 후원 금액이 높은 순으로 정렬됩니다.<br />
-          * 색상 원을 클릭하여 등급별 색상을 변경할 수 있습니다.<br />
-          * '전체 적용' 버튼을 클릭하면 모든 변경사항이 서버에 저장됩니다.
-        </div>
+      {fanLevels.length > 0 && (
+        <>
+          <div className="mt-6 text-sm text-gray-400">
+            * 색상 원을 클릭하여 등급별 색상을 변경할 수 있습니다.<br />
+            * '전체 적용' 버튼을 클릭하면 모든 변경사항이 서버에 저장됩니다.
+          </div>
+        </>
       )}
     </div>
   );
