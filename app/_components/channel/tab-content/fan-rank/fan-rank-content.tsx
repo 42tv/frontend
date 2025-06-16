@@ -5,8 +5,12 @@ import { getFanLevels, updateFanLevel } from "@/app/_apis/user";
 import { FanLevelItem } from "./FanLevelItem";
 import { FanRankHeader } from "./FanRankHeader";
 import { BulkUpdateButton } from "./BulkUpdateButton";
+import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import ErrorMessage from "@/app/_components/modals/error_component";
+import DefaultAlertMessage from "@/app/_components/modals/default_alert_compoent";
 
 export const FanRankContent = () => {
+  const { openError } = errorModalStore();
   const [fanLevels, setFanLevels] = useState<FanLevel[]>([]);
   const [originalFanLevels, setOriginalFanLevels] = useState<FanLevel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,9 +74,10 @@ export const FanRankContent = () => {
       });
       setColorStates(initialColorStates);
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('팬 등급 로드 실패:', err);
       setError('팬 등급을 불러오는데 실패했습니다.');
+      openError(<ErrorMessage message={err?.response?.data?.message || '팬 등급을 불러오는데 실패했습니다.'} />);
     } finally {
       setLoading(false);
     }
@@ -88,7 +93,7 @@ export const FanRankContent = () => {
     const updateColor = color !== undefined ? color : levelToUpdate.color;
 
     if (!updateName.trim() || updateMinDonation < 0) {
-      alert('등급명과 최소 후원 금액을 올바르게 입력해주세요.');
+      openError(<ErrorMessage message="등급명과 최소 후원 금액을 올바르게 입력해주세요." />);
       return;
     }
 
@@ -208,30 +213,23 @@ export const FanRankContent = () => {
 
     setIsUpdating(true);
     try {
-      // 모든 레벨에 대해 변경사항 확인 후 업데이트
-      for (const level of fanLevels) {
-        const originalLevel = originalFanLevels.find(orig => orig.id === level.id);
+      // 모든 레벨의 현재 상태를 수집하여 한 번에 업데이트
+      const updatedLevels = fanLevels.map(level => {
         const colorState = colorStates[level.id];
-        
-        if (!originalLevel) continue;
-        
-        // 변경사항이 있는지 확인
-        const hasColorChange = colorState && colorState.color !== originalLevel.color;
-        const hasMinDonationChange = level.min_donation !== originalLevel.min_donation;
-        const hasNameChange = level.name !== originalLevel.name;
-        
-        // 변경사항이 있는 경우에만 업데이트
-        if (hasColorChange || hasMinDonationChange || hasNameChange) {
-          const updateColor = colorState ? colorState.color : level.color;
-          await updateFanLevel(level.id, level.name, level.min_donation, updateColor);
-        }
-      }
+        const updateColor = colorState ? colorState.color : level.color;
+        return {
+          name: level.name,
+          min_donation: level.min_donation,
+          color: updateColor
+        };
+      });
       
-      alert('모든 팬 등급이 성공적으로 업데이트되었습니다.');
+      // 새로운 API로 모든 레벨 한 번에 업데이트
+      await updateFanLevel(updatedLevels);
       await loadFanLevels();
-    } catch (err) {
+    } catch (err: any) {
       console.error('일괄 업데이트 실패:', err);
-      alert('일괄 업데이트 중 오류가 발생했습니다.');
+      openError(<ErrorMessage message={err?.response?.data?.message || '일괄 업데이트 중 오류가 발생했습니다.'} />);
     } finally {
       setIsUpdating(false);
     }
