@@ -1,5 +1,5 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import { FanLevel } from "@/app/_components/utils/interfaces";
 import { ColorPicker } from "./ColorPicker";
 
@@ -38,6 +38,9 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   onHexInputChange,
   onUpdate
 }) => {
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(level.name);
+
   // 현재 표시할 색상 결정 (우선순위: 미리보기 > 색상 상태 > 원본 색상)
   const displayColor = previewLevelId === level.id && previewColor 
     ? previewColor 
@@ -45,6 +48,37 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
 
   // 색상이 원본과 다른지 확인 (원본 색상과 비교)
   const hasColorChange = colorState && colorState.color !== originalColor;
+
+  // 이름 편집 시작
+  const handleNameEdit = () => {
+    setIsEditingName(true);
+    setTempName(level.name);
+  };
+
+  // 이름 편집 취소
+  const handleNameCancel = () => {
+    setIsEditingName(false);
+    setTempName(level.name);
+  };
+
+  // 이름 편집 완료
+  const handleNameSave = () => {
+    if (tempName.trim()) {
+      onUpdate(level.id, tempName.trim());
+      setIsEditingName(false);
+    } else {
+      handleNameCancel();
+    }
+  };
+
+  // Enter 키 또는 Escape 키 처리
+  const handleNameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleNameSave();
+    } else if (e.key === 'Escape') {
+      handleNameCancel();
+    }
+  };
 
   return (
     <div className="bg-gray-800 dark:bg-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors flex items-center gap-4 relative">
@@ -79,15 +113,48 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
         />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-white truncate">
-          {level.name}
-          {previewLevelId === level.id && previewColor && (
-            <span className="ml-2 text-xs text-yellow-400">(미리보기)</span>
-          )}
-          {hasColorChange && previewLevelId !== level.id && (
-            <span className="ml-2 text-xs text-orange-400">(변경됨)</span>
-          )}
-        </p>
+        {isEditingName ? (
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              onKeyDown={handleNameKeyDown}
+              onBlur={handleNameSave}
+              className="flex-1 px-2 py-1 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:border-blue-500 text-white"
+              autoFocus
+              maxLength={20}
+            />
+            <button
+              onClick={handleNameSave}
+              className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+              title="저장"
+            >
+              ✓
+            </button>
+            <button
+              onClick={handleNameCancel}
+              className="px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700"
+              title="취소"
+            >
+              ✕
+            </button>
+          </div>
+        ) : (
+          <p 
+            className="font-medium text-white truncate cursor-pointer hover:text-blue-400 transition-colors"
+            onClick={handleNameEdit}
+            title="클릭하여 이름 편집"
+          >
+            {level.name}
+            {previewLevelId === level.id && previewColor && (
+              <span className="ml-2 text-xs text-yellow-400">(미리보기)</span>
+            )}
+            {hasColorChange && previewLevelId !== level.id && (
+              <span className="ml-2 text-xs text-orange-400">(변경됨)</span>
+            )}
+          </p>
+        )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <input
