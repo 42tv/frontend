@@ -146,6 +146,7 @@ export default {
           DEFAULT: "rgb(255, 255, 255)",
           dark: "rgb(17, 24, 39)",
         },
+        errorBg: "rgb(70, 80, 97))",
         contentBg: "rgb(31, 41, 55)", // gray-800
         darkBg: "rgb(17, 24, 39)", // gray-900
         colorFg01: "rgb(156, 163, 175)", // gray-400

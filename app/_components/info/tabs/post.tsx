@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReceiveMessage from "./post_tabs_component/receive_message";
 import SentMessage from "./post_tabs_component/sent_message";
 import BlockPostUser from "./post_tabs_component/block_post_user";

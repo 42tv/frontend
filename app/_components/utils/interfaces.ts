@@ -92,3 +92,10 @@ export interface CardData {
   hidden: boolean;
   is_live: boolean;
 }
+
+export interface FanLevel {
+  id: number;
+  name: string;
+  min_donation: number;
+  color: string;
+}

@@ -1,4 +1,4 @@
-import { deletePost, deletePosts, getPosts, readPost } from "@/app/_apis/posts";
+import { deletePost, deletePosts, getPosts, getPostSetting, readPost } from "@/app/_apis/posts";
 import BlockAlertComponent from "@/app/_components/modals/block_alert";
 import MessageSettingsModal from "@/app/_components/modals/message_settings_modal";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
@@ -28,10 +28,22 @@ interface Post {
     readAt: string;
 }
 
+interface PostSetting {
+    fanLevels: FanLevel[];
+    minFanLevel: number | null;
+}
+
+interface FanLevel {
+    id: number;
+    name: string;
+    min_donation: number;
+}
+
 export default function ReceiveMessage() {
     const { openModal, closeModal } = useModalStore();
     const { openPopup, closePopup } = popupModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
+    const [postSetting, setPostSetting] = useState<PostSetting>();
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
@@ -55,12 +67,15 @@ export default function ReceiveMessage() {
     const endPage = Math.min(currentSet * pageSetSize, totalPages);
 
     useEffect(() => {
-        async function fetchPosts() {
+        async function fetchInitialData() {
             // Fetch posts from API
-            const response = await getPosts();
-            setPosts(response);
+            const posts = await getPosts();
+            setPosts(posts);
+            const postSetting: PostSetting = await getPostSetting();
+            console.log(postSetting);
+            setPostSetting(postSetting);
         }
-        fetchPosts();
+        fetchInitialData();
     }, [])
     
     // Format the date as xxxx년 xx월 xx일 xx시 xx분
@@ -81,7 +96,7 @@ export default function ReceiveMessage() {
     };
 
     const handleOpenSettings = () => {
-        openModal(<MessageSettingsModal closeModal={closeModal} />);
+        openModal(<MessageSettingsModal closeModal={closeModal} postSetting={postSetting} setPostSetting={setPostSetting}/>);
     };
 
     async function changePopupComponent(compoent: JSX.Element) {
