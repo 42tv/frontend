@@ -12,6 +12,7 @@ interface ColorPickerProps {
   onColorPreview: (levelId: number, color: string) => void;
   onColorConfirm: () => void;
   onClose: () => void;
+  onCancel: () => void;
   onHexInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -25,6 +26,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   onColorPreview,
   onColorConfirm,
   onClose,
+  onCancel,
   onHexInputChange
 }) => {
   const hexInputRef = useRef<HTMLInputElement>(null);
@@ -87,9 +89,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               {/* 현재 색상 */}
               <div className="flex flex-col items-center gap-2">
                 <span className="text-xs text-gray-400 font-medium">현재</span>
-                <div 
-                  className="w-16 h-16 rounded-xl border-2 border-gray-600 shadow-lg"
+                <button
+                  onClick={() => onColorPreview(levelId, currentColor)}
+                  className="w-16 h-16 rounded-xl border-2 border-gray-600 shadow-lg hover:border-gray-400 transition-colors cursor-pointer"
                   style={{ backgroundColor: currentColor }}
+                  title="현재 색상으로 되돌리기"
                 />
                 <span className="text-xs text-gray-300 font-mono">{currentColor.toUpperCase()}</span>
               </div>
@@ -129,7 +133,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               적용
             </button>
             <button
-              onClick={onClose}
+              onClick={onCancel}
               className="w-full px-5 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors font-medium"
             >
               취소

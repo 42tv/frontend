@@ -10,9 +10,11 @@ interface FanLevelItemProps {
   previewColor: string | null;
   colorPickerOpen: number | null;
   hexInput: string;
+  colorState?: { color: string; hexInput: string };
   onToggleColorPicker: (levelId: number) => void;
   onColorPreview: (levelId: number, color: string) => void;
   onColorConfirm: () => void;
+  onColorCancel: () => void;
   onCloseColorPicker: () => void;
   onHexInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onUpdate: (id: number, name?: string, minDonation?: number, color?: string) => void;
@@ -25,14 +27,22 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   previewColor,
   colorPickerOpen,
   hexInput,
+  colorState,
   onToggleColorPicker,
   onColorPreview,
   onColorConfirm,
+  onColorCancel,
   onCloseColorPicker,
   onHexInputChange,
   onUpdate
 }) => {
-  const displayColor = previewLevelId === level.id && previewColor ? previewColor : level.color;
+  // 현재 표시할 색상 결정 (우선순위: 미리보기 > 색상 상태 > 원본 색상)
+  const displayColor = previewLevelId === level.id && previewColor 
+    ? previewColor 
+    : (colorState ? colorState.color : level.color);
+
+  // 색상이 원본과 다른지 확인
+  const hasColorChange = colorState && colorState.color !== level.color;
 
   return (
     <div className="bg-gray-800 dark:bg-gray-800 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors flex items-center gap-4 relative">
@@ -41,7 +51,11 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
         <button
           onClick={() => onToggleColorPicker(level.id)}
           className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0 hover:scale-105 transition-transform cursor-pointer border-2 ${
-            previewLevelId === level.id && previewColor ? 'border-yellow-400' : 'border-transparent hover:border-gray-400'
+            previewLevelId === level.id && previewColor 
+              ? 'border-yellow-400' 
+              : hasColorChange 
+                ? 'border-orange-400' 
+                : 'border-transparent hover:border-gray-400'
           }`} 
           style={{ backgroundColor: displayColor }}
           title="색상 변경하기"
@@ -58,6 +72,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
           onColorPreview={onColorPreview}
           onColorConfirm={onColorConfirm}
           onClose={onCloseColorPicker}
+          onCancel={onColorCancel}
           onHexInputChange={onHexInputChange}
         />
       </div>
@@ -66,6 +81,9 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
           {level.name}
           {previewLevelId === level.id && previewColor && (
             <span className="ml-2 text-xs text-yellow-400">(미리보기)</span>
+          )}
+          {hasColorChange && previewLevelId !== level.id && (
+            <span className="ml-2 text-xs text-orange-400">(변경됨)</span>
           )}
         </p>
       </div>
