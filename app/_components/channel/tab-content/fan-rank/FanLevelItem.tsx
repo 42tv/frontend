@@ -94,7 +94,9 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
           type="text"
           value={level.min_donation}
           onChange={(e) => {
-            const newValue = parseInt(e.target.value) || 0;
+            // 입력값에서 숫자만 추출
+            const numbersOnly = e.target.value.replace(/\D/g, '');
+            const newValue = parseInt(numbersOnly) || 0;
             onUpdate(level.id, level.name, newValue);
           }}
           className="w-24 px-2 py-1 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:border-blue-500 text-center text-white"
