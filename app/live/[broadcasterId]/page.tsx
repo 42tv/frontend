@@ -29,7 +29,7 @@ interface LivePageProps {
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
-    const {is_guest} = useUserStore();
+    const {is_guest, idx} = useUserStore();
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
@@ -70,11 +70,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             else {
                 await requestCreateBookMark(broadcasterId);
             }
-            // playDataState가 존재하므로 안전하게 스프레드 가능
-            setPlayDataState({
-                ...playDataState,
-                is_bookmarked: !playDataState.is_bookmarked,
-            })
         }
         catch (e) {
             const message = getApiErrorMessage(e);
@@ -221,14 +216,31 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             });
         };
 
+        const handleBookmark = (data: any) => {
+            setPlayDataState((prevState) => {
+                if (!prevState) {
+                    console.log("Previous state is null, cannot update bookmark.");
+                    return null; // 이전 상태가 없으면 null 반환
+                }
+                const adder = data.action == 'add' ? 1 : -1; // action에 따라 +1 또는 -1
+                return {
+                    ...prevState,
+                    is_bookmarked: data.user_idx == idx ? !prevState.is_bookmarked : prevState.is_bookmarked, // 자신의 북마크가 아닌 경우에만 상태 변경
+                    bookmark_cnt: (prevState.bookmark_cnt + adder),
+                };
+            });
+        };
+
         socket.on('duplicate_connection', handleDuplicateConnection);
         socket.on('recommend', handleRecommend);
         socket.on('viewer_count', handleViewerCount);
+        socket.on('bookmark', handleBookmark);
 
         return () => {
             socket.off('duplicate_connection', handleDuplicateConnection);
             socket.off('recommend', handleRecommend);
             socket.off('viewer_count', handleViewerCount);
+            socket.off('bookmark', handleBookmark);
         };
     }, [socket, openError, router]); // socket이 변경될 때만 실행
 
