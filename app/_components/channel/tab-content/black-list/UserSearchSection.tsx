@@ -186,24 +186,9 @@ export const UserSearchSection: React.FC<UserSearchSectionProps> = ({
                         )}
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-white mb-1">{userInfo.nickname}({userInfo.user_id})</h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                          <span className="text-green-400 text-xs font-medium">사용자 확인됨</span>
-                        </div>
+                        <p className="text-sm">{userInfo.nickname}</p>
+                        <p className="text-xs text-gray-400">ID: {userInfo.user_id}</p>
                       </div>
-                      <div className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium border border-yellow-500/30">
-                        차단 대상
-                      </div>
-                    </div>
-                    {/* 액션 버튼들 */}
-                    <div className="flex gap-3">
-                      <button
-                        onClick={clearSearch}
-                        className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
-                      >
-                        취소
-                      </button>
                       <button
                         onClick={handleBlock}
                         disabled={isLoading}

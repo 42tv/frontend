@@ -142,13 +142,6 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
           </tbody>
         </table>
       </div>
-
-      {/* 테이블 하단 정보 */}
-      <div className="bg-gray-700 px-4 py-3 border-t border-gray-600">
-        <div className="flex items-center justify-between text-sm text-gray-400">
-          <span>총 {users.length}명의 차단된 사용자</span>
-        </div>
-      </div>
     </div>
   );
 };
