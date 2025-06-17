@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { searchUserProfile, UserProfile } from "../../../../_apis/user";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { MdBlock } from "react-icons/md";
 
 interface UserInfo {
   user_id: string;
@@ -192,21 +193,10 @@ export const UserSearchSection: React.FC<UserSearchSectionProps> = ({
                       <button
                         onClick={handleBlock}
                         disabled={isLoading}
-                        className="flex-1 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-700 disabled:to-gray-700 text-white rounded transition-all duration-200 font-medium"
+                        className="p-1 text-red-500 dark:text-red-500 hover:text-red-500 hover:bg-gray-700 dark:hover:text-red-400 dark:hover:bg-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed rounded transition-colors"
+                        title={'차단'}
                       >
-                        {isLoading ? (
-                          <div className="flex items-center justify-center gap-2">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            차단 중...
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center gap-2">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636" />
-                            </svg>
-                            차단하기
-                          </div>
-                        )}
+                        <MdBlock className="w-8 h-8" />
                       </button>
                     </div>
                   </div>

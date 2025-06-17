@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { BlacklistUser } from "./BlacklistManager";
+import { CgUnblock } from "react-icons/cg";
 
 interface BlacklistTableProps {
   users: BlacklistUser[];
@@ -28,10 +29,6 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
   };
 
   const handleUnblock = async (userId: string) => {
-    if (!confirm("이 사용자의 차단을 해제하시겠습니까?")) {
-      return;
-    }
-
     setUnblockingUsers(prev => new Set(prev).add(userId));
     try {
       await onUnblockUser(userId);
@@ -80,7 +77,7 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
               <th className="w-16 text-left p-4 text-gray-300 font-medium text-sm">프로필</th>
               <th className="text-left p-4 text-gray-300 font-medium text-sm">사용자 정보</th>
               <th className="text-left p-4 text-gray-300 font-medium text-sm min-w-[140px]">차단일</th>
-              <th className="w-24 text-center p-4 text-gray-300 font-medium text-sm">액션</th>
+              <th className="w-24 text-center p-4 text-gray-300 font-medium text-sm">차딘 해제</th>
             </tr>
           </thead>
           <tbody>
@@ -132,9 +129,10 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
                   <button
                     onClick={() => handleUnblock(user.user_id)}
                     disabled={unblockingUsers.has(user.user_id)}
-                    className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded text-sm transition-colors"
+                    className="p-1 text-green-500 dark:text-green-500 hover:text-green-500 hover:bg-gray-700 dark:hover:text-green-400 dark:hover:bg-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed rounded transition-colors"
+                    title="차단 해제"
                   >
-                    {unblockingUsers.has(user.user_id) ? '해제 중...' : '차단해제'}
+                    <CgUnblock className="w-6 h-6" />
                   </button>
                 </td>
               </tr>
