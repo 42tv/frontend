@@ -133,8 +133,9 @@ export default function ReceiveMessage() {
      * @param message 
      * @param sentAt 
      * @param postId 
+     * @param senderIdx 
      */
-    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number) {
+    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number, senderIdx: number) {
         try{
             await readPost(postId);
             setPosts(posts.map(post => post.id === postId ? {
@@ -156,6 +157,7 @@ export default function ReceiveMessage() {
                 closeModal={closeModal} 
                 deleteSinglePost={deleteSinglePost}
                 responsePost={responsePost}
+                senderIdx={senderIdx}
         />);
     }
 
@@ -266,7 +268,7 @@ export default function ReceiveMessage() {
                               <td className={`p-2 ${post.is_read ? '' : 'text-text-primary dark:text-text-primary-dark'}`}>
                                   <div className="pl-5 mx-auto overflow-hidden">
                                       <button
-                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}
+                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id, post.sender.idx)}
                                           className="truncate block w-full text-left"
                                           title={post.message}
                                       >
@@ -276,7 +278,7 @@ export default function ReceiveMessage() {
                               </td>
                               <td className={`p-2 ${post.is_read ? '' : 'text-text-primary dark:text-text-primary-dark'}`}>
                               <button
-                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id)}>
+                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id, post.sender.idx)}>
                                     <span>
                                         {post.sender.nickname}
                                     </span>
