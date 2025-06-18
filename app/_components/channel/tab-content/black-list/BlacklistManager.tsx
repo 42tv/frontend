@@ -44,14 +44,24 @@ export const BlacklistManager = () => {
     fetchBlacklist();
   }, []);
 
-  // 검색 필터링
+  // 검색 필터링 - 실시간 검색으로 변경
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    if (term.trim() === '') {
+      setFilteredBlacklist(blacklist);
+    } else {
+      const filtered = blacklist.filter(user => 
+        user.nickname.toLowerCase().includes(term.toLowerCase()) ||
+        user.user_id.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredBlacklist(filtered);
+    }
+  };
+
+  // 기존 useEffect는 제거하고 실시간 검색 함수로 대체
   useEffect(() => {
-    const filtered = blacklist.filter(user => 
-      user.nickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.user_id.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredBlacklist(filtered);
-  }, [blacklist, searchTerm]);
+    setFilteredBlacklist(blacklist);
+  }, [blacklist]);
 
   // 블랙리스트에 사용자 추가 (닉네임 또는 사용자 ID로)
   const handleAddUser = async (nickname: string) => {
@@ -87,11 +97,6 @@ export const BlacklistManager = () => {
     }
   };
 
-  // 검색어 초기화
-  const handleClearSearch = () => {
-    setSearchTerm("");
-  };
-
   return (
     <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
       <div className="space-y-6">
@@ -102,7 +107,12 @@ export const BlacklistManager = () => {
         </div>
         
         {/* 전체 차단 회원 통계 */}
-        <p className="text-gray-400">차단 수: {blacklist.length}</p>
+        <p className="text-gray-400">
+          {searchTerm ? '검색 결과' : '차단 수'}: {filteredBlacklist.length}
+          {searchTerm && (
+            <span className="ml-2">(전체 {blacklist.length}명 중)</span>
+          )}
+        </p>
 
         {/* 사용자 검색 및 차단 */}
         <UserSearchSection
@@ -113,8 +123,7 @@ export const BlacklistManager = () => {
         {/* 차단 목록 검색 */}
         <BlacklistSearchForm
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onClearSearch={handleClearSearch}
+          onSearchChange={handleSearchChange}
         />
 
         {/* 테이블 */}
