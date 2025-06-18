@@ -16,19 +16,22 @@ interface BlockedUser {
 
 export default function BlockPostUser() {
     const [blockedUser, setBlockedUser] = useState<BlockedUser[]>([]);
+    const [filteredUsers, setFilteredUsers] = useState<BlockedUser[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+    const [searchNickname, setSearchNickname] = useState('');
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
     
-    // Calculate the posts to display on current page
+    // Calculate the posts to display on current page (use filtered users if search is active)
+    const usersToShow = searchNickname ? filteredUsers : blockedUser;
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentUsers = blockedUser.slice(indexOfFirstPost, indexOfLastPost);
+    const currentUsers = usersToShow.slice(indexOfFirstPost, indexOfLastPost);
     
     // Calculate total pages
-    const totalPages = Math.ceil(blockedUser.length / postsPerPage);
+    const totalPages = Math.ceil(usersToShow.length / postsPerPage);
     
     // Calculate current page set
     const currentSet = Math.ceil(currentPage / pageSetSize);
@@ -42,6 +45,7 @@ export default function BlockPostUser() {
         async function fetchPosts() {
             const response = await getBlockedPostUser()
             setBlockedUser(response)
+            setFilteredUsers(response)
             console.log(response)
         }
         fetchPosts();
@@ -51,6 +55,9 @@ export default function BlockPostUser() {
         try {
             const reponse = await unblockPostUsers(selectedUsers)
             setBlockedUser(prev => prev.filter(user => !selectedUsers.includes(user.blocked.idx)))
+            setFilteredUsers(prev => prev.filter(user => !selectedUsers.includes(user.blocked.idx)))
+            setSelectedUsers([])
+            setIsChecked(false)
             console.log(reponse)
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -63,12 +70,35 @@ export default function BlockPostUser() {
         try {
             const reponse = await unblockPostUser(userIdx)
             setBlockedUser(prev => prev.filter(user => user.blocked.idx !== userIdx))
+            setFilteredUsers(prev => prev.filter(user => user.blocked.idx !== userIdx))
             console.log(reponse)
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
         }
     }
+
+    /**
+     * 검색어 변경 시 실시간 검색
+     */
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSearchNickname(value);
+        
+        if (value.trim() === '') {
+            // 검색어가 비어있으면 모든 차단 유저 보여주기
+            setFilteredUsers(blockedUser);
+        } else {
+            // 닉네임 또는 유저ID로 필터링
+            const filtered = blockedUser.filter(user => 
+                user.blocked.nickname.toLowerCase().includes(value.toLowerCase()) ||
+                user.blocked.user_id.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredUsers(filtered);
+        }
+        // 검색 후 첫 페이지로 이동
+        setCurrentPage(1);
+    };
     
     // Format the date as xxxx년 xx월 xx일 xx시 xx분
     const formatDateFromString = (dateString: string) => {
@@ -109,17 +139,34 @@ export default function BlockPostUser() {
 
     return (
         <div className="mb-20">
+            <div className="flex flex-row my-5 mx-5 justify-end">
+                <div className="flex space-x-2">
+                    <input
+                        className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
+                         border-borderButton1 dark:border-borderButton1-dark 
+                         placeholder-textSearch dark:placeholder-textSearch-dark"
+                        placeholder="아이디를 입력하세요"
+                        value={searchNickname}
+                        onChange={handleSearchChange}
+                    />
+                </div>
+            </div>
             <div className="p-4">
                 <div className="mb-2">
                   <span className="text-textBase">
-                    총 게시물 :
+                    {searchNickname ? '검색 결과' : '총 게시물'} :
                   </span>
                   <span className="font-semibold">
-                   {blockedUser.length}
+                   {usersToShow.length}
                   </span>
                   <span className="text-textBase">
                     건
                   </span>
+                  {searchNickname && (
+                    <span className="text-textBase ml-2">
+                      (전체 {blockedUser.length}건 중)
+                    </span>
+                  )}
                 </div>
                 <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
