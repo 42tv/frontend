@@ -29,7 +29,7 @@ interface LivePageProps {
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
-    const {is_guest} = useUserStore();
+    const {is_guest, idx} = useUserStore();
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [elapsedTime, setElapsedTime] = useState<string>(''); // 경과 시간 상태 추가
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
@@ -70,11 +70,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             else {
                 await requestCreateBookMark(broadcasterId);
             }
-            // playDataState가 존재하므로 안전하게 스프레드 가능
-            setPlayDataState({
-                ...playDataState,
-                is_bookmarked: !playDataState.is_bookmarked,
-            })
         }
         catch (e) {
             const message = getApiErrorMessage(e);
@@ -194,24 +189,60 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }, []); // Adjusted dependencies
 
     useEffect(() => {
-        socketRef.current?.on('duplicate_connection', () => {
+        if (!socket) return; // socket이 없으면 아무것도 하지 않음
+
+        const handleDuplicateConnection = () => {
             openError(<ErrorMessage message="다른 기기에서 접속하였습니다" />);
             router.push('/'); // 홈으로 리다이렉트
-        })
-        socketRef.current?.on('viewer_count', (data) => {
+        };
+
+        const handleRecommend = (data: any) => {
             setPlayDataState((prevState) => {
                 if (!prevState) return null; // 이전 상태가 없으면 null 반환
                 return {
                     ...prevState,
-                    viewer_cnt: data.viewer_cnt, // 서버로부터 받은 play_cnt 업데이트
+                    recommend_cnt: prevState.recommend_cnt + 1, // 서버로부터 받은 recommend_cnt 업데이트
                 };
             });
-        })
+        };
+
+        const handleViewerCount = (data: any) => {
+            setPlayDataState((prevState) => {
+                if (!prevState) return null; // 이전 상태가 없으면 null 반환
+                return {
+                    ...prevState,
+                    viewer_cnt: data.viewer_cnt, // 서버로부터 받은 viewer_cnt 업데이트
+                };
+            });
+        };
+
+        const handleBookmark = (data: any) => {
+            setPlayDataState((prevState) => {
+                if (!prevState) {
+                    console.log("Previous state is null, cannot update bookmark.");
+                    return null; // 이전 상태가 없으면 null 반환
+                }
+                const adder = data.action == 'add' ? 1 : -1; // action에 따라 +1 또는 -1
+                return {
+                    ...prevState,
+                    is_bookmarked: data.user_idx == idx ? !prevState.is_bookmarked : prevState.is_bookmarked, // 자신의 북마크가 아닌 경우에만 상태 변경
+                    bookmark_cnt: (prevState.bookmark_cnt + adder),
+                };
+            });
+        };
+
+        socket.on('duplicate_connection', handleDuplicateConnection);
+        socket.on('recommend', handleRecommend);
+        socket.on('viewer_count', handleViewerCount);
+        socket.on('bookmark', handleBookmark);
+
         return () => {
-            socketRef.current?.off('duplicate_connection'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
-            socketRef.current?.off('viewer_count'); // 컴포넌트 언마운트 시 이벤트 리스너 해제
-        }
-    }, [socketRef.current]); // socketRef.current가 변경될 때마다 실행
+            socket.off('duplicate_connection', handleDuplicateConnection);
+            socket.off('recommend', handleRecommend);
+            socket.off('viewer_count', handleViewerCount);
+            socket.off('bookmark', handleBookmark);
+        };
+    }, [socket, openError, router]); // socket이 변경될 때만 실행
 
     // 경과 시간 업데이트를 위한 useEffect 추가
     useEffect(() => {

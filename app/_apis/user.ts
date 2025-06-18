@@ -13,6 +13,18 @@ export interface FanLevelItem {
 }
 
 /**
+ * 사용자 프로필 인터페이스
+ */
+export interface UserProfile {
+  idx: number;
+  user_id: string;
+  nickname: string;
+  profile_img: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
  * 회원가입 함수
  * @param id
  * @param password
@@ -362,6 +374,18 @@ export async function updateSingleFanLevel(id: number, name: string, min_donatio
  */
 export async function deleteFanLevel(id: number) {
   const response = await api.delete(`/api/fan-level/${id}`, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * 사용자 프로필 검색 (닉네임으로)
+ * @param nickname 검색할 닉네임
+ * @returns UserProfile 정보
+ */
+export async function searchUserProfile(nickname: string): Promise<UserProfile> {
+  const response = await api.get(`/api/user/profile/${nickname}`, {
     withCredentials: true,
   });
   return response.data;

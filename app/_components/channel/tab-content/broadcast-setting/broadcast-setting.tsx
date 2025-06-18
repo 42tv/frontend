@@ -116,7 +116,8 @@ export default function BroadcastSettings() {
   }
 
   return (
-    <div className="flex flex-col w-full p-4 max-w-3xl relative">
+    <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
+      <div className="flex flex-col w-full p-4 max-w-3xl relative">
       {/* Toast notification - always in DOM but visibility controlled by opacity */}
       <div 
         className={`fixed top-4 right-4 bg-success-bg dark:bg-success-bg-dark border text-success dark:text-success-dark px-4 py-2 rounded flex items-center shadow-md transition-opacity duration-300 ${
@@ -127,14 +128,17 @@ export default function BroadcastSettings() {
         <span>{copiedText}</span>
       </div>
       
-      <label className="block mb-2 font-bold text-xl">방송설정</label>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold text-xl text-white">방송설정</h3>
+      </div>
+      
       <div className="grid grid-cols-6 items-center my-2">
         <div className="flex col-span-1 text-center items-center">
             <label className="w-[100px]">스트림키</label>
         </div>
         <div className="flex col-span-4 items-center space-x-2">
             <div 
-              className="flex w-full h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md space-x-3">
+              className="flex w-full h-[40px] border border-gray-700 items-center px-2 py-1 rounded-md space-x-3">
               <input 
                 type={showStreamKey ? "text" : "password"} 
                 value={streamKey} 
@@ -151,7 +155,7 @@ export default function BroadcastSettings() {
         </div>
         <div className="flex col-span-1 justify-center items-center">
           <button 
-            className="border border-border-primary dark:border-border-primary-dark px-2 py-1 rounded-md hover:bg-bg-hover dark:hover:bg-bg-hover-dark transition-colors"
+            className="border border-gray-700 px-2 py-1 rounded-md hover:bg-bg-hover dark:hover:bg-bg-hover-dark transition-colors"
             onClick={() => reissueStreamKey()}
           >
             재발급
@@ -163,7 +167,7 @@ export default function BroadcastSettings() {
             <label className="w-[100px]">서버URL</label>
         </div>
         <div className="flex col-span-5 items-center space-x-2">
-          <div className="flex w-full h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md space-x-3">
+          <div className="flex w-full h-[40px] border border-gray-700 items-center px-2 py-1 rounded-md space-x-3">
             <input 
               type="text"
               value={serverUrl} 
@@ -181,7 +185,7 @@ export default function BroadcastSettings() {
             <label className="w-[100px]">방송제목</label>
         </div>
         <div className="flex col-span-5 items-center space-x-2">
-          <div className="flex w-full h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md space-x-3">
+          <div className="flex w-full h-[40px] border border-gray-700 items-center px-2 py-1 rounded-md space-x-3">
             <input 
               type="text"
               value={title} 
@@ -266,7 +270,7 @@ export default function BroadcastSettings() {
           </div>
           <div className="flex col-span-4 items-center ml-4 space-x-2 h-full">
             {isPrivate ? (
-              <div className="flex h-[40px] border border-border-primary dark:border-border-primary-dark items-center px-2 py-1 rounded-md">
+              <div className="flex h-[40px] border border-gray-700 items-center px-2 py-1 rounded-md">
                 <input 
                   type="text"
                   value={password}
@@ -293,6 +297,13 @@ export default function BroadcastSettings() {
           저장하기
         </button>
       </div>
+      
+      <div className="mt-6 text-sm text-gray-400">
+        * 스트림키를 클릭하여 복사할 수 있습니다.<br />
+        * 방송 설정 변경 후 '저장하기' 버튼을 클릭하면 설정이 적용됩니다.<br />
+        * 스트림키 재발급 시 기존 방송이 중단될 수 있습니다.
+      </div>
+    </div>
     </div>
   );
 }

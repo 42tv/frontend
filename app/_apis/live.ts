@@ -6,6 +6,7 @@ export async function getLiveList() {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
+      "Cache-Control": "no-store",
     },
   });
   return response.data;

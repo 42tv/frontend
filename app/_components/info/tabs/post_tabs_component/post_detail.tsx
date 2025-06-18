@@ -1,6 +1,13 @@
 "use client";
 
-export default function PostDetail({ nickname, userId, message, sentAt, postId, closeModal, deleteSinglePost, responsePost }: 
+import { blockPostUser } from "@/app/_apis/posts";
+import { useState } from "react";
+import { MdBlock } from "react-icons/md";
+import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import ErrorMessage from "@/app/_components/modals/error_component";
+import { getApiErrorMessage } from "@/app/_apis/interfaces";
+
+export default function PostDetail({ nickname, userId, message, sentAt, postId, closeModal, deleteSinglePost, responsePost, senderIdx }: 
   { 
     nickname: string;
     userId: string;
@@ -9,9 +16,11 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     postId: number,
     closeModal: () => void,
     deleteSinglePost: (postId: number) => void,
-    responsePost?: (userId: string) => void
+    responsePost?: (userId: string) => void,
+    senderIdx: number
   }
   ) {
+  const { openError } = errorModalStore();
 
   const maskString = (str: string): string => {
       if (!str || str.length <= 3) {
@@ -45,16 +54,34 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     }
   }
 
+  async function handleBlockUser() {
+    try {
+      await blockPostUser(senderIdx);
+      openError(<ErrorMessage message="사용자가 차단되었습니다." />);
+      closeModal();
+    } catch (error) {
+      const message = getApiErrorMessage(error)
+      openError(<ErrorMessage message={message} />);
+    }
+  }
+
   return (
     <div className="flex flex-col max-w-md w-[450px] h-[500px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
       <h2 className="text-lg font-bold mb-2 px-1 pt-5 px-6">쪽지</h2>
       <div className="w-full h-[360px] pt-5 px-5 rounded-[8px] overflow-auto">
-        <div className="mt-2 flex justify-between border-b-[2px] border-b-tableBorder-dark pb-[13px]">
+        <div className="mt-2 flex justify-between items-center border-b-[2px] border-b-tableBorder-dark pb-[13px]">
           <div>
             {`${nickname}(${maskString(userId)})`} 
           </div>
-          <div>
-            {formatTimestamp(sentAt)}
+          <div className="flex items-center gap-2">
+            <span>{formatTimestamp(sentAt)}</span>
+            <button
+              onClick={handleBlockUser}
+              className="p-1 text-gray-500 hover:text-red-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed rounded transition-colors"
+              title={'차단'}
+            >
+              <MdBlock className="w-4 h-4" />
+            </button>
           </div>
         </div>
         <div className="mt-[22px] h-[240px] whitespace-pre-line break-all text-[15px] text-textBase dark:text-textBase-dark ">
