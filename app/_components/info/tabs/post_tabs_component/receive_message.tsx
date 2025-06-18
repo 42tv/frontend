@@ -257,7 +257,7 @@ export default function ReceiveMessage() {
                         className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
                          border-borderButton1 dark:border-borderButton1-dark 
                          placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="닉네임을 입력하세요"
+                        placeholder="아이디를 입력하세요"
                         value={searchNickname}
                         onChange={handleSearchChange}
                     />
