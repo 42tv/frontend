@@ -9,6 +9,7 @@ interface Post {
     id: number;
     message: string;
     sender: {
+        idx: number;
         userId: string;
         nickname: string;
     };
@@ -25,19 +26,22 @@ interface Post {
 export default function ReceiveMessage() {
     const { openModal, closeModal } = useModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
+    const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
+    const [searchNickname, setSearchNickname] = useState('');
     const postsPerPage = 10;
     const pageSetSize = 5; // Number of page buttons to show at once
     
-    // Calculate the posts to display on current page
+    // Calculate the posts to display on current page (use filtered posts if search is active)
+    const postsToShow = searchNickname ? filteredPosts : posts;
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+    const currentPosts = postsToShow.slice(indexOfFirstPost, indexOfLastPost);
     
     // Calculate total pages
-    const totalPages = Math.ceil(posts.length / postsPerPage);
+    const totalPages = Math.ceil(postsToShow.length / postsPerPage);
     
     // Calculate current page set
     const currentSet = Math.ceil(currentPage / pageSetSize);
@@ -53,6 +57,7 @@ export default function ReceiveMessage() {
             const response = await getSendPosts();
             console.log(response)
             setPosts(response);
+            setFilteredPosts(response);
         }
         fetchPosts();
     }, [])
@@ -74,6 +79,27 @@ export default function ReceiveMessage() {
         );
     };
 
+    /**
+     * 검색어 변경 시 실시간 검색
+     */
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSearchNickname(value);
+        
+        if (value.trim() === '') {
+            // 검색어가 비어있으면 모든 포스트 보여주기
+            setFilteredPosts(posts);
+        } else {
+            // 받는 사람의 닉네임으로 필터링
+            const filtered = posts.filter(post => 
+                post.recipient.nickname.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredPosts(filtered);
+        }
+        // 검색 후 첫 페이지로 이동
+        setCurrentPage(1);
+    };
+
     // Page navigation functions
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
     
@@ -90,8 +116,9 @@ export default function ReceiveMessage() {
      * @param message 
      * @param sentAt 
      * @param postId 
+     * @param senderIdx 
      */
-    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number) {
+    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number, senderIdx: number) {
         openModal(
             <PostDetail 
                 userId={userId} 
@@ -101,6 +128,7 @@ export default function ReceiveMessage() {
                 postId={postId} 
                 closeModal={closeModal} 
                 deleteSinglePost={deleteSinglePost}
+                senderIdx={senderIdx}
         />);
     }
 
@@ -112,6 +140,7 @@ export default function ReceiveMessage() {
             // Delete selected posts
             await deletePosts(selectedPosts);
             setPosts(posts.filter(post => !selectedPosts.includes(post.id)));
+            setFilteredPosts(filteredPosts.filter(post => !selectedPosts.includes(post.id)));
             setSelectedPosts([]);
             setIsChecked(false);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -122,8 +151,9 @@ export default function ReceiveMessage() {
     async function deleteSinglePost(postId: number) {
         try {
             await deletePost(postId);
-            // Then update the state
+            // Then update both posts and filtered posts state
             setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+            setFilteredPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             console.log(error);
@@ -159,26 +189,28 @@ export default function ReceiveMessage() {
                         className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
                          border-borderButton1 dark:border-borderButton1-dark 
                          placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="검색어를 입력하세요"
+                        placeholder="닉네임을 입력하세요"
+                        value={searchNickname}
+                        onChange={handleSearchChange}
                     />
-                    <button 
-                        className="w-[80px] h-[40px] rounded-[8px] bg-primary text-primary-foreground hover:bg-primary-hover"
-                    >
-                        검색
-                    </button>
                 </div>
             </div>
             <div className="p-4">
                 <div className="mb-2">
                   <span className="text-textBase">
-                    총 게시물 :
+                    {searchNickname ? '검색 결과' : '총 게시물'} :
                   </span>
                   <span className="font-semibold">
-                   {posts.length}
+                   {postsToShow.length}
                   </span>
                   <span className="text-textBase">
                     건
                   </span>
+                  {searchNickname && (
+                    <span className="text-textBase ml-2">
+                      (전체 {posts.length}건 중)
+                    </span>
+                  )}
                 </div>
                 <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
                     <thead>
@@ -202,7 +234,7 @@ export default function ReceiveMessage() {
                               <td className={`p-2 `}>
                                   <div className="max-w-[400px] mx-auto overflow-hidden">
                                       <button
-                                          onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id)}
+                                          onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id, post.sender.idx)}
                                           className="truncate block w-full text-left"
                                           title={post.message}
                                       >
@@ -212,7 +244,7 @@ export default function ReceiveMessage() {
                               </td>
                               <td className={`p-2 `}>
                               <button
-                                    onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id)}>
+                                    onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id, post.sender.idx)}>
                                     <span>
                                         {post.recipient.nickname}
                                     </span>
@@ -226,7 +258,7 @@ export default function ReceiveMessage() {
                     </tbody>
                 </table>
                 {/* Pagination Controls */}
-                {posts.length > postsPerPage && (
+                {postsToShow.length > postsPerPage && (
                     <div className="flex justify-center mt-6">
                         {/* Previous set button */}
                         {currentSet > 1 && (
