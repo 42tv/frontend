@@ -63,10 +63,11 @@ export async function deletePost(postId: number) {
  * @param postIds
  * @returns
  */
-export async function deletePosts(postIds: number[]) {
+export async function deletePosts(postIds: number[], type: "receive" | "sent") {
   const response = await api.delete(`/api/post`, {
     data: {
       postIds: postIds,
+      type: type,
     },
     withCredentials: true,
     headers: {
