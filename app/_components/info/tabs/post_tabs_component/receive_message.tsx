@@ -198,7 +198,7 @@ export default function ReceiveMessage() {
     async function handleDeletePosts() {
         try {
             // Delete selected posts
-            await deletePosts(selectedPosts);
+            await deletePosts(selectedPosts, 'receive');
             setPosts(posts.filter(post => !selectedPosts.includes(post.id)));
             setFilteredPosts(filteredPosts.filter(post => !selectedPosts.includes(post.id)));
             setSelectedPosts([]);
