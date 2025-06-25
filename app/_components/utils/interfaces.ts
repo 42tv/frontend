@@ -68,20 +68,25 @@ export interface Live {
 }
 
 export interface PlayData {
-  broadcaster_idx: string;
-  broadcaster_id: string;
-  broadcaster_nickname: string;
-  playback_url: string;
-  title: string;
-  is_bookmarked: boolean;
-  profile_img: string;
-  nickname: string;
+  broadcaster: {
+    idx: number;
+    user_id: string;
+    nickname: string;
+    profile_img: string;
+  };
+  stream: {
+    title: string;
+    playback_url: string;
+    play_cnt: number;
+    recommend_cnt: number;
+    bookmark_cnt: number;
+    start_time: string;
+  };
+  user: {
+    is_bookmarked: boolean;
+    play_token: string;
+  };
   viewer_cnt: number;
-  play_cnt: number;
-  recommend_cnt: number;
-  bookmark_cnt: number;
-  start_time: string;
-  play_token: string;
 }
 
 export interface CardData {

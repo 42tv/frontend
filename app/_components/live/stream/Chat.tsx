@@ -3,11 +3,15 @@ import { reqeustChat } from '@/app/_apis/live';
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
 import useModalStore from '../../utils/store/modalStore';
+import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
+import UserActionsModal from '../../modals/user_actions_modal';
 
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
     socket: Socket | null; // socket prop 추가
+    currentUserRole?: 'broadcaster' | 'manager' | 'viewer'; // 현재 유저의 역할
+    broadcasterIdx?: number; // 방송자의 idx
 }
 
 type MessageType = 'chat' | 'donation' | 'recommend';
@@ -23,6 +27,8 @@ interface ChatMessage extends BaseMessage {
   chatter_idx: number;
   chatter_nickname: string;
   chatter_message: string;
+  role: string;
+  color: string;
 }
 
 interface DonationMessage extends BaseMessage {
@@ -39,11 +45,157 @@ interface RecommendMessage extends BaseMessage {
 
 type Message = ChatMessage | DonationMessage | RecommendMessage;
 
-const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
+    const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'viewer', broadcasterIdx }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
-    const {openModal} = useModalStore()
+    const {openModal} = useModalStore();
+    const {idx: currentUserIdx} = useUserStore();
+
+    // 테스트용 메시지 추가
+    useEffect(() => {
+        // 테스트용 메시지 데이터
+        const testMessages: ChatMessage[] = [
+            {
+                type: 'chat',
+                chatter_idx: 1,
+                chatter_nickname: '테스트유저1',
+                chatter_message: '안녕하세요! 첫 번째 채팅입니다.',
+                role: 'viewer',
+                color: 'silver',
+                timestamp: Date.now()
+            },
+            {
+                type: 'chat',
+                chatter_idx: 2,
+                chatter_nickname: '매니저유저',
+                chatter_message: '매니저 테스트 메시지입니다.',
+                color: 'gold',
+                role: 'manager',
+                timestamp: Date.now() + 1000
+            },
+            {
+                type: 'chat',
+                chatter_idx: 3,
+                chatter_nickname: '방송자',
+                chatter_message: '방송자 테스트 메시지입니다!',
+                color: 'platinum',
+                role: 'broadcaster',
+                timestamp: Date.now() + 2000
+            }
+        ];
+        setMessages(testMessages);
+    }, []);
+
+    // 채팅 클릭 시 유저 정보 모달 열기
+    const handleChatClick = (message: ChatMessage) => {
+        console.log('Chat clicked:', message);
+        console.log('Current user idx:', currentUserIdx);
+        console.log('Current user role:', currentUserRole);
+        
+        if (!currentUserIdx) {
+            console.log('No current user, showing login modal');
+            openModal(<LoginComponent />);
+            return;
+        }
+
+        const userInfo = {
+            idx: message.chatter_idx,
+            nickname: message.chatter_nickname,
+            role: message.role,
+            color: message.color,
+        };
+
+        const currentUser = {
+            idx: currentUserIdx,
+            role: currentUserRole
+        };
+
+        console.log('Opening user actions modal with:', { userInfo, currentUser });
+
+        openModal(
+            <UserActionsModal
+                userInfo={userInfo}
+                currentUser={currentUser}
+                onKick={handleKickUser}
+                onBan={handleBanUser}
+                onUnban={handleUnbanUser}
+                onPromoteManager={handlePromoteManager}
+                onDemoteManager={handleDemoteManager}
+                onSendMessage={handleSendPrivateMessage}
+            />
+        );
+    };
+
+    // 사용자 강퇴
+    const handleKickUser = async (userIdx: number) => {
+        try {
+            if (socket) {
+                socket.emit('kick_user', { userIdx, broadcasterId });
+            }
+            console.log(`User ${userIdx} kicked`);
+        } catch (error) {
+            console.error('Failed to kick user:', error);
+        }
+    };
+
+    // 사용자 차단
+    const handleBanUser = async (userIdx: number) => {
+        try {
+            if (socket) {
+                socket.emit('ban_user', { userIdx, broadcasterId });
+            }
+            console.log(`User ${userIdx} banned`);
+        } catch (error) {
+            console.error('Failed to ban user:', error);
+        }
+    };
+
+    // 사용자 차단 해제
+    const handleUnbanUser = async (userIdx: number) => {
+        try {
+            if (socket) {
+                socket.emit('unban_user', { userIdx, broadcasterId });
+            }
+            console.log(`User ${userIdx} unbanned`);
+        } catch (error) {
+            console.error('Failed to unban user:', error);
+        }
+    };
+
+    // 매니저로 승격
+    const handlePromoteManager = async (userIdx: number) => {
+        try {
+            if (socket) {
+                socket.emit('promote_manager', { userIdx, broadcasterId });
+            }
+            console.log(`User ${userIdx} promoted to manager`);
+        } catch (error) {
+            console.error('Failed to promote user:', error);
+        }
+    };
+
+    // 매니저 해제
+    const handleDemoteManager = async (userIdx: number) => {
+        try {
+            if (socket) {
+                socket.emit('demote_manager', { userIdx, broadcasterId });
+            }
+            console.log(`User ${userIdx} demoted from manager`);
+        } catch (error) {
+            console.error('Failed to demote user:', error);
+        }
+    };
+
+    // 쪽지 보내기
+    const handleSendPrivateMessage = async (userIdx: number) => {
+        try {
+            // TODO: 쪽지 보내기 모달 또는 페이지로 이동
+            console.log(`Send private message to user ${userIdx}`);
+        } catch (error) {
+            console.error('Failed to send private message:', error);
+        }
+    };
     
     const handleChatMessage = (message: ChatMessage) => {
         console.log('Chat message received:', message);
@@ -106,10 +258,44 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket }) => {
                     {messages.map((msg, index) => (
                         <div key={index} className="text-sm">
                             {msg.type === 'chat' && (
-                                <>
-                                    <span className="font-semibold mr-1">{msg.chatter_nickname}:</span>
-                                    <span className="break-words">{msg.chatter_message}</span>
-                                </>
+                                <div 
+                                    onClick={() => handleChatClick(msg)}
+                                    className="cursor-pointer hover:bg-bg-tertiary dark:hover:bg-bg-tertiary-dark p-2 rounded transition-colors duration-150"
+                                >
+                                    <div className="flex items-start space-x-2">
+                                        <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 overflow-hidden flex-shrink-0">
+                                            {msg.color ? (
+                                                <img 
+                                                    src={msg.color} 
+                                                    alt={`${msg.chatter_nickname} 프로필`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center space-x-1">
+                                                <span className="font-semibold text-text-primary dark:text-text-primary-dark">
+                                                    {msg.chatter_nickname}
+                                                </span>
+                                                {msg.role === 'broadcaster' && (
+                                                    <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
+                                                )}
+                                                {msg.role === 'manager' && (
+                                                    <span className="text-xs bg-blue-500 text-white px-1 rounded">매니저</span>
+                                                )}
+                                            </div>
+                                            <div className="break-words text-text-primary dark:text-text-primary-dark">
+                                                {msg.chatter_message}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             )}
                             {msg.type === 'donation' && (
                                 <div className="text-success dark:text-success-dark">

@@ -56,8 +56,8 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         }
 
         try {
-            console.log(playDataState.is_bookmarked) // playDataState가 존재하므로 안전하게 접근 가능
-            if (playDataState.is_bookmarked) {
+            console.log(playDataState.user.is_bookmarked) // playDataState가 존재하므로 안전하게 접근 가능
+            if (playDataState.user.is_bookmarked) {
                 await requestDeleteBookMark(broadcasterId);
             }
             else {
@@ -89,13 +89,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         if (!playDataState) return;
 
         try {
-            const response = await requestLike(playDataState.broadcaster_idx);
+            const response = await requestLike(playDataState.broadcaster.idx);
             console.log("Like response:", response);
             // Update like count if the API returns it
             if (response.recommend_cnt !== undefined) {
                 setPlayDataState({
                     ...playDataState,
-                    recommend_cnt: response.recommend_cnt,
+                    stream: {
+                        ...playDataState.stream,
+                        recommend_cnt: response.recommend_cnt,
+                    }
                 });
             }
         } catch (e) {
@@ -109,25 +112,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             if (playData) {
                 console.log(playData);
                 setPlayDataState({
-                    broadcaster_idx: playData.broadcaster_idx,
-                    broadcaster_id: playData.broadcaster_id,
-                    broadcaster_nickname: playData.broadcaster_nickname,
-                    playback_url: playData.playback_url,
-                    title: playData.title,
-                    is_bookmarked: playData.is_bookmarked,
-                    profile_img: playData.profile_img,
-                    nickname: playData.nickname,
-                    bookmark_cnt: playData.bookmark_cnt,
-                    viewer_cnt: playData.viewer_cnt,
-                    play_cnt: playData.play_cnt,
-                    recommend_cnt: playData.recommend_cnt,
-                    start_time: playData.start_time,
-                    play_token: playData.play_token,
+                    broadcaster: playData.broadcaster,
+                    stream: playData.stream,
+                    user: playData.user,
+                    viewer_cnt: 0,
                 })
                 const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                     withCredentials: true,
                     auth: {
-                        token: `Bearer ${playData.play_token}`,
+                        token: `Bearer ${playData.user.play_token}`,
                     },
                     transports: ['websocket'],
                 });
@@ -139,25 +132,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     const response = await requestPlay(broadcasterId);
                     console.log("Response:", response);
                     setPlayDataState({
-                        broadcaster_idx: response.broadcaster_idx,
-                        broadcaster_id: response.broadcaster_id,
-                        broadcaster_nickname: response.broadcaster_nickname,
-                        playback_url: response.playback_url,
-                        title: response.title,
-                        is_bookmarked: response.is_bookmarked,
-                        profile_img: response.profile_img,
-                        nickname: response.nickname,
-                        bookmark_cnt: response.bookmark_cnt,
-                        viewer_cnt: response.viewer_cnt,
-                        play_cnt: response.play_cnt,
-                        recommend_cnt: response.recommend_cnt,
-                        start_time: response.start_time,
-                        play_token: response.play_token,
+                        broadcaster: response.broadcaster,
+                        stream: response.stream,
+                        user: response.user,
+                        viewer_cnt: 0,
                     });
                     const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                         withCredentials: true,
                         auth: {
-                            token: `Bearer ${response.play_token}`,
+                            token: `Bearer ${response.user.play_token}`,
                         },
                         transports: ['websocket'],
                     });
@@ -190,17 +173,20 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         };
 
         const handleRecommend = (data: any) => {
-            setPlayDataState((prevState) => {
+            setPlayDataState((prevState: PlayData | null | undefined) => {
                 if (!prevState) return null; // 이전 상태가 없으면 null 반환
                 return {
                     ...prevState,
-                    recommend_cnt: prevState.recommend_cnt + 1, // 서버로부터 받은 recommend_cnt 업데이트
+                    stream: {
+                        ...prevState.stream,
+                        recommend_cnt: prevState.stream.recommend_cnt + 1, // 서버로부터 받은 recommend_cnt 업데이트
+                    }
                 };
             });
         };
 
         const handleViewerCount = (data: any) => {
-            setPlayDataState((prevState) => {
+            setPlayDataState((prevState: PlayData | null | undefined) => {
                 if (!prevState) return null; // 이전 상태가 없으면 null 반환
                 return {
                     ...prevState,
@@ -210,7 +196,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         };
 
         const handleBookmark = (data: any) => {
-            setPlayDataState((prevState) => {
+            setPlayDataState((prevState: PlayData | null | undefined) => {
                 if (!prevState) {
                     console.log("Previous state is null, cannot update bookmark.");
                     return null; // 이전 상태가 없으면 null 반환
@@ -218,8 +204,14 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 const adder = data.action == 'add' ? 1 : -1; // action에 따라 +1 또는 -1
                 return {
                     ...prevState,
-                    is_bookmarked: data.user_idx == idx ? !prevState.is_bookmarked : prevState.is_bookmarked, // 자신의 북마크가 아닌 경우에만 상태 변경
-                    bookmark_cnt: (prevState.bookmark_cnt + adder),
+                    user: {
+                        ...prevState.user,
+                        is_bookmarked: data.user_idx == idx ? !prevState.user.is_bookmarked : prevState.user.is_bookmarked, // 자신의 북마크가 아닌 경우에만 상태 변경
+                    },
+                    stream: {
+                        ...prevState.stream,
+                        bookmark_cnt: (prevState.stream.bookmark_cnt + adder),
+                    }
                 };
             });
         };
@@ -253,7 +245,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              {/* 채팅 영역 컨테이너 */}
              <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
                 <div className="flex-1 h-full">
-                    <Chat broadcasterId={broadcasterId} socket={socket} />
+                    <Chat 
+                        broadcasterId={broadcasterId} 
+                        socket={socket} 
+                        currentUserRole={
+                            playDataState?.broadcaster.idx === idx ? 'broadcaster' : 
+                            // TODO: 매니저 권한 확인 로직 추가
+                            'viewer'
+                        }
+                        broadcasterIdx={playDataState?.broadcaster.idx}
+                    />
                 </div>
             </div>
         </div>
