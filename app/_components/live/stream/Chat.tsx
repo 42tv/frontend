@@ -52,41 +52,6 @@ type Message = ChatMessage | DonationMessage | RecommendMessage;
     const {openModal} = useModalStore();
     const {idx: currentUserIdx} = useUserStore();
 
-    // 테스트용 메시지 추가
-    useEffect(() => {
-        // 테스트용 메시지 데이터
-        const testMessages: ChatMessage[] = [
-            {
-                type: 'chat',
-                chatter_idx: 1,
-                chatter_nickname: '테스트유저1',
-                chatter_message: '안녕하세요! 첫 번째 채팅입니다.',
-                role: 'viewer',
-                color: 'silver',
-                timestamp: Date.now()
-            },
-            {
-                type: 'chat',
-                chatter_idx: 2,
-                chatter_nickname: '매니저유저',
-                chatter_message: '매니저 테스트 메시지입니다.',
-                color: 'gold',
-                role: 'manager',
-                timestamp: Date.now() + 1000
-            },
-            {
-                type: 'chat',
-                chatter_idx: 3,
-                chatter_nickname: '방송자',
-                chatter_message: '방송자 테스트 메시지입니다!',
-                color: 'platinum',
-                role: 'broadcaster',
-                timestamp: Date.now() + 2000
-            }
-        ];
-        setMessages(testMessages);
-    }, []);
-
     // 채팅 클릭 시 유저 정보 모달 열기
     const handleChatClick = (message: ChatMessage) => {
         console.log('Chat clicked:', message);
