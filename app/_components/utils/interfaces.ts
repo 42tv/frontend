@@ -85,6 +85,7 @@ export interface PlayData {
   user: {
     is_bookmarked: boolean;
     play_token: string;
+    role: 'owner' | 'guest' | 'manager' | 'member';
   };
   viewer_cnt: number;
 }
