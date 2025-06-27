@@ -322,21 +322,12 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
                                         onClick={() => handleChatClick(msg)}
                                         className="cursor-pointer hover:bg-bg-tertiary dark:hover:bg-bg-tertiary-dark p-2 rounded transition-colors duration-150"
                                     >
-                                        <div className="flex items-start space-x-2">
-                                            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 overflow-hidden flex-shrink-0">
-                                                {msg.color ? (
-                                                    <img 
-                                                        src={msg.color} 
-                                                        alt={`${msg.chatter_nickname} 프로필`}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-                                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                                        </svg>
-                                                    </div>
-                                                )}
+                                        <div className="flex items-center space-x-2 justify-center">
+                                            <div 
+                                                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                                                style={{ backgroundColor: msg.color || '#6B7280' }}
+                                            >
+                                                {msg.chatter_nickname.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center space-x-1">
@@ -389,20 +380,11 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
                                     className="cursor-pointer hover:bg-bg-tertiary dark:hover:bg-bg-tertiary-dark p-2 rounded transition-colors duration-150"
                                 >
                                     <div className="flex items-center space-x-2">
-                                        <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 overflow-hidden flex-shrink-0">
-                                            {viewer.color ? (
-                                                <img 
-                                                    src={viewer.color} 
-                                                    alt={`${viewer.nickname} 프로필`}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                                    </svg>
-                                                </div>
-                                            )}
+                                        <div 
+                                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                                            style={{ backgroundColor: viewer.color || '#6B7280' }}
+                                        >
+                                            {viewer.nickname.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center space-x-1">
