@@ -1,5 +1,6 @@
 import api from "./auto_refresh_axios";
 import axios from "axios";
+import { PlayData } from "../_components/utils/interfaces";
 
 export async function getLiveList() {
   const response = await api.get("/api/live", {
@@ -12,7 +13,7 @@ export async function getLiveList() {
   return response.data;
 }
 
-export async function requestPlay(streamId: string, password?: string) {
+export async function requestPlay(streamId: string, password?: string): Promise<PlayData> {
   const requestBody = {
     stream_id: streamId,
     password: password,
@@ -54,7 +55,7 @@ export async function reqeustChat(broadcastId: string, message: string) {
   return response.data;
 }
 
-export async function requestLike(broadcasterIdx: string) {
+export async function requestLike(broadcasterIdx: number) {
   const requestBody = {
     broadcaster_idx: broadcasterIdx,
   };

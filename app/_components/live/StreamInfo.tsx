@@ -25,29 +25,29 @@ export default function StreamInfo({
 
     // 경과 시간 업데이트를 위한 useEffect
     useEffect(() => {
-        if (!playDataState?.start_time) {
+        if (!playDataState?.stream.start_time) {
             setElapsedTime('');
             return;
         }
         
         // 초기 경과 시간 설정
-        setElapsedTime(formatElapsedTimeBySeconds(playDataState.start_time));
+        setElapsedTime(formatElapsedTimeBySeconds(playDataState.stream.start_time));
 
         // 1초마다 경과 시간 업데이트
         const intervalId = setInterval(() => {
-            setElapsedTime(formatElapsedTimeBySeconds(playDataState.start_time));
+            setElapsedTime(formatElapsedTimeBySeconds(playDataState.stream.start_time));
         }, 1000);
         
         // 컴포넌트 언마운트 시 인터벌 정리
         return () => clearInterval(intervalId);
-    }, [playDataState?.start_time]);
+    }, [playDataState?.stream.start_time]);
 
     return (
         <div className="flex flex-row w-full p-4 border-t border-border-secondary dark:border-border-secondary-dark flex items-center space-x-4">
             {/* 프로필 이미지 영역 */}
             <div className="flex items-center justify-center space-x-2 min-w-[60px]">
                 <Image
-                    src={playDataState?.profile_img || "/icons/anonymouse1.svg"}
+                    src={playDataState?.broadcaster.profile_img || "/icons/anonymouse1.svg"}
                     alt="프로필 이미지"
                     width={60}
                     height={60}
@@ -57,8 +57,8 @@ export default function StreamInfo({
             
             {/* 설명 텍스트 영역 */}
             <div className="flex w-full flex-col">
-                <h2 className="text-xl font-semibold">{playDataState?.title}</h2>
-                <p className="dark:text-textBase-dark text-textBase">{playDataState?.nickname}</p>
+                <h2 className="text-xl font-semibold">{playDataState?.stream.title}</h2>
+                <p className="dark:text-textBase-dark text-textBase">{playDataState?.broadcaster.nickname}</p>
                 <div className="flex items-center space-x-4 dark:text-textBase-dark text-textBase text-sm mt-1">
                     <span className="flex items-center space-x-1">
                         <FiUser title="시청자" />
@@ -66,11 +66,11 @@ export default function StreamInfo({
                     </span>
                     <span className="flex items-center space-x-1">
                         <AiOutlineLike title="추천" />
-                        <span>{playDataState?.recommend_cnt ?? 0}</span>
+                        <span>{playDataState?.stream.recommend_cnt ?? 0}</span>
                     </span>
                     <span className="flex items-center space-x-1">
                         <MdOutlineBookmark title="북마크" />
-                        <span>{playDataState?.bookmark_cnt ?? 0}</span>
+                        <span>{playDataState?.stream.bookmark_cnt ?? 0}</span>
                     </span>
                     <span className="flex items-center space-x-1">
                         <AiOutlineClockCircle />
@@ -86,7 +86,7 @@ export default function StreamInfo({
                     className="hover:text-text-primary dark:hover:text-text-primary-dark transition-colors duration-200"
                     onClick={onToggleBookmark}
                 >
-                    {playDataState?.is_bookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />}
+                    {playDataState?.user.is_bookmarked ? <MdOutlineBookmark/> : <MdOutlineBookmarkBorder />}
                 </button>
                 <button 
                     title="쪽지" 
