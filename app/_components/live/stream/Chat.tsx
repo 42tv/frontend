@@ -2,7 +2,6 @@
 import { reqeustChat } from '@/app/_apis/live';
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
-import useModalStore from '../../utils/store/modalStore';
 import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
@@ -11,52 +10,11 @@ import popupModalStore from '../../utils/store/popupModalStore';
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
     socket: Socket | null; // socket prop 추가
-    currentUserRole?: 'broadcaster' | 'manager' | 'viewer'; // 현재 유저의 역할
-    broadcasterIdx?: number; // 방송자의 idx
+    myRole: 'broadcaster' | 'manager' | 'member' | 'guest'; // 현재 유저의 역할
+    broadcasterIdx: number; // 방송자의 idx
 }
 
-type MessageType = 'chat' | 'donation' | 'recommend';
-
-interface BaseMessage {
-  id?: string;
-  type: MessageType;
-  timestamp?: number;
-}
-
-interface ChatMessage extends BaseMessage {
-  type: 'chat';
-  chatter_idx: number;
-  chatter_nickname: string;
-  chatter_message: string;
-  grade: string;
-  role: string;
-  color: string;
-}
-
-interface DonationMessage extends BaseMessage {
-  type: 'donation';
-  amount: number;
-  donor_nickname: string;
-  message?: string;
-}
-
-interface RecommendMessage extends BaseMessage {
-  type: 'recommend';
-  recommender_nickname: string;
-}
-
-type Message = ChatMessage | DonationMessage | RecommendMessage;
-
-interface Viewer {
-    idx: number;
-    nickname: string;
-    role: string;
-    color?: string;
-}
-
-type TabType = 'chat' | 'viewers';
-
-const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'viewer', broadcasterIdx }) => {
+const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', broadcasterIdx }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const [viewers, setViewers] = useState<Viewer[]>([]); // 시청자 목록 상태
@@ -69,7 +27,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
     const handleChatClick = (message: ChatMessage) => {
         console.log('Chat clicked:', message);
         console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', currentUserRole);
+        console.log('Current user role:', myRole);
         
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
@@ -86,7 +44,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
 
         const currentUser = {
             idx: currentUserIdx,
-            role: currentUserRole
+            role: myRole
         };
 
         console.log('Opening user actions modal with:', { userInfo, currentUser });
@@ -180,7 +138,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
     const handleViewerClick = (viewer: Viewer) => {
         console.log('Viewer clicked:', viewer);
         console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', currentUserRole);
+        console.log('Current user role:', myRole);
         
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
@@ -189,15 +147,15 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
         }
 
         const userInfo = {
-            idx: viewer.idx,
+            user_idx: viewer.user_idx,
+            user_id: viewer.user_id,
             nickname: viewer.nickname,
-            role: viewer.role,
-            color: viewer.color || '',
+            type: viewer.type,
         };
 
         const currentUser = {
             idx: currentUserIdx,
-            role: currentUserRole
+            role: myRole
         };
 
         console.log('Opening user actions modal with:', { userInfo, currentUser });
@@ -262,10 +220,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
 
     // manager나 broadcaster가 시청자 탭을 선택했을 때 시청자 목록 요청
     useEffect(() => {
-        if (socket && activeTab === 'viewers' && (currentUserRole === 'manager' || currentUserRole === 'broadcaster')) {
+        if (socket && activeTab === 'viewers' && (myRole === 'manager' || myRole === 'broadcaster')) {
             socket.emit('get_viewers_list', { broadcasterId });
         }
-    }, [socket, activeTab, currentUserRole, broadcasterId]);
+    }, [socket, activeTab, myRole, broadcasterId]);
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -295,7 +253,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, currentUserRole = 'v
                     >
                         채팅
                     </button>
-                    {(currentUserRole === 'manager' || currentUserRole === 'broadcaster') && (
+                    {(myRole === 'manager' || myRole === 'broadcaster') && (
                         <button
                             onClick={() => setActiveTab('viewers')}
                             className={`flex-1 p-3 text-center font-semibold transition-colors duration-150 ${

@@ -2,10 +2,10 @@
 import React from 'react';
 
 interface UserInfo {
-  idx: number;
+  user_idx: number;
+  user_id: string;
   nickname: string;
-  profileImg?: string;
-  role: string;
+  type: 'viewer' | 'broadcaster' | 'manager';
 }
 
 interface CurrentUser {
