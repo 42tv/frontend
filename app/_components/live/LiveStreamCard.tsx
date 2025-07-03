@@ -42,11 +42,11 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
 
     async function handlePlay() {
         try {
-            const response = await requestLobyPlay(live.user.user_id)
+            const response = await requestLobyPlay(live.broadcaster.user_id)
             setPlayData(response);
 
-            router.push(`/live/${live.user.user_id}`); // 재생 페이지로 이동
-            
+            router.push(`/live/${live.broadcaster.user_id}`); // 재생 페이지로 이동
+
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
@@ -67,7 +67,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
             <div className="relative w-full aspect-[16/9]">
                 <Image
                     src={live.thumbnail || DEFAULT_PLACEHOLDER_IMAGE_URL}
-                    alt={live.user.broadcastSetting.title || "Live Stream Thumbnail"}
+                    alt={live.broadcaster.broadcastSetting.title || "Live Stream Thumbnail"}
                     fill // Use fill prop
                     className="object-cover" 
                     priority={true} // Prioritize first few images (adjust as needed)
@@ -75,9 +75,9 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
                 />
             </div>
             <div className="pt-3 flex flex-col flex-grow"> 
-                <h3 className="truncate text-text-primary dark:text-text-primary-dark">{live.user.broadcastSetting.title}</h3> 
+                <h3 className="truncate text-text-primary dark:text-text-primary-dark">{live.broadcaster.broadcastSetting.title}</h3> 
                 <div className="flex items-center text-sm text-text-muted dark:text-text-muted-dark"> 
-                    <span className="truncate flex-grow min-w-0 mr-2">{live.user.nickname}</span>
+                    <span className="truncate flex-grow min-w-0 mr-2">{live.broadcaster.nickname}</span>
                     {/* Display viewer, play, and like counts */}
                     <div className="flex items-center text-xs text-text-secondary dark:text-text-secondary-dark space-x-2 flex-shrink-0">
                         <span className="flex items-center">

@@ -17,12 +17,11 @@ export interface Channel {
 }
 
 export interface BroadcastSetting {
-  title: string | null;
-  is_adult: boolean | null;
-  is_pw: boolean | null;
-  is_fan: boolean | null;
+  title: string;
   fan_level: number | null;
-  password: string | null;
+  is_adult: boolean;
+  is_pw: boolean;
+  is_fan: boolean;
 }
 
 export interface IVSChannel {
@@ -48,7 +47,7 @@ export interface Live {
   start_time: string;
   play_cnt: number;
   recommend_cnt: number;
-  user: {
+  broadcaster: {
     idx: number;
     user_id: string;
     nickname: string;
