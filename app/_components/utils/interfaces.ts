@@ -32,15 +32,6 @@ export interface IVSChannel {
   stream_key: string | null;
 }
 
-export interface Stream {
-  request_id: string | null;
-  stream_id: string | null;
-  title: string | null;
-  start_time: string | null;
-  play_cnt: number | null;
-  recommend_cnt: number | null;
-}
-
 export interface Post {
   id: number | null;
   content: string | null;
@@ -67,13 +58,36 @@ export interface Live {
   viewerCount: number;
 }
 
-export interface PlayData {
-  broadcaster: {
-    idx: number;
+export interface MyInfo {
+    user_idx: number;
     user_id: string;
     nickname: string;
     profile_img: string;
-  };
+    is_bookmarked: boolean;
+    role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+    play_token: string;
+    is_guest: boolean;
+    guest_id?: string; // 게스트 ID (게스트인 경우에만 존재)
+}
+
+export interface Broadcaster {
+  idx: number;
+  user_id: string;
+  nickname: string;
+  profile_img: string;
+}
+
+export interface Stream {
+  title: string;
+  playback_url: string;
+  play_cnt: number;
+  recommend_cnt: number;
+  bookmark_cnt: number;
+  start_time: string;
+}
+
+export interface PlayData {
+  broadcaster: Broadcaster;
   stream: {
     title: string;
     playback_url: string;
@@ -82,11 +96,7 @@ export interface PlayData {
     bookmark_cnt: number;
     start_time: string;
   };
-  user: {
-    is_bookmarked: boolean;
-    play_token: string;
-    role: 'broadcaster' | 'manager' | 'member' | 'guest';
-  };
+  user: MyInfo;
   viewer_cnt: number;
 }
 

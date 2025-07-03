@@ -245,16 +245,14 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              {/* 채팅 영역 컨테이너 */}
              <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
                 <div className="flex-1 h-full">
-                    <Chat 
-                        broadcasterId={broadcasterId} 
-                        socket={socket} 
-                        currentUserRole={
-                            playDataState?.broadcaster.idx === idx ? 'broadcaster' : 
-                            // TODO: 매니저 권한 확인 로직 추가
-                            'viewer'
-                        }
-                        broadcasterIdx={playDataState?.broadcaster.idx}
-                    />
+                    {playDataState && (
+                        <Chat 
+                            broadcasterId={broadcasterId} 
+                            socket={socket} 
+                            myInfo={playDataState.user}
+                            broadcasterIdx={playDataState.broadcaster.idx}
+                        />
+                    )}
                 </div>
             </div>
         </div>
