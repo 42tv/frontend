@@ -197,6 +197,31 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         setViewers(viewersData);
     };
 
+    // 역할 변경 핸들러 (매니저로 승격되었을 때)
+    const handleRoleChanged = (newRole: string) => {
+        console.log('Role changed to:', newRole);
+        if (newRole === 'manager' || newRole === 'broadcaster') {
+            // 매니저나 방송자가 되었을 때 시청자 목록 갱신 시작
+            fetchViewersList();
+            
+            if (!viewersIntervalRef.current) {
+                viewersIntervalRef.current = setInterval(() => {
+                    fetchViewersList();
+                }, 5000);
+            }
+            
+            if (socket) {
+                socket.emit('get_viewers_list', { broadcasterId });
+            }
+        } else {
+            // 매니저나 방송자가 아니게 되었을 때 갱신 중지
+            if (viewersIntervalRef.current) {
+                clearInterval(viewersIntervalRef.current);
+                viewersIntervalRef.current = null;
+            }
+        }
+    };
+
     // API를 통해 시청자 리스트 가져오기
     const fetchViewersList = async () => {
         try {
@@ -218,12 +243,14 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             // socket.on('donation', handleDonationMessage);
             socket.on('recommend', handleRecommendMessage);
             socket.on('viewers_list', handleViewersUpdate); // 시청자 목록 이벤트 추가
+            socket.on('role_changed', handleRoleChanged); // 역할 변경 이벤트 추가
 
             return () => {
                 socket.off('chat', handleChatMessage);
                 // socket.off('donation', handleDonationMessage);
                 socket.off('recommend', handleRecommendMessage);
                 socket.off('viewers_list', handleViewersUpdate);
+                socket.off('role_changed', handleRoleChanged);
             };
         }
     }, [socket]);
@@ -233,9 +260,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // manager나 broadcaster일 때 시청자 목록을 백그라운드에서 주기적으로 갱신
+    // 초기 로드 시에만 manager나 broadcaster일 때 시청자 목록 갱신 시작
     useEffect(() => {
-        if (myRole === 'manager' || myRole === 'broadcaster') {
+        if (socket && (myRole === 'manager' || myRole === 'broadcaster')) {
             // 즉시 시청자 리스트 가져오기
             fetchViewersList();
             
@@ -245,15 +272,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             }, 5000);
 
             // 소켓을 통한 실시간 업데이트도 유지
-            if (socket) {
-                socket.emit('get_viewers_list', { broadcasterId });
-            }
-        } else {
-            // manager나 broadcaster가 아닐 때는 인터벌 정리
-            if (viewersIntervalRef.current) {
-                clearInterval(viewersIntervalRef.current);
-                viewersIntervalRef.current = null;
-            }
+            socket.emit('get_viewers_list', { broadcasterId });
         }
 
         // 컴포넌트 언마운트 시 인터벌 정리
@@ -263,7 +282,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                 viewersIntervalRef.current = null;
             }
         };
-    }, [myRole, broadcasterId, socket]);
+    }, [socket]); // socket 연결 시에만 실행
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
