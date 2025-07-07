@@ -10,7 +10,7 @@ import popupModalStore from '../../utils/store/popupModalStore';
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
     socket: Socket | null; // socket prop 추가
-    myRole: 'broadcaster' | 'manager' | 'member' | 'guest'; // 현재 유저의 역할
+    myRole:  'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
     broadcasterIdx: number; // 방송자의 idx
 }
 
@@ -36,10 +36,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
         }
 
         const userInfo = {
-            idx: message.chatter_idx,
+            user_idx: message.chatter_idx,
+            user_id: message.chatter_user_id,
             nickname: message.chatter_nickname,
             role: message.role,
-            color: message.color,
         };
 
         const currentUser = {
@@ -150,7 +150,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
             user_idx: viewer.user_idx,
             user_id: viewer.user_id,
             nickname: viewer.nickname,
-            type: viewer.type,
+            role: viewer.role,
         };
 
         const currentUser = {
@@ -326,14 +326,14 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                 ) : (
                     /* 시청자 목록 */
                     <div className="p-3 space-y-2">
-                        {viewers.length === 0 ? (
+                        {/* {viewers.length === 0 ? (
                             <div className="text-center text-text-muted dark:text-text-muted-dark py-8">
                                 시청자가 없습니다.
                             </div>
                         ) : (
                             viewers.map((viewer, index) => (
                                 <div 
-                                    key={`${viewer.idx}-${index}`}
+                                    key={`${viewer.user_idx}-${index}`}
                                     onClick={() => handleViewerClick(viewer)}
                                     className="cursor-pointer hover:bg-bg-tertiary dark:hover:bg-bg-tertiary-dark p-2 rounded transition-colors duration-150"
                                 >
@@ -349,7 +349,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                                                 <span className="font-semibold text-text-primary dark:text-text-primary-dark">
                                                     {viewer.nickname}
                                                 </span>
-                                                {viewer.role === 'broadcaster' && (
+                                                {viewer. === 'broadcaster' && (
                                                     <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
                                                 )}
                                                 {viewer.role === 'manager' && (
@@ -360,7 +360,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                                     </div>
                                 </div>
                             ))
-                        )}
+                        )} */}
                     </div>
                 )}
             </div>

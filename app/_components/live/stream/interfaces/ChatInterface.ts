@@ -15,7 +15,7 @@ interface ChatMessage extends BaseMessage {
   chatter_nickname: string;
   chatter_message: string;
   grade: string;
-  role: string;
+  role:  'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
   color: string;
 }
 
@@ -35,7 +35,7 @@ interface Viewer {
   user_idx: number;
   user_id: string;
   nickname: string;
-  type: 'viewer' | 'broadcaster' | 'manager';
+  role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
 }
 
 

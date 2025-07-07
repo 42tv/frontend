@@ -249,7 +249,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         <Chat 
                             broadcasterId={broadcasterId} 
                             socket={socket} 
-                            myInfo={playDataState.user}
+                            myRole={playDataState.user.role}
                             broadcasterIdx={playDataState.broadcaster.idx}
                         />
                     )}
