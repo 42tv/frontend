@@ -1,5 +1,5 @@
 'use client';
-import { reqeustChat } from '@/app/_apis/live';
+import { reqeustChat, getViewersList } from '@/app/_apis/live';
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
 import useUserStore from '../../utils/store/userStore';
@@ -14,12 +14,13 @@ interface ChatProps {
     broadcasterIdx: number; // 방송자의 idx
 }
 
-const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', broadcasterIdx }) => {
+const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterIdx }) => {
     const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
     const [newMessage, setNewMessage] = useState(''); // 입력 중인 메시지 상태
     const [viewers, setViewers] = useState<Viewer[]>([]); // 시청자 목록 상태
     const [activeTab, setActiveTab] = useState<TabType>('chat'); // 활성 탭 상태
     const messagesEndRef = useRef<null | HTMLDivElement>(null); // 메시지 목록 맨 아래 참조
+    const viewersIntervalRef = useRef<NodeJS.Timeout | null>(null); // 시청자 리스트 갱신 인터벌 참조
     const {openPopup, closePopup} = popupModalStore();
     const {idx: currentUserIdx} = useUserStore();
 
@@ -196,6 +197,20 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
         setViewers(viewersData);
     };
 
+    // API를 통해 시청자 리스트 가져오기
+    const fetchViewersList = async () => {
+        try {
+            const response = await getViewersList(broadcasterId);
+            console.log(response);
+            if (response) {
+                setViewers(response.viewers);
+                console.log('Viewers list fetched from API:', response.viewers);
+            }
+        } catch (error) {
+            console.error('Failed to fetch viewers list:', error);
+        }
+    };
+
     useEffect(() => {
         console.log("this is chat component:", socket);
         if (socket) {
@@ -218,12 +233,37 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // manager나 broadcaster가 시청자 탭을 선택했을 때 시청자 목록 요청
+    // manager나 broadcaster일 때 시청자 목록을 백그라운드에서 주기적으로 갱신
     useEffect(() => {
-        if (socket && activeTab === 'viewers' && (myRole === 'manager' || myRole === 'broadcaster')) {
-            socket.emit('get_viewers_list', { broadcasterId });
+        if (myRole === 'manager' || myRole === 'broadcaster') {
+            // 즉시 시청자 리스트 가져오기
+            fetchViewersList();
+            
+            // 5초마다 시청자 리스트 갱신
+            viewersIntervalRef.current = setInterval(() => {
+                fetchViewersList();
+            }, 5000);
+
+            // 소켓을 통한 실시간 업데이트도 유지
+            if (socket) {
+                socket.emit('get_viewers_list', { broadcasterId });
+            }
+        } else {
+            // manager나 broadcaster가 아닐 때는 인터벌 정리
+            if (viewersIntervalRef.current) {
+                clearInterval(viewersIntervalRef.current);
+                viewersIntervalRef.current = null;
+            }
         }
-    }, [socket, activeTab, myRole, broadcasterId]);
+
+        // 컴포넌트 언마운트 시 인터벌 정리
+        return () => {
+            if (viewersIntervalRef.current) {
+                clearInterval(viewersIntervalRef.current);
+                viewersIntervalRef.current = null;
+            }
+        };
+    }, [myRole, broadcasterId, socket]);
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -326,7 +366,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                 ) : (
                     /* 시청자 목록 */
                     <div className="p-3 space-y-2">
-                        {/* {viewers.length === 0 ? (
+                        {viewers.length === 0 ? (
                             <div className="text-center text-text-muted dark:text-text-muted-dark py-8">
                                 시청자가 없습니다.
                             </div>
@@ -340,7 +380,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                                     <div className="flex items-center space-x-2">
                                         <div 
                                             className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                                            style={{ backgroundColor: viewer.color || '#6B7280' }}
+                                            style={{ backgroundColor: '#6B7280' }}
                                         >
                                             {viewer.nickname.charAt(0).toUpperCase()}
                                         </div>
@@ -349,7 +389,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                                                 <span className="font-semibold text-text-primary dark:text-text-primary-dark">
                                                     {viewer.nickname}
                                                 </span>
-                                                {viewer. === 'broadcaster' && (
+                                                {viewer.role === 'broadcaster' && (
                                                     <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
                                                 )}
                                                 {viewer.role === 'manager' && (
@@ -360,7 +400,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole = 'viewer', b
                                     </div>
                                 </div>
                             ))
-                        )} */}
+                        )}
                     </div>
                 )}
             </div>
