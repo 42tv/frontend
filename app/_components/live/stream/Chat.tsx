@@ -200,14 +200,14 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     // 역할 변경 핸들러 (매니저로 승격되었을 때)
     const handleRoleChanged = (newRole: string) => {
         console.log('Role changed to:', newRole);
-        if (newRole === 'manager' || newRole === 'broadcaster') {
+        if (newRole === 'manager') {
             // 매니저나 방송자가 되었을 때 시청자 목록 갱신 시작
             fetchViewersList();
             
             if (!viewersIntervalRef.current) {
                 viewersIntervalRef.current = setInterval(() => {
                     fetchViewersList();
-                }, 5000);
+                }, 60000);
             }
             
             if (socket) {
