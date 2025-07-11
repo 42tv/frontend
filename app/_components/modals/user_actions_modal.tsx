@@ -20,8 +20,8 @@ interface UserActionsModalProps {
   onKick?: (userIdx: number) => void;
   onBan?: (userIdx: number) => void;
   onUnban?: (userIdx: number) => void;
-  onPromoteManager?: (userIdx: number) => void;
-  onDemoteManager?: (userIdx: number) => void;
+  onPromoteManager?: (userId: string) => void;
+  onDemoteManager?: (userId: string) => void;
   onSendMessage?: (userIdx: number) => void;
 }
 
@@ -118,7 +118,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                 onDemoteManager && (
                   <button
                     onClick={() => {
-                      onDemoteManager(userInfo.user_idx);
+                      onDemoteManager(userInfo.user_id);
                       onClose?.();
                     }}
                     className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
@@ -130,7 +130,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                 onPromoteManager && (
                   <button
                     onClick={() => {
-                      onPromoteManager(userInfo.user_idx);
+                      onPromoteManager(userInfo.user_id);
                       onClose?.();
                     }}
                     className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"

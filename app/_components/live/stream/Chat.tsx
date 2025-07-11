@@ -1,5 +1,6 @@
 'use client';
 import { reqeustChat, getViewersList } from '@/app/_apis/live';
+import { addManager, removeManager } from '@/app/_apis/manager';
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
 import useUserStore from '../../utils/store/userStore';
@@ -102,24 +103,32 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     };
 
     // 매니저로 승격
-    const handlePromoteManager = async (userIdx: number) => {
+    const handlePromoteManager = async (userId: string) => {
         try {
+            // API 호출로 매니저 추가
+            await addManager(userId);
+
+            // 소켓을 통한 실시간 업데이트
             if (socket) {
-                socket.emit('promote_manager', { userIdx, broadcasterId });
+                socket.emit('promote_manager', { userId, broadcasterId });
             }
-            console.log(`User ${userIdx} promoted to manager`);
+            console.log(`User ${userId} promoted to manager`);
         } catch (error) {
             console.error('Failed to promote user:', error);
         }
     };
 
     // 매니저 해제
-    const handleDemoteManager = async (userIdx: number) => {
+    const handleDemoteManager = async (userId: string) => {
         try {
+            // API 호출로 매니저 제거
+            await removeManager(userId);
+
+            // 소켓을 통한 실시간 업데이트
             if (socket) {
-                socket.emit('demote_manager', { userIdx, broadcasterId });
+                socket.emit('demote_manager', { userId, broadcasterId });
             }
-            console.log(`User ${userIdx} demoted from manager`);
+            console.log(`User ${userId} demoted from manager`);
         } catch (error) {
             console.error('Failed to demote user:', error);
         }
