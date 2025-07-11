@@ -193,8 +193,26 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
 
     // 시청자 목록 업데이트 핸들러
     const handleViewersUpdate = (viewersData: Viewer[]) => {
-        console.log('Viewers list updated:', viewersData);
         setViewers(viewersData);
+    };
+
+    // 시청자 입장 핸들러
+    const handleViewerJoin = (viewerData: Viewer) => {
+        setViewers(prevViewers => {
+            // 중복 방지를 위해 기존에 있는지 확인
+            const exists = prevViewers.some(viewer => viewer.user_idx === viewerData.user_idx);
+            if (!exists) {
+                return [...prevViewers, viewerData];
+            }
+            return prevViewers;
+        });
+    };
+
+    // 시청자 퇴장 핸들러
+    const handleViewerLeave = (userData: { user_idx: number }) => {
+        setViewers(prevViewers => 
+            prevViewers.filter(viewer => viewer.user_idx !== userData.user_idx)
+        );
     };
 
     // 역할 변경 핸들러 (매니저로 승격되었을 때)
@@ -242,15 +260,19 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             socket.on('chat', handleChatMessage);
             // socket.on('donation', handleDonationMessage);
             socket.on('recommend', handleRecommendMessage);
-            socket.on('viewers_list', handleViewersUpdate); // 시청자 목록 이벤트 추가
+            socket.on('viewer_list', handleViewersUpdate); // 시청자 목록 이벤트 추가
             socket.on('role_changed', handleRoleChanged); // 역할 변경 이벤트 추가
+            socket.on('join', handleViewerJoin); // 시청자 입장 이벤트 추가
+            socket.on('leave', handleViewerLeave); // 시청자 퇴장 이벤트 추가
 
             return () => {
                 socket.off('chat', handleChatMessage);
                 // socket.off('donation', handleDonationMessage);
                 socket.off('recommend', handleRecommendMessage);
-                socket.off('viewers_list', handleViewersUpdate);
+                socket.off('viewer_list', handleViewersUpdate);
                 socket.off('role_changed', handleRoleChanged);
+                socket.off('join', handleViewerJoin);
+                socket.off('leave', handleViewerLeave);
             };
         }
     }, [socket]);
@@ -261,28 +283,28 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     }, [messages]);
 
     // 초기 로드 시에만 manager나 broadcaster일 때 시청자 목록 갱신 시작
-    useEffect(() => {
-        if (socket && (myRole === 'manager' || myRole === 'broadcaster')) {
-            // 즉시 시청자 리스트 가져오기
-            fetchViewersList();
+    // useEffect(() => {
+    //     if (socket && (myRole === 'manager' || myRole === 'broadcaster')) {
+    //         // 즉시 시청자 리스트 가져오기
+    //         fetchViewersList();
             
-            // 5초마다 시청자 리스트 갱신
-            viewersIntervalRef.current = setInterval(() => {
-                fetchViewersList();
-            }, 5000);
+    //         // 5초마다 시청자 리스트 갱신
+    //         viewersIntervalRef.current = setInterval(() => {
+    //             fetchViewersList();
+    //         }, 5000);
 
-            // 소켓을 통한 실시간 업데이트도 유지
-            socket.emit('get_viewers_list', { broadcasterId });
-        }
+    //         // 소켓을 통한 실시간 업데이트도 유지
+    //         socket.emit('get_viewers_list', { broadcasterId });
+    //     }
 
-        // 컴포넌트 언마운트 시 인터벌 정리
-        return () => {
-            if (viewersIntervalRef.current) {
-                clearInterval(viewersIntervalRef.current);
-                viewersIntervalRef.current = null;
-            }
-        };
-    }, [socket]); // socket 연결 시에만 실행
+    //     // 컴포넌트 언마운트 시 인터벌 정리
+    //     return () => {
+    //         if (viewersIntervalRef.current) {
+    //             clearInterval(viewersIntervalRef.current);
+    //             viewersIntervalRef.current = null;
+    //         }
+    //     };
+    // }, [socket]); // socket 연결 시에만 실행
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
