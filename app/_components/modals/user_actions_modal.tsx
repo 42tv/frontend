@@ -123,7 +123,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                     }}
                     className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
                   >
-                    매니저 해제
+                    매니저 해임
                   </button>
                 )
               ) : (
@@ -135,7 +135,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                     }}
                     className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
                   >
-                    매니저 승격
+                    매니저 부여
                   </button>
                 )
               )}
