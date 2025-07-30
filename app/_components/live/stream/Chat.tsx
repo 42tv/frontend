@@ -439,10 +439,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                                                 <span className="font-semibold text-text-primary dark:text-text-primary-dark">
                                                     {viewer.nickname}
                                                 </span>
-                                                {viewer.role === 'broadcaster' && (
+                                                {viewer.role.role === 'broadcaster' && (
                                                     <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
                                                 )}
-                                                {viewer.role === 'manager' && (
+                                                {viewer.role.role === 'manager' && (
                                                     <span className="text-xs bg-blue-500 text-white px-1 rounded">매니저</span>
                                                 )}
                                             </div>

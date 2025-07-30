@@ -1,21 +1,10 @@
 'use client';
 import React from 'react';
-
-interface UserInfo {
-  user_idx: number;
-  user_id: string;
-  nickname: string;
-  role:  'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
-}
-
-interface CurrentUser {
-  idx: number;
-  role?: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
-}
+import { Viewer } from '../live/stream/interfaces/ChatInterface';
 
 interface UserActionsModalProps {
-  userInfo: UserInfo;
-  currentUser: CurrentUser;
+  userInfo: Viewer;
+  currentUser: Viewer;
   onClose?: () => void;
   onKick?: (userIdx: number) => void;
   onBan?: (userIdx: number) => void;
@@ -55,89 +44,94 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
               {userInfo.nickname}
             </h3>
             <p className="text-sm text-text-secondary dark:text-text-secondary-dark">
-              {userInfo.role === 'broadcaster' ? '방송자' : 
-               userInfo.role === 'manager' ? '매니저' : '시청자'}
+              {userInfo.role.role === 'broadcaster' ? '방송자' : 
+               userInfo.role.role === 'manager' ? '매니저' : '시청자'}
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="space-y-2 mb-4">
-          {/* 쪽지 보내기 - 모든 사용자가 가능 */}
-          {currentUser.idx !== userInfo.user_idx && onSendMessage && (
-            <button
-              onClick={() => {
-                onSendMessage(userInfo.user_idx);
-                onClose?.();
-              }}
-              className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-            >
-              쪽지 보내기
-            </button>
-          )}
-
-          {/* 관리자 권한이 필요한 액션들 */}
-          {(currentUser.role === 'broadcaster' || currentUser.role === 'manager') && 
-           currentUser.idx !== userInfo.user_idx && userInfo.role !== 'broadcaster' && (
+          {/* guest 대상으로는 모든 액션 불가 */}
+          {userInfo.role.role !== 'guest' && (
             <>
-              {/* 강퇴 */}
-              {onKick && (
+              {/* 쪽지 보내기 - 모든 사용자가 가능 (guest 제외) */}
+              {currentUser.user_idx !== userInfo.user_idx && onSendMessage && (
                 <button
                   onClick={() => {
-                    onKick(userInfo.user_idx);
+                    onSendMessage(userInfo.user_idx);
                     onClose?.();
                   }}
-                  className="w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                 >
-                  강퇴
+                  쪽지 보내기
                 </button>
               )}
 
-              {/* 차단/차단해제 */}
-              {onBan && onUnban && (
-                <button
-                  onClick={() => {
-                    // 현재는 차단 상태를 확인할 방법이 없으므로 차단으로 기본 설정
-                    onBan(userInfo.user_idx);
-                    onClose?.();
-                  }}
-                  className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                >
-                  차단
-                </button>
-              )}
-            </>
-          )}
+              {/* 관리자 권한이 필요한 액션들 */}
+              {currentUser.role && (currentUser.role.role === 'broadcaster' || currentUser.role.role === 'manager') && 
+               currentUser.user_idx !== userInfo.user_idx && userInfo.role.role !== 'broadcaster' && (
+                <>
+                  {/* 강퇴 */}
+                  {onKick && (
+                    <button
+                      onClick={() => {
+                        onKick(userInfo.user_idx);
+                        onClose?.();
+                      }}
+                      className="w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+                    >
+                      강퇴
+                    </button>
+                  )}
 
-          {/* 방송자 전용 권한 */}
-          {currentUser.role === 'broadcaster' && 
-           currentUser.idx !== userInfo.user_idx && userInfo.role !== 'broadcaster' && (
-            <>
-              {/* 매니저 승격/해제 */}
-              {userInfo.role === 'manager' ? (
-                onDemoteManager && (
-                  <button
-                    onClick={() => {
-                      onDemoteManager(userInfo.user_id);
-                      onClose?.();
-                    }}
-                    className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
-                  >
-                    매니저 해임
-                  </button>
-                )
-              ) : (
-                onPromoteManager && (
-                  <button
-                    onClick={() => {
-                      onPromoteManager(userInfo.user_id);
-                      onClose?.();
-                    }}
-                    className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                  >
-                    매니저 부여
-                  </button>
-                )
+                  {/* 차단/차단해제 */}
+                  {onBan && onUnban && (
+                    <button
+                      onClick={() => {
+                        // 현재는 차단 상태를 확인할 방법이 없으므로 차단으로 기본 설정
+                        onBan(userInfo.user_idx);
+                        onClose?.();
+                      }}
+                      className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    >
+                      차단
+                    </button>
+                  )}
+                </>
+              )}
+
+              {/* 방송자 전용 권한 */}
+              {(currentUser.role?.role === 'broadcaster' && 
+               currentUser.user_idx !== userInfo.user_idx && userInfo.role.role !== 'broadcaster') && (
+                <>
+                  {/* 매니저 승격/해제 */}
+                  {userInfo.role.role === 'manager' ? (
+                    onDemoteManager && (
+                      <button
+                        onClick={() => {
+                          onDemoteManager(userInfo.user_id);
+                          onClose?.();
+                        }}
+                        className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
+                      >
+                        매니저 해임
+                      </button>
+                    )
+                  ) : (
+                    onPromoteManager && (
+                      <button
+                        onClick={() => {
+                          onPromoteManager(userInfo.user_id);
+                          onClose?.();
+                        }}
+                        className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                      >
+                        매니저 부여
+                      </button>
+                    )
+                  )}
+                </>
               )}
             </>
           )}

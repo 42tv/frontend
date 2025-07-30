@@ -190,7 +190,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 if (!prevState) return null; // 이전 상태가 없으면 null 반환
                 return {
                     ...prevState,
-                    viewer_cnt: data.viewer_cnt, // 서버로부터 받은 viewer_cnt 업데이트
+                    viewer_cnt: data.viewer_count, // 서버로부터 받은 viewer_cnt 업데이트
                 };
             });
         };

@@ -31,12 +31,21 @@ interface RecommendMessage extends BaseMessage {
   recommender_nickname: string;
 }
 
-interface Viewer {
-  user_idx: number;
+export interface JwtDecode {
+  idx: number;
   user_id: string;
   nickname: string;
   role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+  profile_img: string;
+  is_guest: boolean;
+  guest_id?: string;
 }
 
+export interface Viewer {
+  user_idx: number;
+  user_id: string;
+  nickname: string;
+  role: JwtDecode;
+}
 
 
