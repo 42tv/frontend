@@ -7,6 +7,7 @@ import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
 import popupModalStore from '../../utils/store/popupModalStore';
+import { Viewer } from './interfaces/ChatInterface';
 
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
@@ -218,9 +219,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     };
 
     // 시청자 퇴장 핸들러
-    const handleViewerLeave = (userData: { user_idx: number }) => {
+    const handleViewerLeave = (viewerData: Viewer) => {
         setViewers(prevViewers => 
-            prevViewers.filter(viewer => viewer.user_idx !== userData.user_idx)
+            prevViewers.filter(viewer => viewer.user_idx !== viewerData.user_idx)
         );
     };
 
