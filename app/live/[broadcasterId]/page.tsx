@@ -190,7 +190,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 if (!prevState) return null; // 이전 상태가 없으면 null 반환
                 return {
                     ...prevState,
-                    viewer_cnt: data.viewer_cnt, // 서버로부터 받은 viewer_cnt 업데이트
+                    viewer_cnt: data.viewer_count, // 서버로부터 받은 viewer_cnt 업데이트
                 };
             });
         };
@@ -246,10 +246,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
                 <div className="flex-1 h-full">
                     {playDataState && (
-                        <Chat 
-                            broadcasterId={broadcasterId} 
-                            socket={socket} 
-                            myRole={playDataState.user.role}
+                        <Chat
+                            broadcasterId={broadcasterId}
+                            socket={socket}
+                            myRole={{
+                                user_idx: playDataState.user.user_idx,
+                                user_id: playDataState.user.user_id,
+                                nickname: playDataState.user.nickname,
+                                role: playDataState.user.role
+                            }}
                             broadcasterIdx={playDataState.broadcaster.idx}
                         />
                     )}
