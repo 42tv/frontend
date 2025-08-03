@@ -51,6 +51,6 @@ export interface MyRole {
   user_idx: number;
   user_id: string;
   nickname: string;
-  role: UserRole
+  role: UserRole;
 }
 
