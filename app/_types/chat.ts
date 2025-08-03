@@ -9,10 +9,10 @@ interface BaseMessage {
 
 export interface ChatMessage extends BaseMessage {
   type: 'chat';
-  chatter_idx: number;
-  chatter_user_id: string;
-  chatter_nickname: string;
-  chatter_message: string;
+  user_idx: number;
+  user_id: string;
+  nickname: string;
+  message: string;
   grade: string;
   color: string;
   jwt_decode: JwtDecode;

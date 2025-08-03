@@ -39,9 +39,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         }
 
         const userInfo = {
-            user_idx: message.chatter_idx,
-            user_id: message.chatter_user_id,
-            nickname: message.chatter_nickname,
+            user_idx: message.user_idx,
+            user_id: message.user_id,
+            nickname: message.nickname,
             role: message.jwt_decode,
         };
 
@@ -366,12 +366,12 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                                                 className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                                                 style={{ backgroundColor: msg.color || '#6B7280' }}
                                             >
-                                                {msg.chatter_nickname.charAt(0).toUpperCase()}
+                                                {msg.nickname.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center space-x-1">
                                                     <span className="font-semibold text-text-primary dark:text-text-primary-dark">
-                                                        {msg.chatter_nickname}
+                                                        {msg.nickname}
                                                     </span>
                                                     {msg.jwt_decode.role === 'broadcaster' && (
                                                         <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
@@ -381,7 +381,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                                                     )}
                                                 </div>
                                                 <div className="break-words text-text-primary dark:text-text-primary-dark">
-                                                    {msg.chatter_message}
+                                                    {msg.message}
                                                 </div>
                                             </div>
                                         </div>
