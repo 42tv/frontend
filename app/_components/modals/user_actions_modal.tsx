@@ -1,10 +1,10 @@
 'use client';
+import { MyRole, UserRole, Viewer } from '@/app/_types';
 import React from 'react';
-import { Viewer } from '../live/stream/interfaces/ChatInterface';
 
 interface UserActionsModalProps {
   userInfo: Viewer;
-  currentUser: Viewer;
+  currentUser: MyRole;
   onClose?: () => void;
   onKick?: (userIdx: number) => void;
   onBan?: (userIdx: number) => void;
@@ -69,7 +69,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
               )}
 
               {/* 관리자 권한이 필요한 액션들 */}
-              {currentUser.role && (currentUser.role.role === 'broadcaster' || currentUser.role.role === 'manager') && 
+              {currentUser.role && (currentUser.role === 'broadcaster' || currentUser.role === 'manager') && 
                currentUser.user_idx !== userInfo.user_idx && userInfo.role.role !== 'broadcaster' && (
                 <>
                   {/* 강퇴 */}
@@ -102,7 +102,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
               )}
 
               {/* 방송자 전용 권한 */}
-              {(currentUser.role?.role === 'broadcaster' && 
+              {(currentUser.role === 'broadcaster' && 
                currentUser.user_idx !== userInfo.user_idx && userInfo.role.role !== 'broadcaster') && (
                 <>
                   {/* 매니저 승격/해제 */}

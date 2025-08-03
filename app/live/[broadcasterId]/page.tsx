@@ -246,10 +246,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
                 <div className="flex-1 h-full">
                     {playDataState && (
-                        <Chat 
-                            broadcasterId={broadcasterId} 
-                            socket={socket} 
-                            myRole={playDataState.user.role}
+                        <Chat
+                            broadcasterId={broadcasterId}
+                            socket={socket}
+                            myRole={{
+                                user_idx: playDataState.user.user_idx,
+                                user_id: playDataState.user.user_id,
+                                nickname: playDataState.user.nickname,
+                                role: playDataState.user.role
+                            }}
                             broadcasterIdx={playDataState.broadcaster.idx}
                         />
                     )}

@@ -7,12 +7,12 @@ import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
 import popupModalStore from '../../utils/store/popupModalStore';
-import { Viewer } from './interfaces/ChatInterface';
+import { ChatMessage, Message, MyRole, TabType, Viewer } from '@/app/_types';
 
 interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
     socket: Socket | null; // socket prop 추가
-    myRole:  'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+    myRole: MyRole;
     broadcasterIdx: number; // 방송자의 idx
 }
 
@@ -42,20 +42,15 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             user_idx: message.chatter_idx,
             user_id: message.chatter_user_id,
             nickname: message.chatter_nickname,
-            role: message.role,
+            role: message.jwt_decode,
         };
 
-        const currentUser = {
-            idx: currentUserIdx,
-            role: myRole
-        };
-
-        console.log('Opening user actions modal with:', { userInfo, currentUser });
+        console.log('Opening user actions modal with:', { userInfo, myRole });
 
         openPopup(
             <UserActionsModal
                 userInfo={userInfo}
-                currentUser={currentUser}
+                currentUser={myRole}
                 onClose={closePopup}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
@@ -164,17 +159,12 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             role: viewer.role,
         };
 
-        const currentUser = {
-            idx: currentUserIdx,
-            role: myRole
-        };
-
-        console.log('Opening user actions modal with:', { userInfo, currentUser });
+        console.log('Opening user actions modal with:', { userInfo, myRole });
 
         openPopup(
             <UserActionsModal
                 userInfo={userInfo}
-                currentUser={currentUser}
+                currentUser={myRole}
                 onClose={closePopup}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
@@ -196,10 +186,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     //     setMessages(prevMessages => [...prevMessages, message]);
     // };
     
-    const handleRecommendMessage = (message: RecommendMessage) => {
-        console.log('Recommendation message received:', message);
-        setMessages(prevMessages => [...prevMessages, message]);
-    };
+    // const handleRecommendMessage = (message: RecommendMessage) => {
+    //     console.log('Recommendation message received:', message);
+    //     setMessages(prevMessages => [...prevMessages, message]);
+    // };
 
     // 시청자 목록 업데이트 핸들러
     const handleViewersUpdate = (viewersData: Viewer[]) => {
@@ -269,7 +259,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         if (socket) {
             socket.on('chat', handleChatMessage);
             // socket.on('donation', handleDonationMessage);
-            socket.on('recommend', handleRecommendMessage);
+            // socket.on('recommend', handleRecommendMessage);
             socket.on('viewer_list', handleViewersUpdate); // 시청자 목록 이벤트 추가
             socket.on('role_changed', handleRoleChanged); // 역할 변경 이벤트 추가
             socket.on('join', handleViewerJoin); // 시청자 입장 이벤트 추가
@@ -278,7 +268,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             return () => {
                 socket.off('chat', handleChatMessage);
                 // socket.off('donation', handleDonationMessage);
-                socket.off('recommend', handleRecommendMessage);
+                // socket.off('recommend', handleRecommendMessage);
                 socket.off('viewer_list', handleViewersUpdate);
                 socket.off('role_changed', handleRoleChanged);
                 socket.off('join', handleViewerJoin);
@@ -344,7 +334,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                     >
                         채팅
                     </button>
-                    {(myRole === 'manager' || myRole === 'broadcaster') && (
+                    {(myRole.role === 'manager' || myRole.role === 'broadcaster') && (
                         <button
                             onClick={() => setActiveTab('viewers')}
                             className={`flex-1 p-3 text-center font-semibold transition-colors duration-150 ${
@@ -383,10 +373,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                                                     <span className="font-semibold text-text-primary dark:text-text-primary-dark">
                                                         {msg.chatter_nickname}
                                                     </span>
-                                                    {msg.role === 'broadcaster' && (
+                                                    {msg.jwt_decode.role === 'broadcaster' && (
                                                         <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
                                                     )}
-                                                    {msg.role === 'manager' && (
+                                                    {msg.jwt_decode.role === 'manager' && (
                                                         <span className="text-xs bg-blue-500 text-white px-1 rounded">매니저</span>
                                                     )}
                                                 </div>
