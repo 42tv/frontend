@@ -209,7 +209,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     };
 
     // 시청자 퇴장 핸들러
-    const handleViewerLeave = (viewerData: Viewer) => {
+    const handleViewerLeave = (viewerData: { user_idx: number }) => {
         setViewers(prevViewers => 
             prevViewers.filter(viewer => viewer.user_idx !== viewerData.user_idx)
         );
