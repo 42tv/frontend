@@ -42,7 +42,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             user_idx: message.user_idx,
             user_id: message.user_id,
             nickname: message.nickname,
-            role: message.jwt_decode,
+            role: "",
         };
 
         console.log('Opening user actions modal with:', { userInfo, myRole });
@@ -366,17 +366,17 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                                                 className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                                                 style={{ backgroundColor: msg.color || '#6B7280' }}
                                             >
-                                                {msg.nickname.charAt(0).toUpperCase()}
+                                                {msg.grade.charAt(0)}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center space-x-1">
                                                     <span className="font-semibold text-text-primary dark:text-text-primary-dark">
                                                         {msg.nickname}
                                                     </span>
-                                                    {msg.jwt_decode.role === 'broadcaster' && (
+                                                    {msg.role === 'broadcaster' && (
                                                         <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
                                                     )}
-                                                    {msg.jwt_decode.role === 'manager' && (
+                                                    {msg.role === 'manager' && (
                                                         <span className="text-xs bg-blue-500 text-white px-1 rounded">매니저</span>
                                                     )}
                                                 </div>
@@ -430,10 +430,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                                                 <span className="font-semibold text-text-primary dark:text-text-primary-dark">
                                                     {viewer.nickname}
                                                 </span>
-                                                {viewer.role.role === 'broadcaster' && (
+                                                {viewer.role === 'broadcaster' && (
                                                     <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
                                                 )}
-                                                {viewer.role.role === 'manager' && (
+                                                {viewer.role === 'manager' && (
                                                     <span className="text-xs bg-blue-500 text-white px-1 rounded">매니저</span>
                                                 )}
                                             </div>

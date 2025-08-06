@@ -13,9 +13,9 @@ export interface ChatMessage extends BaseMessage {
   user_id: string;
   nickname: string;
   message: string;
+  role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
   grade: string;
   color: string;
-  jwt_decode: JwtDecode;
 }
 
 export interface DonationMessage extends BaseMessage {
@@ -44,7 +44,7 @@ export interface Viewer {
   user_idx: number;
   user_id: string;
   nickname: string;
-  role: JwtDecode;
+  role: UserRole;
 }
 
 export interface MyRole {
