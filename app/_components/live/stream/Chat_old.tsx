@@ -112,7 +112,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             openPopup(<LoginComponent />);
         }
     };
-
     return (
         <div className="flex flex-col h-full bg-bg-secondary dark:bg-bg-secondary-dark text-text-primary dark:text-text-primary-dark">
             {/* 탭 헤더 */}
