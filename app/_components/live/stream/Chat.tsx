@@ -51,18 +51,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             return;
         }
 
-        const userInfo = {
-            user_idx: message.user_idx,
-            user_id: message.user_id,
-            nickname: message.nickname,
-            role: message.role,
-        };
-
-        console.log('Opening user actions modal with:', { userInfo, myRole });
-
         openPopup(
             <UserActionsModal
-                userInfo={userInfo}
+                user={message}
                 currentUser={myRole}
                 onClose={closePopup}
                 onKick={handleKickUser}
@@ -77,31 +68,31 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
 
     // 시청자 클릭 핸들러
     const handleViewerClick = (viewer: Viewer) => {
-        console.log('Viewer clicked:', viewer);
-        console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', myRole);
+        // console.log('Viewer clicked:', viewer);
+        // console.log('Current user idx:', currentUserIdx);
+        // console.log('Current user role:', myRole);
         
-        if (!currentUserIdx) {
-            console.log('No current user, showing login modal');
-            openPopup(<LoginComponent />);
-            return;
-        }
+        // if (!currentUserIdx) {
+        //     console.log('No current user, showing login modal');
+        //     openPopup(<LoginComponent />);
+        //     return;
+        // }
 
-        console.log('Opening user actions modal with:', { userInfo: viewer, myRole });
+        // console.log('Opening user actions modal with:', { userInfo: viewer, myRole });
 
-        openPopup(
-            <UserActionsModal
-                userInfo={viewer}
-                currentUser={myRole}
-                onClose={closePopup}
-                onKick={handleKickUser}
-                onBan={handleBanUser}
-                onUnban={handleUnbanUser}
-                onPromoteManager={handlePromoteManager}
-                onDemoteManager={handleDemoteManager}
-                onSendMessage={handleSendPrivateMessage}
-            />
-        );
+        // openPopup(
+        //     <UserActionsModal
+        //         user={viewer}
+        //         currentUser={myRole}
+        //         onClose={closePopup}
+        //         onKick={handleKickUser}
+        //         onBan={handleBanUser}
+        //         onUnban={handleUnbanUser}
+        //         onPromoteManager={handlePromoteManager}
+        //         onDemoteManager={handleDemoteManager}
+        //         onSendMessage={handleSendPrivateMessage}
+        //     />
+        // );
     };
 
     // 메시지 전송 핸들러
