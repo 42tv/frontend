@@ -16,6 +16,7 @@ import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
 import { Socket, io } from "socket.io-client";
 import { useRouter } from "next/navigation";
+import { OpCode } from "@/app/_types";
 
 interface LivePageProps {
     broadcasterId: string;
@@ -217,15 +218,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         };
 
         socket.on('duplicate_connection', handleDuplicateConnection);
-        socket.on('recommend', handleRecommend);
-        socket.on('viewer_count', handleViewerCount);
-        socket.on('bookmark', handleBookmark);
+        socket.on(OpCode.RECOMMEND, handleRecommend);
+        socket.on(OpCode.VIEWER_COUNT, handleViewerCount);
+        socket.on(OpCode.BOOKMARK, handleBookmark);
 
         return () => {
             socket.off('duplicate_connection', handleDuplicateConnection);
-            socket.off('recommend', handleRecommend);
-            socket.off('viewer_count', handleViewerCount);
-            socket.off('bookmark', handleBookmark);
+            socket.off(OpCode.RECOMMEND, handleRecommend);
+            socket.off(OpCode.VIEWER_COUNT, handleViewerCount);
+            socket.off(OpCode.BOOKMARK, handleBookmark);
         };
     }, [socket, openError, router]); // socket이 변경될 때만 실행
 

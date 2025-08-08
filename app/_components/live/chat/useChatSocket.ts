@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Socket } from 'socket.io-client';
-import { Message, ChatMessage, Viewer } from '@/app/_types';
+import { Message, ChatMessage, Viewer, OpCode, RoleChangePayload } from '@/app/_types';
 import { getViewersList } from '@/app/_apis/live';
 
 export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
@@ -37,27 +37,56 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
     // 시청자 입장 핸들러
     const handleViewerJoin = useCallback((viewerData: Viewer) => {
         setViewers(prevViewers => {
+            // prevViewers가 배열이 아닌 경우 빈 배열로 초기화
+            const currentViewers = Array.isArray(prevViewers) ? prevViewers : [];
             // 중복 방지를 위해 기존에 있는지 확인
-            const exists = prevViewers.some(viewer => viewer.user_idx === viewerData.user_idx);
+            const exists = currentViewers.some(viewer => viewer.user_idx === viewerData.user_idx);
             if (!exists) {
-                return [...prevViewers, viewerData];
+                return [...currentViewers, viewerData];
             }
-            return prevViewers;
+            return currentViewers;
         });
     }, []);
 
     // 시청자 퇴장 핸들러
     const handleViewerLeave = useCallback((viewerData: { user_idx: number }) => {
-        setViewers(prevViewers => 
-            prevViewers.filter(viewer => viewer.user_idx !== viewerData.user_idx)
-        );
+        setViewers(prevViewers => {
+            // prevViewers가 배열이 아닌 경우 빈 배열로 초기화
+            const currentViewers = Array.isArray(prevViewers) ? prevViewers : [];
+            return currentViewers.filter(viewer => viewer.user_idx !== viewerData.user_idx);
+        });
     }, []);
 
-    // 역할 변경 핸들러 (매니저로 승격되었을 때)
-    const handleRoleChanged = useCallback((newRole: string) => {
-        console.log('Role changed to:', newRole);
-        if (newRole === 'manager') {
-            // 매니저나 방송자가 되었을 때 시청자 목록 갱신 시작
+    // 역할 변경 핸들러
+    const handleRoleChanged = useCallback((payload: RoleChangePayload) => {
+        console.log('Role change received:', payload);
+        
+        // viewers 목록에서 해당 사용자의 역할 업데이트
+        setViewers(prevViewers => {
+            const currentViewers = Array.isArray(prevViewers) ? prevViewers : [];
+            return currentViewers.map(viewer => 
+                viewer.user_idx === payload.user_idx 
+                    ? { ...viewer, role: payload.to_role }
+                    : viewer
+            );
+        });
+
+        // messages에서 해당 사용자의 역할과 색상 업데이트 (ChatMessage만)
+        setMessages(prevMessages => {
+            return prevMessages.map(message => {
+                if (message.type === 'chat' && (message as ChatMessage).user_idx === payload.user_idx) {
+                    return {
+                        ...message,
+                        role: payload.to_role,
+                        color: payload.to_color
+                    } as ChatMessage;
+                }
+                return message;
+            });
+        });
+
+        // 매니저로 승격되었을 때 추가 동작 (기존 로직 유지)
+        if (payload.to_role === 'manager') {
             fetchViewersList();
             
             if (!viewersIntervalRef.current) {
@@ -69,8 +98,8 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
             if (socket) {
                 socket.emit('get_viewers_list', { broadcasterId });
             }
-        } else {
-            // 매니저나 방송자가 아니게 되었을 때 갱신 중지
+        } else if (payload.from_role === 'manager') {
+            // 매니저에서 다른 역할로 변경되었을 때 갱신 중지
             if (viewersIntervalRef.current) {
                 clearInterval(viewersIntervalRef.current);
                 viewersIntervalRef.current = null;
@@ -82,18 +111,18 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
     useEffect(() => {
         console.log("Setting up chat socket:", socket);
         if (socket) {
-            socket.on('chat', handleChatMessage);
-            socket.on('viewer_list', handleViewersUpdate);
-            socket.on('role_changed', handleRoleChanged);
-            socket.on('join', handleViewerJoin);
-            socket.on('leave', handleViewerLeave);
+            socket.on(OpCode.CHAT, handleChatMessage);
+            socket.on(OpCode.VIEWER_LIST, handleViewersUpdate);
+            socket.on(OpCode.ROLE_CHANGE, handleRoleChanged);
+            socket.on(OpCode.USER_JOIN, handleViewerJoin);
+            socket.on(OpCode.USER_LEAVE, handleViewerLeave);
 
             return () => {
-                socket.off('chat', handleChatMessage);
-                socket.off('viewer_list', handleViewersUpdate);
-                socket.off('role_changed', handleRoleChanged);
-                socket.off('join', handleViewerJoin);
-                socket.off('leave', handleViewerLeave);
+                socket.off(OpCode.CHAT, handleChatMessage);
+                socket.off(OpCode.VIEWER_LIST, handleViewersUpdate);
+                socket.off(OpCode.ROLE_CHANGE, handleRoleChanged);
+                socket.off(OpCode.USER_JOIN, handleViewerJoin);
+                socket.off(OpCode.USER_LEAVE, handleViewerLeave);
             };
         }
     }, [socket, handleChatMessage, handleViewersUpdate, handleRoleChanged, handleViewerJoin, handleViewerLeave]);

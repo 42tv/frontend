@@ -3,6 +3,34 @@ export type TabType = 'chat' | 'viewers';
 export type Message = ChatMessage | DonationMessage | RecommendMessage;
 export type UserRole = 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
 
+export enum OpCode {
+  CHAT = 'chat',
+  KICK = 'kick',
+  BAN = 'ban',
+  RECOMMEND = 'recommend',
+  BOOKMARK = 'bookmark',
+  USER_JOIN = 'join',
+  USER_LEAVE = 'leave',
+  ROLE_CHANGE = 'role_change',
+  VIEWER_COUNT = 'viewer_count',
+  VIEWER_LIST = 'viewer_list',
+}
+
+export enum RoleChangeType {
+  MANAGER_GRANT = 'manager_grant',
+  MANAGER_REVOKE = 'manager_revoke',
+}
+
+export interface RoleChangePayload {
+  type: RoleChangeType;
+  user_idx: number;
+  user_id: string;
+  nickname: string;
+  from_role: 'manager' | 'member' | 'viewer';
+  to_role: 'manager' | 'member' | 'viewer';
+  to_color: string;
+}
+
 interface BaseMessage {
   type: MessageType;
 }
@@ -13,6 +41,7 @@ export interface ChatMessage extends BaseMessage {
   user_id: string;
   nickname: string;
   message: string;
+  profile_img: string;
   role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
   grade: string;
   color: string;
