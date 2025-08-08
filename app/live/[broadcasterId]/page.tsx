@@ -16,6 +16,7 @@ import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
 import { Socket, io } from "socket.io-client";
 import { useRouter } from "next/navigation";
+import { OpCode } from "@/app/_types";
 
 interface LivePageProps {
     broadcasterId: string;
@@ -190,7 +191,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 if (!prevState) return null; // 이전 상태가 없으면 null 반환
                 return {
                     ...prevState,
-                    viewer_cnt: data.viewer_cnt, // 서버로부터 받은 viewer_cnt 업데이트
+                    viewer_cnt: data.viewer_count, // 서버로부터 받은 viewer_cnt 업데이트
                 };
             });
         };
@@ -217,15 +218,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         };
 
         socket.on('duplicate_connection', handleDuplicateConnection);
-        socket.on('recommend', handleRecommend);
-        socket.on('viewer_count', handleViewerCount);
-        socket.on('bookmark', handleBookmark);
+        socket.on(OpCode.RECOMMEND, handleRecommend);
+        socket.on(OpCode.VIEWER_COUNT, handleViewerCount);
+        socket.on(OpCode.BOOKMARK, handleBookmark);
 
         return () => {
             socket.off('duplicate_connection', handleDuplicateConnection);
-            socket.off('recommend', handleRecommend);
-            socket.off('viewer_count', handleViewerCount);
-            socket.off('bookmark', handleBookmark);
+            socket.off(OpCode.RECOMMEND, handleRecommend);
+            socket.off(OpCode.VIEWER_COUNT, handleViewerCount);
+            socket.off(OpCode.BOOKMARK, handleBookmark);
         };
     }, [socket, openError, router]); // socket이 변경될 때만 실행
 
@@ -245,16 +246,19 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
              {/* 채팅 영역 컨테이너 */}
              <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
                 <div className="flex-1 h-full">
-                    <Chat 
-                        broadcasterId={broadcasterId} 
-                        socket={socket} 
-                        currentUserRole={
-                            playDataState?.broadcaster.idx === idx ? 'broadcaster' : 
-                            // TODO: 매니저 권한 확인 로직 추가
-                            'viewer'
-                        }
-                        broadcasterIdx={playDataState?.broadcaster.idx}
-                    />
+                    {playDataState && (
+                        <Chat
+                            broadcasterId={broadcasterId}
+                            socket={socket}
+                            myRole={{
+                                user_idx: playDataState.user.user_idx,
+                                user_id: playDataState.user.user_id,
+                                nickname: playDataState.user.nickname,
+                                role: playDataState.user.role
+                            }}
+                            broadcasterIdx={playDataState.broadcaster.idx}
+                        />
+                    )}
                 </div>
             </div>
         </div>

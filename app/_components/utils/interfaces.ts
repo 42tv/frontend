@@ -17,12 +17,11 @@ export interface Channel {
 }
 
 export interface BroadcastSetting {
-  title: string | null;
-  is_adult: boolean | null;
-  is_pw: boolean | null;
-  is_fan: boolean | null;
+  title: string;
   fan_level: number | null;
-  password: string | null;
+  is_adult: boolean;
+  is_pw: boolean;
+  is_fan: boolean;
 }
 
 export interface IVSChannel {
@@ -30,15 +29,6 @@ export interface IVSChannel {
   ingest_endpoint: string | null;
   playback_url: string | null;
   stream_key: string | null;
-}
-
-export interface Stream {
-  request_id: string | null;
-  stream_id: string | null;
-  title: string | null;
-  start_time: string | null;
-  play_cnt: number | null;
-  recommend_cnt: number | null;
 }
 
 export interface Post {
@@ -57,7 +47,7 @@ export interface Live {
   start_time: string;
   play_cnt: number;
   recommend_cnt: number;
-  user: {
+  broadcaster: {
     idx: number;
     user_id: string;
     nickname: string;
@@ -67,13 +57,36 @@ export interface Live {
   viewerCount: number;
 }
 
-export interface PlayData {
-  broadcaster: {
-    idx: number;
+export interface MyInfo {
+    user_idx: number;
     user_id: string;
     nickname: string;
     profile_img: string;
-  };
+    is_bookmarked: boolean;
+    role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+    play_token: string;
+    is_guest: boolean;
+    guest_id?: string; // 게스트 ID (게스트인 경우에만 존재)
+}
+
+export interface Broadcaster {
+  idx: number;
+  user_id: string;
+  nickname: string;
+  profile_img: string;
+}
+
+export interface Stream {
+  title: string;
+  playback_url: string;
+  play_cnt: number;
+  recommend_cnt: number;
+  bookmark_cnt: number;
+  start_time: string;
+}
+
+export interface PlayData {
+  broadcaster: Broadcaster;
   stream: {
     title: string;
     playback_url: string;
@@ -82,11 +95,7 @@ export interface PlayData {
     bookmark_cnt: number;
     start_time: string;
   };
-  user: {
-    is_bookmarked: boolean;
-    play_token: string;
-    role: 'owner' | 'guest' | 'manager' | 'member';
-  };
+  user: MyInfo;
   viewer_cnt: number;
 }
 

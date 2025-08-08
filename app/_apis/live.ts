@@ -67,3 +67,13 @@ export async function requestLike(broadcasterIdx: number) {
   });
   return response.data;
 }
+
+export async function getViewersList(broadcasterId: string) {
+  const response = await api.get(`/api/live/${broadcasterId}/viewers`, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}

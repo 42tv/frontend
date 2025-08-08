@@ -1,3 +1,14 @@
+import { ErrorResponse } from "@/app/_types";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getApiErrorMessage(error: any): string {
+  if (error.response && error.response.data) {
+    const { message } = error.response.data as ErrorResponse;
+    return message;
+  }
+  return "getApiErrorMessage 변환 실패";
+}
+
 // Helper function to format elapsed time as HH:MM
 export const formatElapsedTime = (startTime: string | null): string => {
   if (!startTime) return "00:00"; // Handle null or undefined start time
