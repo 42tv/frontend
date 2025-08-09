@@ -72,13 +72,14 @@ export const useUserActions = (socket: Socket | null, broadcasterId: string) => 
         }
     }, [socket, broadcasterId]);
 
-    // 쪽지 보내기
-    const handleSendPrivateMessage = useCallback(async (userId: string) => {
+    // 쪽지 보내기 - 모달 교체 함수 반환
+    const handleSendPrivateMessage = useCallback((userId: string, nickname: string, openMessageModal: () => void) => {
         try {
-            // TODO: 쪽지 보내기 모달 또는 페이지로 이동
-            console.log(`Send private message to user ${userId}`);
+            // 쪽지 보내기 모달 열기
+            openMessageModal();
+            console.log(`Opening message modal for user ${userId}`);
         } catch (error) {
-            console.error('Failed to send private message:', error);
+            console.error('Failed to open message modal:', error);
         }
     }, []);
 
