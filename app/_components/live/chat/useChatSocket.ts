@@ -36,6 +36,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
 
     // 시청자 목록 업데이트 핸들러
     const handleViewersUpdate = useCallback((viewersData: Viewer[]) => {
+        console.log(viewersData);
         setViewers(viewersData);
     }, []);
 

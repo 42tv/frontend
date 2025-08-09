@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import { addManager, removeManager } from '@/app/_apis/manager';
 import { kickViewer } from '@/app/_apis/live';
+import { addToBlacklist } from '@/app/_apis/user';
 
 export const useUserActions = (socket: Socket | null, broadcasterId: string) => {
     // 사용자 강퇴
@@ -19,10 +20,9 @@ export const useUserActions = (socket: Socket | null, broadcasterId: string) => 
     // 사용자 차단
     const handleBanUser = useCallback(async (userId: string) => {
         try {
-            if (socket) {
-                socket.emit('ban_user', { userId, broadcasterId });
-            }
-            console.log(`User ${userId} banned`);
+            // API 호출로 블랙리스트에 추가
+            await addToBlacklist(userId);
+            console.log(`User ${userId} added to blacklist`);
         } catch (error) {
             console.error('Failed to ban user:', error);
         }
@@ -72,13 +72,14 @@ export const useUserActions = (socket: Socket | null, broadcasterId: string) => 
         }
     }, [socket, broadcasterId]);
 
-    // 쪽지 보내기
-    const handleSendPrivateMessage = useCallback(async (userId: string) => {
+    // 쪽지 보내기 - 모달 교체 함수 반환
+    const handleSendPrivateMessage = useCallback((userId: string, nickname: string, openMessageModal: () => void) => {
         try {
-            // TODO: 쪽지 보내기 모달 또는 페이지로 이동
-            console.log(`Send private message to user ${userId}`);
+            // 쪽지 보내기 모달 열기
+            openMessageModal();
+            console.log(`Opening message modal for user ${userId}`);
         } catch (error) {
-            console.error('Failed to send private message:', error);
+            console.error('Failed to open message modal:', error);
         }
     }, []);
 

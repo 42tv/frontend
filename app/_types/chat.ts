@@ -98,6 +98,9 @@ export interface Viewer {
   user_id: string;
   nickname: string;
   role: UserRole;
+  profile_img: string;
+  grade: string;
+  color: string;
 }
 
 export interface MyRole {
