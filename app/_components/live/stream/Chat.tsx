@@ -5,7 +5,7 @@ import { Socket } from 'socket.io-client'; // Socket 타입 import
 import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
-import SendMessageModal from '../../modals/send_message_modal';
+import SendMessageForm from '../../common/SendMessageForm';
 import popupModalStore from '../../utils/store/popupModalStore';
 import { ChatMessage, MyRole, TabType, Viewer } from '@/app/_types';
 
@@ -55,10 +55,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
             openPopup(
-                <SendMessageModal
-                    recipientId={message.user_id}
-                    recipientNickname={message.nickname}
+                <SendMessageForm
                     onClose={closePopup}
+                    initialUserId={message.user_id}
                 />
             );
         };

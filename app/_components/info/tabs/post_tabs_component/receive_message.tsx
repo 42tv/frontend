@@ -5,7 +5,7 @@ import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_det
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import useModalStore from "@/app/_components/utils/store/modalStore";
 import popupModalStore from "@/app/_components/utils/store/popupModalStore";
-import SendPost from "./send_post";
+import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
@@ -134,12 +134,12 @@ export default function ReceiveMessage() {
     }
 
     async function openModalSendpost() {
-        openModal(<SendPost close={closeModal}/>);
+        openModal(<SendMessageForm onClose={closeModal} />);
     }
 
     async function responsePost(userId: string) {
         closeModal();
-        openModal(<SendPost close={closeModal} userId={userId}/>);
+        openModal(<SendMessageForm onClose={closeModal} initialUserId={userId} />);
     }
 
     // Page navigation functions
