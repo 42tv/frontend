@@ -2,7 +2,7 @@
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { requestPlay, requestLike } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
-import SendPost from "@/app/_components/info/tabs/post_tabs_component/send_post";
+import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import Chat from "@/app/_components/live/stream/Chat";
 import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import StreamInfo from "@/app/_components/live/StreamInfo";
@@ -77,7 +77,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             openModal(<LoginComponent />)
             return;
         }
-        openModal(<SendPost close={closeModal} userId={(await params).broadcasterId}/>);
+        openModal(<SendMessageForm onClose={closeModal} initialUserId={(await params).broadcasterId} />);
     }
 
     async function handleRecommend() {

@@ -11,7 +11,7 @@ interface UserActionsModalProps {
   onUnban?: (userId: string) => void;
   onPromoteManager?: (userId: string) => void;
   onDemoteManager?: (userId: string) => void;
-  onSendMessage?: (userId: string) => void;
+  onSendMessage?: (userId: string, nickname: string) => void;
   onViewProfile?: (userId: string) => void;
 }
 
@@ -187,8 +187,8 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
               {onSendMessage && (
                 <MenuItem
                   onClick={() => {
-                    onSendMessage(user.user_id);
-                    onClose?.();
+                    onSendMessage(user.user_id, user.nickname);
+                    // onClose는 호출하지 않음 - 모달 교체를 위해
                   }}
                   icon={
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

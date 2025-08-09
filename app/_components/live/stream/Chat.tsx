@@ -5,6 +5,7 @@ import { Socket } from 'socket.io-client'; // Socket 타입 import
 import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
+import SendMessageForm from '../../common/SendMessageForm';
 import popupModalStore from '../../utils/store/popupModalStore';
 import { ChatMessage, MyRole, TabType, Viewer } from '@/app/_types';
 
@@ -51,6 +52,16 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             return;
         }
 
+        // 쪽지 보내기 모달 열기 함수
+        const openMessageModal = () => {
+            openPopup(
+                <SendMessageForm
+                    onClose={closePopup}
+                    initialUserId={message.user_id}
+                />
+            );
+        };
+
         openPopup(
             <UserActionsModal
                 user={message}
@@ -61,38 +72,59 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                 onUnban={handleUnbanUser}
                 onPromoteManager={handlePromoteManager}
                 onDemoteManager={handleDemoteManager}
-                onSendMessage={handleSendPrivateMessage}
+                onSendMessage={(userId: string, nickname: string) => handleSendPrivateMessage(userId, nickname, openMessageModal)}
             />
         );
     };
 
     // 시청자 클릭 핸들러
     const handleViewerClick = (viewer: Viewer) => {
-        // console.log('Viewer clicked:', viewer);
-        // console.log('Current user idx:', currentUserIdx);
-        // console.log('Current user role:', myRole);
+        console.log('Viewer clicked:', viewer);
+        console.log('Current user idx:', currentUserIdx);
+        console.log('Current user role:', myRole);
         
-        // if (!currentUserIdx) {
-        //     console.log('No current user, showing login modal');
-        //     openPopup(<LoginComponent />);
-        //     return;
-        // }
+        if (!currentUserIdx) {
+            console.log('No current user, showing login modal');
+            openPopup(<LoginComponent />);
+            return;
+        }
 
-        // console.log('Opening user actions modal with:', { userInfo: viewer, myRole });
+        // 쪽지 보내기 모달 열기 함수
+        const openMessageModal = () => {
+            openPopup(
+                <SendMessageForm
+                    onClose={closePopup}
+                    initialUserId={viewer.user_id}
+                />
+            );
+        };
 
-        // openPopup(
-        //     <UserActionsModal
-        //         user={viewer}
-        //         currentUser={myRole}
-        //         onClose={closePopup}
-        //         onKick={handleKickUser}
-        //         onBan={handleBanUser}
-        //         onUnban={handleUnbanUser}
-        //         onPromoteManager={handlePromoteManager}
-        //         onDemoteManager={handleDemoteManager}
-        //         onSendMessage={handleSendPrivateMessage}
-        //     />
-        // );
+        // Viewer를 ChatMessage 호환 형태로 변환
+        const userAsMessage: ChatMessage = {
+            type: 'chat',
+            user_idx: viewer.user_idx,
+            user_id: viewer.user_id,
+            nickname: viewer.nickname,
+            role: viewer.role,
+            profile_img: viewer.profile_img,
+            grade: viewer.grade,
+            color: viewer.color,
+            message: '' // 시청자는 메시지가 없으므로 빈 문자열
+        };
+
+        openPopup(
+            <UserActionsModal
+                user={userAsMessage}
+                currentUser={myRole}
+                onClose={closePopup}
+                onKick={handleKickUser}
+                onBan={handleBanUser}
+                onUnban={handleUnbanUser}
+                onPromoteManager={handlePromoteManager}
+                onDemoteManager={handleDemoteManager}
+                onSendMessage={(userId: string, nickname: string) => handleSendPrivateMessage(userId, nickname, openMessageModal)}
+            />
+        );
     };
 
     // 메시지 전송 핸들러
