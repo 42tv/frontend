@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import { addManager, removeManager } from '@/app/_apis/manager';
 import { kickViewer } from '@/app/_apis/live';
+import { addToBlacklist } from '@/app/_apis/user';
 
 export const useUserActions = (socket: Socket | null, broadcasterId: string) => {
     // 사용자 강퇴
@@ -19,10 +20,9 @@ export const useUserActions = (socket: Socket | null, broadcasterId: string) => 
     // 사용자 차단
     const handleBanUser = useCallback(async (userId: string) => {
         try {
-            if (socket) {
-                socket.emit('ban_user', { userId, broadcasterId });
-            }
-            console.log(`User ${userId} banned`);
+            // API 호출로 블랙리스트에 추가
+            await addToBlacklist(userId);
+            console.log(`User ${userId} added to blacklist`);
         } catch (error) {
             console.error('Failed to ban user:', error);
         }
