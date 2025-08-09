@@ -77,3 +77,17 @@ export async function getViewersList(broadcasterId: string) {
   });
   return response.data;
 }
+
+export async function kickViewer(broadcasterId: string, viewerId: string, reason?: string) {
+  const requestBody = {
+    viewer_id: viewerId,
+    reason: reason,
+  };
+  const response = await api.post(`/api/live/${broadcasterId}/kick`, requestBody, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+}

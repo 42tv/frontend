@@ -6,6 +6,7 @@ export type UserRole = 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest'
 export enum OpCode {
   CHAT = 'chat',
   KICK = 'kick',
+  KICKED = 'kicked',
   BAN = 'ban',
   RECOMMEND = 'recommend',
   BOOKMARK = 'bookmark',
@@ -29,6 +30,29 @@ export interface RoleChangePayload {
   from_role: 'manager' | 'member' | 'viewer';
   to_role: 'manager' | 'member' | 'viewer';
   to_color: string;
+}
+
+export interface KickPayload {
+  user_id: string;
+  user_idx: number;
+  nickname: string;
+  kicked_by: {
+    idx: number;
+    user_id: string;
+    nickname: string;
+  };
+}
+
+export interface KickedPayload {
+  user_id: string;
+  user_idx: number;
+  nickname: string;
+  kicked_by: {
+    idx: number;
+    user_id: string;
+    nickname: string;
+  };
+  reason?: string;
 }
 
 interface BaseMessage {

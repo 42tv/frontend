@@ -2,39 +2,39 @@
 import { useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import { addManager, removeManager } from '@/app/_apis/manager';
+import { kickViewer } from '@/app/_apis/live';
 
 export const useUserActions = (socket: Socket | null, broadcasterId: string) => {
     // 사용자 강퇴
-    const handleKickUser = useCallback(async (userIdx: number) => {
+    const handleKickUser = useCallback(async (viewerId: string, reason?: string) => {
         try {
-            if (socket) {
-                socket.emit('kick_user', { userIdx, broadcasterId });
-            }
-            console.log(`User ${userIdx} kicked`);
+            // API 호출로 강퇴 요청
+            await kickViewer(broadcasterId, viewerId, reason);
+            console.log(`Viewer ${viewerId} kicked`);
         } catch (error) {
-            console.error('Failed to kick user:', error);
+            console.error('Failed to kick viewer:', error);
         }
     }, [socket, broadcasterId]);
 
     // 사용자 차단
-    const handleBanUser = useCallback(async (userIdx: number) => {
+    const handleBanUser = useCallback(async (userId: string) => {
         try {
             if (socket) {
-                socket.emit('ban_user', { userIdx, broadcasterId });
+                socket.emit('ban_user', { userId, broadcasterId });
             }
-            console.log(`User ${userIdx} banned`);
+            console.log(`User ${userId} banned`);
         } catch (error) {
             console.error('Failed to ban user:', error);
         }
     }, [socket, broadcasterId]);
 
     // 사용자 차단 해제
-    const handleUnbanUser = useCallback(async (userIdx: number) => {
+    const handleUnbanUser = useCallback(async (userId: string) => {
         try {
             if (socket) {
-                socket.emit('unban_user', { userIdx, broadcasterId });
+                socket.emit('unban_user', { userId, broadcasterId });
             }
-            console.log(`User ${userIdx} unbanned`);
+            console.log(`User ${userId} unbanned`);
         } catch (error) {
             console.error('Failed to unban user:', error);
         }
@@ -73,10 +73,10 @@ export const useUserActions = (socket: Socket | null, broadcasterId: string) => 
     }, [socket, broadcasterId]);
 
     // 쪽지 보내기
-    const handleSendPrivateMessage = useCallback(async (userIdx: number) => {
+    const handleSendPrivateMessage = useCallback(async (userId: string) => {
         try {
             // TODO: 쪽지 보내기 모달 또는 페이지로 이동
-            console.log(`Send private message to user ${userIdx}`);
+            console.log(`Send private message to user ${userId}`);
         } catch (error) {
             console.error('Failed to send private message:', error);
         }

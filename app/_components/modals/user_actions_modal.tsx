@@ -6,12 +6,12 @@ interface UserActionsModalProps {
   user: ChatMessage;
   currentUser: MyRole;
   onClose?: () => void;
-  onKick?: (userIdx: number) => void;
-  onBan?: (userIdx: number) => void;
-  onUnban?: (userIdx: number) => void;
+  onKick?: (userId: string) => void;
+  onBan?: (userId: string) => void;
+  onUnban?: (userId: string) => void;
   onPromoteManager?: (userId: string) => void;
   onDemoteManager?: (userId: string) => void;
-  onSendMessage?: (userIdx: number) => void;
+  onSendMessage?: (userId: string) => void;
   onViewProfile?: (userId: string) => void;
 }
 
@@ -21,7 +21,6 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
   onClose,
   onKick,
   onBan,
-  onUnban,
   onPromoteManager,
   onDemoteManager,
   onSendMessage,
@@ -188,7 +187,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
               {onSendMessage && (
                 <MenuItem
                   onClick={() => {
-                    onSendMessage(user.user_idx);
+                    onSendMessage(user.user_id);
                     onClose?.();
                   }}
                   icon={
@@ -208,7 +207,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                   {onKick && (
                     <MenuItem
                       onClick={() => {
-                        onKick(user.user_idx);
+                        onKick(user.user_id);
                         onClose?.();
                       }}
                       icon={
@@ -225,7 +224,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                   {onBan && (
                     <MenuItem
                       onClick={() => {
-                        onBan(user.user_idx);
+                        onBan(user.user_id);
                         onClose?.();
                       }}
                       icon={
@@ -247,7 +246,7 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
                   {onKick && (
                     <MenuItem
                       onClick={() => {
-                        onKick(user.user_idx);
+                        onKick(user.user_id);
                         onClose?.();
                       }}
                       icon={
