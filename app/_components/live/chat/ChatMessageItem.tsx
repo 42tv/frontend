@@ -19,7 +19,11 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, onChatClick 
                         className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                         style={{ backgroundColor: message.color || '#6B7280' }}
                     >
-                        {message.grade.charAt(0)}
+                        {
+                            message.role === 'broadcaster' ? 'B' :
+                            message.role === 'manager' ? 'M' :
+                            message.grade.charAt(0).toUpperCase()
+                        }
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-1">
