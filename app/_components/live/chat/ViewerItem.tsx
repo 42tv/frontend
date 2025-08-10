@@ -26,7 +26,11 @@ const ViewerItem: React.FC<ViewerItemProps> = ({ viewer, onClick }) => {
                             className="w-full h-full flex items-center justify-center text-white text-xs font-bold"
                             style={{ backgroundColor: '#6B7280' }}
                         >
-                            {viewer.grade.charAt(0).toUpperCase()}
+                            {
+                                viewer.role === 'broadcaster' ? 'B' :
+                                viewer.role === 'manager' ? 'M' :
+                                viewer.grade.charAt(0).toUpperCase()
+                            }
                         </div>
                     )}
                 </div>

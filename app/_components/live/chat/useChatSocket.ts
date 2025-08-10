@@ -67,14 +67,20 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
     const handleRoleChanged = useCallback((payload: RoleChangePayload) => {
         console.log('Role change received:', payload);
         
-        // viewers 목록에서 해당 사용자의 역할 업데이트
+        // viewers 목록에서 해당 사용자의 역할과 등급 업데이트
         setViewers(prevViewers => {
             const currentViewers = Array.isArray(prevViewers) ? prevViewers : [];
-            return currentViewers.map(viewer => 
-                viewer.user_idx === payload.user_idx 
-                    ? { ...viewer, role: payload.to_role }
-                    : viewer
-            );
+            return currentViewers.map(viewer => {
+                if (viewer.user_idx === payload.user_idx) {
+                    return { 
+                        ...viewer, 
+                        role: payload.to_role,
+                        grade: payload.to_grade,
+                        color: payload.to_color
+                    };
+                }
+                return viewer;
+            });
         });
 
         // messages에서 해당 사용자의 역할과 색상 업데이트 (ChatMessage만)
@@ -84,6 +90,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
                     return {
                         ...message,
                         role: payload.to_role,
+                        grade: payload.to_grade,
                         color: payload.to_color
                     } as ChatMessage;
                 }

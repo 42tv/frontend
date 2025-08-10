@@ -29,6 +29,7 @@ export interface RoleChangePayload {
   nickname: string;
   from_role: 'manager' | 'member' | 'viewer';
   to_role: 'manager' | 'member' | 'viewer';
+  to_grade: string;
   to_color: string;
 }
 
