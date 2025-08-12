@@ -125,7 +125,7 @@ export default function ReceiveMessage() {
                 message={message} 
                 sentAt={sentAt} 
                 postId={postId} 
-                closeModal={closeAllModals} 
+ 
                 deleteSinglePost={deleteSinglePost}
                 senderIdx={senderIdx}
             />

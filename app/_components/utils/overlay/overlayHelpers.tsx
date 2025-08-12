@@ -4,8 +4,8 @@ import { MdClose } from "react-icons/md";
 import { ReactNode } from 'react';
 
 // 모달 헬퍼 함수들
-export const openModal = (content: ReactNode) => {
-    return overlay.open(({ isOpen, close }) => (
+export const openModal = (content: ReactNode | ((close: () => void) => ReactNode)) => {
+    return overlay.open(({ isOpen, close, unmount }) => (
         <div>
             {isOpen && (
                 <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
@@ -16,7 +16,7 @@ export const openModal = (content: ReactNode) => {
                         >
                             <MdClose className="w-full h-full" />
                         </button>
-                        {content}
+                        {typeof content === 'function' ? content(close) : content}
                     </div>
                 </div>
             )}
@@ -57,6 +57,7 @@ export const openErrorModal = (content: ReactNode) => {
     ));
 };
 
+// 팝업은 클릭하면 닫히는거
 export const openPopupModal = (content: ReactNode) => {
     return overlay.open(({ isOpen, close }) => (
         <div>

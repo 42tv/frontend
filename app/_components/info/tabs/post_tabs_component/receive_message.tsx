@@ -99,7 +99,7 @@ export default function ReceiveMessage() {
     };
 
     const handleOpenSettings = () => {
-        openModal(<MessageSettingsModal closeModal={closeAllModals} postSetting={postSetting} setPostSetting={setPostSetting}/>);
+        openModal((close) => <MessageSettingsModal closeModal={close} postSetting={postSetting} setPostSetting={setPostSetting}/>);
     };
 
     /**
@@ -133,12 +133,12 @@ export default function ReceiveMessage() {
     }
 
     async function openModalSendpost() {
-        openModal(<SendMessageForm onClose={closeAllModals} />);
+        openModal(<SendMessageForm />);
     }
 
     async function responsePost(userId: string) {
         closeAllModals();
-        openModal(<SendMessageForm onClose={closeAllModals} initialUserId={userId} />);
+        openModal(<SendMessageForm initialUserId={userId} />);
     }
 
     // Page navigation functions
@@ -184,7 +184,7 @@ export default function ReceiveMessage() {
                 message={message} 
                 sentAt={sentAt} 
                 postId={postId} 
-                closeModal={closeAllModals} 
+ 
                 deleteSinglePost={deleteSinglePost}
                 responsePost={responsePost}
                 senderIdx={senderIdx}

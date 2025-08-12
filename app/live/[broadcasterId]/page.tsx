@@ -8,7 +8,7 @@ import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import StreamInfo from "@/app/_components/live/StreamInfo";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
-import useModalStore from "@/app/_components/utils/store/modalStore";
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, useRef, use } from "react";
 import { PlayData } from "@/app/_components/utils/interfaces";
@@ -28,7 +28,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
     const socketRef = useRef<Socket | null>(null); // 최신 소켓 인스턴스 추적을 위한 ref 추가
-    const {openModal, closeModal} = useModalStore();
     const {openError} = errorModalStore();
     const router = useRouter();
 
@@ -77,7 +76,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             openModal(<LoginComponent />)
             return;
         }
-        openModal(<SendMessageForm onClose={closeModal} initialUserId={(await params).broadcasterId} />);
+        openModal(<SendMessageForm initialUserId={(await params).broadcasterId} />);
     }
 
     async function handleRecommend() {

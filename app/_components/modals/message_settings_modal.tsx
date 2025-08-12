@@ -95,7 +95,6 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="flex flex-col max-w-md w-[450px] h-[520px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
                 {/* Header */}
                 <h2 className="text-lg font-bold mb-2 px-6 pt-5">쪽지 수신 설정</h2>
@@ -165,6 +164,5 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                     </button>
                 </div>
             </div>
-        </div>
     );
 }

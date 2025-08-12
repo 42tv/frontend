@@ -7,14 +7,13 @@ import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 
-export default function PostDetail({ nickname, userId, message, sentAt, postId, closeModal, deleteSinglePost, responsePost, senderIdx }: 
+export default function PostDetail({ nickname, userId, message, sentAt, postId, deleteSinglePost, responsePost, senderIdx }: 
   { 
     nickname: string;
     userId: string;
     message: string;
     sentAt: string,
     postId: number,
-    closeModal: () => void,
     deleteSinglePost: (postId: number) => void,
     responsePost?: (userId: string) => void,
     senderIdx: number
@@ -58,7 +57,6 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     try {
       await blockPostUser(senderIdx);
       openError(<ErrorMessage message="사용자가 차단되었습니다." />);
-      closeModal();
     } catch (error) {
       const message = getApiErrorMessage(error)
       openError(<ErrorMessage message={message} />);
@@ -93,7 +91,6 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
           className={`w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark`}
           onClick={() => {
             deleteSinglePost(postId)
-            closeModal()
           }}
         >
           삭제

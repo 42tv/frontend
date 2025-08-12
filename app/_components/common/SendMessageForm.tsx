@@ -5,13 +5,11 @@ import DefaultAlertMessage from '../modals/default_alert_compoent';
 import popupModalStore from '../utils/store/popupModalStore';
 
 interface SendMessageFormProps {
-  onClose: () => void;
   initialUserId?: string;
   title?: string;
 }
 
 export default function SendMessageForm({ 
-  onClose, 
   initialUserId = '',
   title = '쪽지 보내기'
 }: SendMessageFormProps) {
@@ -26,7 +24,6 @@ export default function SendMessageForm({
   async function requestSendPost() {
     try {
       const response = await sendPost(receiverId, message);
-      onClose();
       openPopup(<DefaultAlertMessage message={response.message} />);
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +66,6 @@ export default function SendMessageForm({
         </button>
         <button
           className="w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark"
-          onClick={onClose}
         >
           취소
         </button>
