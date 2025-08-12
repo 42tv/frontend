@@ -1,8 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import useUserStore from '../utils/store/userStore';
-import useModalStore from '../utils/store/modalStore';
 import LoginComponent from '../modals/login_component';
+import { openModal } from '../utils/overlay/overlayHelpers';
 
 interface AuthNavItemProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -13,7 +13,6 @@ interface AuthNavItemProps {
 const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) => {
   const router = useRouter();
   const { user_id } = useUserStore();
-  const { openModal } = useModalStore();
 
   const handleClick = () => {
     if (user_id) {

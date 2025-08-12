@@ -3,12 +3,12 @@ import BlockAlertComponent from "@/app/_components/modals/block_alert";
 import MessageSettingsModal from "@/app/_components/modals/message_settings_modal";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
-import useModalStore from "@/app/_components/utils/store/modalStore";
 import popupModalStore from "@/app/_components/utils/store/popupModalStore";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
+import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
 
 interface Post {
     id: number;
@@ -40,7 +40,6 @@ interface FanLevel {
 }
 
 export default function ReceiveMessage() {
-    const { openModal, closeModal } = useModalStore();
     const { openPopup, closePopup } = popupModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
@@ -100,7 +99,7 @@ export default function ReceiveMessage() {
     };
 
     const handleOpenSettings = () => {
-        openModal(<MessageSettingsModal closeModal={closeModal} postSetting={postSetting} setPostSetting={setPostSetting}/>);
+        openModal(<MessageSettingsModal closeModal={closeAllModals} postSetting={postSetting} setPostSetting={setPostSetting}/>);
     };
 
     /**
@@ -134,12 +133,12 @@ export default function ReceiveMessage() {
     }
 
     async function openModalSendpost() {
-        openModal(<SendMessageForm onClose={closeModal} />);
+        openModal(<SendMessageForm onClose={closeAllModals} />);
     }
 
     async function responsePost(userId: string) {
-        closeModal();
-        openModal(<SendMessageForm onClose={closeModal} initialUserId={userId} />);
+        closeAllModals();
+        openModal(<SendMessageForm onClose={closeAllModals} initialUserId={userId} />);
     }
 
     // Page navigation functions
@@ -185,11 +184,12 @@ export default function ReceiveMessage() {
                 message={message} 
                 sentAt={sentAt} 
                 postId={postId} 
-                closeModal={closeModal} 
+                closeModal={closeAllModals} 
                 deleteSinglePost={deleteSinglePost}
                 responsePost={responsePost}
                 senderIdx={senderIdx}
-        />);
+            />
+        );
     }
 
     /**

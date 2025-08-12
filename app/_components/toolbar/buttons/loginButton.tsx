@@ -1,10 +1,8 @@
 'use client';
 import LoginComponent from "../../modals/login_component";
-import useModalStore from "../../utils/store/modalStore";
+import { openModal } from "../../utils/overlay/overlayHelpers";
 
 export default function Login() {
-    const { openModal } = useModalStore();
-
     return (
         <div className="mx-[10px] ">
             <button 

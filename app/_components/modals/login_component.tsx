@@ -3,12 +3,11 @@ import errorModalStore from '../utils/store/errorModalStore';
 import ErrorMessage from './error_component';
 import { login, singUp } from '@/app/_apis/user';
 import { useRouter } from 'next/navigation';
-import useModalStore from '../utils/store/modalStore';
 import useUserStore from '../utils/store/userStore';
+import { overlay } from 'overlay-kit';
 
 export default function LoginComponent() {
   const router = useRouter()
-  const { closeModal } = useModalStore();
   const { fetchUser } = useUserStore();
   const { openError } = errorModalStore();
   const [activeTab, setActiveTab] = useState('login'); // Track the active tab
@@ -26,7 +25,7 @@ export default function LoginComponent() {
     try {
       await login(userId, password);
       await fetchUser();
-      closeModal();
+      overlay.closeAll();
 
       if (!window.location.pathname.startsWith('/live')) {
         router.push('/live');

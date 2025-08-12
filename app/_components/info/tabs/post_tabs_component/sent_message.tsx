@@ -1,9 +1,9 @@
 import { deletePost, deletePosts, getSendPosts } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
-import useModalStore from "@/app/_components/utils/store/modalStore";
 import { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
+import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
 
 interface Post {
     id: number;
@@ -24,7 +24,6 @@ interface Post {
 }
 
 export default function ReceiveMessage() {
-    const { openModal, closeModal } = useModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -126,10 +125,11 @@ export default function ReceiveMessage() {
                 message={message} 
                 sentAt={sentAt} 
                 postId={postId} 
-                closeModal={closeModal} 
+                closeModal={closeAllModals} 
                 deleteSinglePost={deleteSinglePost}
                 senderIdx={senderIdx}
-        />);
+            />
+        );
     }
 
     /**
