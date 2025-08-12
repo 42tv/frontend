@@ -1,17 +1,26 @@
 import { create } from 'zustand';
+import { openErrorModal, closeAllModals } from '../overlay/overlayHelpers';
+import { ReactNode } from 'react';
 
 interface ModalState {
-    isOpen: boolean;
-    content: React.ReactNode | null;
-    openError: (content: React.ReactNode) => void;
+    currentOverlayId: string | null;
+    openError: (content: ReactNode) => void;
     closeModal: () => void;
 }
 
-const errorModalStore = create<ModalState>((set) => ({
-    isOpen: false,
-    content: null,
-    openError: (content) => set({ isOpen: true, content }),
-    closeModal: () => set({ isOpen: false, content: null }),
+const errorModalStore = create<ModalState>((set, get) => ({
+    currentOverlayId: null,
+    openError: (content) => {
+        const overlayId = openErrorModal(content);
+        set({ currentOverlayId: overlayId });
+    },
+    closeModal: () => {
+        const { currentOverlayId } = get();
+        if (currentOverlayId) {
+            closeAllModals();
+            set({ currentOverlayId: null });
+        }
+    },
 }));
 
 export default errorModalStore;
