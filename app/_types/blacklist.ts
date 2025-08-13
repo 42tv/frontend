@@ -27,12 +27,6 @@ export interface BlacklistTableProps {
   isLoading: boolean;
 }
 
-export interface UserSearchModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onBlock: (userId: string) => Promise<void>;
-  isLoading: boolean;
-}
 
 export interface UserSearchSectionProps {
   onBlockUser: (userId: string) => Promise<void>;
