@@ -6,6 +6,7 @@ import { MdBlock } from "react-icons/md";
 import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import SendMessageForm from "@/app/_components/common/SendMessageForm";
 
 export default function PostDetail({ nickname, userId, message, sentAt, postId, deleteSinglePost, responsePost, senderIdx, closeModal }: 
   { 
@@ -21,6 +22,7 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
   }
   ) {
   const { openError } = errorModalStore();
+  const [showReplyForm, setShowReplyForm] = useState(false);
 
   const maskString = (str: string): string => {
       if (!str || str.length <= 3) {
@@ -49,9 +51,7 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
   }
 
   async function handleResponsePost() {
-    if (responsePost) {
-      responsePost(userId);
-    }
+    setShowReplyForm(true);
   }
 
   async function handleBlockUser() {
@@ -62,6 +62,10 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
       const message = getApiErrorMessage(error)
       openError(<ErrorMessage message={message} />);
     }
+  }
+
+  if (showReplyForm) {
+    return <SendMessageForm initialUserId={userId} closeModal={closeModal} title="답장 보내기" />;
   }
 
   return (

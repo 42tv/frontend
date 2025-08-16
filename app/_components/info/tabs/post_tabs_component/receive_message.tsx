@@ -143,7 +143,6 @@ export default function ReceiveMessage() {
     }
 
     async function responsePost(userId: string) {
-        closeAllModals();
         openModal((close) => <SendMessageForm initialUserId={userId} closeModal={close} />);
     }
 
