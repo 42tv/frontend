@@ -69,7 +69,7 @@ export default function SendMessageForm({
         </button>
         <button
           className="w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark"
-          onClick={closeModal}
+          onClick={() => closeModal?.()}
         >
           취소
         </button>

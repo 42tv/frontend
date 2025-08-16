@@ -7,7 +7,7 @@ import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
-import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
+import { openModal, openReplaceableModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
 
 interface Post {
     id: number;
@@ -165,8 +165,10 @@ export default function ReceiveMessage() {
      * @param senderIdx 
      */
     async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number, senderIdx: number) {
-        try{
+        // 쪽지를 읽음 처리하고 UI 상태 업데이트
+        try {
             await readPost(postId);
+            // 읽음 처리 성공 시 로컬 상태 업데이트
             const updatedPosts = posts.map(post => post.id === postId ? {
                 ...post, 
                 readAt: new Date().toISOString(),
@@ -178,11 +180,13 @@ export default function ReceiveMessage() {
                 readAt: new Date().toISOString(),
                 is_read: true
             } : post));
+        } catch (error) {
+            // 읽음 처리 실패 시에도 모달은 열되, 에러는 로깅만
+            console.error('Failed to mark post as read:', error);
         }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        catch(error) {
-        }
-        openModal((close) => 
+        
+        // 읽음 처리 성공/실패와 관계없이 모달 열기
+        openReplaceableModal((close) => 
             <PostDetail 
                 userId={userId} 
                 nickname={nickname} 
