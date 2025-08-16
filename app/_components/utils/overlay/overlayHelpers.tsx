@@ -6,6 +6,14 @@ import React, { ReactNode, createContext, useContext, useState } from 'react';
 // 모달 내용 타입 정의
 type ModalContent = ReactNode | ((close: () => void) => ReactNode);
 
+// 모달 옵션 타입 정의
+interface ModalOptions {
+    /** 팝업 모드 (배경 클릭 시 닫힘, X버튼 없음) */
+    isPopup?: boolean;
+    /** X버튼 크기 커스터마이징 */
+    closeButtonSize?: string;
+}
+
 // 모달 내용 교체를 위한 컨텍스트
 interface ModalContentContextType {
     content: ModalContent;
@@ -18,51 +26,56 @@ const ModalContentContext = createContext<ModalContentContextType | null>(null);
 const ModalContainer = ({ 
     children, 
     onClose,
-    closeButtonSize = "w-[25px] h-[25px]",
-    useCustomCloseIcon = false
+    options = {}
 }: { 
     children: ReactNode;
     onClose: () => void;
-    closeButtonSize?: string;
-    useCustomCloseIcon?: boolean;
-}) => (
-    <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-        <div className="rounded-lg shadow-lg relative bg-contentBg">
-            <button
-                className={`absolute ${closeButtonSize} top-2 right-2 flex justify-center items-center cursor-pointer z-20`}
+    options?: ModalOptions;
+}) => {
+    const { isPopup = false, closeButtonSize = "w-[25px] h-[25px]" } = options;
+
+    if (isPopup) {
+        // 팝업 모드: 배경 클릭으로 닫힘, X버튼 없음
+        return (
+            <div 
+                className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50" 
                 onClick={onClose}
             >
-                {useCustomCloseIcon ? (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                        stroke="currentColor"
-                        className="w-5 h-5 text-text-tertiary hover:text-white transition-colors"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                ) : (
-                    <MdClose className="w-full h-full" />
-                )}
-            </button>
-            {children}
-        </div>
-    </div>
-);
+                <div 
+                    className="flex items-center justify-center" 
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {children}
+                </div>
+            </div>
+        );
+    }
 
-// 교체 가능한 모달 컴포넌트
-const ReplaceableModal = ({ 
+    // 일반 모드: X버튼 있음, 배경 클릭해도 안닫힘
+    return (
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
+            <div className="rounded-lg shadow-lg relative bg-contentBg">
+                <button
+                    className={`absolute ${closeButtonSize} top-2 right-2 flex justify-center items-center cursor-pointer z-20`}
+                    onClick={onClose}
+                >
+                    <MdClose className="w-full h-full" />
+                </button>
+                {children}
+            </div>
+        </div>
+    );
+};
+
+// 메인 모달 컴포넌트
+const Modal = ({ 
     initialContent, 
-    onClose 
+    onClose,
+    options = {}
 }: { 
     initialContent: ModalContent;
     onClose: () => void;
+    options?: ModalOptions;
 }) => {
     const [currentContent, setCurrentContent] = useState<ModalContent>(initialContent);
 
@@ -84,7 +97,7 @@ const ReplaceableModal = ({
 
     return (
         <ModalContentContext.Provider value={{ content: currentContent, setContent: setCurrentContent }}>
-            <ModalContainer onClose={onClose}>
+            <ModalContainer onClose={onClose} options={options}>
                 {renderContent()}
             </ModalContainer>
         </ModalContentContext.Provider>
@@ -95,53 +108,29 @@ const ReplaceableModal = ({
 export const useModalContentReplace = () => {
     const context = useContext(ModalContentContext);
     if (!context) {
-        throw new Error('useModalContentReplace must be used within ReplaceableModal');
+        throw new Error('useModalContentReplace must be used within Modal');
     }
     return context.setContent;
 };
 
 // 모달 헬퍼 함수들
-export const openModal = (content: ModalContent) => {
+export const openModal = (content: ModalContent, options: ModalOptions = {}) => {
     return overlay.open(({ isOpen, close }) => (
         <div>
             {isOpen && (
-                <ModalContainer onClose={close}>
-                    {typeof content === 'function' ? content(close) : content}
-                </ModalContainer>
+                <Modal 
+                    initialContent={content}
+                    onClose={close}
+                    options={options}
+                />
             )}
         </div>
     ));
 };
 
-export const openErrorModal = (content: ReactNode) => {
-    return overlay.open(({ isOpen, close }) => (
-        <div>
-            {isOpen && (
-                <ModalContainer 
-                    onClose={close} 
-                    closeButtonSize="w-[16px] h-[16px]"
-                    useCustomCloseIcon={true}
-                >
-                    {content}
-                </ModalContainer>
-            )}
-        </div>
-    ));
-};
-
-// 팝업은 클릭하면 닫히는거
+// 팝업 모달 (배경 클릭으로 닫힘)
 export const openPopupModal = (content: ReactNode) => {
-    return overlay.open(({ isOpen, close }) => (
-        <div>
-            {isOpen && (
-                <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50" onClick={close}>
-                    <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-                        {content}
-                    </div>
-                </div>
-            )}
-        </div>
-    ));
+    return openModal(content, { isPopup: true });
 };
 
 export const closeModal = (overlayId: string) => {
@@ -150,18 +139,4 @@ export const closeModal = (overlayId: string) => {
 
 export const closeAllModals = () => {
     overlay.closeAll();
-};
-
-// 내용 교체가 가능한 모달을 여는 함수
-export const openReplaceableModal = (content: ModalContent) => {
-    return overlay.open(({ isOpen, close }) => (
-        <div>
-            {isOpen && (
-                <ReplaceableModal 
-                    initialContent={content}
-                    onClose={close}
-                />
-            )}
-        </div>
-    ));
 };

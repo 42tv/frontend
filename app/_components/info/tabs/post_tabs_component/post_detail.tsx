@@ -3,11 +3,10 @@
 import { blockPostUser } from "@/app/_apis/posts";
 import { useState } from "react";
 import { MdBlock } from "react-icons/md";
-import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
-import { useModalContentReplace } from "@/app/_components/utils/overlay/overlayHelpers";
+import { useModalContentReplace, openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 
 export default function PostDetail({ nickname, userId, message, sentAt, postId, deleteSinglePost, responsePost, senderIdx, closeModal }: 
   { 
@@ -22,7 +21,6 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     closeModal?: () => void
   }
   ) {
-  const { openError } = errorModalStore();
   const replaceContent = useModalContentReplace();
 
   const maskString = (str: string): string => {
@@ -65,10 +63,10 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
   async function handleBlockUser() {
     try {
       await blockPostUser(senderIdx);
-      openError(<ErrorMessage message="사용자가 차단되었습니다." />);
+      openModal(<ErrorMessage message="사용자가 차단되었습니다." />, { closeButtonSize: "w-[16px] h-[16px]" });
     } catch (error) {
       const message = getApiErrorMessage(error)
-      openError(<ErrorMessage message={message} />);
+      openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
     }
   }
 

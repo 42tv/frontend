@@ -7,7 +7,7 @@ import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
-import { openModal, openReplaceableModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
+import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
 
 interface Post {
     id: number;
@@ -186,7 +186,7 @@ export default function ReceiveMessage() {
         }
         
         // 읽음 처리 성공/실패와 관계없이 모달 열기
-        openReplaceableModal((close) => 
+        openModal((close) => 
             <PostDetail 
                 userId={userId} 
                 nickname={nickname} 
