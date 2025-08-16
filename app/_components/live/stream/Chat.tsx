@@ -6,7 +6,7 @@ import useUserStore from '../../utils/store/userStore';
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
 import SendMessageForm from '../../common/SendMessageForm';
-import popupModalStore from '../../utils/store/popupModalStore';
+import { openPopupModal, closeAllModals } from '../../utils/overlay/overlayHelpers';
 import { ChatMessage, MyRole, TabType, Viewer } from '@/app/_types';
 
 // 분리된 컴포넌트들 import
@@ -26,7 +26,6 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterIdx }) => {
     const [activeTab, setActiveTab] = useState<TabType>('chat'); // 활성 탭 상태
-    const {openPopup, closePopup} = popupModalStore();
     const {idx: currentUserIdx} = useUserStore();
 
     // 커스텀 훅 사용
@@ -48,25 +47,24 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
-            openPopup(<LoginComponent />);
+            openPopupModal(<LoginComponent />);
             return;
         }
 
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
-            openPopup(
+            openPopupModal(
                 <SendMessageForm
-                    onClose={closePopup}
                     initialUserId={message.user_id}
                 />
             );
         };
 
-        openPopup(
+        openPopupModal(
             <UserActionsModal
                 user={message}
                 currentUser={myRole}
-                onClose={closePopup}
+                onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
                 onUnban={handleUnbanUser}
@@ -85,15 +83,14 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
-            openPopup(<LoginComponent />);
+            openPopupModal(<LoginComponent />);
             return;
         }
 
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
-            openPopup(
+            openPopupModal(
                 <SendMessageForm
-                    onClose={closePopup}
                     initialUserId={viewer.user_id}
                 />
             );
@@ -112,11 +109,11 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
             message: '' // 시청자는 메시지가 없으므로 빈 문자열
         };
 
-        openPopup(
+        openPopupModal(
             <UserActionsModal
                 user={userAsMessage}
                 currentUser={myRole}
-                onClose={closePopup}
+                onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
                 onUnban={handleUnbanUser}
@@ -132,7 +129,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         try {
             await reqeustChat(broadcasterId, message);
         } catch (e: any) {
-            openPopup(<LoginComponent />);
+            openPopupModal(<LoginComponent />);
         }
     };
 
