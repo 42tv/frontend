@@ -183,7 +183,7 @@ export default function ReceiveMessage() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(error) {
         }
-        openModal(
+        openModal((close) => 
             <PostDetail 
                 userId={userId} 
                 nickname={nickname} 
@@ -194,6 +194,7 @@ export default function ReceiveMessage() {
                 deleteSinglePost={deleteSinglePost}
                 responsePost={responsePost}
                 senderIdx={senderIdx}
+                closeModal={close}
             />
         );
     }

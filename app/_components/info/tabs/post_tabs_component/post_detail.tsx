@@ -7,7 +7,7 @@ import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 
-export default function PostDetail({ nickname, userId, message, sentAt, postId, deleteSinglePost, responsePost, senderIdx }: 
+export default function PostDetail({ nickname, userId, message, sentAt, postId, deleteSinglePost, responsePost, senderIdx, closeModal }: 
   { 
     nickname: string;
     userId: string;
@@ -16,7 +16,8 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
     postId: number,
     deleteSinglePost: (postId: number) => void,
     responsePost?: (userId: string) => void,
-    senderIdx: number
+    senderIdx: number,
+    closeModal?: () => void
   }
   ) {
   const { openError } = errorModalStore();
@@ -90,7 +91,8 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
         <button
           className={`w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark`}
           onClick={() => {
-            deleteSinglePost(postId)
+            deleteSinglePost(postId);
+            closeModal?.();
           }}
         >
           삭제
