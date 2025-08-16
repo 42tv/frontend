@@ -3,7 +3,6 @@ import BlockAlertComponent from "@/app/_components/modals/block_alert";
 import MessageSettingsModal from "@/app/_components/modals/message_settings_modal";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
-import popupModalStore from "@/app/_components/utils/store/popupModalStore";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { LuSettings } from "react-icons/lu";
@@ -40,7 +39,6 @@ interface FanLevel {
 }
 
 export default function ReceiveMessage() {
-    const { openPopup, closePopup } = popupModalStore();
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     const [postSetting, setPostSetting] = useState<PostSetting>();
@@ -123,22 +121,30 @@ export default function ReceiveMessage() {
         setCurrentPage(1);
     };
 
-    async function changePopupComponent(compoent: JSX.Element) {
-        closePopup();
-        openPopup(compoent);
+    async function changePopupComponent(component: JSX.Element) {
+        closeAllModals();
+        openModal(component);
     }
     // 차단 창 팝업으로 띄우기
     async function requestBlockUser(blockedIdx: number, blockUserId: string, blockedNickname: string) {
-        openPopup(BlockAlertComponent({ blockedIdx, blockUserId, blockedNickname, closePopup, changePopupComponent }));
+        openModal((close) => 
+            BlockAlertComponent({ 
+                blockedIdx, 
+                blockUserId, 
+                blockedNickname, 
+                closePopup: close, 
+                changePopupComponent 
+            })
+        );
     }
 
     async function openModalSendpost() {
-        openModal(<SendMessageForm />);
+        openModal((close) => <SendMessageForm closeModal={close} />);
     }
 
     async function responsePost(userId: string) {
         closeAllModals();
-        openModal(<SendMessageForm initialUserId={userId} />);
+        openModal((close) => <SendMessageForm initialUserId={userId} closeModal={close} />);
     }
 
     // Page navigation functions

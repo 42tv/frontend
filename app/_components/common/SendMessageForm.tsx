@@ -2,18 +2,19 @@
 import React, { useState, useEffect } from 'react';
 import { sendPost } from '@/app/_apis/posts';
 import DefaultAlertMessage from '../modals/default_alert_compoent';
-import popupModalStore from '../utils/store/popupModalStore';
+import { openPopupModal } from '../utils/overlay/overlayHelpers';
 
 interface SendMessageFormProps {
   initialUserId?: string;
   title?: string;
+  closeModal?: () => void;
 }
 
 export default function SendMessageForm({ 
   initialUserId = '',
-  title = '쪽지 보내기'
+  title = '쪽지 보내기',
+  closeModal
 }: SendMessageFormProps) {
-  const { openPopup } = popupModalStore();
   const [receiverId, setReceiverId] = useState('');
   const [message, setMessage] = useState('');
 
@@ -24,12 +25,14 @@ export default function SendMessageForm({
   async function requestSendPost() {
     try {
       const response = await sendPost(receiverId, message);
-      openPopup(<DefaultAlertMessage message={response.message} />);
+      closeModal?.(); // 현재 모달 닫기
+      openPopupModal(<DefaultAlertMessage message={response.message} />);
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const error = e as any;
       const errorMessage = error?.response?.data?.message || "An unknown error occurred";
-      openPopup(<DefaultAlertMessage message={errorMessage} />);
+      closeModal?.(); // 현재 모달 닫기
+      openPopupModal(<DefaultAlertMessage message={errorMessage} />);
     }
   }
 
@@ -66,6 +69,7 @@ export default function SendMessageForm({
         </button>
         <button
           className="w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark"
+          onClick={closeModal}
         >
           취소
         </button>
