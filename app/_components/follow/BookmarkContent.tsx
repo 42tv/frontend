@@ -6,7 +6,7 @@ import { deleteMultiBookmakrs, requestBookmarkList } from '../../_apis/user';
 import { CardData } from '../utils/interfaces';
 import ToggleSwitch from './ToggleSwitch'; // ToggleSwitch 임포트 추가
 import { getApiErrorMessage } from '@/app/_apis/interfaces';
-import errorModalStore from '../utils/store/errorModalStore';
+import { openModal } from '../utils/overlay/overlayHelpers';
 import ErrorMessage from '../modals/error_component';
 
 export default function BookmarkContent() {
@@ -16,7 +16,6 @@ export default function BookmarkContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showLiveOnly, setShowLiveOnly] = useState(false); // showLiveOnly 상태 추가
-  const { openError } = errorModalStore();
 
   // API 호출 함수
   const fetchData = async () => {
@@ -64,7 +63,7 @@ export default function BookmarkContent() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       catch (e) {
         const message = getApiErrorMessage(e);
-        openError(<ErrorMessage message={message} />);
+        openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
       }
       // TODO: 선택된 아이템 삭제 API 호출 등
       setIsEditing(false);

@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 import { useRouter } from 'next/navigation';
 import { Message, ChatMessage, Viewer, OpCode, RoleChangePayload, KickPayload, KickedPayload } from '@/app/_types';
 import { getViewersList } from '@/app/_apis/live';
-import errorModalStore from '@/app/_components/utils/store/errorModalStore';
+import { openModal } from '@/app/_components/utils/overlay/overlayHelpers';
 import ErrorMessage from '@/app/_components/modals/error_component';
 
 export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
@@ -12,7 +12,6 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
     const [viewers, setViewers] = useState<Viewer[]>([]);
     const viewersIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
-    const { openError } = errorModalStore();
 
     // API를 통해 시청자 리스트 가져오기
     const fetchViewersList = useCallback(async () => {
@@ -139,11 +138,11 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
             ? `강퇴당했습니다. 사유: ${payload.reason}`
             : '강퇴당했습니다.';
         
-        openError(React.createElement(ErrorMessage, { message }));
+        openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
         
         // /live 페이지로 즉시 리디렉션
         router.push('/live');
-    }, [openError, router]);
+    }, [router]);
 
     // 소켓 이벤트 등록
     useEffect(() => {

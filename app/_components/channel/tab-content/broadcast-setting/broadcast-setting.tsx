@@ -3,7 +3,7 @@ import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { reCreateStreamKey } from "@/app/_apis/ivs";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import ErrorMessage from "@/app/_components/modals/error_component";
-import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import { useEffect, useState } from "react";
 import { FiCopy, FiEye, FiEyeOff, FiCheck } from "react-icons/fi";
 
@@ -19,7 +19,6 @@ export default function BroadcastSettings() {
   const [fanLevel, setFanLevel] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [copiedText, setCopiedText] = useState("");
-  const { openError } = errorModalStore();
   const iconSize = 25;
 
   useEffect(() => {
@@ -79,22 +78,22 @@ export default function BroadcastSettings() {
     }
     catch(e) {
       const message = getApiErrorMessage(e);
-      openError(<ErrorMessage message={message} />);
+      openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
 
     }
   }
 
   function validateValues() {
     if (title.length < 1 || title.length > 30) {
-      openError(<ErrorMessage message="방송 제목은 1자 이상 30자 이하로 입력해주세요" />);
+      openModal(<ErrorMessage message="방송 제목은 1자 이상 30자 이하로 입력해주세요" />, { closeButtonSize: "w-[16px] h-[16px]" });
       return false;
     }
     if (isPrivate && (password.length < 4 || password.length > 8)) {
-      openError(<ErrorMessage message="비밀번호는 4~8글자로 설정해주세요" />);
+      openModal(<ErrorMessage message="비밀번호는 4~8글자로 설정해주세요" />, { closeButtonSize: "w-[16px] h-[16px]" });
       return false;
     }
     if (isFanClub && (fanLevel < 1 || fanLevel > 5)) {
-      openError(<ErrorMessage message="팬 레벨은 1~5입니다" />);
+      openModal(<ErrorMessage message="팬 레벨은 1~5입니다" />, { closeButtonSize: "w-[16px] h-[16px]" });
       return false;
     }
     return true;
@@ -108,7 +107,7 @@ export default function BroadcastSettings() {
       await updateBroadcastSetting(title, isAdult, isPrivate, isFanClub, fanLevel, password)
     }
     catch(e) {
-      openError(<ErrorMessage message="유효하지 않은 설정입니다" />);
+      openModal(<ErrorMessage message="유효하지 않은 설정입니다" />, { closeButtonSize: "w-[16px] h-[16px]" });
       console.error(e);
     }
     

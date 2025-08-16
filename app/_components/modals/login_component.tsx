@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import errorModalStore from '../utils/store/errorModalStore';
+import { openModal } from '../utils/overlay/overlayHelpers';
 import ErrorMessage from './error_component';
 import { login, singUp } from '@/app/_apis/user';
 import { useRouter } from 'next/navigation';
@@ -9,7 +9,6 @@ import { overlay } from 'overlay-kit';
 export default function LoginComponent() {
   const router = useRouter()
   const { fetchUser } = useUserStore();
-  const { openError } = errorModalStore();
   const [activeTab, setActiveTab] = useState('login'); // Track the active tab
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +32,7 @@ export default function LoginComponent() {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch(err: any) {
-      openError(<ErrorMessage message={err?.response?.data?.message} />);
+      openModal(<ErrorMessage message={err?.response?.data?.message} />, { closeButtonSize: "w-[16px] h-[16px]" });
     }
     
   };
@@ -41,18 +40,18 @@ export default function LoginComponent() {
   function checkInputValidate(signupUserId: string, signupPassword: string, confirmPassword: string) {
     if (!/^[a-zA-Z0-9]{4,20}$/.test(signupUserId)) {
       console.log("아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요.")
-      openError(<ErrorMessage message="아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요." />);
+      openModal(<ErrorMessage message="아이디는 4~20자의 영문 대소문자와 숫자로만 입력해주세요." />, { closeButtonSize: "w-[16px] h-[16px]" });
       return false;
     }
     console.log(signupPassword)
     if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\|-]{8,}$/.test(signupPassword)) {
       console.log("비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)")
-      openError(<ErrorMessage message="비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)" />);
+      openModal(<ErrorMessage message="비밀번호가 조건을 만족하지 않음 (영문, 숫자, 특수문자 포함 최소 8자)" />, { closeButtonSize: "w-[16px] h-[16px]" });
       return false;
     }
     if (signupPassword !== confirmPassword) {
       console.log("비밀번호와 비밀번호 확인이 일치하지 않음")
-      openError(<ErrorMessage message="비밀번호와 비밀번호 확인이 일치하지 않음" />);
+      openModal(<ErrorMessage message="비밀번호와 비밀번호 확인이 일치하지 않음" />, { closeButtonSize: "w-[16px] h-[16px]" });
       return false;
     }
     return true;
@@ -65,11 +64,11 @@ export default function LoginComponent() {
     try {
       await singUp(signupUserId, signupPassword, nickname)
       setActiveTab('login');
-      openError(<ErrorMessage message="회원가입이 완료되었습니다." />);
+      openModal(<ErrorMessage message="회원가입이 완료되었습니다." />, { closeButtonSize: "w-[16px] h-[16px]" });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (err: any) {
-      openError(<ErrorMessage message={err?.response?.data?.message} />);
+      openModal(<ErrorMessage message={err?.response?.data?.message} />, { closeButtonSize: "w-[16px] h-[16px]" });
     }
   }
 

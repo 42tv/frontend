@@ -5,12 +5,11 @@ import { getFanLevels, updateFanLevel } from "@/app/_apis/user";
 import { FanLevelItem } from "./FanLevelItem";
 import { FanRankHeader } from "./FanRankHeader";
 import { BulkUpdateButton } from "./BulkUpdateButton";
-import errorModalStore from "@/app/_components/utils/store/errorModalStore";
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import DefaultAlertMessage from "@/app/_components/modals/default_alert_compoent";
 
 export const FanRankContent = () => {
-  const { openError } = errorModalStore();
   const [fanLevels, setFanLevels] = useState<FanLevel[]>([]);
   const [originalFanLevels, setOriginalFanLevels] = useState<FanLevel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +76,7 @@ export const FanRankContent = () => {
     } catch (err: any) {
       console.error('팬 등급 로드 실패:', err);
       setError('팬 등급을 불러오는데 실패했습니다.');
-      openError(<ErrorMessage message={err?.response?.data?.message || '팬 등급을 불러오는데 실패했습니다.'} />);
+      openModal(<ErrorMessage message={err?.response?.data?.message || '팬 등급을 불러오는데 실패했습니다.'} />, { closeButtonSize: "w-[16px] h-[16px]" });
     } finally {
       setLoading(false);
     }
@@ -93,7 +92,7 @@ export const FanRankContent = () => {
     const updateColor = color !== undefined ? color : levelToUpdate.color;
 
     if (!updateName.trim() || updateMinDonation < 0) {
-      openError(<ErrorMessage message="등급명과 최소 후원 금액을 올바르게 입력해주세요." />);
+      openModal(<ErrorMessage message="등급명과 최소 후원 금액을 올바르게 입력해주세요." />, { closeButtonSize: "w-[16px] h-[16px]" });
       return;
     }
 
@@ -229,7 +228,7 @@ export const FanRankContent = () => {
       await loadFanLevels();
     } catch (err: any) {
       console.error('일괄 업데이트 실패:', err);
-      openError(<ErrorMessage message={err?.response?.data?.message || '일괄 업데이트 중 오류가 발생했습니다.'} />);
+      openModal(<ErrorMessage message={err?.response?.data?.message || '일괄 업데이트 중 오류가 발생했습니다.'} />, { closeButtonSize: "w-[16px] h-[16px]" });
     } finally {
       setIsUpdating(false);
     }

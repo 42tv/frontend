@@ -3,11 +3,10 @@ import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
 import { Button } from "@mui/material";
 import { getInfo, updateNickname, updatePassword } from "@/app/_apis/user";
-import errorModalStore from "../../utils/store/errorModalStore";
+import { openModal } from "../../utils/overlay/overlayHelpers";
 import ErrorMessage from "../../modals/error_component";
 
 export default function UserTab() {
-    const { openError } = errorModalStore();
     const [nickname, setNickname ] = useState<string>("");
     const [inputNickname, setInputNickname] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -41,24 +40,24 @@ export default function UserTab() {
                 const response = await updateNickname(inputNickname);
                 if (!isPasswordChanged) {
                     setNickname(inputNickname);
-                    openError(<ErrorMessage message={response.message}/>);
+                    openModal(<ErrorMessage message={response.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
                 }
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             catch (e: any) {
                 setInputNickname(nickname);
-                openError(<ErrorMessage message={e.response.data.message}/>);
+                openModal(<ErrorMessage message={e.response.data.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
                 return;
             }
         }
         if (password != "" && newPassword != "" && newPassword == passwordCheck) {
             try {
                 const response = await updatePassword(password, newPassword);
-                openError(<ErrorMessage message={response.message}/>);
+                openModal(<ErrorMessage message={response.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             catch (e: any) {
-                openError(<ErrorMessage message={e.response.data.message}/>);
+                openModal(<ErrorMessage message={e.response.data.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
                 return;
             }
         }

@@ -7,7 +7,6 @@ import Chat from "@/app/_components/live/stream/Chat";
 import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import StreamInfo from "@/app/_components/live/StreamInfo";
 import ErrorMessage from "@/app/_components/modals/error_component";
-import errorModalStore from "@/app/_components/utils/store/errorModalStore";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, useRef, use } from "react";
@@ -28,7 +27,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
     const socketRef = useRef<Socket | null>(null); // 최신 소켓 인스턴스 추적을 위한 ref 추가
-    const {openError} = errorModalStore();
     const router = useRouter();
 
     // TODO: broadcasterIdx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
@@ -66,7 +64,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         }
         catch (e) {
             const message = getApiErrorMessage(e);
-            openError(<ErrorMessage message={message} />);
+            openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
         }
     }
 
@@ -103,7 +101,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             }
         } catch (e) {
             const message = getApiErrorMessage(e);
-            openError(<ErrorMessage message={message} />);
+            openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
         }
     }
 
@@ -150,7 +148,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 catch(e) {
                     const message = getApiErrorMessage(e);
                     router.push('/live'); // 홈으로 리다이렉트
-                    openError(<ErrorMessage message={message} />);
+                    openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
                 }
             }
         }
@@ -168,7 +166,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         if (!socket) return; // socket이 없으면 아무것도 하지 않음
 
         const handleDuplicateConnection = () => {
-            openError(<ErrorMessage message="다른 기기에서 접속하였습니다" />);
+            openModal(<ErrorMessage message="다른 기기에서 접속하였습니다" />, { closeButtonSize: "w-[16px] h-[16px]" });
             router.push('/'); // 홈으로 리다이렉트
         };
 
@@ -227,7 +225,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             socket.off(OpCode.VIEWER_COUNT, handleViewerCount);
             socket.off(OpCode.BOOKMARK, handleBookmark);
         };
-    }, [socket, openError, router]); // socket이 변경될 때만 실행
+    }, [socket, router]); // socket이 변경될 때만 실행
 
     return (
         <div className="flex flex-row w-full h-full">

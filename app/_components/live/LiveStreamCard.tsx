@@ -5,7 +5,7 @@ import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가�
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
 import { requestLobyPlay } from "@/app/_apis/live";
 import usePlayStore from "../utils/store/playStore";
-import errorModalStore from "../utils/store/errorModalStore";
+import { openModal } from "../utils/overlay/overlayHelpers";
 import ErrorMessage from "../modals/error_component";
 import { getApiErrorMessage } from "@/app/_apis/interfaces";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
@@ -25,7 +25,6 @@ interface LiveStreamCardProps {
 
 export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
     const [elapsedTime, setElapsedTime] = useState(''); // 경과 시간 상태 추가
-    const { openError } = errorModalStore()
     const { setPlayData } = usePlayStore()
     const router = useRouter(); // useRouter 훅 사용
 
@@ -51,7 +50,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         catch(e) {
             const message = getApiErrorMessage(e);
-            openError(<ErrorMessage message={message} />);
+            openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
         }
     }
 
