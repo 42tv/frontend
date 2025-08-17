@@ -1,4 +1,4 @@
-import useUserStore from "@/app/_components/utils/store/userStore";
+import { useUserStore } from "@/app/_lib/stores";
  
 export default function UserDefault({inputNickname, setInputNickname} : {inputNickname: string, setInputNickname: (nickname: string) => void}) {
     const { user_id } = useUserStore();
