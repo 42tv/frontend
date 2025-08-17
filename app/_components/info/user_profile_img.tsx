@@ -37,7 +37,7 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
     return (
         <div className="flex w-full h-full justify-center items-center relative">
             <div 
-                className="flex items-center justify-center rounded-full overflow-hidden border-contentBg border-[1px]" 
+                className="rounded-full overflow-hidden border-contentBg border-[1px]" 
                 style={{ width: `${width}px`, height: `${height}px`, backgroundColor: 'white' }}
             >
                 <Image
@@ -45,6 +45,7 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
                     alt="Picture of the author"
                     width={width}
                     height={height}
+                    className="w-full h-full object-cover"
                 />
             </div>
             

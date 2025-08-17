@@ -52,8 +52,8 @@ export default function ProfileIcon() {
             ref={menuRef}
         >
             {profile_img ? (
-                <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                    <Image src={profile_img} width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+                <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
+                    <Image src={profile_img} width={40} height={40} alt="profile icon" priority={true} className="w-full h-full object-cover" />
                 </div>
                 
             ) : (

@@ -7,6 +7,7 @@ import { FiUser, FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import Image from 'next/image';
+import { openPopupModal } from '@/app/_components/utils/overlay/overlayHelpers';
 
 interface StreamInfoProps {
     playDataState: PlayData | null | undefined;
@@ -42,16 +43,32 @@ export default function StreamInfo({
         return () => clearInterval(intervalId);
     }, [playDataState?.stream.start_time]);
 
+    const handleImageClick = () => {
+        const imageUrl = playDataState?.broadcaster.profile_img || "/icons/anonymouse1.svg";
+        const ImageWrapper = ({ closeModal, ...props }: any) => <Image {...props} />;
+        
+        openPopupModal(
+                <ImageWrapper
+                    src={imageUrl}
+                    alt="프로필 이미지 확대"
+                    width={400}
+                    height={400}
+                    className="rounded-lg object-contain"
+                />
+        );
+    };
+
     return (
         <div className="flex flex-row w-full p-4 border-t border-border-secondary dark:border-border-secondary-dark flex items-center space-x-4">
             {/* 프로필 이미지 영역 */}
-            <div className="flex items-center justify-center space-x-2 min-w-[60px]">
+            <div className="w-[60px] h-[60px] rounded-full overflow-hidden flex-shrink-0">
                 <Image
                     src={playDataState?.broadcaster.profile_img || "/icons/anonymouse1.svg"}
                     alt="프로필 이미지"
                     width={60}
                     height={60}
-                    className="rounded-full"
+                    className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={handleImageClick}
                 />
             </div>
             
