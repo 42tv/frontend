@@ -4,7 +4,7 @@ import { blockPostUser } from "@/app/_apis/posts";
 import { useState } from "react";
 import { MdBlock } from "react-icons/md";
 import ErrorMessage from "@/app/_components/modals/error_component";
-import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { getApiErrorMessage } from "@/app/_lib/api";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useModalContentReplace, openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 

@@ -7,10 +7,10 @@ import { requestLobyPlay } from "@/app/_apis/live";
 import usePlayStore from "../utils/store/playStore";
 import { openModal } from "../utils/overlay/overlayHelpers";
 import ErrorMessage from "../modals/error_component";
-import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { getApiErrorMessage } from "@/app/_lib/api";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
 import { Live } from "@/app/_types";
-import { formatElapsedTime } from "../utils/utils";
+import { formatElapsedTime } from "@/app/_lib/utils";
 import { AiOutlineLike } from "react-icons/ai";
 
 

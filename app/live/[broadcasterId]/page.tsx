@@ -1,5 +1,5 @@
 'use client';
-import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { getApiErrorMessage } from "@/app/_lib/api";
 import { requestPlay, requestLike } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";

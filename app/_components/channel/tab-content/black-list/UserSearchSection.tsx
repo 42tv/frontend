@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { searchUserProfile, UserProfile } from "../../../../_apis/user";
-import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { getApiErrorMessage } from "@/app/_lib/api";
 import { MdBlock } from "react-icons/md";
 
 interface UserInfo {

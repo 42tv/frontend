@@ -5,7 +5,7 @@ import { FiEdit } from 'react-icons/fi';
 import { deleteMultiBookmakrs, requestBookmarkList } from '../../_apis/user';
 import { CardData } from '@/app/_types';
 import ToggleSwitch from './ToggleSwitch'; // ToggleSwitch 임포트 추가
-import { getApiErrorMessage } from '@/app/_apis/interfaces';
+import { getApiErrorMessage } from '@/app/_lib/api';
 import { openModal } from '../utils/overlay/overlayHelpers';
 import ErrorMessage from '../modals/error_component';
 
