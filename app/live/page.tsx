@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import LiveStreamCard from "../_components/live/LiveStreamCard";
 import { getLiveList } from "../_apis/live";
-import { Live } from "../_components/utils/interfaces";
+import { Live } from "@/app/_types";
 
 export default function LivePage() {
     const [lives, setLives] = useState<Live[]>([]);

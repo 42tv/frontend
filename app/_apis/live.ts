@@ -1,6 +1,6 @@
 import api from "./auto_refresh_axios";
 import axios from "axios";
-import { PlayData } from "../_components/utils/interfaces";
+import { PlayData } from "@/app/_types";
 
 export async function getLiveList() {
   const response = await api.get("/api/live", {

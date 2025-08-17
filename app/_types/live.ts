@@ -1,5 +1,4 @@
-import { User } from './user';
-import { Post } from './post';
+// User and Post interfaces are imported via index.ts exports
 
 export interface Live {
   // Export the interface
@@ -63,6 +62,8 @@ export interface Channel {
   month_time: number | null;
   total_time: number | null;
 }
+
+// FanLevel and CardData are already exported from ui.ts via index.ts
 
 export interface BroadcastSetting {
   title: string | null;

@@ -1,6 +1,6 @@
 import { getLoginInfo } from '@/app/_apis/user';
 import { create } from 'zustand';
-import { User } from '../interfaces';
+import { User } from '@/app/_types';
 
 interface UserState extends User {
   setUser: (user: User) => void;

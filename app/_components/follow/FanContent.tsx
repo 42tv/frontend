@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import CardGrid from './CardGrid';
 // import { requestFanList } from '../../_apis/user'; // 팬 목록 API 호출 함수 (필요시 구현)
-import { CardData } from '../utils/interfaces';
+import { CardData } from '@/app/_types';
 import ToggleSwitch from './ToggleSwitch'; // ToggleSwitch 임포트 추가
 
 export default function FanContent() {

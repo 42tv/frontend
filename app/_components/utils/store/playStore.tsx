@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PlayData } from '../interfaces';
+import { PlayData } from '@/app/_types';
 
 interface PlayState {
   playData: PlayData | null;

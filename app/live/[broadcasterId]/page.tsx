@@ -10,7 +10,7 @@ import ErrorMessage from "@/app/_components/modals/error_component";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import usePlayStore from "@/app/_components/utils/store/playStore";
 import { useEffect, useState, useRef, use } from "react";
-import { PlayData } from "@/app/_components/utils/interfaces";
+import { PlayData } from "@/app/_types";
 import useUserStore from "@/app/_components/utils/store/userStore";
 import LoginComponent from "@/app/_components/modals/login_component";
 import { Socket, io } from "socket.io-client";

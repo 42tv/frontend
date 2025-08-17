@@ -1,5 +1,5 @@
 'use client';
-import { PlayData } from "@/app/_components/utils/interfaces";
+import { PlayData } from "@/app/_types";
 import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
 import { useEffect, useState } from "react";
 import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from "react";
-import { FanLevel } from "@/app/_components/utils/interfaces";
+import { FanLevel } from "@/app/_types";
 import { getFanLevels, updateFanLevel } from "@/app/_apis/user";
 import { FanLevelItem } from "./FanLevelItem";
 import { FanRankHeader } from "./FanRankHeader";

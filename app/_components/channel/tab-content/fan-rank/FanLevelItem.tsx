@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { FanLevel } from "@/app/_components/utils/interfaces";
+import { FanLevel } from "@/app/_types";
 import { ColorPicker } from "./ColorPicker";
 
 interface FanLevelItemProps {
