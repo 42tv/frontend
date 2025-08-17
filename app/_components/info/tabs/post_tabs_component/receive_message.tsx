@@ -2,41 +2,20 @@ import { deletePost, deletePosts, getPosts, getPostSetting, readPost } from "@/a
 import BlockAlertComponent from "@/app/_components/modals/block_alert";
 import MessageSettingsModal from "@/app/_components/modals/message_settings_modal";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
-import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
-import { LuSettings } from "react-icons/lu";
-import { MdDelete } from "react-icons/md";
 import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
 
-interface Post {
-    id: number;
-    message: string;
-    sender: {
-        idx: number;
-        userId: string;
-        nickname: string;
-    };
-    recipient: {
-        idx: number;
-        userId: string;
-        nickname: string;
-    }
-    is_read: boolean;
-    sentAt: string;
-    readAt: string;
-}
+// Components
+import MessageActionButtons from "./components/MessageActionButtons";
+import MessageSearchBar from "./components/MessageSearchBar";
+import MessageStats from "./components/MessageStats";
+import MessageTable from "./components/MessageTable";
+import MessagePagination from "./components/MessagePagination";
+import SendMessageButton from "./components/SendMessageButton";
 
-interface PostSetting {
-    fanLevels: FanLevel[];
-    minFanLevel: number | null;
-}
-
-interface FanLevel {
-    id: number;
-    name: string;
-    min_donation: number;
-}
+// Types
+import { Post, PostSetting } from "./types/message";
 
 export default function ReceiveMessage() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -58,13 +37,6 @@ export default function ReceiveMessage() {
     // Calculate total pages
     const totalPages = Math.ceil(postsToShow.length / postsPerPage);
     
-    // Calculate current page set
-    const currentSet = Math.ceil(currentPage / pageSetSize);
-    const lastSet = Math.ceil(totalPages / pageSetSize);
-    
-    // Calculate start and end page numbers for current set
-    const startPage = (currentSet - 1) * pageSetSize + 1;
-    const endPage = Math.min(currentSet * pageSetSize, totalPages);
 
     useEffect(() => {
         async function fetchInitialData() {
@@ -244,155 +216,40 @@ export default function ReceiveMessage() {
     return (
         <div className="mb-20">
             <div className="flex flex-row my-5 mx-5 justify-between">
-                <div className="flex space-x-2">
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-border-primary dark:border-border-primary-dark hover:bg-bg-hover dark:hover:bg-bg-hover-dark transition-colors"
-                        onClick={handleOpenSettings}
-                    >
-                        <LuSettings className="text-icon-primary dark:text-icon-primary-dark"/>
-                        <span className="text-text-primary dark:text-text-primary-dark">설정</span>
-                    </button>
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-border-primary dark:border-border-primary-dark hover:bg-bg-hover dark:hover:bg-bg-hover-dark transition-colors"
-                        onClick={handleDeletePosts}
-                    >
-                        <MdDelete className="text-icon-primary dark:text-icon-primary-dark"/>
-                        <span className="text-text-primary dark:text-text-primary-dark">삭제</span>
-                    </button>
-                </div>
-                <div className="flex space-x-2">
-                    <input
-                        className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
-                         border-borderButton1 dark:border-borderButton1-dark 
-                         placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="아이디를 입력하세요"
-                        value={searchNickname}
-                        onChange={handleSearchChange}
-                    />
-                </div>
+                <MessageActionButtons 
+                    onOpenSettings={handleOpenSettings}
+                    onDeletePosts={handleDeletePosts}
+                />
+                <MessageSearchBar 
+                    searchNickname={searchNickname}
+                    onSearchChange={handleSearchChange}
+                />
             </div>
             <div className="p-4">
-                <div className="mb-2">
-                  <span className="text-textBase">
-                    {searchNickname ? '검색 결과' : '총 게시물'} :
-                  </span>
-                  <span className="font-semibold">
-                   {postsToShow.length}
-                  </span>
-                  <span className="text-textBase">
-                    건
-                  </span>
-                  {searchNickname && (
-                    <span className="text-textBase ml-2">
-                      (전체 {posts.length}건 중)
-                    </span>
-                  )}
-                </div>
-                <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
-                    <thead>
-                        <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <th className="p-2 w-[50px] text-textBase-dark-bold">
-                                <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
-                            </th>
-                            <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
-                            <th className="p-2 w-[200px] text-textBase-dark-bold">보낸 회원</th>
-                            <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
-                            <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
-                            <th className="p-2 w-[50px] text-textBase-dark-bold">차단</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentPosts.map((post) => {
-                          return (
-                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
-                              <td className="p-2 text-textBase-dark-bold">
-                                <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
-                              </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-text-primary dark:text-text-primary-dark'}`}>
-                                  <div className="pl-5 mx-auto overflow-hidden">
-                                      <button
-                                          onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id, post.sender.idx)}
-                                          className="truncate block w-full text-left"
-                                          title={post.message}
-                                      >
-                                          {post.message}
-                                      </button>
-                                  </div>
-                              </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-text-primary dark:text-text-primary-dark'}`}>
-                              <button
-                                    onClick={() => showSendPostModal(post.sender.userId, post.sender.nickname, post.message, post.sentAt, post.id, post.sender.idx)}>
-                                    <span>
-                                        {post.sender.nickname}
-                                    </span>
-                                </button>
-                              </td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-text-primary dark:text-text-primary-dark'}`}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 ${post.is_read ? '' : 'text-text-primary dark:text-text-primary-dark'}`}>{post.is_read ? "읽음" : "안읽음"}</td>
-                              <td className={`p-2 text-text-primary dark:text-textBase-dark`}>
-                                <button
-                                  onClick={() => requestBlockUser(post.sender.idx, post.sender.userId, post.sender.nickname)}
-                                >
-                                    차단
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                </table>
-                {/* Pagination Controls */}
-                {postsToShow.length > postsPerPage && (
-                    <div className="flex justify-center mt-6">
-                        {/* Previous set button */}
-                        {currentSet > 1 && (
-                            <button
-                                onClick={() => navigateToSet(currentSet - 1)}
-                                className="mx-3 py-1 rounded"
-                            >
-                                prev
-                            </button>
-                        )}
-                        
-                        {/* Page numbers */}
-                        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(number => (
-                            <button
-                                key={number}
-                                onClick={() => paginate(number)}
-                                className={`px-3 py-1 mx-1 rounded relative
-                                ${currentPage === number ? 'font-semibold' : ''}
-                                after:content-[''] after:absolute after:h-[2px] after:bg-primary after:left-1/4 after:right-1/4
-                                after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
-                            >
-                                {number}
-                            </button>
-                        ))}
-                        
-                        {/* Next set button */}
-                        {currentSet < lastSet && (
-                            <button
-                                onClick={() => navigateToSet(currentSet + 1)}
-                                className="mx-3 py-1 rounded"
-                            >
-                                next
-                            </button>
-                        )}
-                    </div>
-                )}
+                <MessageStats 
+                    searchNickname={searchNickname}
+                    postsToShowLength={postsToShow.length}
+                    totalPostsLength={posts.length}
+                />
+                <MessageTable 
+                    posts={currentPosts}
+                    selectedPosts={selectedPosts}
+                    isChecked={isChecked}
+                    onSelectPost={handleSelectPost}
+                    onSelectAll={handleCheckedMaster}
+                    onShowPostModal={showSendPostModal}
+                    onBlockUser={requestBlockUser}
+                    formatDate={formatDateFromString}
+                />
+                <MessagePagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    pageSetSize={pageSetSize}
+                    onPageChange={paginate}
+                    onSetNavigate={navigateToSet}
+                />
             </div>
-            <div className="flex w-full justify-center items-center mt-5">
-                <button 
-                    className="w-[120px] h-[40px] rounded-[15px]
-                        bg-color-darkBlue 
-                        text-primary-foreground
-                        hover:bg-opacity-80"
-                    onClick={() => openModalSendpost()}
-                >
-                    쪽지 보내기
-                </button>
-            </div>
+            <SendMessageButton onSendMessage={openModalSendpost} />
         </div>
     )
 }
