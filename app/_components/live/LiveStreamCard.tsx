@@ -4,7 +4,7 @@ import { FiHeart, FiUser } from 'react-icons/fi'; // react-icons에서 아이콘
 import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가져오기
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
 import { requestLobyPlay } from "@/app/_apis/live";
-import usePlayStore from "../utils/store/playStore";
+import { usePlayStore } from "@/app/_lib";
 import { openModal } from "../utils/overlay/overlayHelpers";
 import ErrorMessage from "../modals/error_component";
 import { getApiErrorMessage } from "@/app/_lib/api";

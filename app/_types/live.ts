@@ -6,12 +6,18 @@ export interface Live {
   start_time: string;
   play_cnt: number;
   recommend_cnt: number;
-  user: {
+  broadcaster: {
     idx: number;
     user_id: string;
     nickname: string;
     profile_img: string;
-    broadcastSetting: BroadcastSetting;
+    broadcastSetting: {
+      is_adult: boolean;
+      is_fan: boolean;
+      is_pw: boolean;
+      title: string;
+      fan_level: number;
+    };
   };
   viewerCount: number;
 }
