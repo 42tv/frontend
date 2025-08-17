@@ -2,7 +2,7 @@
 import { reqeustChat } from '@/app/_apis/live';
 import React, { useState } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
-import useUserStore from '../../utils/store/userStore';
+import { useUserStore } from "@/app/_lib/stores"
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
 import SendMessageForm from '../../common/SendMessageForm';

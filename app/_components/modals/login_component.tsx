@@ -3,7 +3,7 @@ import { openModal } from '../utils/overlay/overlayHelpers';
 import ErrorMessage from './error_component';
 import { login, singUp } from '@/app/_apis/user';
 import { useRouter } from 'next/navigation';
-import useUserStore from '../utils/store/userStore';
+import { useUserStore } from "@/app/_lib/stores"
 import { overlay } from 'overlay-kit';
 
 export default function LoginComponent() {

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import useUserStore from "../../utils/store/userStore";
+import { useUserStore } from "@/app/_lib/stores"
 import { FiUser, FiSettings } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";

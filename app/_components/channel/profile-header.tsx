@@ -2,7 +2,7 @@
 // components/ProfileHeader.tsx
 import React from "react";
 import Image from "next/image";
-import useUserStore from "../utils/store/userStore";
+import { useUserStore } from "@/app/_lib/stores";
 
 const ProfileHeader = () => {
   // useUserStore에서 profile_img 상태를 선택합니다.
