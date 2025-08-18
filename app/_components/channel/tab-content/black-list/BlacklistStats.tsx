@@ -48,7 +48,7 @@ export const BlacklistStats: React.FC<BlacklistStatsProps> = ({
       } else {
         setNotFound(true);
       }
-    } catch (error) {
+    } catch {
       setNotFound(true);
     } finally {
       setSearching(false);

@@ -1,7 +1,6 @@
 "use client";
 
 import { blockPostUser } from "@/app/_apis/posts";
-import { useState } from "react";
 import { MdBlock } from "react-icons/md";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_lib/api";

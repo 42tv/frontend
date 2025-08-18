@@ -1,7 +1,7 @@
 import React from 'react';
 import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
 import { BiTrash } from "react-icons/bi";
-import { BlockedUser } from './useBlockedUsers';
+import { BlockedUser } from '@/app/_types/blacklist';
 
 interface BlockedUsersTableProps {
     users: BlockedUser[];

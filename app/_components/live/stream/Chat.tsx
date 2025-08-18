@@ -21,10 +21,9 @@ interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
     socket: Socket | null; // socket prop 추가
     myRole: MyRole;
-    broadcasterIdx: number; // 방송자의 idx
 }
 
-const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterIdx }) => {
+const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     const [activeTab, setActiveTab] = useState<TabType>('chat'); // 활성 탭 상태
     const {idx: currentUserIdx} = useUserStore();
 
@@ -128,7 +127,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     const handleSendMessage = async (message: string) => {
         try {
             await reqeustChat(broadcasterId, message);
-        } catch (e: any) {
+        } catch {
             openPopupModal(<LoginComponent />);
         }
     };

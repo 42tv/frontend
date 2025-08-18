@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react'; // useEffect 제거 (자식 컴포넌트에서 처리)
-import TabNav from '../_components/follow/TabNav';
-import BookmarkContent from '../_components/follow/BookmarkContent'; // BookmarkContent 임포트
-import FanContent from '../_components/follow/FanContent'; // FanContent 임포트
+import TabNav from '@/app/_components/follow/TabNav';
+import BookmarkContent from '@/app/_components/follow/BookmarkContent'; // BookmarkContent 임포트
+import FanContent from '@/app/_components/follow/FanContent'; // FanContent 임포트
 
 const TABS = ['FAN', 'BOOKMARK'];
 

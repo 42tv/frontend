@@ -1,16 +1,6 @@
 import { useState, useEffect } from "react";
 import { getBlockedPostUser, unblockPostUser, unblockPostUsers } from "@/app/_apis/posts";
-
-interface BlockedUser {
-    id: number;
-    blocked: {
-        idx: number;
-        user_id: string;
-        nickname: string;
-        profile_img: string;
-    }
-    created_at: string;
-}
+import { BlockedUser } from "@/app/_types/blacklist";
 
 export const useBlockedUsers = () => {
     const [blockedUser, setBlockedUser] = useState<BlockedUser[]>([]);

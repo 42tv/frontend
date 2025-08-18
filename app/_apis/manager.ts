@@ -20,7 +20,7 @@ export interface RemoveManagerDto {
 export interface AddManagerResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 /**
@@ -29,7 +29,7 @@ export interface AddManagerResponse {
 export interface RemoveManagerResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 /**
@@ -51,7 +51,7 @@ export async function addManager(userId: string): Promise<AddManagerResponse> {
     });
 
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to add manager:", error);
     throw error;
   }
@@ -77,7 +77,7 @@ export async function removeManager(userId: string): Promise<RemoveManagerRespon
     });
 
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to remove manager:", error);
     throw error;
   }
