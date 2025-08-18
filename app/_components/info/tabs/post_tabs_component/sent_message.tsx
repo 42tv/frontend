@@ -1,123 +1,63 @@
-import { deletePost, deletePosts, getSendPosts } from "@/app/_apis/posts";
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
-import CheckboxButton from "@/app/_components/utils/custom_ui/checkbox";
-import { useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
-import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
-
-interface Post {
-    id: number;
-    message: string;
-    sender: {
-        idx: number;
-        userId: string;
-        nickname: string;
-    };
-    recipient: {
-        idx: number;
-        userId: string;
-        nickname: string;
-      },
-    is_read: boolean;
-    sentAt: string;
-    readAt: string;
-}
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
+import { usePosts } from "./sent_message/usePosts";
+import { usePagination } from "./sent_message/usePagination";
+import SearchControls from "./sent_message/SearchControls";
+import PostsCounter from "./sent_message/PostsCounter";
+import PostsTable from "./sent_message/PostsTable";
+import Pagination from "./sent_message/Pagination";
+import SendMessageButton from "./sent_message/SendMessageButton";
+import { useState, useEffect } from "react";
 
 export default function ReceiveMessage() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const {
+        posts,
+        filteredPosts,
+        selectedPosts,
+        searchNickname,
+        handleSearchChange,
+        handleSelectPost,
+        handleDeletePosts,
+        deleteSinglePost,
+        setSelectedPosts
+    } = usePosts();
+
     const [isChecked, setIsChecked] = useState(false);
-    const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
-    const [searchNickname, setSearchNickname] = useState('');
-    const postsPerPage = 10;
-    const pageSetSize = 5; // Number of page buttons to show at once
     
-    // Calculate the posts to display on current page (use filtered posts if search is active)
+    // Determine which posts to show
     const postsToShow = searchNickname ? filteredPosts : posts;
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = postsToShow.slice(indexOfFirstPost, indexOfLastPost);
     
-    // Calculate total pages
-    const totalPages = Math.ceil(postsToShow.length / postsPerPage);
-    
-    // Calculate current page set
-    const currentSet = Math.ceil(currentPage / pageSetSize);
-    const lastSet = Math.ceil(totalPages / pageSetSize);
-    
-    // Calculate start and end page numbers for current set
-    const startPage = (currentSet - 1) * pageSetSize + 1;
-    const endPage = Math.min(currentSet * pageSetSize, totalPages);
+    const pagination = usePagination({ 
+        totalItems: postsToShow.length,
+        itemsPerPage: 10,
+        pageSetSize: 5
+    });
 
+    // Get current page posts
+    const currentPosts = postsToShow.slice(
+        pagination.indexOfFirstItem, 
+        pagination.indexOfLastItem
+    );
+
+    // Reset pagination when search changes
     useEffect(() => {
-        async function fetchPosts() {
-            // Fetch posts from API
-            const response = await getSendPosts();
-            console.log(response)
-            setPosts(response);
-            setFilteredPosts(response);
-        }
-        fetchPosts();
-    }, [])
-    
-    // Format the date as xxxx년 xx월 xx일 xx시 xx분
-    const formatDateFromString = (dateString: string) => {
-        const [datePart, timePart] = dateString.split("T");
-        const [year, month, day] = datePart.split("-");
-        const [hour, minute] = timePart.split(":");
-      
-        return `${year}-${month}-${day} ${hour}:${minute}`;
+        pagination.resetToFirstPage();
+    }, [searchNickname, pagination]);
+
+    // Handle search with pagination reset
+    const handleSearchWithReset = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleSearchChange(e);
+        pagination.resetToFirstPage();
     };
 
-    const handleSelectPost = (postId: number) => {
-        setSelectedPosts(prev =>
-            prev.includes(postId)
-                ? prev.filter(id => id !== postId)
-                : [...prev, postId]
-        );
-    };
-
-    /**
-     * 검색어 변경 시 실시간 검색
-     */
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setSearchNickname(value);
-        
-        if (value.trim() === '') {
-            // 검색어가 비어있으면 모든 포스트 보여주기
-            setFilteredPosts(posts);
-        } else {
-            // 받는 사람의 닉네임으로 필터링
-            const filtered = posts.filter(post => 
-                post.recipient.nickname.toLowerCase().includes(value.toLowerCase())
-            );
-            setFilteredPosts(filtered);
-        }
-        // 검색 후 첫 페이지로 이동
-        setCurrentPage(1);
-    };
-
-    // Page navigation functions
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-    
-    // Navigate to next or previous set of pages
-    const navigateToSet = (setNumber: number) => {
-        const targetPage = (setNumber - 1) * pageSetSize + 1;
-        setCurrentPage(targetPage);
-    };
-
-    /**
-     * 쪽지 자세히 보기
-     * @param userId 
-     * @param nickname 
-     * @param message 
-     * @param sentAt 
-     * @param postId 
-     * @param senderIdx 
-     */
-    async function showSendPostModal(userId: string, nickname: string, message:string, sentAt: string, postId: number, senderIdx: number) {
+    const showSendPostModal = async (
+        userId: string, 
+        nickname: string, 
+        message: string, 
+        sentAt: string, 
+        postId: number, 
+        senderIdx: number
+    ) => {
         openModal(
             <PostDetail 
                 userId={userId} 
@@ -125,187 +65,61 @@ export default function ReceiveMessage() {
                 message={message} 
                 sentAt={sentAt} 
                 postId={postId} 
- 
                 deleteSinglePost={deleteSinglePost}
                 senderIdx={senderIdx}
             />
         );
-    }
+    };
 
-    /**
-     * 여러개의 쪽지 삭제
-     */
-    async function handleDeletePosts() {
-        try {
-            // Delete selected posts
-            await deletePosts(selectedPosts, 'sent');
-            setPosts(posts.filter(post => !selectedPosts.includes(post.id)));
-            setFilteredPosts(filteredPosts.filter(post => !selectedPosts.includes(post.id)));
-            setSelectedPosts([]);
-            setIsChecked(false);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
-        }
-    }
-
-    async function deleteSinglePost(postId: number) {
-        try {
-            await deletePost(postId);
-            // Then update both posts and filtered posts state
-            setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-            setFilteredPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    function handleCheckedMaster() {
+    const handleCheckedMaster = () => {
         if (!isChecked) {
             setIsChecked(true);
-            // Only select posts on the current page instead of all posts
             setSelectedPosts(currentPosts.map(post => post.id));
         } else {
             setIsChecked(false);
             setSelectedPosts([]);
         }
-    }
+    };
 
     return (
         <div className="mb-20">
-            <div className="flex flex-row my-5 mx-5 justify-between">
-                <div className="flex space-x-2">
-                    <button 
-                        className="flex flex-row w-[95px] h-[40px] rounded-[8px] items-center space-x-1 justify-center border
-                        border-borderButton1 dark:border-borderButton1-dark hover:bg-colorFg01"
-                        onClick={handleDeletePosts}
-                    >
-                        <MdDelete className="text-iconBg-dark"/>
-                        <span>삭제</span>
-                    </button>
-                </div>
-                <div className="flex space-x-2">
-                    <input
-                        className="w-[200px] h-[40px] rounded-[8px] border focus:outline-none pl-2
-                         border-borderButton1 dark:border-borderButton1-dark 
-                         placeholder-textSearch dark:placeholder-textSearch-dark"
-                        placeholder="아이디를 입력하세요"
-                        value={searchNickname}
-                        onChange={handleSearchChange}
-                    />
-                </div>
-            </div>
+            <SearchControls
+                searchNickname={searchNickname}
+                onSearchChange={handleSearchWithReset}
+                onDeletePosts={handleDeletePosts}
+            />
+            
             <div className="p-4">
-                <div className="mb-2">
-                  <span className="text-textBase">
-                    {searchNickname ? '검색 결과' : '총 게시물'} :
-                  </span>
-                  <span className="font-semibold">
-                   {postsToShow.length}
-                  </span>
-                  <span className="text-textBase">
-                    건
-                  </span>
-                  {searchNickname && (
-                    <span className="text-textBase ml-2">
-                      (전체 {posts.length}건 중)
-                    </span>
-                  )}
-                </div>
-                <table className="w-full border-t border-t-2 border-b border-tableBorder dark:border-tableBorder-dark">
-                    <thead>
-                        <tr className="border-b border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle">
-                            <th className="p-2 w-[50px] text-textBase-dark-bold">
-                                <CheckboxButton handleClick={handleCheckedMaster} isChecked={isChecked}/>
-                            </th>
-                            <th className="p-2 w-[400px] text-textBase-dark-bold">내용</th>
-                            <th className="p-2 w-[200px] text-textBase-dark-bold">닉네임</th>
-                            <th className="p-2 w-[140px] text-textBase-dark-bold">날짜</th>
-                            <th className="p-2 w-[100px] text-textBase-dark-bold">상태</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentPosts.map((post) => {
-                          return (
-                            <tr key={post.id} className={`border-b border-tableRowBorder dark:border-tableRowBorder-dark text-center align-middle text-textBase dark:text-textBase-dark overflow-hidden`}>
-                              <td className="p-2 text-textBase-dark-bold">
-                                <CheckboxButton handleClick={() => handleSelectPost(post.id)} isChecked={selectedPosts.includes(post.id)}/>
-                              </td>
-                              <td className={`p-2 `}>
-                                  <div className="max-w-[400px] mx-auto overflow-hidden">
-                                      <button
-                                          onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id, post.sender.idx)}
-                                          className="truncate block w-full text-left"
-                                          title={post.message}
-                                      >
-                                          {post.message}
-                                      </button>
-                                  </div>
-                              </td>
-                              <td className={`p-2 `}>
-                              <button
-                                    onClick={() => showSendPostModal(post.recipient.userId, post.recipient.nickname, post.message, post.sentAt, post.id, post.sender.idx)}>
-                                    <span>
-                                        {post.recipient.nickname}
-                                    </span>
-                                </button>
-                              </td>
-                              <td className={`p-2 `}>{formatDateFromString(post.sentAt)}</td>
-                              <td className={`p-2 `}>{post.is_read ? "읽음" : "안읽음"}</td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                </table>
+                <PostsCounter
+                    searchNickname={searchNickname}
+                    filteredCount={postsToShow.length}
+                    totalCount={posts.length}
+                />
+                
+                <PostsTable
+                    posts={currentPosts}
+                    selectedPosts={selectedPosts}
+                    isAllSelected={isChecked}
+                    onSelectPost={handleSelectPost}
+                    onSelectAll={handleCheckedMaster}
+                    onShowPostModal={showSendPostModal}
+                />
+                
                 {/* Pagination Controls */}
-                {postsToShow.length > postsPerPage && (
-                    <div className="flex justify-center mt-6">
-                        {/* Previous set button */}
-                        {currentSet > 1 && (
-                            <button
-                                onClick={() => navigateToSet(currentSet - 1)}
-                                className="mx-3 py-1 rounded"
-                            >
-                                prev
-                            </button>
-                        )}
-                        
-                        {/* Page numbers */}
-                        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(number => (
-                            <button
-                                key={number}
-                                onClick={() => paginate(number)}
-                                className={`px-3 py-1 mx-1 rounded relative
-                                ${currentPage === number ? 'font-semibold' : ''}
-                                after:content-[''] after:absolute after:h-[2px] after:bg-primary after:left-1/4 after:right-1/4
-                                after:bottom-0 after:scale-x-0 ${currentPage === number ? 'after:scale-x-100' : 'hover:after:scale-x-100'}`}
-                            >
-                                {number}
-                            </button>
-                        ))}
-                        
-                        {/* Next set button */}
-                        {currentSet < lastSet && (
-                            <button
-                                onClick={() => navigateToSet(currentSet + 1)}
-                                className="mx-3 py-1 rounded"
-                            >
-                                next
-                            </button>
-                        )}
-                    </div>
+                {postsToShow.length > 10 && (
+                    <Pagination
+                        currentPage={pagination.currentPage}
+                        currentSet={pagination.currentSet}
+                        lastSet={pagination.lastSet}
+                        startPage={pagination.startPage}
+                        endPage={pagination.endPage}
+                        onPageChange={pagination.paginate}
+                        onSetChange={pagination.navigateToSet}
+                    />
                 )}
             </div>
-            <div className="flex w-full justify-center items-center mt-5">
-                <button 
-                    className="w-[120px] h-[40px] rounded-[15px]
-                        bg-color-darkBlue 
-                        text-primary-foreground
-                        hover:bg-opacity-80"
-                >
-                    쪽지 보내기
-                </button>
-            </div>
+            
+            <SendMessageButton />
         </div>
-    )
+    );
 }
