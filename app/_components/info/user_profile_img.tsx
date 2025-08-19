@@ -3,7 +3,7 @@ import { useState, useRef } from 'react'
 import { uploadProfileImage } from '@/app/_apis/user';
 import { useUserStore } from "@/app/_lib/stores"
 import { openModal } from '../utils/overlay/overlayHelpers';
-import DefaultAlertMessage from '../modals/default_alert_compoent';
+import DefaultAlertMessage from '../modals/default_alert_component';
 import { getApiErrorMessage } from '@/app/_lib/api';
 
 export default function UserProfileImg({profilePath, width, height} : {profilePath: string, width: number, height: number}) {

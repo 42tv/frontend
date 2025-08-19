@@ -1,6 +1,6 @@
 import React from 'react';
 import { blockPostUser } from "@/app/_apis/posts";
-import DefaultAlertMessage from './default_alert_compoent';
+import DefaultAlertMessage from './default_alert_component';
 
 export default function BlockAlertComponent(
   { blockedIdx, blockUserId, blockedNickname, closePopup, changePopupComponent }: 

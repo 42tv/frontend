@@ -1,12 +1,13 @@
 import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
+import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { usePosts } from "./sent_message/usePosts";
 import { usePagination } from "./sent_message/usePagination";
 import SearchControls from "./sent_message/SearchControls";
 import PostsCounter from "./sent_message/PostsCounter";
 import PostsTable from "./sent_message/PostsTable";
 import Pagination from "./sent_message/Pagination";
-import SendMessageButton from "./sent_message/SendMessageButton";
+import SendMessageButton from "./components/SendMessageButton";
 import { useState, useEffect } from "react";
 
 export default function ReceiveMessage() {
@@ -119,7 +120,7 @@ export default function ReceiveMessage() {
                 )}
             </div>
             
-            <SendMessageButton />
+            <SendMessageButton onSendMessage={() => openModal(<SendMessageForm />)} />
         </div>
     );
 }

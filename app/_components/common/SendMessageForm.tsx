@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { sendPost } from '@/app/_apis/posts';
-import DefaultAlertMessage from '../modals/default_alert_compoent';
+import DefaultAlertMessage from '../modals/default_alert_component';
 import { openPopupModal } from '../utils/overlay/overlayHelpers';
 
 interface SendMessageFormProps {
