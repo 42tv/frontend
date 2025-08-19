@@ -23,6 +23,17 @@ export const PlayerControls = ({
     onVolumeChange(newVolume);
   };
 
+  const handleVolumeClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    // 음소거 상태일 때만 클릭 이벤트 처리
+    if (isMuted) {
+      const input = event.currentTarget;
+      const rect = input.getBoundingClientRect();
+      const clickPosition = (event.clientX - rect.left) / rect.width;
+      const newVolume = Math.max(0, Math.min(1, clickPosition));
+      onVolumeChange(newVolume);
+    }
+  };
+
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2.5 flex items-center justify-between text-white animate-in fade-in duration-300">
       <div className="flex items-center gap-4">
@@ -45,8 +56,8 @@ export const PlayerControls = ({
           step="0.05"
           value={isMuted ? 0 : volume}
           onChange={handleVolumeChange}
-          className="cursor-pointer w-20 accent-white disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={isMuted}
+          onClick={handleVolumeClick}
+          className={`w-20 accent-white ${isMuted ? 'cursor-pointer opacity-70 hover:opacity-100' : 'cursor-pointer'}`}
         />
       </div>
       {currentQuality && (

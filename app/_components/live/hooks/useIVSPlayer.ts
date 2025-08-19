@@ -11,10 +11,31 @@ interface UseIVSPlayerProps {
 
 export const useIVSPlayer = ({ streamUrl, videoRef }: UseIVSPlayerProps) => {
   const playerRef = useRef<IVSPlayerInstance | null>(null);
+  
+  // 로컬스토리지에서 저장된 설정 불러오기
+  const getStoredSettings = () => {
+    if (typeof window === 'undefined') return { isMuted: true, volume: 1 };
+    
+    try {
+      const storedVolume = localStorage.getItem('ivs-player-volume');
+      const storedMuted = localStorage.getItem('ivs-player-muted');
+      
+      return {
+        isMuted: storedMuted ? JSON.parse(storedMuted) : true,
+        volume: storedVolume ? parseFloat(storedVolume) : 1,
+      };
+    } catch (error) {
+      console.error('Failed to load player settings:', error);
+      return { isMuted: true, volume: 1 };
+    }
+  };
+
+  const { isMuted: initialMuted, volume: initialVolume } = getStoredSettings();
+  
   const [playerState, setPlayerState] = useState<PlayerState>({
     isPlaying: true,
-    isMuted: true,
-    volume: 1,
+    isMuted: initialMuted,
+    volume: initialVolume,
     currentQuality: null,
   });
 
@@ -133,6 +154,13 @@ export const useIVSPlayer = ({ streamUrl, videoRef }: UseIVSPlayerProps) => {
       const newMuted = !playerState.isMuted;
       playerRef.current.setMuted(newMuted);
       setPlayerState(prev => ({ ...prev, isMuted: newMuted }));
+      
+      // 로컬스토리지에 저장
+      try {
+        localStorage.setItem('ivs-player-muted', JSON.stringify(newMuted));
+      } catch (error) {
+        console.error('Failed to save mute setting:', error);
+      }
     }
   };
 
@@ -140,9 +168,25 @@ export const useIVSPlayer = ({ streamUrl, videoRef }: UseIVSPlayerProps) => {
     if (playerRef.current) {
       playerRef.current.setVolume(newVolume);
       setPlayerState(prev => ({ ...prev, volume: newVolume }));
+      
+      // 볼륨을 올리면 음소거 해제
       if (newVolume > 0 && playerState.isMuted) {
         playerRef.current.setMuted(false);
         setPlayerState(prev => ({ ...prev, isMuted: false }));
+        
+        // 음소거 해제 상태도 저장
+        try {
+          localStorage.setItem('ivs-player-muted', JSON.stringify(false));
+        } catch (error) {
+          console.error('Failed to save mute setting:', error);
+        }
+      }
+      
+      // 로컬스토리지에 볼륨 저장
+      try {
+        localStorage.setItem('ivs-player-volume', newVolume.toString());
+      } catch (error) {
+        console.error('Failed to save volume setting:', error);
       }
     }
   };
