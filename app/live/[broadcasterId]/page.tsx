@@ -253,7 +253,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                                 nickname: playDataState.user.nickname,
                                 role: playDataState.user.role
                             }}
-                            broadcasterIdx={playDataState.broadcaster.idx}
                         />
                     )}
                 </div>

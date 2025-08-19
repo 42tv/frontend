@@ -42,11 +42,11 @@ export default function LoginComponent() {
 
     const handleSignUpWithErrorHandling = async () => {
         const result = await handleSignUp();
-        if (result.error) {
+        if ('error' in result && result.error) {
             openModal(<ErrorMessage message={result.error} />, { closeButtonSize: "w-[16px] h-[16px]" });
-        } else if (result.success) {
+        } else if ('success' in result && result.success) {
             setActiveTab('login');
-            if (result.message) {
+            if ('message' in result && result.message) {
                 openModal(<ErrorMessage message={result.message} />, { closeButtonSize: "w-[16px] h-[16px]" });
             }
         }

@@ -33,7 +33,6 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   onToggleColorPicker,
   onColorPreview,
   onColorConfirm,
-  onColorCancel,
   onCloseColorPicker,
   onHexInputChange,
   onUpdate
@@ -107,8 +106,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
           hexInput={hexInput}
           onColorPreview={onColorPreview}
           onColorConfirm={onColorConfirm}
-          onClose={onCloseColorPicker}
-          onCancel={onColorCancel}
+          onCancel={onCloseColorPicker}
           onHexInputChange={onHexInputChange}
         />
       </div>
