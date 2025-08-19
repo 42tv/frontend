@@ -12,8 +12,7 @@ interface MessageActionProps {
 const MessageAction: React.FC<MessageActionProps> = ({
   userId,
   nickname,
-  onSendMessage,
-  onClose
+  onSendMessage
 }) => {
   return (
     <MenuItem

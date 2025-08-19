@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { Message, Viewer, OpCode } from '@/app/_types';
+import { Message, Viewer, OpCode, ChatMessage, RoleChangePayload, KickPayload } from '@/app/_types';
 
 // Handlers
 import { useChatHandlers } from './handlers/chatHandlers';
@@ -27,12 +27,12 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
     useEffect(() => {
         console.log("Setting up chat socket:", socket);
         if (socket) {
-            const wrappedHandleChatMessage = (message: any) => handleChatMessage(message, setMessages);
-            const wrappedHandleViewersUpdate = (viewersData: any) => handleViewersUpdate(viewersData, setViewers);
-            const wrappedHandleViewerJoin = (viewerData: any) => handleViewerJoin(viewerData, setViewers);
-            const wrappedHandleViewerLeave = (viewerData: any) => handleViewerLeave(viewerData, setViewers);
-            const wrappedHandleRoleChanged = (payload: any) => handleRoleChanged(payload, setViewers, setMessages);
-            const wrappedHandleKickUser = (payload: any) => handleKickUser(payload, setViewers);
+            const wrappedHandleChatMessage = (message: ChatMessage) => handleChatMessage(message, setMessages);
+            const wrappedHandleViewersUpdate = (viewersData: Viewer[]) => handleViewersUpdate(viewersData, setViewers);
+            const wrappedHandleViewerJoin = (viewerData: Viewer) => handleViewerJoin(viewerData, setViewers);
+            const wrappedHandleViewerLeave = (viewerData: { user_idx: number }) => handleViewerLeave(viewerData, setViewers);
+            const wrappedHandleRoleChanged = (payload: RoleChangePayload) => handleRoleChanged(payload, setViewers, setMessages);
+            const wrappedHandleKickUser = (payload: KickPayload) => handleKickUser(payload, setViewers);
 
             socket.on(OpCode.CHAT, wrappedHandleChatMessage);
             socket.on(OpCode.VIEWER_LIST, wrappedHandleViewersUpdate);

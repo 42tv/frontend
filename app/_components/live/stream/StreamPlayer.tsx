@@ -17,7 +17,7 @@ interface StreamPlayerProps {
     userData: UserData;
 }
 
-const StreamPlayer: React.FC<StreamPlayerProps> = ({ streamData, userData }) => {
+const StreamPlayer: React.FC<StreamPlayerProps> = ({ streamData }) => {
     return (
         <div className="aspect-video bg-black flex items-center justify-center text-white">
             {/* IvsPlayer 컴포넌트를 사용하여 비디오 스트림 재생 */}

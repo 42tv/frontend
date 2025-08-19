@@ -1,6 +1,6 @@
 import Image from "next/image";
 // import { EyeIcon, PlayIcon, HeartIcon } from '@heroicons/react/24/solid'; // 아이콘 추가 -> 제거
-import { FiHeart, FiUser } from 'react-icons/fi'; // react-icons에서 아이콘 가져오기
+import { FiUser } from 'react-icons/fi'; // react-icons에서 아이콘 가져오기
 import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가져오기
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
 import { requestLobyPlay } from "@/app/_apis/live";
@@ -23,7 +23,7 @@ interface LiveStreamCardProps {
     index: number; // Add index prop for priority
 }
 
-export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
+export default function LiveStreamCard({ live }: LiveStreamCardProps) {
     const [elapsedTime, setElapsedTime] = useState(''); // 경과 시간 상태 추가
     const { setPlayData } = usePlayStore()
     const router = useRouter(); // useRouter 훅 사용

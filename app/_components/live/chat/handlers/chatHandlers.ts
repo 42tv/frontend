@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { ChatMessage, Message, Viewer } from '@/app/_types';
+import { ChatMessage, Message } from '@/app/_types';
 
 export const useChatHandlers = () => {
   // 채팅 메시지 핸들러
