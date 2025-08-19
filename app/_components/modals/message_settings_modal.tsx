@@ -2,22 +2,12 @@
 
 import { updatePostSetting } from '@/app/_apis/posts';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { PostSetting } from '@/app/_components/info/tabs/post_tabs_component/types/message';
 
 interface MessageSettingsModalProps {
     closeModal: () => void;
     postSetting?: PostSetting;
     setPostSetting: Dispatch<SetStateAction<PostSetting | undefined>>;
-}
-
-interface FanLevel {
-    id: number;
-    name: string;
-    min_donation: number;
-}
-
-interface PostSetting {
-    fanLevels: FanLevel[];
-    minFanLevel: number | null;
 }
 
 export default function MessageSettingsModal({ closeModal, postSetting, setPostSetting }: MessageSettingsModalProps) {
@@ -26,67 +16,63 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
     // Get fan levels from postSetting and add '제한없음' option
     const getFanLevels = () => {
         const levels = postSetting?.fanLevels || [];
+
+        // Sort levels by level in descending order (level 1 = highest rank)
+        const sortedLevels = [...levels].sort((a, b) => b.level - a.level);
         
-        // Sort levels by min_donation in descending order to assign colors by rank
-        const sortedLevels = [...levels].sort((a, b) => b.min_donation - a.min_donation);
-        
-        // Assign colors based on rank (highest donation gets best color)
-        const levelsWithColors = sortedLevels.map((level, index) => ({
-            id: level.id,
+        // Use API data directly (level, name, min_donation, color)
+        const levelsWithData = sortedLevels.map((level) => ({
+            level: level.level,
             name: level.name,
             min_donation: level.min_donation,
-            color: getColorByRank(index, sortedLevels.length)
+            color: level.color
         }));
 
         return [
-            ...levelsWithColors,
-            { id: -1, name: '제한없음', min_donation: 0, color: 'bg-text-tertiary' }
+            ...levelsWithData,
+            { level: 0, name: '제한없음', min_donation: 0, color: 'bg-text-tertiary' }
         ];
     };
 
-    // Helper function to assign colors based on rank (0 = highest rank)
-    const getColorByRank = (rank: number, totalLevels: number) => {
-        const colors = [
-            '#9333EA',         // 1등 - 보라색 (bg-purple-600)
-            '#FFC9D5',         // 2등 - 플래티넘 색상 (이미 hex)
-            '#CA8A04',         // 3등 - 노란색 (bg-yellow-600)
-            '#D1D5DB',         // 4등 - 회색 (bg-gray-300)
-            '#6B7280',         // 5등 - 진한 회색 (bg-gray-500)
-        ];
-        
-        // If there are more levels than colors, cycle through colors
-        return colors[rank % colors.length];
+    // Convert fan level to level number for API
+    const getLevelFromSelection = (selectedLevel: number | null): number | null => {
+        if (selectedLevel === null || selectedLevel === 0) return null; // 제한없음
+        return selectedLevel; // API에서 받은 level 값을 그대로 사용
     };
 
     // Initialize selected grade based on minFanLevel
     useEffect(() => {
         if (postSetting) {
             if (postSetting.minFanLevel == null) {
-                setSelectedGrade(-1); // -1 means no restriction
+                setSelectedGrade(0); // 0 means no restriction
             }
             else {
+                // Use minFanLevel directly as it's now the level value
                 setSelectedGrade(postSetting.minFanLevel);
             }
         }
     }, [postSetting]);
 
-    const handleGradeToggle = (gradeId: number | null) => {
-        setSelectedGrade(gradeId);
+    const handleGradeToggle = (level: number | null) => {
+        setSelectedGrade(level);
     };
 
     const handleApply = async () => {
         try {
-            await updatePostSetting(selectedGrade);
+            // Convert level to API format
+            const levelValue = getLevelFromSelection(selectedGrade);
+            console.log('Selected level:', selectedGrade, 'API Level:', levelValue);
+            
+            await updatePostSetting(levelValue);
             if (postSetting) {
                 setPostSetting({
                     ...postSetting,
-                    minFanLevel: selectedGrade
+                    minFanLevel: levelValue
                 });
             }
         }
-        catch(e) {
+        catch {
         }
-        console.log('Selected grade ID:', selectedGrade);
         closeModal();
     };
 
@@ -102,43 +88,43 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                 {/* Content */}
                 <div className="w-full h-[340px] pt-5 px-5 rounded-[8px] overflow-auto">
                     <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-textBase dark:text-textBase-dark mb-3">수신 설정 (설정 등급 이상 수신)</h3>
-                        {getFanLevels().map((level) => (
-                            <div key={level.id || 'unlimited'} className="group relative">
+                        <h3 className="text-sm font-semibold text-textBase dark:text-textBase-dark mb-3">수신 설정 (선택한 등급 이상에서 수신)</h3>
+                        {getFanLevels().map((levelData) => (
+                            <div key={levelData.level || 'unlimited'} className="group relative">
                                 <label className={`flex items-center space-x-4 p-3 rounded border transition-all duration-200 cursor-pointer
-                                    ${selectedGrade === level.id 
+                                    ${selectedGrade === levelData.level 
                                         ? 'border-color-darkBlue' 
                                         : 'border-tableBorder dark:border-tableBorder-dark'
                                     }`}>
                                     <input
                                         type="radio"
-                                        id={level.id?.toString() || 'unlimited'}
+                                        id={levelData.level?.toString() || 'unlimited'}
                                         name="grade"
                                         className="w-4 h-4 text-color-darkBlue bg-modalBg dark:bg-modalBg-dark border-tableBorder dark:border-tableBorder-dark"
-                                        checked={selectedGrade === level.id}
-                                        onChange={() => handleGradeToggle(level.id)}
+                                        checked={selectedGrade === levelData.level}
+                                        onChange={() => handleGradeToggle(levelData.level)}
                                     />
                                     <div className="flex items-center space-x-3 flex-1">
                                         <div 
-                                            className={`w-8 h-8 rounded-full flex items-center justify-center ${level.color.startsWith('bg-') ? level.color : ''}`}
-                                            style={level.color.startsWith('#') ? { backgroundColor: level.color } : {}}
+                                            className={`w-8 h-8 rounded-full flex items-center justify-center ${levelData.color.startsWith('bg-') ? levelData.color : ''}`}
+                                            style={levelData.color.startsWith('#') ? { backgroundColor: levelData.color } : {}}
                                         >
-                                            {level.name === '제한없음' ? (
+                                            {levelData.name === '제한없음' ? (
                                                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
                                             ) : (
                                                 <span className="text-white text-xs font-bold">
-                                                    {level.name.charAt(0).toUpperCase()}
+                                                    {levelData.name.charAt(0).toUpperCase()}
                                                 </span>
                                             )}
                                         </div>
                                         <div className="flex-1">
                                             <span className="text-textBase dark:text-textBase-dark font-medium">
-                                                {level.name}
+                                                {levelData.name}
                                             </span>
                                             <div className="text-xs text-textBase dark:text-textBase-dark opacity-70 mt-0.5">
-                                                {level.name === '제한없음' ? '모든 사용자가 쪽지 발송 가능' : `${level.name} 등급 사용자`}
+                                                {levelData.name === '제한없음' ? '모든 사용자가 쪽지 발송 가능' : `${levelData.name} 등급 사용자`}
                                             </div>
                                         </div>
                                     </div>

@@ -22,7 +22,8 @@ export interface PostSetting {
 }
 
 export interface FanLevel {
-  id: number;
+  level: number;
   name: string;
   min_donation: number;
+  color: string;
 }
