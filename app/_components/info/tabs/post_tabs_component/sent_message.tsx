@@ -82,12 +82,18 @@ export default function ReceiveMessage() {
         }
     };
 
+    // 삭제 후 체크박스 상태도 함께 리셋하는 래퍼 함수
+    const handleDeleteWithReset = async () => {
+        await handleDeletePosts();
+        setIsChecked(false); // 삭제 후 체크박스 상태 리셋
+    };
+
     return (
         <div className="mb-20">
             <SearchControls
                 searchNickname={searchNickname}
                 onSearchChange={handleSearchWithReset}
-                onDeletePosts={handleDeletePosts}
+                onDeletePosts={handleDeleteWithReset}
             />
             
             <div className="p-4">
