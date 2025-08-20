@@ -1,6 +1,6 @@
 'use client';
 import { reqeustChat } from '@/app/_apis/live';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
 import { useUserStore } from "@/app/_lib/stores"
 import LoginComponent from '../../modals/login_component';
@@ -25,10 +25,24 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     const [activeTab, setActiveTab] = useState<TabType>('chat'); // 활성 탭 상태
+    const [currentMyRole, setCurrentMyRole] = useState<MyRole>(myRole); // 현재 사용자 역할 상태
     const {idx: currentUserIdx} = useUserStore();
 
+    // myRole prop이 변경되면 currentMyRole 업데이트
+    useEffect(() => {
+        setCurrentMyRole(myRole);
+    }, [myRole]);
+
+    // 권한이 없어진 경우 채팅 탭으로 자동 전환
+    useEffect(() => {
+        const canViewManagement = currentMyRole.role === 'manager' || currentMyRole.role === 'broadcaster';
+        if (!canViewManagement && activeTab === 'viewers') {
+            setActiveTab('chat');
+        }
+    }, [currentMyRole.role, activeTab]);
+
     // 커스텀 훅 사용
-    const { messages, viewers } = useChatSocket(socket, broadcasterId);
+    const { messages, viewers } = useChatSocket(socket, broadcasterId, setCurrentMyRole);
     const { 
         handleKickUser, 
         handleBanUser, 
@@ -57,7 +71,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
         openPopupModal(
             <UserActionsModal
                 user={message}
-                currentUser={myRole}
+                currentUser={currentMyRole}
                 onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
@@ -101,7 +115,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
         openPopupModal(
             <UserActionsModal
                 user={userAsMessage}
-                currentUser={myRole}
+                currentUser={currentMyRole}
                 onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
@@ -128,7 +142,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 viewersCount={viewers.length}
-                canViewManagement={myRole.role === 'manager' || myRole.role === 'broadcaster'}
+                canViewManagement={currentMyRole.role === 'manager' || currentMyRole.role === 'broadcaster'}
             />
 
             {/* 탭 컨텐츠 영역 */}

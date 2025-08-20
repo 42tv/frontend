@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { Message, Viewer, OpCode, ChatMessage, RoleChangePayload, KickPayload } from '@/app/_types';
+import { Message, Viewer, OpCode, ChatMessage, RoleChangePayload, KickPayload, MyRole } from '@/app/_types';
 
 // Handlers
 import { useChatHandlers } from './handlers/chatHandlers';
@@ -12,7 +12,7 @@ import { useKickHandlers } from './handlers/kickHandlers';
 // Hooks
 import { useViewersManager } from './hooks/useViewersManager';
 
-export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
+export const useChatSocket = (socket: Socket | null, broadcasterId: string, setCurrentMyRole?: React.Dispatch<React.SetStateAction<MyRole>>) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [viewers, setViewers] = useState<Viewer[]>([]);
 
@@ -20,7 +20,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string) => {
     const { fetchViewersList, viewersIntervalRef } = useViewersManager(broadcasterId, setViewers);
     const { handleChatMessage } = useChatHandlers();
     const { handleViewersUpdate, handleViewerJoin, handleViewerLeave } = useViewerHandlers();
-    const { handleRoleChanged } = useRoleHandlers(socket, broadcasterId, fetchViewersList, viewersIntervalRef);
+    const { handleRoleChanged } = useRoleHandlers(socket, broadcasterId, fetchViewersList, viewersIntervalRef, setCurrentMyRole);
     const { handleKickUser, handleKicked } = useKickHandlers();
 
     // 소켓 이벤트 등록
