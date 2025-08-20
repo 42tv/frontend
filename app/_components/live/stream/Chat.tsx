@@ -39,10 +39,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
     // 채팅 클릭 시 유저 정보 모달 열기
     const handleChatClick = (message: ChatMessage) => {
-        console.log('Chat clicked:', message);
-        console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', myRole);
-        
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
             openPopupModal(<LoginComponent />);
@@ -74,10 +70,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
     // 시청자 클릭 핸들러
     const handleViewerClick = (viewer: Viewer) => {
-        console.log('Viewer clicked:', viewer);
-        console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', myRole);
-        
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
             openPopupModal(<LoginComponent />);
