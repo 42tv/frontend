@@ -32,7 +32,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     const { 
         handleKickUser, 
         handleBanUser, 
-        handleUnbanUser, 
         handlePromoteManager, 
         handleDemoteManager, 
         handleSendPrivateMessage 
@@ -66,7 +65,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
                 onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
-                onUnban={handleUnbanUser}
                 onPromoteManager={handlePromoteManager}
                 onDemoteManager={handleDemoteManager}
                 onSendMessage={(userId: string, nickname: string) => handleSendPrivateMessage(userId, nickname, openMessageModal)}
@@ -115,7 +113,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
                 onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
-                onUnban={handleUnbanUser}
                 onPromoteManager={handlePromoteManager}
                 onDemoteManager={handleDemoteManager}
                 onSendMessage={(userId: string, nickname: string) => handleSendPrivateMessage(userId, nickname, openMessageModal)}

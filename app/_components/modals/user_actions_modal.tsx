@@ -11,7 +11,6 @@ interface UserActionsModalProps {
   onClose?: () => void;
   onKick?: (userId: string) => void;
   onBan?: (userId: string) => void;
-  onUnban?: (userId: string) => void;
   onPromoteManager?: (userId: string) => void;
   onDemoteManager?: (userId: string) => void;
   onSendMessage?: (userId: string, nickname: string) => void;
