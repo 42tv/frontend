@@ -1,18 +1,33 @@
 'use client';
 
 import { useCallback } from 'react';
-import { Socket } from 'socket.io-client';
-import { Message, ChatMessage, Viewer, RoleChangePayload, MyRole, RoleChangeType } from '@/app/_types';
+import { Message, ChatMessage, Viewer, RoleChangePayload, MyRole } from '@/app/_types';
 import { useUserStore } from '@/app/_lib/stores';
+import { hasViewerListPermission } from '../utils/rolePermissions';
 
 export const useRoleHandlers = (
-  socket: Socket | null,
-  broadcasterId: string,
   fetchViewersList: () => Promise<void>,
   viewersIntervalRef: React.MutableRefObject<NodeJS.Timeout | null>,
-  setCurrentMyRole?: React.Dispatch<React.SetStateAction<MyRole>>
+  setCurrentMyRole: React.Dispatch<React.SetStateAction<MyRole>>
 ) => {
   const { idx: currentUserIdx } = useUserStore();
+  
+  // viewer list 갱신 시작
+  const startViewerListPolling = useCallback(() => {
+    if (!viewersIntervalRef.current) {
+      viewersIntervalRef.current = setInterval(() => {
+        fetchViewersList();
+      }, 60000);
+    }
+  }, [fetchViewersList, viewersIntervalRef]);
+
+  // viewer list 갱신 중지
+  const stopViewerListPolling = useCallback(() => {
+    if (viewersIntervalRef.current) {
+      clearInterval(viewersIntervalRef.current);
+      viewersIntervalRef.current = null;
+    }
+  }, [viewersIntervalRef]);
   
   // 역할 변경 핸들러
   const handleRoleChanged = useCallback((
@@ -53,35 +68,31 @@ export const useRoleHandlers = (
       });
     });
 
-    // 현재 사용자의 역할이 변경된 경우 myRole 업데이트
-    if (payload.user_idx === currentUserIdx && setCurrentMyRole) {
+    // 현재 사용자의 역할이 변경된 경우
+    if (payload.user_idx === currentUserIdx) {
+      // myRole 상태 업데이트
       setCurrentMyRole(prevRole => ({
         ...prevRole,
         role: payload.to_role
       }));
-    }
-
-    // 매니저로 승격되었을 때 추가 동작
-    if (payload.type === RoleChangeType.MANAGER_GRANT && payload.user_idx === currentUserIdx) {
-      if (!viewersIntervalRef.current) {
-        viewersIntervalRef.current = setInterval(() => {
-          fetchViewersList();
-        }, 10000);
-      }
       
-      if (socket) {
-        socket.emit('get_viewers_list', { broadcasterId });
-      }
-    } else if (payload.type === RoleChangeType.MANAGER_REVOKE && payload.user_idx === currentUserIdx) {
-      // 매니저에서 해임되었을 때 갱신 중지
-      if (viewersIntervalRef.current) {
-        clearInterval(viewersIntervalRef.current);
-        viewersIntervalRef.current = null;
+      // 새로운 role 기반으로 권한 재검증
+      const hasPermission = hasViewerListPermission(payload.to_role);
+      
+      if (hasPermission) {
+        // 권한이 있으면 즉시 리스트 가져오고 갱신 시작
+        fetchViewersList();
+        startViewerListPolling();
+      } else {
+        // 권한이 없으면 갱신 중지
+        stopViewerListPolling();
       }
     }
-  }, [socket, broadcasterId, fetchViewersList, viewersIntervalRef, currentUserIdx, setCurrentMyRole]);
+  }, [currentUserIdx, setCurrentMyRole, startViewerListPolling, stopViewerListPolling, fetchViewersList]);
 
   return {
     handleRoleChanged,
+    startViewerListPolling,
+    stopViewerListPolling,
   };
 };

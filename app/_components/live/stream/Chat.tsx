@@ -42,7 +42,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     }, [currentMyRole.role, activeTab]);
 
     // 커스텀 훅 사용
-    const { messages, viewers } = useChatSocket(socket, broadcasterId, setCurrentMyRole);
+    const { messages, viewers } = useChatSocket(socket, broadcasterId, setCurrentMyRole, currentMyRole);
     const { 
         handleKickUser, 
         handleBanUser, 

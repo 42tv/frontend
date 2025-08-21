@@ -11,8 +11,9 @@ import { useKickHandlers } from './handlers/kickHandlers';
 
 // Hooks
 import { useViewersManager } from './hooks/useViewersManager';
+import { hasViewerListPermission } from './utils/rolePermissions';
 
-export const useChatSocket = (socket: Socket | null, broadcasterId: string, setCurrentMyRole?: React.Dispatch<React.SetStateAction<MyRole>>) => {
+export const useChatSocket = (socket: Socket | null, broadcasterId: string, setCurrentMyRole: React.Dispatch<React.SetStateAction<MyRole>>, currentMyRole: MyRole) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [viewers, setViewers] = useState<Viewer[]>([]);
 
@@ -20,7 +21,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
     const { fetchViewersList, viewersIntervalRef } = useViewersManager(broadcasterId, setViewers);
     const { handleChatMessage } = useChatHandlers();
     const { handleViewersUpdate, handleViewerJoin, handleViewerLeave } = useViewerHandlers();
-    const { handleRoleChanged } = useRoleHandlers(socket, broadcasterId, fetchViewersList, viewersIntervalRef, setCurrentMyRole);
+    const { handleRoleChanged, startViewerListPolling } = useRoleHandlers(fetchViewersList, viewersIntervalRef, setCurrentMyRole);
     const { handleKickUser, handleKicked } = useKickHandlers();
 
     // 소켓 이벤트 등록
@@ -53,6 +54,17 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
             };
         }
     }, [socket, handleChatMessage, handleViewersUpdate, handleRoleChanged, handleViewerJoin, handleViewerLeave, handleKickUser, handleKicked]);
+
+    // 초기 권한 체크 및 viewer list 갱신 시작
+    useEffect(() => {
+        if (socket && currentMyRole.role) {
+            const hasPermission = hasViewerListPermission(currentMyRole.role);
+            if (hasPermission) {
+                fetchViewersList();
+                startViewerListPolling();
+            }
+        }
+    }, [socket, currentMyRole.role, fetchViewersList, startViewerListPolling]);
 
     return {
         messages,
