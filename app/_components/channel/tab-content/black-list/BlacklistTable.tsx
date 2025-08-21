@@ -62,7 +62,7 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-300 mb-2">차단된 사용자가 없습니다</h3>
-          <p className="text-gray-400 text-sm">위의 "사용자 차단" 버튼을 통해 사용자를 차단할 수 있습니다.</p>
+          <p className="text-gray-400 text-sm">위의 &quot;사용자 차단&quot; 버튼을 통해 사용자를 차단할 수 있습니다.</p>
         </div>
       </div>
     );

@@ -13,7 +13,6 @@ interface ColorPickerProps {
   hexInput: string;
   onColorPreview: (levelId: number, color: string) => void;
   onColorConfirm: () => void;
-  onClose: () => void;
   onCancel: () => void;
   onHexInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -27,7 +26,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   hexInput,
   onColorPreview,
   onColorConfirm,
-  onClose,
   onCancel,
   onHexInputChange
 }) => {

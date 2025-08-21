@@ -30,3 +30,6 @@ export * from './api';
 
 // UI types
 export * from './ui';
+
+// Note: All interfaces previously in utils/interfaces.ts are now properly 
+// exported through the module exports above. No additional exports needed.

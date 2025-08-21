@@ -1,7 +1,18 @@
 import { FanLevel } from './ui';
-import { UserInfo, CurrentUser } from './user';
+import { UserInfo, CurrentUser, User } from './user';
 
 export interface Post {
+  id: number | null;
+  content: string | null;
+  is_read: boolean | null;
+  send_at: string | null;
+  read_at: string | null;
+  sender: User | null;
+  receiver: User | null;
+}
+
+// Legacy interface for backward compatibility
+export interface PostLegacy {
   id: number;
   message: string;
   sender: {

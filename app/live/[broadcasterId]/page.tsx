@@ -1,5 +1,5 @@
 'use client';
-import { getApiErrorMessage } from "@/app/_apis/interfaces";
+import { getApiErrorMessage } from "@/app/_lib/api";
 import { requestPlay, requestLike } from "@/app/_apis/live";
 import { requestCreateBookMark, requestDeleteBookMark } from "@/app/_apis/user";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
@@ -8,10 +8,10 @@ import StreamPlayer from "@/app/_components/live/stream/StreamPlayer";
 import StreamInfo from "@/app/_components/live/StreamInfo";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
-import usePlayStore from "@/app/_components/utils/store/playStore";
+import { usePlayStore } from "@/app/_lib/stores";
 import { useEffect, useState, useRef, use } from "react";
-import { PlayData } from "@/app/_components/utils/interfaces";
-import useUserStore from "@/app/_components/utils/store/userStore";
+import { PlayData } from "@/app/_types";
+import { useUserStore } from "@/app/_lib/stores";
 import LoginComponent from "@/app/_components/modals/login_component";
 import { Socket, io } from "socket.io-client";
 import { useRouter } from "next/navigation";
@@ -253,7 +253,6 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                                 nickname: playDataState.user.nickname,
                                 role: playDataState.user.role
                             }}
-                            broadcasterIdx={playDataState.broadcaster.idx}
                         />
                     )}
                 </div>

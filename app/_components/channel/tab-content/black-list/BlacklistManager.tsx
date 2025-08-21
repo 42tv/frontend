@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { BlacklistTable } from "./BlacklistTable";
 import { BlacklistSearchForm } from "./BlacklistSearchForm";
-import { BlacklistStatsOnly } from "./BlacklistStatsOnly";
 import { UserSearchSection } from "./UserSearchSection";
 import { addToBlacklist, removeMultipleFromBlacklist, getBlacklist } from "../../../../_apis/user";
 import { openModal } from "../../../utils/overlay/overlayHelpers";
 import ErrorMessage from "@/app/_components/modals/error_component";
+import { getApiErrorMessage } from "@/app/_lib/api";
 
 export interface BlacklistUser {
   user_idx: number;
@@ -31,9 +31,9 @@ export const BlacklistManager = () => {
       const users = response.lists || [];
       setBlacklist(users);
       setFilteredBlacklist(users);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log(error);
-      openModal(<ErrorMessage message={error?.response?.data?.message || "블랙리스트를 불러오는데 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
+      openModal(<ErrorMessage message={getApiErrorMessage(error) || "블랙리스트를 불러오는데 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +75,8 @@ export const BlacklistManager = () => {
       await addToBlacklist(nickname);
       await fetchBlacklist();
       openModal(<ErrorMessage message="사용자가 블랙리스트에 추가되었습니다." />, { closeButtonSize: "w-[16px] h-[16px]" });
-    } catch (error: any) {
-      openModal(<ErrorMessage message={error?.response?.data?.message || "블랙리스트 추가에 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
+    } catch (error: unknown) {
+      openModal(<ErrorMessage message={getApiErrorMessage(error) || "블랙리스트 추가에 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
     } finally {
       setIsLoading(false);
     }
@@ -89,8 +89,8 @@ export const BlacklistManager = () => {
       await removeMultipleFromBlacklist([userId]);
       await fetchBlacklist();
       openModal(<ErrorMessage message="사용자가 블랙리스트에서 제거되었습니다." />, { closeButtonSize: "w-[16px] h-[16px]" });
-    } catch (error: any) {
-      openModal(<ErrorMessage message={error?.response?.data?.message || "블랙리스트 제거에 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
+    } catch (error: unknown) {
+      openModal(<ErrorMessage message={getApiErrorMessage(error) || "블랙리스트 제거에 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
     } finally {
       setIsLoading(false);
     }

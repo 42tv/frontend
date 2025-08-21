@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import useUserStore from '../utils/store/userStore';
+import { useUserStore } from '@/app/_lib/stores';
 import LoginComponent from '../modals/login_component';
 import { openModal } from '../utils/overlay/overlayHelpers';
 

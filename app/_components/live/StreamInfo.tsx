@@ -1,6 +1,6 @@
 'use client';
-import { PlayData } from "@/app/_components/utils/interfaces";
-import { formatElapsedTimeBySeconds } from "@/app/_components/utils/utils";
+import { PlayData } from "@/app/_types";
+import { formatElapsedTime } from "@/app/_lib/utils";
 import { useEffect, useState } from "react";
 import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
 import { FiUser, FiMail } from "react-icons/fi";
@@ -32,11 +32,11 @@ export default function StreamInfo({
         }
         
         // 초기 경과 시간 설정
-        setElapsedTime(formatElapsedTimeBySeconds(playDataState.stream.start_time));
+        setElapsedTime(formatElapsedTime(playDataState.stream.start_time, true));
 
         // 1초마다 경과 시간 업데이트
         const intervalId = setInterval(() => {
-            setElapsedTime(formatElapsedTimeBySeconds(playDataState.stream.start_time));
+            setElapsedTime(formatElapsedTime(playDataState.stream.start_time, true));
         }, 1000);
         
         // 컴포넌트 언마운트 시 인터벌 정리

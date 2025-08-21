@@ -1,8 +1,8 @@
 'use client';
 import { reqeustChat } from '@/app/_apis/live';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
-import useUserStore from '../../utils/store/userStore';
+import { useUserStore } from "@/app/_lib/stores"
 import LoginComponent from '../../modals/login_component';
 import UserActionsModal from '../../modals/user_actions_modal';
 import SendMessageForm from '../../common/SendMessageForm';
@@ -21,19 +21,31 @@ interface ChatProps {
     broadcasterId: string; // 스트리머 식별 (채팅방 구분을 위해)
     socket: Socket | null; // socket prop 추가
     myRole: MyRole;
-    broadcasterIdx: number; // 방송자의 idx
 }
 
-const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterIdx }) => {
+const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     const [activeTab, setActiveTab] = useState<TabType>('chat'); // 활성 탭 상태
+    const [currentMyRole, setCurrentMyRole] = useState<MyRole>(myRole); // 현재 사용자 역할 상태
     const {idx: currentUserIdx} = useUserStore();
 
+    // myRole prop이 변경되면 currentMyRole 업데이트
+    useEffect(() => {
+        setCurrentMyRole(myRole);
+    }, [myRole]);
+
+    // 권한이 없어진 경우 채팅 탭으로 자동 전환
+    useEffect(() => {
+        const canViewManagement = currentMyRole.role === 'manager' || currentMyRole.role === 'broadcaster';
+        if (!canViewManagement && activeTab === 'viewers') {
+            setActiveTab('chat');
+        }
+    }, [currentMyRole.role, activeTab]);
+
     // 커스텀 훅 사용
-    const { messages, viewers } = useChatSocket(socket, broadcasterId);
+    const { messages, viewers } = useChatSocket(socket, broadcasterId, setCurrentMyRole, currentMyRole);
     const { 
         handleKickUser, 
         handleBanUser, 
-        handleUnbanUser, 
         handlePromoteManager, 
         handleDemoteManager, 
         handleSendPrivateMessage 
@@ -41,10 +53,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
 
     // 채팅 클릭 시 유저 정보 모달 열기
     const handleChatClick = (message: ChatMessage) => {
-        console.log('Chat clicked:', message);
-        console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', myRole);
-        
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
             openPopupModal(<LoginComponent />);
@@ -53,6 +61,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
 
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
+            closeAllModals(); // 기존 모달 모두 닫기
             openPopupModal(
                 <SendMessageForm
                     initialUserId={message.user_id}
@@ -63,11 +72,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         openPopupModal(
             <UserActionsModal
                 user={message}
-                currentUser={myRole}
+                currentUser={currentMyRole}
                 onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
-                onUnban={handleUnbanUser}
                 onPromoteManager={handlePromoteManager}
                 onDemoteManager={handleDemoteManager}
                 onSendMessage={(userId: string, nickname: string) => handleSendPrivateMessage(userId, nickname, openMessageModal)}
@@ -77,10 +85,6 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
 
     // 시청자 클릭 핸들러
     const handleViewerClick = (viewer: Viewer) => {
-        console.log('Viewer clicked:', viewer);
-        console.log('Current user idx:', currentUserIdx);
-        console.log('Current user role:', myRole);
-        
         if (!currentUserIdx) {
             console.log('No current user, showing login modal');
             openPopupModal(<LoginComponent />);
@@ -89,6 +93,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
 
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
+            closeAllModals(); // 기존 모달 모두 닫기
             openPopupModal(
                 <SendMessageForm
                     initialUserId={viewer.user_id}
@@ -112,11 +117,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
         openPopupModal(
             <UserActionsModal
                 user={userAsMessage}
-                currentUser={myRole}
+                currentUser={currentMyRole}
                 onClose={closeAllModals}
                 onKick={handleKickUser}
                 onBan={handleBanUser}
-                onUnban={handleUnbanUser}
                 onPromoteManager={handlePromoteManager}
                 onDemoteManager={handleDemoteManager}
                 onSendMessage={(userId: string, nickname: string) => handleSendPrivateMessage(userId, nickname, openMessageModal)}
@@ -128,7 +132,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
     const handleSendMessage = async (message: string) => {
         try {
             await reqeustChat(broadcasterId, message);
-        } catch (e: any) {
+        } catch {
             openPopupModal(<LoginComponent />);
         }
     };
@@ -140,7 +144,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole, broadcasterI
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 viewersCount={viewers.length}
-                canViewManagement={myRole.role === 'manager' || myRole.role === 'broadcaster'}
+                canViewManagement={currentMyRole.role === 'manager' || currentMyRole.role === 'broadcaster'}
             />
 
             {/* 탭 컨텐츠 영역 */}

@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from "react";
-import LiveStreamCard from "../_components/live/LiveStreamCard";
-import { getLiveList } from "../_apis/live";
-import { Live } from "../_components/utils/interfaces";
+import LiveStreamCard from "@/app/_components/live/LiveStreamCard";
+import { getLiveList } from "@/app/_apis/live";
+import { Live } from "@/app/_types";
 
 export default function LivePage() {
     const [lives, setLives] = useState<Live[]>([]);

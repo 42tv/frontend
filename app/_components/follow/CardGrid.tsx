@@ -1,6 +1,6 @@
 import React from 'react';
 import CardItem from './CardItem';
-import { CardData } from '@/app/_components/utils/interfaces';
+import { CardData } from '@/app/_types';
 
 interface CardGridProps {
   items: CardData[];

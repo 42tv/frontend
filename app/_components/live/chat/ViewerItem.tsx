@@ -24,7 +24,7 @@ const ViewerItem: React.FC<ViewerItemProps> = ({ viewer, onClick }) => {
                     ) : (
                         <div 
                             className="w-full h-full flex items-center justify-center text-white text-xs font-bold"
-                            style={{ backgroundColor: '#6B7280' }}
+                            style={{ backgroundColor: viewer.color || '#6B7280' }}
                         >
                             {
                                 viewer.role === 'broadcaster' ? 'B' :

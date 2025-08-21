@@ -1,5 +1,4 @@
-import { User } from './user';
-import { Post } from './post';
+// User and Post interfaces are imported via index.ts exports
 
 export interface Live {
   // Export the interface
@@ -7,12 +6,18 @@ export interface Live {
   start_time: string;
   play_cnt: number;
   recommend_cnt: number;
-  user: {
+  broadcaster: {
     idx: number;
     user_id: string;
     nickname: string;
     profile_img: string;
-    broadcastSetting: BroadcastSetting;
+    broadcastSetting: {
+      is_adult: boolean;
+      is_fan: boolean;
+      is_pw: boolean;
+      title: string;
+      fan_level: number;
+    };
   };
   viewerCount: number;
 }
@@ -63,6 +68,8 @@ export interface Channel {
   month_time: number | null;
   total_time: number | null;
 }
+
+// FanLevel and CardData are already exported from ui.ts via index.ts
 
 export interface BroadcastSetting {
   title: string | null;

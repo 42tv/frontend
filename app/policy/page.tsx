@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export default function Policy() {
-    const [index, setIndex] = useState(0);
+    const [, setIndex] = useState(0);
     const [html, setHtml] = useState('');
 
     function fetchPolicy(index: string) {

@@ -3,10 +3,10 @@
 import React, { useEffect } from 'react';
 import ToggleTheme from './buttons/ToggleTheme';
 import Login from './buttons/loginButton';
-import Search from './search/serach';
+import Search from './search/search';
 import Logo from '../logo/logo';
 import ProfileIcon from './profile-icon/profile_icon';
-import useUserStore from '../utils/store/userStore';
+import { useUserStore } from "@/app/_lib/stores"
 
 const Toolbar: React.FC = () => {
   const fetchUser = useUserStore((state) => state.fetchUser);

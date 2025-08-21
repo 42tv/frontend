@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { FanLevel } from "@/app/_components/utils/interfaces";
+import { FanLevel } from "@/app/_types";
 import { ColorPicker } from "./ColorPicker";
 
 interface FanLevelItemProps {
@@ -33,7 +33,6 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   onToggleColorPicker,
   onColorPreview,
   onColorConfirm,
-  onColorCancel,
   onCloseColorPicker,
   onHexInputChange,
   onUpdate
@@ -107,8 +106,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
           hexInput={hexInput}
           onColorPreview={onColorPreview}
           onColorConfirm={onColorConfirm}
-          onClose={onCloseColorPicker}
-          onCancel={onColorCancel}
+          onCancel={onCloseColorPicker}
           onHexInputChange={onHexInputChange}
         />
       </div>
