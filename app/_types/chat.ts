@@ -81,7 +81,7 @@ export interface DonationMessage extends BaseMessage {
 
 export interface RecommendMessage extends BaseMessage {
   type: 'recommend';
-  recommender_nickname: string;
+  nickname: string;
 }
 
 export interface JwtDecode {
