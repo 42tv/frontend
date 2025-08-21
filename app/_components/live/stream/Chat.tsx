@@ -61,6 +61,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
+            closeAllModals(); // 기존 모달 모두 닫기
             openPopupModal(
                 <SendMessageForm
                     initialUserId={message.user_id}
@@ -92,6 +93,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
         // 쪽지 보내기 모달 열기 함수
         const openMessageModal = () => {
+            closeAllModals(); // 기존 모달 모두 닫기
             openPopupModal(
                 <SendMessageForm
                     initialUserId={viewer.user_id}
