@@ -27,7 +27,11 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
       updatedAt: '2024-01-15T10:30:00Z',
       viewCount: 156,
       images: [
-        { id: 1, articleId: 1, imageUrl: '/sample-image-1.jpg', createdAt: '2024-01-15T10:30:00Z' }
+        { id: 1, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=1', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 2, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=2', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 3, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=3', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 4, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=4', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 5, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=5', createdAt: '2024-01-15T10:30:00Z' }
       ]
     },
     {
@@ -38,6 +42,10 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
       createdAt: '2024-01-14T15:20:00Z',
       updatedAt: '2024-01-14T15:20:00Z',
       viewCount: 89,
+      images: [
+        { id: 6, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=6', createdAt: '2024-01-14T15:20:00Z' },
+        { id: 7, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=7', createdAt: '2024-01-14T15:20:00Z' }
+      ]
     },
     {
       id: 3,

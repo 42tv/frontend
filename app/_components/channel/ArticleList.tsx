@@ -84,6 +84,31 @@ export default function ArticleList({ articles }: ArticleListProps) {
                     </span>
                   )}
                 </div>
+
+                {/* Image Preview */}
+                {article.images && article.images.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-border-secondary dark:border-border-secondary-dark">
+                    <div className="flex gap-2 overflow-hidden">
+                      {article.images.slice(0, 3).map((image, index) => (
+                        <div key={image.id} className="relative flex-shrink-0">
+                          <img
+                            src={image.imageUrl}
+                            alt="게시글 이미지"
+                            className="w-16 h-16 object-cover rounded-md border border-border-primary dark:border-border-primary-dark"
+                          />
+                          {/* Show "+N" overlay on the last image if there are more than 3 images */}
+                          {index === 2 && article.images && article.images.length > 3 && (
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">
+                              <span className="text-white text-xs font-medium">
+                                +{article.images.length - 3}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </article>
             ))}
           </div>
