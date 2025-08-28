@@ -1,15 +1,35 @@
 import React from "react";
 import Image from "next/image";
+import ArticleManager from "./ArticleManager";
+import { Article } from "../../_types/article";
 
 export const BjArticle = () => {
-  return (
-    <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
-      <h3 className="font-bold text-xl mb-4 text-text-primary dark:text-text-primary-dark">BJ 공지사항</h3>
-      <div className="bg-bg-secondary dark:bg-bg-secondary-dark p-4 rounded">
-        <p className="text-gray-400">현재 공지사항이 없습니다.</p>
-      </div>
-    </div>
-  );
+  // Mock data for demonstration
+  const mockArticles: Article[] = [
+    {
+      id: 1,
+      title: '방송 일정 안내',
+      content: '이번 주 방송 일정을 안내드립니다. 월요일 오후 7시부터 시작하여 금요일까지 매일 방송할 예정입니다. 많은 시청 부탁드립니다!',
+      authorIdx: 1,
+      createdAt: '2024-01-15T10:30:00Z',
+      updatedAt: '2024-01-15T10:30:00Z',
+      viewCount: 234,
+      images: [
+        { id: 1, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=1', createdAt: '2024-01-15T10:30:00Z' }
+      ]
+    },
+    {
+      id: 2,
+      title: '새로운 컨텐츠 준비 중',
+      content: '시청자분들이 요청해주신 새로운 컨텐츠를 준비하고 있습니다. 곧 공개될 예정이니 기대해주세요!',
+      authorIdx: 1,
+      createdAt: '2024-01-14T15:20:00Z',
+      updatedAt: '2024-01-14T15:20:00Z',
+      viewCount: 156,
+    },
+  ];
+
+  return <ArticleManager articles={mockArticles} />;
 };
 
 export const StatsContent = () => {
