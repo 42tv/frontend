@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-export const BJNoticeContent = () => {
+export const BjArticle = () => {
   return (
     <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
       <h3 className="font-bold text-xl mb-4 text-text-primary dark:text-text-primary-dark">BJ 공지사항</h3>
