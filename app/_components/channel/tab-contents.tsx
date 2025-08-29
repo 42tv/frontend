@@ -1,6 +1,8 @@
+'use client';
 import React from "react";
 import Image from "next/image";
 import ArticleManager from "./ArticleManager";
+import ArticleList from "./ArticleList";
 import { Article } from "../../_types/article";
 
 export const BjArticle = () => {
@@ -8,28 +10,86 @@ export const BjArticle = () => {
   const mockArticles: Article[] = [
     {
       id: 1,
-      title: '방송 일정 안내',
-      content: '이번 주 방송 일정을 안내드립니다. 월요일 오후 7시부터 시작하여 금요일까지 매일 방송할 예정입니다. 많은 시청 부탁드립니다!',
+      title: '방송 장비 세팅 가이드 (5개 이미지)',
+      content: '새로 구입한 방송 장비들을 세팅하는 과정을 단계별로 정리해봤습니다. 마이크, 카메라, 조명, 키보드, 모니터 설정 방법을 자세히 설명드리겠습니다.',
       authorIdx: 1,
       createdAt: '2024-01-15T10:30:00Z',
       updatedAt: '2024-01-15T10:30:00Z',
-      viewCount: 234,
+      viewCount: 342,
       images: [
-        { id: 1, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=1', createdAt: '2024-01-15T10:30:00Z' }
+        { id: 1, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=1', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 2, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=2', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 3, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=3', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 4, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=4', createdAt: '2024-01-15T10:30:00Z' },
+        { id: 5, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=5', createdAt: '2024-01-15T10:30:00Z' }
       ]
     },
     {
       id: 2,
-      title: '새로운 컨텐츠 준비 중',
-      content: '시청자분들이 요청해주신 새로운 컨텐츠를 준비하고 있습니다. 곧 공개될 예정이니 기대해주세요!',
+      title: '게임 플레이 하이라이트 (3개 이미지)',
+      content: '오늘 방송에서 있었던 재미있는 게임 플레이 순간들을 정리해봤습니다. 특히 보스전에서의 극적인 승리 장면이 인상적이었어요!',
       authorIdx: 1,
       createdAt: '2024-01-14T15:20:00Z',
       updatedAt: '2024-01-14T15:20:00Z',
-      viewCount: 156,
+      viewCount: 287,
+      images: [
+        { id: 6, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=6', createdAt: '2024-01-14T15:20:00Z' },
+        { id: 7, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=7', createdAt: '2024-01-14T15:20:00Z' },
+        { id: 8, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=8', createdAt: '2024-01-14T15:20:00Z' }
+      ]
+    },
+    {
+      id: 3,
+      title: '새로운 프로필 사진 공개 (1개 이미지)',
+      content: '새로운 프로필 사진을 촬영했습니다! 어떤가요? 이전 프로필보다 더 자연스럽고 밝은 느낌으로 찍어봤어요.',
+      authorIdx: 1,
+      createdAt: '2024-01-13T12:00:00Z',
+      updatedAt: '2024-01-13T12:00:00Z',
+      viewCount: 195,
+      images: [
+        { id: 9, articleId: 3, imageUrl: 'https://picsum.photos/400/300?random=9', createdAt: '2024-01-13T12:00:00Z' }
+      ]
+    },
+    {
+      id: 4,
+      title: '다음 주 방송 일정 안내 (이미지 없음)',
+      content: '다음 주 방송 일정을 안내드립니다. 월요일 오후 7시, 수요일 오후 8시, 금요일 오후 6시, 일요일 오후 5시에 방송할 예정입니다. 새로운 게임도 준비하고 있으니 많은 기대 부탁드려요!',
+      authorIdx: 1,
+      createdAt: '2024-01-12T09:15:00Z',
+      updatedAt: '2024-01-12T09:15:00Z',
+      viewCount: 423,
     },
   ];
 
-  return <ArticleManager articles={mockArticles} />;
+  const handleDelete = (article: any) => {
+    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+      console.log('Delete article:', article);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+            게시글 관리
+          </h2>
+          <p className="text-text-secondary dark:text-text-secondary-dark mt-1">
+            총 {mockArticles.length}개의 게시글
+          </p>
+        </div>
+      </div>
+
+      {/* Article List with Actions */}
+      <ArticleList 
+        articles={mockArticles} 
+        showActions={true}
+        showCreateButton={true}
+        onDelete={handleDelete}
+      />
+    </div>
+  );
 };
 
 export const StatsContent = () => {
