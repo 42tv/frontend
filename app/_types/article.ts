@@ -51,6 +51,12 @@ export interface ArticleListByAuthorParams {
   limit?: number;
 }
 
+export interface GetArticlesParams {
+  userIdx: number;
+  offset?: number;
+  limit?: number;
+}
+
 export interface GetArticleByIdParams {
   id: number;
   incrementView?: boolean;

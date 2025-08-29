@@ -7,6 +7,7 @@ import {
   ArticleResponse,
   ArticleListByAuthorParams,
   GetArticleByIdParams,
+  GetArticlesParams,
 } from "../_types/article";
 
 /**
@@ -62,9 +63,38 @@ export async function getArticleById(params: GetArticleByIdParams): Promise<Arti
 }
 
 /**
- * 작성자별 게시글 목록 조회
+ * 게시글 목록 조회 (새로운 API)
  * @param params 조회 파라미터
  * @returns 
+ */
+export async function getArticles(params: GetArticlesParams): Promise<ArticleListResponse> {
+  const queryParams = new URLSearchParams();
+  queryParams.append('userIdx', params.userIdx.toString());
+  
+  if (params.offset !== undefined) {
+    queryParams.append('offset', params.offset.toString());
+  }
+  if (params.limit !== undefined) {
+    queryParams.append('limit', params.limit.toString());
+  }
+  
+  const response = await api.get(
+    `/api/article?${queryParams.toString()}`,
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+}
+
+/**
+ * 작성자별 게시글 목록 조회 (레거시)
+ * @param params 조회 파라미터
+ * @returns 
+ * @deprecated getArticles 함수를 사용하세요
  */
 export async function getArticlesByAuthor(params: ArticleListByAuthorParams): Promise<ArticleListResponse> {
   const queryParams = new URLSearchParams();
