@@ -6,7 +6,8 @@ import ChannelLayout from '../../_components/channel/channel-layout';
 import ArticleList from '../../_components/channel/ArticleList';
 import FanLevel from '../../_components/channel/FanLevel';
 import FanRanking from '../../_components/channel/FanRanking';
-import { Article, FanLevel as FanLevelType } from '../../_types';
+import { mockArticles } from '../../_components/channel/mockData';
+import { FanLevel as FanLevelType } from '../../_types';
 
 interface ChannelPageProps {
   broadcasterId: string;
@@ -16,47 +17,6 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
   const { broadcasterId } = use(params);
   const [activeTab, setActiveTab] = useState<'articles' | 'fanLevel' | 'ranking'>('articles');
 
-  // Mock data for UI demonstration
-  const mockArticles: Article[] = [
-    {
-      id: 1,
-      title: '안녕하세요! 첫 번째 게시글입니다',
-      content: '라이브 스트리밍을 시작하면서 첫 인사 드립니다. 앞으로 재미있는 방송으로 찾아뵙겠습니다!',
-      authorIdx: parseInt(broadcasterId),
-      createdAt: '2024-01-15T10:30:00Z',
-      updatedAt: '2024-01-15T10:30:00Z',
-      viewCount: 156,
-      images: [
-        { id: 1, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=1', createdAt: '2024-01-15T10:30:00Z' },
-        { id: 2, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=2', createdAt: '2024-01-15T10:30:00Z' },
-        { id: 3, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=3', createdAt: '2024-01-15T10:30:00Z' },
-        { id: 4, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=4', createdAt: '2024-01-15T10:30:00Z' },
-        { id: 5, articleId: 1, imageUrl: 'https://picsum.photos/400/300?random=5', createdAt: '2024-01-15T10:30:00Z' }
-      ]
-    },
-    {
-      id: 2,
-      title: '오늘의 방송 하이라이트',
-      content: '오늘 방송에서 있었던 재미있는 순간들을 정리해봤어요. 시청해주신 분들 감사합니다!',
-      authorIdx: parseInt(broadcasterId),
-      createdAt: '2024-01-14T15:20:00Z',
-      updatedAt: '2024-01-14T15:20:00Z',
-      viewCount: 89,
-      images: [
-        { id: 6, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=6', createdAt: '2024-01-14T15:20:00Z' },
-        { id: 7, articleId: 2, imageUrl: 'https://picsum.photos/400/300?random=7', createdAt: '2024-01-14T15:20:00Z' }
-      ]
-    },
-    {
-      id: 3,
-      title: '다음 주 방송 일정 공지',
-      content: '다음 주 방송 일정을 안내드립니다. 월요일 오후 7시, 수요일 오후 8시, 금요일 오후 6시에 만나요!',
-      authorIdx: parseInt(broadcasterId),
-      createdAt: '2024-01-13T12:00:00Z',
-      updatedAt: '2024-01-13T12:00:00Z',
-      viewCount: 234,
-    }
-  ];
 
   const mockFanLevels: FanLevelType[] = [
     { id: 1, name: '새싹', min_donation: 0, color: '#10B981' },

@@ -6,11 +6,10 @@ interface ArticleListProps {
   articles: Article[];
   showActions?: boolean;
   showCreateButton?: boolean;
-  onEdit?: (article: Article) => void;
   onDelete?: (article: Article) => void;
 }
 
-export default function ArticleList({ articles, showActions = false, showCreateButton = false, onEdit, onDelete }: ArticleListProps) {
+export default function ArticleList({ articles, showActions = false, showCreateButton = false, onDelete }: ArticleListProps) {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
@@ -115,10 +114,7 @@ export default function ArticleList({ articles, showActions = false, showCreateB
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-text-primary dark:text-text-primary-dark">
-          게시글 ({articles.length})
-        </h2>
+      <div className="flex justify-end items-center">
         {showCreateButton && (
           <button
             onClick={handleCreateClick}
