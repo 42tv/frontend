@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import Image from "next/image";
-import ArticleList from "./ArticleList";
+import { ArticleList } from "./tab-content/article";
 import { mockArticles } from "./mockData";
 
 export const BjArticle = () => {

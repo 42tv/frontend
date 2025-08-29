@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { use } from 'react';
 import ChannelLayout from '../../_components/channel/channel-layout';
-import ArticleList from '../../_components/channel/ArticleList';
+import { ArticleList } from '../../_components/channel/tab-content/article';
 import FanLevel from '../../_components/channel/FanLevel';
 import FanRanking from '../../_components/channel/FanRanking';
 import { mockArticles } from '../../_components/channel/mockData';
