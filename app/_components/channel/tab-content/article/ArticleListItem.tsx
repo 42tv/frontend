@@ -16,6 +16,7 @@ export default function ArticleListItem({
   onEdit, 
   onDelete 
 }: ArticleListItemProps) {
+  console.log('ArticleListItem rendering article:', article);
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('ko-KR', {
       year: 'numeric',

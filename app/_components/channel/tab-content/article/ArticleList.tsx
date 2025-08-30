@@ -62,7 +62,7 @@ export default function ArticleList({
       </div>
 
       {/* Article List */}
-      {articles.length === 0 ? (
+      {!articles || articles.length === 0 ? (
         <div className="text-center py-12 bg-background-secondary dark:bg-background-secondary-dark rounded-lg">
           <div className="text-text-secondary dark:text-text-secondary-dark">
             작성된 게시글이 없습니다.
@@ -70,9 +70,9 @@ export default function ArticleList({
         </div>
       ) : (
         <div className="grid gap-4">
-          {articles.map((article) => (
+          {articles.map((article, index) => (
             <ArticleListItem
-              key={article.id}
+              key={article.id || `article-${index}`}
               article={article}
               showActions={showActions}
               onSelect={setSelectedArticle}

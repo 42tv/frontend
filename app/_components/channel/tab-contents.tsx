@@ -1,22 +1,96 @@
 'use client';
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArticleList } from "./tab-content/article";
-import { mockArticles } from "./mockData";
+import { getArticles } from "../../_apis/article";
+import { Article } from "../../_types/article";
 
-export const BjArticle = () => {
-  const handleDelete = (article: any) => {
-    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
-      console.log('Delete article:', article);
+interface BjArticleProps {
+  userIdx: number;
+}
+
+export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchArticles = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getArticles({ 
+        userIdx,
+        offset: 0,
+        limit: 10 
+      });
+      console.log('API Response:', response);
+      console.log('Articles:', response.articles);
+      console.log('Articles length:', response.articles?.length);
+      
+      // 백엔드 응답 구조에 따라 데이터 처리
+      let articles: Article[] = [];
+      const responseData = response as any; // 타입 안전성을 위해 임시로 any 사용
+      
+      if (Array.isArray(responseData)) {
+        // 응답이 직접 배열인 경우
+        articles = responseData;
+      } else if (responseData.articles && Array.isArray(responseData.articles)) {
+        // 응답이 { articles: [] } 구조인 경우
+        articles = responseData.articles;
+      } else if (responseData.data && Array.isArray(responseData.data)) {
+        // 응답이 { data: [] } 구조인 경우
+        articles = responseData.data;
+      } else if (responseData.data && responseData.data.articles && Array.isArray(responseData.data.articles)) {
+        // 응답이 { data: { articles: [] } } 구조인 경우
+        articles = responseData.data.articles;
+      }
+      
+      console.log('Processed articles:', articles);
+      console.log('Processed articles length:', articles.length);
+      setArticles(articles);
+    } catch (err) {
+      console.error('게시글 조회 실패:', err);
+      setError('게시글을 불러오는데 실패했습니다.');
+      setArticles([]); // 에러 시에도 빈 배열로 설정
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const handleDelete = (article: Article) => {
+    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+      console.log('Delete article:', article);
+      // TODO: 삭제 API 호출 후 목록 새로고침
+      fetchArticles();
+    }
+  };
+
+  const handleArticleCreated = () => {
+    // 새로운 게시글이 생성되면 목록을 새로고침
+    fetchArticles();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-text-secondary dark:text-text-secondary-dark">
+          게시글을 불러오는 중...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ArticleList 
-      articles={mockArticles} 
+      articles={articles} 
       showActions={true}
       showCreateButton={true}
       onDelete={handleDelete}
+      onArticleCreated={handleArticleCreated}
     />
   );
 };

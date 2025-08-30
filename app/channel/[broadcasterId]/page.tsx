@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import { use } from 'react';
 import ChannelLayout from '../../_components/channel/channel-layout';
-import { ArticleList } from '../../_components/channel/tab-content/article';
+import { BjArticle } from '../../_components/channel/tab-contents';
 import FanLevel from '../../_components/channel/FanLevel';
 import FanRanking from '../../_components/channel/FanRanking';
-import { mockArticles } from '../../_components/channel/mockData';
 import { FanLevel as FanLevelType } from '../../_types';
 
 interface ChannelPageProps {
@@ -99,7 +98,7 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
       {/* Tab Content */}
       <div className="min-h-96">
         {activeTab === 'articles' && (
-          <ArticleList articles={mockArticles} />
+          <BjArticle userIdx={parseInt(broadcasterId)} />
         )}
 
         {activeTab === 'fanLevel' && (

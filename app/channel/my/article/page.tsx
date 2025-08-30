@@ -1,5 +1,21 @@
+'use client';
+
 import { BjArticle } from "../../../_components/channel/tab-contents";
+import { useUserStore } from "../../../_lib/stores";
 
 export default function ArticlePage() {
-  return <BjArticle />;
+  const { idx: userIdx } = useUserStore();
+
+  // 로그인하지 않은 경우 처리
+  if (!userIdx || userIdx === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-text-secondary dark:text-text-secondary-dark">
+          로그인이 필요합니다.
+        </div>
+      </div>
+    );
+  }
+
+  return <BjArticle userIdx={userIdx} />;
 }
