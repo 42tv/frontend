@@ -1,26 +1,31 @@
 'use client'
 import { useState } from 'react';
-import { Article } from '../../../../_types/article';
+import { Article, ArticleListResponse } from '../../../../_types/article';
 import ArticleListItem from './ArticleListItem';
 import ArticleDetailModal from './ArticleDetailModal';
 import ArticleFormModal from './ArticleFormModal';
+import Pagination from './Pagination';
 
 interface ArticleListProps {
   articles: Article[];
+  pagination?: ArticleListResponse['pagination'];
   showActions?: boolean;
   showCreateButton?: boolean;
   onDelete?: (article: Article) => void;
   onArticleCreated?: (article: Article) => Promise<void>;
   onRefresh?: () => Promise<void>;
+  onPageChange?: (page: number) => void;
 }
 
 export default function ArticleList({ 
   articles, 
+  pagination,
   showActions = false, 
   showCreateButton = false, 
   onDelete, 
   onArticleCreated,
-  onRefresh 
+  onRefresh,
+  onPageChange
 }: ArticleListProps) {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
@@ -87,6 +92,15 @@ export default function ArticleList({
             />
           ))}
         </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && onPageChange && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={onPageChange}
+        />
       )}
 
       {/* Modals */}

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArticleList } from "./tab-content/article";
 import { getArticles, deleteArticle } from "../../_apis/article";
-import { Article } from "../../_types/article";
+import { Article, ArticleListResponse } from "../../_types/article";
 
 interface BjArticleProps {
   userIdx: number;
@@ -11,38 +11,51 @@ interface BjArticleProps {
 
 export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const fetchArticles = async () => {
-    console.log('tab-contents: fetchArticles called');
+  const fetchArticles = async (page: number = currentPage) => {
+    console.log('tab-contents: fetchArticles called with page:', page);
     try {
       setLoading(true);
       const response = await getArticles({ 
         userIdx,
-        page: 1,
+        page: page,
         limit: 10 
       });
       console.log('tab-contents: API Response:', response);
       
       // 새로운 응답 구조: { data: Article[], pagination: {...} }
       setArticles(response.data || []);
+      setPagination(response.pagination);
+      setCurrentPage(page);
     } catch (err) {
       console.error('게시글 조회 실패:', err);
       setArticles([]); // 에러 시에도 빈 배열로 설정
+      setPagination(undefined);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchArticles();
-  }, []);
+    fetchArticles(1);
+  }, [userIdx]);
+
+  const handlePageChange = async (page: number): Promise<void> => {
+    await fetchArticles(page);
+  };
 
   const handleDelete = async (article: Article) => {
     if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
       try {
         await deleteArticle(article.id);
-        fetchArticles();
+        // 삭제 후 현재 페이지의 게시글이 없으면 이전 페이지로
+        const remainingItems = articles.length - 1;
+        const shouldGoToPrevPage = remainingItems === 0 && currentPage > 1;
+        const targetPage = shouldGoToPrevPage ? currentPage - 1 : currentPage;
+        await fetchArticles(targetPage);
       } catch (error) {
         console.error('Failed to delete article:', error);
         alert('게시글 삭제에 실패했습니다.');
@@ -52,7 +65,8 @@ export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
 
   const handleArticleCreated = async () => {
     console.log('tab-contents: handleArticleCreated called');
-    await fetchArticles();
+    // 새 게시글 생성 시 첫 페이지로 이동
+    await fetchArticles(1);
   };
 
   if (loading) {
@@ -68,11 +82,13 @@ export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
   return (
     <ArticleList 
       articles={articles} 
+      pagination={pagination}
       showActions={true}
       showCreateButton={true}
       onDelete={handleDelete}
       onArticleCreated={handleArticleCreated}
-      onRefresh={fetchArticles}
+      onRefresh={() => fetchArticles(currentPage)}
+      onPageChange={handlePageChange}
     />
   );
 };

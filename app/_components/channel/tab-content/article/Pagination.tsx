@@ -1,0 +1,118 @@
+'use client'
+import { useState } from 'react';
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  className?: string;
+}
+
+export default function Pagination({ 
+  currentPage, 
+  totalPages, 
+  onPageChange, 
+  className = '' 
+}: PaginationProps) {
+  const [inputPage, setInputPage] = useState<string>('');
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value;
+    // 숫자만 허용 (빈 문자열도 허용)
+    if (value === '' || /^\d+$/.test(value)) {
+      setInputPage(value);
+    }
+  };
+
+  const handleInputSubmit = (e: React.FormEvent): void => {
+    e.preventDefault();
+    const page = parseInt(inputPage);
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      onPageChange(page);
+      setInputPage('');
+    }
+  };
+
+  const getVisiblePages = (): number[] => {
+    const maxVisible = 10; // 최대 표시할 페이지 수
+    const pages: number[] = [];
+    
+    if (totalPages <= maxVisible) {
+      // 전체 페이지가 10개 이하면 모든 페이지 표시
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // 현재 페이지를 기준으로 앞뒤로 페이지 표시
+      const start = Math.max(1, Math.min(currentPage - 5, totalPages - maxVisible + 1));
+      const end = Math.min(totalPages, start + maxVisible - 1);
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  };
+
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  const visiblePages = getVisiblePages();
+
+  return (
+    <div className={`flex items-center justify-center gap-1 border border-gray-800 mt-8 ${className}`}>
+      <div className="flex items-center rounded-lg p-1">
+        {/* 페이지 번호들 */}
+        {visiblePages.map((page) => (
+          <button
+            key={page}
+            onClick={() => onPageChange(page)}
+            className={`min-w-[32px] h-8 px-2 text-sm font-medium transition-colors ${
+              currentPage === page
+                ? 'text-white bg-gray-700 rounded-md'
+                : 'text-gray-400 hover:text-white hover:bg-gray-800 rounded-md'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        
+        {/* 다음 버튼 */}
+        {currentPage < totalPages && (
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            className="min-w-[32px] h-8 px-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+          >
+            <svg 
+              className="w-4 h-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* 페이지 직접 이동 */}
+      <form onSubmit={handleInputSubmit} className="flex items-center gap-2 ml-6">
+        <input
+          type="text"
+          value={inputPage}
+          onChange={handleInputChange}
+          placeholder={currentPage.toString()}
+          className="w-14 h-8 px-2 text-center text-sm bg-gray-900 dark:bg-gray-900 border border-gray-700 dark:border-gray-700 rounded text-gray-300 dark:text-gray-300 placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors"
+        />
+        <button
+          type="submit"
+          className="h-8 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded text-sm font-medium transition-colors"
+        >
+          이동
+        </button>
+      </form>
+    </div>
+  );
+}

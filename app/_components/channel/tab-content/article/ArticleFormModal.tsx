@@ -33,7 +33,6 @@ export default function ArticleFormModal({
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files = Array.from(e.target.files || []);
     if (files.length + selectedImages.length > 5) {
-      alert('최대 5개의 이미지만 업로드할 수 있습니다.');
       return;
     }
 
@@ -74,7 +73,6 @@ export default function ArticleFormModal({
     e.preventDefault();
     
     if (!formData.title.trim() || !formData.content.trim()) {
-      alert('제목과 내용을 입력해주세요.');
       return;
     }
 
@@ -88,7 +86,6 @@ export default function ArticleFormModal({
         
         const response = await createArticle(createArticleDto, selectedImages);
         console.log('ArticleFormModal: Article created successfully:', response);
-        alert('게시글이 작성되었습니다.');
         
         if (onSuccess) {
           console.log('ArticleFormModal: onSuccess called');
@@ -99,7 +96,6 @@ export default function ArticleFormModal({
         const articleId = article.id;
         
         if (!articleId) {
-          alert('게시글 ID가 없습니다. 다시 시도해주세요.');
           return;
         }
         
@@ -111,7 +107,6 @@ export default function ArticleFormModal({
         
         const response = await editArticle(articleId, editArticleDto, selectedImages);
         console.log('ArticleFormModal: Article edited successfully:', response);
-        alert('게시글이 수정되었습니다.');
         
         if (onSuccess) {
           console.log('ArticleFormModal: onSuccess called');
@@ -123,7 +118,6 @@ export default function ArticleFormModal({
       onClose();
     } catch (error) {
       console.error('게시글 작성/수정 중 오류:', error);
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }
