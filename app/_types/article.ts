@@ -29,13 +29,24 @@ export interface UpdateArticleDto {
   content?: string;
 }
 
+export interface EditArticleDto {
+  title?: string;
+  content?: string;
+  keepImages?: number[]; // 유지할 이미지 ID들
+}
+
 export interface ArticleListResponse {
-  articles: Article[];
+  data: Article[];
   pagination: {
+    total: number;
     currentPage: number;
     totalPages: number;
-    totalItems: number;
-    itemsPerPage: number;
+    limit: number;
+    offset: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+    nextOffset: number | null;
+    prevOffset: number | null;
   };
 }
 
@@ -53,6 +64,7 @@ export interface ArticleListByAuthorParams {
 
 export interface GetArticlesParams {
   userIdx: number;
+  page?: number;
   offset?: number;
   limit?: number;
 }

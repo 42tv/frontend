@@ -1,14 +1,14 @@
 'use client'
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Article } from '../../../../_types/article';
-import { createArticle } from '../../../../_apis/article';
+import { createArticle, editArticle } from '../../../../_apis/article';
 import ImageUploader from './ImageUploader';
 
 interface ArticleFormModalProps {
   mode: 'create' | 'edit';
   article?: Article;
   onClose: () => void;
-  onSuccess?: (article: Article) => void;
+  onSuccess?: (article: Article) => Promise<void>;
 }
 
 export default function ArticleFormModal({
@@ -24,6 +24,9 @@ export default function ArticleFormModal({
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>(
     article?.images?.map(img => img.imageUrl) || []
+  );
+  const [keepImageIds, setKeepImageIds] = useState<number[]>(
+    article?.images?.map(img => img.id) || []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,7 +52,21 @@ export default function ArticleFormModal({
   };
 
   const handleRemoveImage = (index: number): void => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    const originalImageCount = article?.images?.length || 0;
+    
+    if (index < originalImageCount) {
+      // 기존 이미지 제거 - keepImageIds에서 해당 이미지 ID 제거
+      const imageId = article?.images?.[index]?.id;
+      if (imageId) {
+        setKeepImageIds(prev => prev.filter(id => id !== imageId));
+      }
+    } else {
+      // 새로운 이미지 제거 - selectedImages에서 제거
+      const newImageIndex = index - originalImageCount;
+      setSelectedImages(prev => prev.filter((_, i) => i !== newImageIndex));
+    }
+    
+    // 프리뷰에서는 항상 해당 인덱스 제거
     setPreviewImages(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -70,15 +87,37 @@ export default function ArticleFormModal({
         };
         
         const response = await createArticle(createArticleDto, selectedImages);
+        console.log('ArticleFormModal: Article created successfully:', response);
         alert('게시글이 작성되었습니다.');
         
-        if (onSuccess && response.data) {
-          onSuccess(response.data);
+        if (onSuccess) {
+          console.log('ArticleFormModal: onSuccess called');
+          // 백엔드에서 생성된 게시글 정보를 반환하지 않으므로, 더미 데이터로 콜백 호출
+          await onSuccess({ id: 0, title: formData.title, content: formData.content } as Article);
         }
       } else if (mode === 'edit' && article) {
-        // Update article logic here
-        console.log('Updating article:', article.id, formData, selectedImages);
+        const articleId = article.id;
+        
+        if (!articleId) {
+          alert('게시글 ID가 없습니다. 다시 시도해주세요.');
+          return;
+        }
+        
+        const editArticleDto = {
+          title: formData.title.trim(),
+          content: formData.content.trim(),
+          keepImages: keepImageIds
+        };
+        
+        const response = await editArticle(articleId, editArticleDto, selectedImages);
+        console.log('ArticleFormModal: Article edited successfully:', response);
         alert('게시글이 수정되었습니다.');
+        
+        if (onSuccess) {
+          console.log('ArticleFormModal: onSuccess called');
+          // 백엔드에서 수정된 게시글 정보를 반환하지 않으므로, 업데이트된 데이터로 콜백 호출
+          await onSuccess({ ...article, title: formData.title, content: formData.content } as Article);
+        }
       }
       
       onClose();

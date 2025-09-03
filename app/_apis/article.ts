@@ -3,6 +3,7 @@ import {
   Article,
   CreateArticleDto,
   UpdateArticleDto,
+  EditArticleDto,
   ArticleListResponse,
   ArticleResponse,
   ArticleListByAuthorParams,
@@ -71,6 +72,9 @@ export async function getArticles(params: GetArticlesParams): Promise<ArticleLis
   const queryParams = new URLSearchParams();
   queryParams.append('userIdx', params.userIdx.toString());
   
+  if (params.page !== undefined) {
+    queryParams.append('page', params.page.toString());
+  }
   if (params.offset !== undefined) {
     queryParams.append('offset', params.offset.toString());
   }
@@ -118,10 +122,54 @@ export async function getArticlesByAuthor(params: ArticleListByAuthorParams): Pr
 }
 
 /**
- * 게시글 수정
+ * 게시글 수정 (이미지 포함)
+ * @param id 게시글 ID
+ * @param editArticleDto 수정할 데이터
+ * @param newImages 새로 업로드할 이미지 파일들
+ * @returns 
+ */
+export async function editArticle(
+  id: number,
+  editArticleDto: EditArticleDto,
+  newImages?: File[]
+): Promise<ArticleResponse> {
+  const formData = new FormData();
+  
+  // 제목과 내용 추가 (선택적)
+  if (editArticleDto.title !== undefined) {
+    formData.append('title', editArticleDto.title);
+  }
+  if (editArticleDto.content !== undefined) {
+    formData.append('content', editArticleDto.content);
+  }
+  
+  // 유지할 이미지 ID들 추가
+  if (editArticleDto.keepImages && editArticleDto.keepImages.length > 0) {
+    formData.append('keepImages', editArticleDto.keepImages.join(','));
+  }
+  
+  // 새로운 이미지 파일들 추가
+  if (newImages && newImages.length > 0) {
+    newImages.forEach((image) => {
+      formData.append('images', image);
+    });
+  }
+
+  const response = await api.put(`/api/article/${id}`, formData, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+}
+
+/**
+ * 게시글 수정 (레거시)
  * @param id 게시글 ID
  * @param updateArticleDto 수정할 데이터
  * @returns 
+ * @deprecated editArticle 함수를 사용하세요
  */
 export async function updateArticle(
   id: number,

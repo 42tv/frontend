@@ -10,7 +10,8 @@ interface ArticleListProps {
   showActions?: boolean;
   showCreateButton?: boolean;
   onDelete?: (article: Article) => void;
-  onArticleCreated?: (article: Article) => void;
+  onArticleCreated?: (article: Article) => Promise<void>;
+  onRefresh?: () => Promise<void>;
 }
 
 export default function ArticleList({ 
@@ -18,7 +19,8 @@ export default function ArticleList({
   showActions = false, 
   showCreateButton = false, 
   onDelete, 
-  onArticleCreated 
+  onArticleCreated,
+  onRefresh 
 }: ArticleListProps) {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
@@ -41,9 +43,13 @@ export default function ArticleList({
     setEditingArticle(null);
   };
 
-  const handleFormSuccess = (article: Article): void => {
+  const handleFormSuccess = async (article: Article) => {
+    console.log('ArticleList: handleFormSuccess called');
+    if (onRefresh) {
+      await onRefresh();
+    }
     if (onArticleCreated) {
-      onArticleCreated(article);
+      await onArticleCreated(article);
     }
   };
 
