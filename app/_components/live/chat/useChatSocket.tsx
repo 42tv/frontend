@@ -8,6 +8,7 @@ import { useChatHandlers } from './handlers/chatHandlers';
 import { useViewerHandlers } from './handlers/viewerHandlers';
 import { useRoleHandlers } from './handlers/roleHandlers';
 import { useKickHandlers } from './handlers/kickHandlers';
+import { useRecommendHandlers } from './handlers/recommendHandlers';
 
 // Hooks
 import { useViewersManager } from './hooks/useViewersManager';
@@ -23,6 +24,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
     const { handleViewersUpdate, handleViewerJoin, handleViewerLeave } = useViewerHandlers();
     const { handleRoleChanged, startViewerListPolling } = useRoleHandlers(fetchViewersList, viewersIntervalRef, setCurrentMyRole);
     const { handleKickUser, handleKicked } = useKickHandlers();
+    const { handleRecommend } = useRecommendHandlers();
 
     // 소켓 이벤트 등록
     useEffect(() => {
@@ -34,6 +36,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
             const wrappedHandleViewerLeave = (viewerData: { user_idx: number }) => handleViewerLeave(viewerData, setViewers);
             const wrappedHandleRoleChanged = (payload: RoleChangePayload) => handleRoleChanged(payload, setViewers, setMessages);
             const wrappedHandleKickUser = (payload: KickPayload) => handleKickUser(payload, setViewers);
+            const wrappedHandleRecommend = (payload: { nickname: string }) => handleRecommend(payload, setMessages);
 
             socket.on(OpCode.CHAT, wrappedHandleChatMessage);
             socket.on(OpCode.VIEWER_LIST, wrappedHandleViewersUpdate);
@@ -42,6 +45,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
             socket.on(OpCode.USER_LEAVE, wrappedHandleViewerLeave);
             socket.on(OpCode.KICK, wrappedHandleKickUser);
             socket.on(OpCode.KICKED, handleKicked);
+            socket.on(OpCode.RECOMMEND, wrappedHandleRecommend);
 
             return () => {
                 socket.off(OpCode.CHAT, wrappedHandleChatMessage);
@@ -51,9 +55,10 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
                 socket.off(OpCode.USER_LEAVE, wrappedHandleViewerLeave);
                 socket.off(OpCode.KICK, wrappedHandleKickUser);
                 socket.off(OpCode.KICKED, handleKicked);
+                socket.off(OpCode.RECOMMEND, wrappedHandleRecommend);
             };
         }
-    }, [socket, handleChatMessage, handleViewersUpdate, handleRoleChanged, handleViewerJoin, handleViewerLeave, handleKickUser, handleKicked]);
+    }, [socket, handleChatMessage, handleViewersUpdate, handleRoleChanged, handleViewerJoin, handleViewerLeave, handleKickUser, handleKicked, handleRecommend]);
 
     // 초기 권한 체크 및 viewer list 갱신 시작
     useEffect(() => {

@@ -1,14 +1,95 @@
-import React from "react";
+'use client';
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { ArticleList } from "./tab-content/article";
+import { getArticles, deleteArticle } from "../../_apis/article";
+import { Article, ArticleListResponse } from "../../_types/article";
 
-export const BJNoticeContent = () => {
-  return (
-    <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
-      <h3 className="font-bold text-xl mb-4 text-text-primary dark:text-text-primary-dark">BJ 공지사항</h3>
-      <div className="bg-bg-secondary dark:bg-bg-secondary-dark p-4 rounded">
-        <p className="text-gray-400">현재 공지사항이 없습니다.</p>
+interface BjArticleProps {
+  userIdx: number;
+}
+
+export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  const fetchArticles = async (page: number = currentPage) => {
+    console.log('tab-contents: fetchArticles called with page:', page);
+    try {
+      setLoading(true);
+      const response = await getArticles({ 
+        userIdx,
+        page: page,
+        limit: 10 
+      });
+      console.log('tab-contents: API Response:', response);
+      
+      // 새로운 응답 구조: { data: Article[], pagination: {...} }
+      setArticles(response.data || []);
+      setPagination(response.pagination);
+      setCurrentPage(page);
+    } catch (err) {
+      console.error('게시글 조회 실패:', err);
+      setArticles([]); // 에러 시에도 빈 배열로 설정
+      setPagination(undefined);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles(1);
+  }, [userIdx]);
+
+  const handlePageChange = async (page: number): Promise<void> => {
+    await fetchArticles(page);
+  };
+
+  const handleDelete = async (article: Article) => {
+    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+      try {
+        await deleteArticle(article.id);
+        // 삭제 후 현재 페이지의 게시글이 없으면 이전 페이지로
+        const remainingItems = articles.length - 1;
+        const shouldGoToPrevPage = remainingItems === 0 && currentPage > 1;
+        const targetPage = shouldGoToPrevPage ? currentPage - 1 : currentPage;
+        await fetchArticles(targetPage);
+      } catch (error) {
+        console.error('Failed to delete article:', error);
+        alert('게시글 삭제에 실패했습니다.');
+      }
+    }
+  };
+
+  const handleArticleCreated = async () => {
+    console.log('tab-contents: handleArticleCreated called');
+    // 새 게시글 생성 시 첫 페이지로 이동
+    await fetchArticles(1);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-text-secondary dark:text-text-secondary-dark">
+          게시글을 불러오는 중...
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <ArticleList 
+      articles={articles} 
+      pagination={pagination}
+      showActions={true}
+      showCreateButton={true}
+      onDelete={handleDelete}
+      onArticleCreated={handleArticleCreated}
+      onRefresh={() => fetchArticles(currentPage)}
+      onPageChange={handlePageChange}
+    />
   );
 };
 

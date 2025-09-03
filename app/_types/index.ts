@@ -13,6 +13,9 @@ export * from './follow';
 // Post/Message types
 export * from './post';
 
+// Article types
+export * from './article';
+
 // Live/Stream types
 export * from './live';
 

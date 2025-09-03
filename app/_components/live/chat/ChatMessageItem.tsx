@@ -59,9 +59,9 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, onChatClick 
     
     if (message.type === 'recommend') {
         return (
-            <div className="italic text-warning dark:text-warning-dark">
-                <span className="font-semibold">{message.recommender_nickname}</span>님이 추천했습니다!
-            </div>
+                <div className="text-warning dark:text-warning-dark text-center text-sm">
+                    <span className="font-semibold">'{message.nickname}'</span> 님이 추천하셨습니다.
+                </div>
         );
     }
     

@@ -7,7 +7,7 @@ export default function ChannelMyDefaultPage() {
   const router = useRouter();
   
   useEffect(() => {
-    router.replace("/channel/my/bjNotice");
+    router.replace("/channel/my/article");
   }, [router]);
   
   return <div>Redirecting...</div>;
