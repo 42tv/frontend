@@ -98,7 +98,7 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
       {/* Tab Content */}
       <div className="min-h-96">
         {activeTab === 'articles' && (
-          <BjArticle userIdx={parseInt(broadcasterId)} />
+          <BjArticle userId={broadcasterId} />
         )}
 
         {activeTab === 'fanLevel' && (

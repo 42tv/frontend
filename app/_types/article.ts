@@ -63,7 +63,7 @@ export interface ArticleListByAuthorParams {
 }
 
 export interface GetArticlesParams {
-  userIdx: number;
+  userId: string;
   page?: number;
   offset?: number;
   limit?: number;

@@ -4,10 +4,10 @@ import { BjArticle } from "../../../_components/channel/tab-contents";
 import { useUserStore } from "../../../_lib/stores";
 
 export default function ArticlePage() {
-  const { idx: userIdx } = useUserStore();
+  const { idx: userIdx, user_id: userId } = useUserStore();
 
   // 로그인하지 않은 경우 처리
-  if (!userIdx || userIdx === 0) {
+  if (!userIdx || userIdx === 0 || !userId) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-text-secondary dark:text-text-secondary-dark">
@@ -19,7 +19,7 @@ export default function ArticlePage() {
 
   return (
     <BjArticle 
-      userIdx={userIdx} 
+      userId={userId} 
       showActions={true}
       showCreateButton={true}
     />
