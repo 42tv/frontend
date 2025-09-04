@@ -17,5 +17,11 @@ export default function ArticlePage() {
     );
   }
 
-  return <BjArticle userIdx={userIdx} />;
+  return (
+    <BjArticle 
+      userIdx={userIdx} 
+      showActions={true}
+      showCreateButton={true}
+    />
+  );
 }

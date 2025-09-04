@@ -18,9 +18,9 @@ export default function ArticleDetailModal({ article, onClose }: ArticleDetailMo
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-background dark:bg-background-dark rounded-lg max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-background dark:bg-background-dark rounded-lg w-[1200px] max-w-[90vw] h-[80vh] max-h-[800px] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex justify-between items-start p-6 pb-4 border-b border-border-primary dark:border-border-primary-dark">
+        <div className="flex justify-between items-start p-6 pb-4 border-b border-border-primary dark:border-border-primary-dark flex-shrink-0">
           <div className="flex-1 pr-4">
             <h1 className="text-2xl font-bold text-text-primary dark:text-text-primary-dark mb-3 line-clamp-2">
               {article.title}
@@ -46,9 +46,9 @@ export default function ArticleDetailModal({ article, onClose }: ArticleDetailMo
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           {article.images && article.images.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 p-6">
+            <div className="flex gap-6 p-6 h-full">
               {/* Text Content Section - 70% */}
-              <div className="lg:col-span-7">
+              <div className="flex-1" style={{ flexBasis: '70%' }}>
                 <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-6 h-full">
                   <h3 className="text-xl font-semibold text-text-primary dark:text-text-primary-dark mb-4">
                     게시글 내용
@@ -62,7 +62,7 @@ export default function ArticleDetailModal({ article, onClose }: ArticleDetailMo
               </div>
               
               {/* Images Section - 30% */}
-              <div className="lg:col-span-3">
+              <div className="flex-shrink-0" style={{ flexBasis: '30%' }}>
                 <div className="space-y-4">
                   <ImageGallery images={article.images} />
                 </div>
@@ -70,9 +70,9 @@ export default function ArticleDetailModal({ article, onClose }: ArticleDetailMo
             </div>
           ) : (
             /* No Images - Full Width Content */
-            <div className="p-6">
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-6">
+            <div className="p-6 h-full">
+              <div className="max-w-none h-full">
+                <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-6 h-full">
                   <div className="text-text-primary dark:text-text-primary-dark text-lg leading-relaxed">
                     <div className="whitespace-pre-wrap break-words">
                       {article.content}
@@ -85,7 +85,7 @@ export default function ArticleDetailModal({ article, onClose }: ArticleDetailMo
         </div>
 
         {/* Footer */}
-        <div className="border-t border-border-primary dark:border-border-primary-dark p-4 bg-background-secondary dark:bg-background-secondary-dark">
+        <div className="border-t border-border-primary dark:border-border-primary-dark p-4 bg-background-secondary dark:bg-background-secondary-dark flex-shrink-0">
           <div className="flex items-center justify-between text-sm text-text-secondary dark:text-text-secondary-dark">
             <div className="flex items-center space-x-4">
               <span className="flex items-center">
