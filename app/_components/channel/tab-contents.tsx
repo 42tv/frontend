@@ -7,9 +7,15 @@ import { Article, ArticleListResponse } from "../../_types/article";
 
 interface BjArticleProps {
   userIdx: number;
+  showActions?: boolean;
+  showCreateButton?: boolean;
 }
 
-export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
+export const BjArticle: React.FC<BjArticleProps> = ({ 
+  userIdx, 
+  showActions = false, 
+  showCreateButton = false 
+}) => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
@@ -83,10 +89,10 @@ export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
     <ArticleList 
       articles={articles} 
       pagination={pagination}
-      showActions={true}
-      showCreateButton={true}
-      onDelete={handleDelete}
-      onArticleCreated={handleArticleCreated}
+      showActions={showActions}
+      showCreateButton={showCreateButton}
+      onDelete={showActions ? handleDelete : undefined}
+      onArticleCreated={showCreateButton ? handleArticleCreated : undefined}
       onRefresh={() => fetchArticles(currentPage)}
       onPageChange={handlePageChange}
     />
