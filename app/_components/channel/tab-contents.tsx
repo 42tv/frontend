@@ -22,7 +22,7 @@ export const BjArticle: React.FC<BjArticleProps> = ({ userIdx }) => {
       const response = await getArticles({ 
         userIdx,
         page: page,
-        limit: 10 
+        limit: 5 
       });
       console.log('tab-contents: API Response:', response);
       

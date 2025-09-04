@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react';
 import { Article } from '../../../../_types/article';
 
 interface ArticleListItemProps {
@@ -16,6 +17,7 @@ export default function ArticleListItem({
   onEdit, 
   onDelete 
 }: ArticleListItemProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -30,52 +32,97 @@ export default function ArticleListItem({
       : content;
   };
 
+  const nextImage = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    if (article.images) {
+      setCurrentImageIndex((currentImageIndex + 1) % article.images.length);
+    }
+  };
+
+  const prevImage = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    if (article.images) {
+      setCurrentImageIndex(currentImageIndex === 0 ? article.images.length - 1 : currentImageIndex - 1);
+    }
+  };
+
   return (
-    <div className="border border-border-primary dark:border-border-primary-dark rounded-lg p-4 hover:bg-background-secondary dark:hover:bg-background-secondary-dark transition-colors">
-      <div className="flex justify-between items-start">
+    <div className="border border-border-primary dark:border-border-primary-dark rounded-lg p-4 hover:bg-background-secondary dark:hover:bg-background-secondary-dark transition-colors min-h-[180px]">
+      <div className="flex justify-between items-start gap-4 h-full">
         <div 
-          className="flex-1 cursor-pointer"
+          className="flex-1 cursor-pointer flex flex-col h-full"
           onClick={() => onSelect(article)}
         >
           <h3 className="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-2">
             {article.title}
           </h3>
-          <p className="text-text-secondary dark:text-text-secondary-dark line-clamp-2 mb-3">
+          <p className="text-text-secondary dark:text-text-secondary-dark flex-1 mb-3 overflow-hidden">
             {truncateContent(article.content)}
           </p>
-          <div className="flex items-center space-x-4 text-sm text-text-secondary dark:text-text-secondary-dark">
+          <div className="flex items-center space-x-4 text-sm text-text-secondary dark:text-text-secondary-dark mt-auto">
             <span>{formatDate(article.createdAt)}</span>
             <span>조회수 {article.viewCount}</span>
             {article.images && article.images.length > 0 && (
               <span>이미지 {article.images.length}개</span>
             )}
           </div>
-
-          {/* Image Preview */}
-          {article.images && article.images.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border-secondary dark:border-border-secondary-dark">
-              <div className="flex gap-2 overflow-hidden">
-                {article.images.slice(0, 3).map((image, index) => (
-                  <div key={image.id} className="relative flex-shrink-0">
-                    <img
-                      src={image.imageUrl}
-                      alt="게시글 이미지"
-                      className="w-16 h-16 object-cover rounded-md border border-border-primary dark:border-border-primary-dark"
-                    />
-                    {/* Show "+N" overlay on the last image if there are more than 3 images */}
-                    {index === 2 && article.images && article.images.length > 3 && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">
-                        <span className="text-white text-xs font-medium">
-                          +{article.images.length - 3}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Image Carousel - Right side */}
+        {article.images && article.images.length > 0 && (
+          <div className="flex-shrink-0 h-full aspect-[16/9] relative overflow-hidden rounded-md border border-border-primary dark:border-border-primary-dark">
+            <img
+              src={article.images[currentImageIndex].imageUrl}
+              alt="게시글 이미지"
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+            
+            {/* Image navigation arrows - only show if more than 1 image */}
+            {article.images.length > 1 && (
+              <>
+                {/* Previous arrow */}
+                <button
+                  onClick={prevImage}
+                  className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full flex items-center justify-center text-white text-xs transition-opacity opacity-70 hover:opacity-100"
+                >
+                  ‹
+                </button>
+                
+                {/* Next arrow */}
+                <button
+                  onClick={nextImage}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full flex items-center justify-center text-white text-xs transition-opacity opacity-70 hover:opacity-100"
+                >
+                  ›
+                </button>
+
+                {/* Image counter and indicator dots */}
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
+                  {/* Image counter */}
+                  <div className="bg-black bg-opacity-70 text-white text-xs px-2 py-0.5 rounded-full">
+                    {currentImageIndex + 1}/{article.images.length}
+                  </div>
+                  
+                  {/* Indicator dots - only show if 5 or fewer images */}
+                  {article.images.length <= 5 && (
+                    <div className="flex gap-1">
+                      {article.images.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                            index === currentImageIndex 
+                              ? 'bg-white' 
+                              : 'bg-white bg-opacity-50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
         {showActions && (
           <div className="flex space-x-2 ml-4">
             <button
