@@ -70,7 +70,7 @@ export async function getArticleById(params: GetArticleByIdParams): Promise<Arti
  */
 export async function getArticles(params: GetArticlesParams): Promise<ArticleListResponse> {
   const queryParams = new URLSearchParams();
-  queryParams.append('userIdx', params.userIdx.toString());
+  queryParams.append('userId', params.userId.toString());
   
   if (params.page !== undefined) {
     queryParams.append('page', params.page.toString());

@@ -61,7 +61,6 @@ export default function ArticleListItem({
           </p>
           <div className="flex items-center space-x-4 text-sm text-text-secondary dark:text-text-secondary-dark mt-auto">
             <span>{formatDate(article.createdAt)}</span>
-            <span>조회수 {article.viewCount}</span>
             {article.images && article.images.length > 0 && (
               <span>이미지 {article.images.length}개</span>
             )}

@@ -8,6 +8,7 @@ import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import Image from 'next/image';
 import { openPopupModal } from '@/app/_components/utils/overlay/overlayHelpers';
+import { useRouter } from 'next/navigation';
 
 interface StreamInfoProps {
     playDataState: PlayData | null | undefined;
@@ -23,6 +24,7 @@ export default function StreamInfo({
     onRecommend 
 }: StreamInfoProps) {
     const [elapsedTime, setElapsedTime] = useState<string>('');
+    const router = useRouter();
 
     // 경과 시간 업데이트를 위한 useEffect
     useEffect(() => {
@@ -58,6 +60,12 @@ export default function StreamInfo({
         );
     };
 
+    const handleNicknameClick = () => {
+        if (playDataState?.broadcaster.user_id) {
+            router.push(`/channel/${playDataState.broadcaster.user_id}`);
+        }
+    };
+
     return (
         <div className="flex flex-row w-full p-4 border-t border-border-secondary dark:border-border-secondary-dark flex items-center space-x-4">
             {/* 프로필 이미지 영역 */}
@@ -75,7 +83,12 @@ export default function StreamInfo({
             {/* 설명 텍스트 영역 */}
             <div className="flex w-full flex-col">
                 <h2 className="text-xl font-semibold">{playDataState?.stream.title}</h2>
-                <p className="dark:text-textBase-dark text-textBase">{playDataState?.broadcaster.nickname}</p>
+                <p 
+                    className="dark:text-textBase-dark text-textBase cursor-pointer hover:text-primary dark:hover:text-primary-dark transition-colors"
+                    onClick={handleNicknameClick}
+                >
+                    {playDataState?.broadcaster.nickname}
+                </p>
                 <div className="flex items-center space-x-4 dark:text-textBase-dark text-textBase text-sm mt-1">
                     <span className="flex items-center space-x-1">
                         <FiUser title="시청자" />

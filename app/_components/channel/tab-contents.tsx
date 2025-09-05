@@ -6,13 +6,13 @@ import { getArticles, deleteArticle } from "../../_apis/article";
 import { Article, ArticleListResponse } from "../../_types/article";
 
 interface BjArticleProps {
-  userIdx: number;
+  userId: string;
   showActions?: boolean;
   showCreateButton?: boolean;
 }
 
 export const BjArticle: React.FC<BjArticleProps> = ({ 
-  userIdx, 
+  userId, 
   showActions = false, 
   showCreateButton = false 
 }) => {
@@ -26,7 +26,7 @@ export const BjArticle: React.FC<BjArticleProps> = ({
     try {
       setLoading(true);
       const response = await getArticles({ 
-        userIdx,
+        userId,
         page: page,
         limit: 5 
       });
@@ -47,7 +47,7 @@ export const BjArticle: React.FC<BjArticleProps> = ({
 
   useEffect(() => {
     fetchArticles(1);
-  }, [userIdx]);
+  }, [userId]);
 
   const handlePageChange = async (page: number): Promise<void> => {
     await fetchArticles(page);
