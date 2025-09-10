@@ -4,6 +4,7 @@ import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
 import LeftContainer from "./_components/left-container/left-container";
 import OverlayProviderWrapper from "./_components/providers/OverlayProviderWrapper";
+import FooterContainer from "./_components/footer/footer_container";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,9 +26,11 @@ export default function RootLayout({
             <Toolbar />
             <div className="flex flex-1 pt-[65px] overflow-auto">
               <LeftContainer />
-              <div className="flex-1 overflow-x-auto overflow-y-auto">
-                {children}
-                {/* <FooterContainer /> */}
+              <div className="flex-1 flex flex-col overflow-x-auto overflow-y-auto">
+                <main className="flex-1">
+                  {children}
+                </main>
+                <FooterContainer />
               </div>
             </div>
           </OverlayProviderWrapper>
