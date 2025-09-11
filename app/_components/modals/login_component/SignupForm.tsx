@@ -34,7 +34,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
                     type="text"
                     value={signupUserId}
                     onChange={(e) => onSignupUserIdChange(e.target.value)}
-                    className="w-full p-2 border rounded bg-bg-300 text-text-100 border-bg-300 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
                     placeholder="아이디를 입력하세요"
                 />
             </div>
@@ -47,7 +47,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
                     type="password"
                     value={signupPassword}
                     onChange={(e) => onSignupPasswordChange(e.target.value)}
-                    className="w-full p-2 border rounded bg-bg-300 text-text-100 border-bg-300 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
                     placeholder="비밀번호를 입력하세요"
                 />
             </div>
@@ -60,7 +60,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => onConfirmPasswordChange(e.target.value)}
-                    className="w-full p-2 border rounded bg-bg-300 text-text-100 border-bg-300 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
                     placeholder="비밀번호를 입력하세요"
                 />
             </div>
@@ -73,7 +73,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
                     type="text"
                     value={nickname}
                     onChange={(e) => onNicknameChange(e.target.value)}
-                    className="w-full p-2 border rounded bg-bg-300 text-text-100 border-bg-300 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
                     placeholder="닉네임을 입력하세요"
                 />
             </div>

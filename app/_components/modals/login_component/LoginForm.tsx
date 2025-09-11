@@ -29,7 +29,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
                     type="text"
                     value={userId}
                     onChange={(e) => onUserIdChange(e.target.value)}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
                     placeholder="아이디를 입력하세요"
                 />
             </div>
@@ -47,7 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
                             onLogin();
                         }
                     }}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
                     placeholder="비밀번호를 입력하세요"
                 />
             </div>
