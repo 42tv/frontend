@@ -17,7 +17,7 @@ const TermsAgreement: React.FC = () => {
                     onChange={handleSelectAll}
                     className="mr-2"
                 />
-                <label htmlFor="agreeAll" className="text-text-primary font-semibold">
+                <label htmlFor="agreeAll" className="text-text-100 font-semibold">
                     전체 동의
                 </label>
             </div>
@@ -29,7 +29,7 @@ const TermsAgreement: React.FC = () => {
                         id="agreeTerms"
                         className="mr-2"
                     />
-                    <label htmlFor="agreeTerms" className="text-text-secondary">
+                    <label htmlFor="agreeTerms" className="text-text-200">
                         [필수] 이용약관 동의
                     </label>
                 </div>
@@ -40,7 +40,7 @@ const TermsAgreement: React.FC = () => {
                         id="agreePrivacy"
                         className="mr-2"
                     />
-                    <label htmlFor="agreePrivacy" className="text-text-secondary">
+                    <label htmlFor="agreePrivacy" className="text-text-200">
                         [필수] 개인정보 수집 및 이용 동의
                     </label>
                 </div>
@@ -51,7 +51,7 @@ const TermsAgreement: React.FC = () => {
                         id="agreeDelegate"
                         className="mr-2"
                     />
-                    <label htmlFor="agreeDelegate" className="text-text-secondary">
+                    <label htmlFor="agreeDelegate" className="text-text-200">
                         [필수] 개인정보 처리 위탁 동의
                     </label>
                 </div>
@@ -62,7 +62,7 @@ const TermsAgreement: React.FC = () => {
                         id="agreeAge"
                         className="mr-2"
                     />
-                    <label htmlFor="agreeAge" className="text-text-secondary">
+                    <label htmlFor="agreeAge" className="text-text-200">
                         [필수] 만 14세 이상 동의
                     </label>
                 </div>

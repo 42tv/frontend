@@ -52,12 +52,12 @@ export default function BroadcastSettings() {
   };
 
   return (
-    <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700 relative">
+    <div className="p-6 rounded-lg relative" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
       <ToastNotification showToast={showToast} copiedText={copiedText} />
       
       <div className="flex flex-col w-full p-4 max-w-3xl">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-xl text-white">방송설정</h3>
+          <h3 className="font-bold text-xl" style={{ color: 'var(--text-100)' }}>방송설정</h3>
         </div>
         
         <StreamKeyField

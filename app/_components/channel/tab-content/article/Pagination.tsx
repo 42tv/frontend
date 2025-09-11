@@ -62,18 +62,30 @@ export default function Pagination({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className={`flex items-center justify-center gap-1 border border-gray-800 mt-8 ${className}`}>
+    <div className={`flex items-center justify-center gap-1 mt-8 ${className}`} style={{ border: '1px solid var(--bg-300)' }}>
       <div className="flex items-center rounded-lg p-1">
         {/* 페이지 번호들 */}
         {visiblePages.map((page) => (
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`min-w-[32px] h-8 px-2 text-sm font-medium transition-colors ${
-              currentPage === page
-                ? 'text-white bg-gray-700 rounded-md'
-                : 'text-gray-400 hover:text-white hover:bg-gray-800 rounded-md'
-            }`}
+            className="min-w-[32px] h-8 px-2 text-sm font-medium transition-colors rounded-md"
+            style={{
+              color: currentPage === page ? 'var(--text-100)' : 'var(--text-200)',
+              backgroundColor: currentPage === page ? 'var(--bg-300)' : 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== page) {
+                e.currentTarget.style.backgroundColor = 'var(--bg-300)';
+                e.currentTarget.style.color = 'var(--text-100)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== page) {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--text-200)';
+              }
+            }}
           >
             {page}
           </button>
@@ -83,7 +95,16 @@ export default function Pagination({
         {currentPage < totalPages && (
           <button
             onClick={() => onPageChange(currentPage + 1)}
-            className="min-w-[32px] h-8 px-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+            className="min-w-[32px] h-8 px-2 rounded-md transition-colors"
+            style={{ color: 'var(--text-200)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--bg-300)';
+              e.currentTarget.style.color = 'var(--text-100)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'var(--text-200)';
+            }}
           >
             <svg 
               className="w-4 h-4" 
@@ -104,11 +125,27 @@ export default function Pagination({
           value={inputPage}
           onChange={handleInputChange}
           placeholder={currentPage.toString()}
-          className="w-14 h-8 px-2 text-center text-sm bg-gray-900 dark:bg-gray-900 border border-gray-700 dark:border-gray-700 rounded text-gray-300 dark:text-gray-300 placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors"
+          className="w-14 h-8 px-2 text-center text-sm rounded focus:outline-none transition-colors"
+          style={{
+            backgroundColor: 'var(--bg-200)',
+            border: '1px solid var(--bg-300)',
+            color: 'var(--text-100)'
+          }}
+          onFocus={(e) => e.target.style.borderColor = 'var(--primary-100)'}
+          onBlur={(e) => e.target.style.borderColor = 'var(--bg-300)'}
         />
         <button
           type="submit"
-          className="h-8 px-3 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded text-sm font-medium transition-colors"
+          className="h-8 px-3 rounded text-sm font-medium transition-colors"
+          style={{ backgroundColor: 'var(--bg-300)', color: 'var(--text-100)' }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--bg-200)';
+            e.currentTarget.style.color = 'var(--text-100)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--bg-300)';
+            e.currentTarget.style.color = 'var(--text-100)';
+          }}
         >
           이동
         </button>

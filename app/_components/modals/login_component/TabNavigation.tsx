@@ -7,12 +7,12 @@ interface TabNavigationProps {
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange }) => {
     return (
-        <div className="flex border-b border-border mb-4">
+        <div className="flex border-b border-bg-300 mb-4">
             <button
                 className={`flex-1 py-2 text-center font-medium ${
                     activeTab === 'login'
-                        ? 'border-b-2 border-primary text-text-primary'
-                        : 'text-text-secondary hover:text-text-primary'
+                        ? 'border-b-2 border-primary-100 text-text-100'
+                        : 'text-text-200 hover:text-text-100'
                 }`}
                 onClick={() => onTabChange('login')}
             >
@@ -21,8 +21,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
             <button
                 className={`flex-1 py-2 text-center font-medium ${
                     activeTab === 'signup'
-                        ? 'border-b-2 border-primary text-text-primary'
-                        : 'text-text-secondary hover:text-text-primary'
+                        ? 'border-b-2 border-primary-100 text-text-100'
+                        : 'text-text-200 hover:text-text-100'
                 }`}
                 onClick={() => onTabChange('signup')}
             >

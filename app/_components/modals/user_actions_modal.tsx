@@ -31,14 +31,14 @@ const UserActionsModal: React.FC<UserActionsModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
          onClick={onClose}>
-      <div className="bg-bg-primary dark:bg-bg-primary-dark rounded-lg shadow-lg w-80 max-w-sm mx-4 overflow-hidden"
+      <div className="bg-[var(--bg-200)] rounded-lg shadow-lg w-80 max-w-sm mx-4 overflow-hidden border border-[var(--bg-300)]"
            onClick={(e) => e.stopPropagation()}>
         
         <CloseButton onClose={onClose} />
         <UserHeader user={user} />
         
         {/* Divider */}
-        <div className="border-t border-gray-200 dark:border-gray-700"></div>
+        <div className="border-t border-[var(--bg-300)]"></div>
         
         <ActionMenuList
           user={user}

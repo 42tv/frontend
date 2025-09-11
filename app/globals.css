@@ -8,20 +8,34 @@
   --foreground: #080808;
   
   /* Primary colors */
-  --primary: rgb(75, 85, 99);
-  --primary-hover: rgb(55, 65, 81);
-  --primary-light: rgb(107, 114, 128);
+  --primary-100: #6A00FF;
+  --primary-200: #8A2BE2;
+  --primary-300: #9370DB;
+  --primary: var(--primary-100);
+  --primary-hover: var(--primary-200);
+  --primary-light: var(--primary-300);
   
-  /* Background variants */
-  --bg-primary: rgb(249, 250, 251); /* gray-50 */
-  --bg-secondary: rgb(243, 244, 246); /* gray-100 */
-  --bg-tertiary: rgb(229, 231, 235); /* gray-200 */
+  /* Accent colors */
+  --accent-100: #00E5FF;
+  --accent-200: #00829b;
+  --accent: var(--accent-100);
+  --accent-light: var(--accent-200);
   
   /* Text colors */
+  --text-100: #FFFFFF;
+  --text-200: #e0e0e0;
   --text-primary: rgb(17, 24, 39);
   --text-secondary: rgb(75, 85, 99);
   --text-tertiary: rgb(107, 114, 128);
   --text-muted: rgb(156, 163, 175);
+  
+  /* Background colors */
+  --bg-100: #1A1A1A;
+  --bg-200: #292929;
+  --bg-300: #404040;
+  --bg-primary: rgb(249, 250, 251);
+  --bg-secondary: rgb(243, 244, 246);
+  --bg-tertiary: rgb(229, 231, 235);
   
   /* Border colors */
   --border-primary: rgb(229, 231, 235);
@@ -31,56 +45,64 @@
 
 [data-theme="dark"] {
   /* Dark theme colors */
-  --background: #080808;
-  --foreground: hsl(210 40% 98%);
+  --background: var(--bg-100);
+  --foreground: var(--text-100);
   
   /* Primary colors */
-  --primary: rgb(75, 85, 99);
-  --primary-hover: rgb(55, 65, 81);
-  --primary-light: rgb(107, 114, 128);
+  --primary: var(--primary-300);
+  --primary-hover: var(--primary-200);
+  --primary-light: var(--primary-100);
+  
+  /* Accent colors */
+  --accent: var(--accent-200);
+  --accent-light: var(--accent-100);
   
   /* Background variants */
-  --bg-primary: rgb(55, 65, 81); /* gray-700 */
-  --bg-secondary: rgb(54, 61, 71); /* gray-600 */
-  --bg-tertiary: rgb(107, 114, 128); /* gray-500 */
+  --bg-primary: var(--bg-200);
+  --bg-secondary: var(--bg-300);
+  --bg-tertiary: var(--bg-100);
   
   /* Text colors */
-  --text-primary: rgb(243, 244, 246);
-  --text-secondary: rgb(209, 213, 219);
+  --text-primary: var(--text-100);
+  --text-secondary: var(--text-200);
   --text-tertiary: rgb(156, 163, 175);
   --text-muted: rgb(107, 114, 128);
   
   /* Border colors */
-  --border-primary: rgb(107, 114, 128);
-  --border-secondary: rgb(75, 85, 99);
-  --border-hover: rgb(156, 163, 175);
+  --border-primary: var(--bg-300);
+  --border-secondary: var(--primary-200);
+  --border-hover: var(--primary-300);
 }
 
 .dark {
   /* Dark theme colors */
-  --background: #080808;
-  --foreground: hsl(210 40% 98%);
+  --background: var(--bg-100);
+  --foreground: var(--text-100);
   
   /* Primary colors */
-  --primary: rgb(75, 85, 99);
-  --primary-hover: rgb(55, 65, 81);
-  --primary-light: rgb(107, 114, 128);
+  --primary: var(--primary-300);
+  --primary-hover: var(--primary-200);
+  --primary-light: var(--primary-100);
+  
+  /* Accent colors */
+  --accent: var(--accent-200);
+  --accent-light: var(--accent-100);
   
   /* Background variants */
-  --bg-primary: rgb(55, 65, 81); /* gray-700 */
-  --bg-secondary: rgb(75, 85, 99); /* gray-600 */
-  --bg-tertiary: rgb(107, 114, 128); /* gray-500 */
+  --bg-primary: var(--bg-200);
+  --bg-secondary: var(--bg-300);
+  --bg-tertiary: var(--bg-100);
   
   /* Text colors */
-  --text-primary: rgb(243, 244, 246);
-  --text-secondary: rgb(209, 213, 219);
+  --text-primary: var(--text-100);
+  --text-secondary: var(--text-200);
   --text-tertiary: rgb(156, 163, 175);
   --text-muted: rgb(107, 114, 128);
   
   /* Border colors */
-  --border-primary: rgb(107, 114, 128);
-  --border-secondary: rgb(75, 85, 99);
-  --border-hover: rgb(156, 163, 175);
+  --border-primary: var(--bg-300);
+  --border-secondary: var(--primary-200);
+  --border-hover: var(--primary-300);
 }
 
 /* 전체 레이아웃 설정 - 제거 또는 주석 처리 */

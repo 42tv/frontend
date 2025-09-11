@@ -35,15 +35,15 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   const hasPreview = previewLevelId === levelId && previewColor && previewColor !== currentColor;
 
   return (
-    <div className="absolute z-50 mt-2 p-6 bg-gray-800 border border-gray-600 rounded-xl shadow-xl left-0 top-full">
-      <div className="text-lg text-gray-300 mb-5 font-medium">색상 선택</div>
+    <div className="absolute z-50 mt-2 p-6 rounded-xl shadow-xl left-0 top-full" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
+      <div className="text-lg mb-5 font-medium" style={{ color: 'var(--text-100)' }}>색상 선택</div>
       
       <div className="flex gap-6">
         {/* 색상 선택 영역 */}
         <div className="flex flex-col gap-4">
           {/* react-colorful 색상 선택기 */}
-          <div className="bg-gray-750 p-4 rounded-lg border border-gray-600">
-            <div className="text-sm text-gray-400 mb-3 font-medium">정밀 색상 선택</div>
+          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-300)', border: '1px solid var(--bg-300)' }}>
+            <div className="text-sm mb-3 font-medium" style={{ color: 'var(--text-200)' }}>정밀 색상 선택</div>
             <HexColorPicker 
               color={displayColor} 
               onChange={(color) => onColorPreview(levelId, color)}
@@ -74,17 +74,32 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             <button
               onClick={onColorConfirm}
               disabled={!hasPreview}
-              className={`w-full px-5 py-3 text-white text-sm rounded-lg transition-colors font-medium ${
-                hasPreview 
-                  ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer' 
-                  : 'bg-gray-600 cursor-not-allowed opacity-50'
-              }`}
+              className="w-full px-5 py-3 text-sm rounded-lg transition-colors font-medium"
+              style={{
+                backgroundColor: hasPreview ? 'var(--primary-100)' : 'var(--bg-300)',
+                color: 'var(--text-100)',
+                cursor: hasPreview ? 'pointer' : 'not-allowed',
+                opacity: hasPreview ? 1 : 0.5
+              }}
+              onMouseEnter={(e) => {
+                if (hasPreview) {
+                  e.currentTarget.style.backgroundColor = 'var(--accent-100)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (hasPreview) {
+                  e.currentTarget.style.backgroundColor = 'var(--primary-100)';
+                }
+              }}
             >
               적용
             </button>
             <button
               onClick={onCancel}
-              className="w-full px-5 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors font-medium"
+              className="w-full px-5 py-3 text-sm rounded-lg transition-colors font-medium"
+              style={{ backgroundColor: 'var(--bg-300)', color: 'var(--text-100)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-100)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-300)'}
             >
               취소
             </button>

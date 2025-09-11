@@ -15,36 +15,37 @@ export const ColorPreview: React.FC<ColorPreviewProps> = ({
   onResetToCurrentColor
 }) => {
   return (
-    <div className="bg-gray-750 p-4 rounded-lg border border-gray-600">
-      <div className="text-sm text-gray-400 mb-3 font-medium">미리보기</div>
+    <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-300)', border: '1px solid var(--bg-300)' }}>
+      <div className="text-sm mb-3 font-medium" style={{ color: 'var(--text-200)' }}>미리보기</div>
       <div className="flex items-center justify-center gap-4">
         {/* 현재 색상 */}
         <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-gray-400 font-medium">현재</span>
+          <span className="text-xs font-medium" style={{ color: 'var(--text-200)' }}>현재</span>
           <button
             onClick={onResetToCurrentColor}
-            className="w-16 h-16 rounded-xl border-2 border-gray-600 shadow-lg hover:border-gray-400 transition-colors cursor-pointer"
-            style={{ backgroundColor: currentColor }}
+            className="w-16 h-16 rounded-xl border-2 shadow-lg transition-colors cursor-pointer"
+            style={{ backgroundColor: currentColor, borderColor: 'var(--bg-300)' }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--text-200)'}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--bg-300)'}
             title="현재 색상으로 되돌리기"
           />
-          <span className="text-xs text-gray-300 font-mono">{currentColor.toUpperCase()}</span>
+          <span className="text-xs font-mono" style={{ color: 'var(--text-100)' }}>{currentColor.toUpperCase()}</span>
         </div>
         
         {/* 화살표 */}
-        <div className="text-gray-400 text-2xl">→</div>
+        <div className="text-2xl" style={{ color: 'var(--text-200)' }}>→</div>
         
         {/* 새 색상 */}
         <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-yellow-400 font-medium">새 색상</span>
+          <span className="text-xs font-medium" style={{ color: 'var(--accent-100)' }}>새 색상</span>
           <div 
-            className={`w-16 h-16 rounded-xl border-2 shadow-lg ${
-              hasPreview ? 'border-yellow-400' : 'border-gray-600'
-            }`}
-            style={{ backgroundColor: displayColor }}
+            className="w-16 h-16 rounded-xl border-2 shadow-lg"
+            style={{ 
+              backgroundColor: displayColor,
+              borderColor: hasPreview ? 'var(--accent-100)' : 'var(--bg-300)'
+            }}
           />
-          <span className={`text-xs font-mono ${
-            hasPreview ? 'text-yellow-300' : 'text-gray-300'
-          }`}>
+          <span className="text-xs font-mono" style={{ color: hasPreview ? 'var(--accent-100)' : 'var(--text-100)' }}>
             {displayColor.toUpperCase()}
           </span>
         </div>

@@ -12,11 +12,16 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({
 }) => {
     return (
         <div 
-            className={`absolute top-4 right-4 bg-success-bg dark:bg-[rgb(20,83,45)] border border-success text-success dark:text-success-dark px-4 py-2 rounded flex items-center shadow-md transition-opacity duration-300 z-50 ${
+            className={`absolute top-4 right-4 px-4 py-2 rounded flex items-center shadow-md transition-opacity duration-300 z-50 ${
                 showToast ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
+            style={{ 
+                backgroundColor: 'var(--bg-300)', 
+                border: '1px solid var(--accent-100)', 
+                color: 'var(--text-100)' 
+            }}
         >
-            <FiCheck className="mr-2" />
+            <FiCheck className="mr-2" style={{ color: 'var(--accent-100)' }} />
             <span>{copiedText}</span>
         </div>
     );
