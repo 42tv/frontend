@@ -15,12 +15,8 @@ export default function Policy() {
 
     const fetchPolicyContent = async (type: string) => {
         setLoading(true);
-        // TODO: 백엔드 API 요청 구현 필요
-        // 예시: const response = await fetch(`/api/policy?type=${type}`);
-        // const data = await response.text();
-        // setHtmlContent(data);
         
-        // 임시 더미 데이터
+        // 더미 데이터로 UI 구현
         setTimeout(() => {
             switch (type) {
                 case 'privacy':

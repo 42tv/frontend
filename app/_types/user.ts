@@ -4,6 +4,8 @@ export interface User {
   nickname: string | null;
   profile_img: string | null;
   is_guest: boolean;
+  role?: 'admin' | 'super_admin' | 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+  is_admin?: boolean;
 }
 
 export interface UserInfo {
@@ -25,7 +27,7 @@ export interface MyInfo {
   nickname: string;
   profile_img: string;
   is_bookmarked: boolean;
-  role: 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+  role: 'admin' | 'super_admin' | 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
   play_token: string;
   is_guest: boolean;
   guest_id?: string; // 게스트 ID (게스트인 경우에만 존재)
