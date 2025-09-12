@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import useUserStore from "@/app/_lib/stores/userStore";
 
 interface AdminGuardProps {
@@ -7,7 +8,8 @@ interface AdminGuardProps {
 }
 
 export default function AdminGuard({ children }: AdminGuardProps) {
-  const { setIsAdmin } = useUserStore();
+  const router = useRouter();
+  const { fetchUser, isAdminUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
 
@@ -16,21 +18,30 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       setIsLoading(true);
       
       try {
-        // 개발용 - admin 권한으로 설정
-        setIsAdmin(true);
+        // 사용자 정보를 백엔드에서 가져옴
+        await fetchUser();
         
-        // UI 개발을 위해 항상 접근 허용
-        setHasAccess(true);
+        // 백엔드에서 받은 is_admin 값으로 권한 확인
+        const hasAdminAccess = isAdminUser();
+        
+        if (hasAdminAccess) {
+          setHasAccess(true);
+        } else {
+          // admin 권한이 없으면 홈으로 리디렉트
+          router.push('/');
+          return;
+        }
       } catch (error) {
         console.error("Admin verification failed:", error);
-        setHasAccess(false);
+        router.push('/');
+        return;
       } finally {
         setIsLoading(false);
       }
     };
 
     verifyAdmin();
-  }, [setIsAdmin]);
+  }, [router, fetchUser, isAdminUser]);
 
   if (isLoading) {
     return (

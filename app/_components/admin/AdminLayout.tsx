@@ -1,15 +1,14 @@
 'use client';
 import AdminGuard from "./AdminGuard";
 import AdminNav from "./AdminNav";
+import useUserStore from "@/app/_lib/stores/userStore";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  // 더미 사용자 정보
-  const nickname = "Admin";
-  const role = "admin";
+  const { nickname, is_admin } = useUserStore();
 
   return (
     <AdminGuard>
@@ -27,16 +26,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="font-medium text-foreground">{nickname}</p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {role === 'admin' && '관리자'}
-                    {role === 'super_admin' && '최고 관리자'}
+                  <p className="font-medium text-foreground">{nickname || '관리자'}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {is_admin ? '관리자' : '사용자'}
                   </p>
                 </div>
                 
                 <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
                   <span className="text-sm font-medium text-accent-foreground">
-                    {nickname?.charAt(0).toUpperCase()}
+                    {(nickname || '관리자')?.charAt(0).toUpperCase()}
                   </span>
                 </div>
               </div>
