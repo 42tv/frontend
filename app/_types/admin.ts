@@ -1,9 +1,9 @@
-// Admin UI 관련 타입 정의 (UI 전용)
+// Admin UI 관련 타입 정의 (백엔드 스키마와 일치)
 
-// Policy 관련 타입 (컴포넌트에서 사용)
+// Policy 관련 타입 (백엔드 스키마 기준)
 export interface Policy {
   id: number;
-  type: 'terms' | 'privacy';
+  page: string; // 'privacy', 'terms' 등
   title: string;
   content: string;
   version: string;
@@ -13,7 +13,7 @@ export interface Policy {
 }
 
 export interface PolicyFormData {
-  type: 'terms' | 'privacy';
+  page: string; // 'privacy', 'terms' 등
   title: string;
   content: string;
   version: string;
