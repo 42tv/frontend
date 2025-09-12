@@ -4,10 +4,10 @@ export default function FooterContainer() {
             <div className="max-w-7xl mx-auto px-4 py-6">
                 {/* 정책 링크 */}
                 <div className="flex justify-center space-x-6 mb-4">
-                    <a href="/policy?type=terms" className="text-foreground hover:text-primary transition-colors text-sm">
+                    <a href="/policy?type=terms" className="text-foreground hover:text-accent-100 transition-colors text-sm">
                         이용약관
                     </a>
-                    <a href="/policy?type=privacy" className="text-foreground hover:text-primary transition-colors text-sm">
+                    <a href="/policy?type=privacy" className="text-foreground hover:text-accent-100 transition-colors text-sm">
                         개인정보처리방침
                     </a>
                 </div>
