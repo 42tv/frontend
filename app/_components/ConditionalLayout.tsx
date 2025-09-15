@@ -27,7 +27,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
           <main className="flex-1">
             {children}
           </main>
-          <FooterContainer />
+          {(pathname === '/' || pathname === '/live') && <FooterContainer />}
         </div>
       </div>
     </>
