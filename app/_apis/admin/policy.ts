@@ -63,7 +63,7 @@ export async function getPolicyByPage(page: PolicyPageType): Promise<PolicyRespo
  */
 export async function getPolicy(id: number): Promise<PolicyResponseDto> {
   try {
-    const response = await api.get(`/api/admin/policy/${id}`, {
+    const response = await api.get(`/api/policy/${id}`, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export async function getActivePolicy(page: PolicyPageType): Promise<PolicyRespo
  */
 export async function createPolicy(createPolicyDto: CreatePolicyDto): Promise<PolicyResponseDto> {
   try {
-    const response = await api.post("/api/admin/policy", createPolicyDto, {
+    const response = await api.post("/api/policy", createPolicyDto, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -135,7 +135,7 @@ export async function createPolicy(createPolicyDto: CreatePolicyDto): Promise<Po
  */
 export async function updatePolicy(id: number, updatePolicyDto: UpdatePolicyDto): Promise<PolicyResponseDto> {
   try {
-    const response = await api.patch(`/api/admin/policy/${id}`, updatePolicyDto, {
+    const response = await api.patch(`/api/policy/${id}`, updatePolicyDto, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -156,7 +156,7 @@ export async function updatePolicy(id: number, updatePolicyDto: UpdatePolicyDto)
  */
 export async function deletePolicy(id: number): Promise<PolicyResponseDto> {
   try {
-    const response = await api.delete(`/api/admin/policy/${id}`, {
+    const response = await api.delete(`/api/policy/${id}`, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -178,7 +178,7 @@ export async function deletePolicy(id: number): Promise<PolicyResponseDto> {
  */
 export async function togglePolicyStatus(id: number, is_active: boolean): Promise<PolicyResponseDto> {
   try {
-    const response = await api.patch(`/api/admin/policy/${id}/status`, { is_active }, {
+    const response = await api.patch(`/api/policy/${id}/status`, { is_active }, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

@@ -8,6 +8,12 @@ export enum PolicyPageType {
   SERVICE = 'service',
 }
 
+// VersionIncrementType enum (백엔드와 동일)
+export enum VersionIncrementType {
+  MAJOR = 'major', // 1.0 증가 (1.5 -> 2.0)
+  MINOR = 'minor', // 0.1 증가 (1.5 -> 1.6)
+}
+
 // Policy 관련 타입 (백엔드 스키마 기준)
 export interface Policy {
   id: number;
@@ -24,7 +30,7 @@ export interface PolicyFormData {
   page: PolicyPageType;
   title: string;
   content: string;
-  version: string;
+  versionIncrementType: VersionIncrementType;
   is_active: boolean;
 }
 
@@ -33,7 +39,7 @@ export interface CreatePolicyDto {
   page: PolicyPageType;
   title: string;
   content: string;
-  version: string;
+  versionIncrementType: VersionIncrementType;
   is_active?: boolean;
 }
 

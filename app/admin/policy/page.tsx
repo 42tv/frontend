@@ -4,15 +4,18 @@ import {
   Policy, 
   PolicyFormData, 
   PolicyPageType, 
-  CreatePolicyDto, 
-  UpdatePolicyDto 
+  CreatePolicyDto,
+  VersionIncrementType
 } from '@/app/_types/admin';
 import { 
   createPolicy, 
-  updatePolicy, 
   getActivePolicy 
 } from '@/app/_apis/admin/policy';
 import HtmlEditor from '@/app/_components/admin/HtmlEditor';
+import { 
+  showSuccessNotification, 
+  showErrorNotification 
+} from '@/app/_components/utils/overlay/notificationHelpers';
 
 type ActiveTab = 'terms' | 'privacy';
 
@@ -33,14 +36,14 @@ export default function PolicyManagement() {
       page: PolicyPageType.TERMS,
       title: '서비스 이용약관',
       content: '',
-      version: '1.0',
+      versionIncrementType: VersionIncrementType.MINOR,
       is_active: true
     },
     privacy: {
       page: PolicyPageType.PRIVACY,
       title: '개인정보처리방침',
       content: '',
-      version: '1.0',
+      versionIncrementType: VersionIncrementType.MINOR,
       is_active: true
     }
   });
@@ -90,26 +93,26 @@ export default function PolicyManagement() {
           page: newPolicies.terms.page,
           title: newPolicies.terms.title,
           content: newPolicies.terms.content,
-          version: newPolicies.terms.version,
+          versionIncrementType: VersionIncrementType.MINOR,
           is_active: newPolicies.terms.is_active
         } : {
           page: PolicyPageType.TERMS,
           title: '서비스 이용약관',
           content: '<h1>서비스 이용약관</h1><p>새로운 이용약관을 작성해주세요.</p>',
-          version: '1.0',
+          versionIncrementType: VersionIncrementType.MINOR,
           is_active: true
         },
         privacy: newPolicies.privacy ? {
           page: newPolicies.privacy.page,
           title: newPolicies.privacy.title,
           content: newPolicies.privacy.content,
-          version: newPolicies.privacy.version,
+          versionIncrementType: VersionIncrementType.MINOR,
           is_active: newPolicies.privacy.is_active
         } : {
           page: PolicyPageType.PRIVACY,
           title: '개인정보처리방침',
           content: '<h1>개인정보처리방침</h1><p>새로운 개인정보처리방침을 작성해주세요.</p>',
-          version: '1.0',
+          versionIncrementType: VersionIncrementType.MINOR,
           is_active: true
         }
       };
@@ -117,7 +120,7 @@ export default function PolicyManagement() {
       setEditData(newEditData);
     } catch (error) {
       console.error('Failed to load policies:', error);
-      alert('정책을 불러오는 중 오류가 발생했습니다.');
+      showErrorNotification('정책을 불러오는 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -138,55 +141,33 @@ export default function PolicyManagement() {
       setSaving(true);
       
       const currentData = getCurrentData();
-      const existingPolicy = policies[activeTab];
       
-      if (existingPolicy) {
-        // 기존 정책 업데이트
-        const updateDto: UpdatePolicyDto = {
-          title: currentData.title,
-          content: currentData.content,
-          version: currentData.version,
-          is_active: currentData.is_active
-        };
-        
-        const response = await updatePolicy(existingPolicy.id, updateDto);
-        
-        if (response.success) {
-          // 로컬 상태 업데이트
-          setPolicies(prev => ({
-            ...prev,
-            [activeTab]: response.data || prev[activeTab]
-          }));
-          alert(`${currentData.title}이(가) 수정되었습니다.`);
-        } else {
-          alert(response.message || '수정에 실패했습니다.');
-        }
+      // 항상 새 정책 생성 (버전별 기록)
+      const createDto: CreatePolicyDto = {
+        page: currentData.page,
+        title: currentData.title,
+        content: currentData.content,
+        versionIncrementType: currentData.versionIncrementType,
+        is_active: currentData.is_active
+      };
+      
+      const response = await createPolicy(createDto);
+      
+      if (response.success) {
+        // 로컬 상태 업데이트
+        setPolicies(prev => ({
+          ...prev,
+          [activeTab]: response.data || null
+        }));
+        showSuccessNotification(`${currentData.title}이(가) 저장되었습니다.`, {
+          onConfirm: () => window.location.reload()
+        });
       } else {
-        // 새 정책 생성
-        const createDto: CreatePolicyDto = {
-          page: currentData.page,
-          title: currentData.title,
-          content: currentData.content,
-          version: currentData.version,
-          is_active: currentData.is_active
-        };
-        
-        const response = await createPolicy(createDto);
-        
-        if (response.success) {
-          // 로컬 상태 업데이트
-          setPolicies(prev => ({
-            ...prev,
-            [activeTab]: response.data || null
-          }));
-          alert(`${currentData.title}이(가) 생성되었습니다.`);
-        } else {
-          alert(response.message || '생성에 실패했습니다.');
-        }
+        showErrorNotification(response.message || '저장에 실패했습니다.');
       }
     } catch (error) {
       console.error('Failed to save policy:', error);
-      alert('저장 중 오류가 발생했습니다.');
+      showErrorNotification('저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
     }
@@ -253,15 +234,16 @@ export default function PolicyManagement() {
             
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                버전
+                버전 증가 타입
               </label>
-              <input
-                type="text"
-                value={currentData.version}
-                onChange={(e) => updateCurrentData({ version: e.target.value })}
+              <select
+                value={currentData.versionIncrementType}
+                onChange={(e) => updateCurrentData({ versionIncrementType: e.target.value as VersionIncrementType })}
                 className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground"
-                placeholder="1.0"
-              />
+              >
+                <option value={VersionIncrementType.MAJOR}>Major (1.0 증가)</option>
+                <option value={VersionIncrementType.MINOR}>Minor (0.1 증가)</option>
+              </select>
             </div>
           </div>
 
@@ -299,18 +281,15 @@ export default function PolicyManagement() {
               disabled={saving || !currentData.title.trim() || !currentData.content.trim()}
               className="px-6 py-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground rounded-lg transition-colors"
             >
-              {saving 
-                ? '저장 중...' 
-                : policies[activeTab] 
-                  ? '수정' 
-                  : '생성'
-              }
+              {saving ? '저장 중...' : '저장'}
             </button>
             
             <div className="text-sm text-muted-foreground">
               {policies[activeTab] ? (
                 <>
-                  마지막 수정: {new Date(policies[activeTab]!.updated_at).toLocaleString('ko-KR')}
+                  현재 버전: {policies[activeTab]!.version}
+                  <br />
+                  마지막 저장: {new Date(policies[activeTab]!.updated_at).toLocaleString('ko-KR')}
                   <br />
                   상태: {policies[activeTab]!.is_active ? '활성' : '비활성'}
                 </>
