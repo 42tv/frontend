@@ -9,7 +9,7 @@ import {
 } from '@/app/_types/admin';
 import { 
   createPolicy, 
-  getActivePolicy 
+  getAllPolicies 
 } from '@/app/_apis/admin/policy';
 import HtmlEditor from '@/app/_components/admin/HtmlEditor';
 import { 
@@ -24,28 +24,23 @@ export default function PolicyManagement() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // 각 탭별 실제 정책 데이터 (백엔드에서 가져온 데이터)
-  const [policies, setPolicies] = useState<Record<string, Policy | null>>({
-    terms: null,
-    privacy: null
+  // 각 정책별 실제 데이터 (백엔드에서 가져온 데이터)
+  const [termsPolicy, setTermsPolicy] = useState<Policy | null>(null);
+  const [privacyPolicy, setPrivacyPolicy] = useState<Policy | null>(null);
+
+  // 각 정책별 편집 중인 데이터
+  const [termsEditData, setTermsEditData] = useState<PolicyFormData>({
+    page: PolicyPageType.TERMS,
+    title: '서비스 이용약관',
+    content: '',
+    versionIncrementType: VersionIncrementType.MINOR
   });
 
-  // 각 탭별 편집 중인 데이터
-  const [editData, setEditData] = useState<Record<string, PolicyFormData>>({
-    terms: {
-      page: PolicyPageType.TERMS,
-      title: '서비스 이용약관',
-      content: '',
-      versionIncrementType: VersionIncrementType.MINOR,
-      is_active: true
-    },
-    privacy: {
-      page: PolicyPageType.PRIVACY,
-      title: '개인정보처리방침',
-      content: '',
-      versionIncrementType: VersionIncrementType.MINOR,
-      is_active: true
-    }
+  const [privacyEditData, setPrivacyEditData] = useState<PolicyFormData>({
+    page: PolicyPageType.PRIVACY,
+    title: '개인정보처리방침',
+    content: '',
+    versionIncrementType: VersionIncrementType.MINOR
   });
 
   const tabs = [
@@ -55,18 +50,21 @@ export default function PolicyManagement() {
 
   // 현재 활성 탭의 편집 데이터 가져오기
   const getCurrentData = (): PolicyFormData => {
-    return editData[activeTab];
+    return activeTab === 'terms' ? termsEditData : privacyEditData;
   };
 
   // 현재 활성 탭의 편집 데이터 업데이트
   const updateCurrentData = (updates: Partial<PolicyFormData>) => {
-    setEditData(prev => ({
-      ...prev,
-      [activeTab]: {
-        ...prev[activeTab],
-        ...updates
-      }
-    }));
+    if (activeTab === 'terms') {
+      setTermsEditData(prev => ({ ...prev, ...updates }));
+    } else {
+      setPrivacyEditData(prev => ({ ...prev, ...updates }));
+    }
+  };
+
+  // 현재 활성 탭의 정책 데이터 가져오기
+  const getCurrentPolicy = (): Policy | null => {
+    return activeTab === 'terms' ? termsPolicy : privacyPolicy;
   };
 
   // 백엔드에서 정책 데이터 로드
@@ -74,50 +72,53 @@ export default function PolicyManagement() {
     try {
       setLoading(true);
       
-      // 이용약관과 개인정보처리방침 데이터를 각각 가져옴
-      const [termsResponse, privacyResponse] = await Promise.all([
-        getActivePolicy(PolicyPageType.TERMS).catch(() => ({ success: false, data: null })),
-        getActivePolicy(PolicyPageType.PRIVACY).catch(() => ({ success: false, data: null }))
-      ]);
+      // 모든 정책 데이터를 한번에 가져옴
+      const response = await getAllPolicies();
+      
+      if (response.success && response.data) {
+        // 정책 배열을 페이지별로 분류
+        const policiesArray = response.data;
+        const foundTermsPolicy = policiesArray.find(p => p.page === PolicyPageType.TERMS) || null;
+        const foundPrivacyPolicy = policiesArray.find(p => p.page === PolicyPageType.PRIVACY) || null;
 
-      const newPolicies: Record<string, Policy | null> = {
-        terms: termsResponse.success ? termsResponse.data || null : null,
-        privacy: privacyResponse.success ? privacyResponse.data || null : null
-      };
+        setTermsPolicy(foundTermsPolicy);
+        setPrivacyPolicy(foundPrivacyPolicy);
 
-      setPolicies(newPolicies);
-
-      // 편집 데이터 초기화 (백엔드 데이터로)
-      const newEditData: Record<string, PolicyFormData> = {
-        terms: newPolicies.terms ? {
-          page: newPolicies.terms.page,
-          title: newPolicies.terms.title,
-          content: newPolicies.terms.content,
-          versionIncrementType: VersionIncrementType.MINOR,
-          is_active: newPolicies.terms.is_active
-        } : {
-          page: PolicyPageType.TERMS,
-          title: '서비스 이용약관',
-          content: '<h1>서비스 이용약관</h1><p>새로운 이용약관을 작성해주세요.</p>',
-          versionIncrementType: VersionIncrementType.MINOR,
-          is_active: true
-        },
-        privacy: newPolicies.privacy ? {
-          page: newPolicies.privacy.page,
-          title: newPolicies.privacy.title,
-          content: newPolicies.privacy.content,
-          versionIncrementType: VersionIncrementType.MINOR,
-          is_active: newPolicies.privacy.is_active
-        } : {
-          page: PolicyPageType.PRIVACY,
-          title: '개인정보처리방침',
-          content: '<h1>개인정보처리방침</h1><p>새로운 개인정보처리방침을 작성해주세요.</p>',
-          versionIncrementType: VersionIncrementType.MINOR,
-          is_active: true
+        // 편집 데이터 초기화 (백엔드 데이터로)
+        if (foundTermsPolicy) {
+          setTermsEditData({
+            page: foundTermsPolicy.page,
+            title: foundTermsPolicy.title,
+            content: foundTermsPolicy.content,
+            versionIncrementType: VersionIncrementType.MINOR
+          });
+        } else {
+          setTermsEditData({
+            page: PolicyPageType.TERMS,
+            title: '서비스 이용약관',
+            content: '<h1>서비스 이용약관</h1><p>새로운 이용약관을 작성해주세요.</p>',
+            versionIncrementType: VersionIncrementType.MINOR
+          });
         }
-      };
 
-      setEditData(newEditData);
+        if (foundPrivacyPolicy) {
+          setPrivacyEditData({
+            page: foundPrivacyPolicy.page,
+            title: foundPrivacyPolicy.title,
+            content: foundPrivacyPolicy.content,
+            versionIncrementType: VersionIncrementType.MINOR
+          });
+        } else {
+          setPrivacyEditData({
+            page: PolicyPageType.PRIVACY,
+            title: '개인정보처리방침',
+            content: '<h1>개인정보처리방침</h1><p>새로운 개인정보처리방침을 작성해주세요.</p>',
+            versionIncrementType: VersionIncrementType.MINOR
+          });
+        }
+      } else {
+        throw new Error(response.message || '정책 데이터를 가져올 수 없습니다.');
+      }
     } catch (error) {
       console.error('Failed to load policies:', error);
       showErrorNotification('정책을 불러오는 중 오류가 발생했습니다.');
@@ -147,21 +148,16 @@ export default function PolicyManagement() {
         page: currentData.page,
         title: currentData.title,
         content: currentData.content,
-        versionIncrementType: currentData.versionIncrementType,
-        is_active: currentData.is_active
+        versionIncrementType: currentData.versionIncrementType
       };
       
       const response = await createPolicy(createDto);
       
       if (response.success) {
-        // 로컬 상태 업데이트
-        setPolicies(prev => ({
-          ...prev,
-          [activeTab]: response.data || null
-        }));
-        showSuccessNotification(`${currentData.title}이(가) 저장되었습니다.`, {
-          onConfirm: () => window.location.reload()
-        });
+        // 전체 정책 목록을 다시 로드하여 최신 데이터 동기화
+        await loadPolicies();
+        
+        showSuccessNotification(`${currentData.title}이(가) 저장되었습니다.`);
       } else {
         showErrorNotification(response.message || '저장에 실패했습니다.');
       }
@@ -260,19 +256,6 @@ export default function PolicyManagement() {
             />
           </div>
 
-          {/* 활성화 설정 */}
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={currentData.is_active}
-              onChange={(e) => updateCurrentData({ is_active: e.target.checked })}
-              className="rounded"
-            />
-            <label htmlFor="is_active" className="text-sm font-medium text-foreground">
-              활성화 (사용자에게 표시)
-            </label>
-          </div>
 
           {/* 저장 버튼 */}
           <div className="flex items-center gap-4 pt-4 border-t border-border">
@@ -285,13 +268,11 @@ export default function PolicyManagement() {
             </button>
             
             <div className="text-sm text-muted-foreground">
-              {policies[activeTab] ? (
+              {getCurrentPolicy() ? (
                 <>
-                  현재 버전: {policies[activeTab]!.version}
+                  현재 버전: {getCurrentPolicy()!.version}
                   <br />
-                  마지막 저장: {new Date(policies[activeTab]!.updated_at).toLocaleString('ko-KR')}
-                  <br />
-                  상태: {policies[activeTab]!.is_active ? '활성' : '비활성'}
+                  마지막 저장: {new Date(getCurrentPolicy()!.updated_at).toLocaleString('ko-KR')}
                 </>
               ) : (
                 '새 정책 (저장되지 않음)'

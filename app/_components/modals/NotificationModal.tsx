@@ -18,7 +18,8 @@ const NotificationModal = ({
   const handleConfirm = () => {
     if (onConfirm) {
       onConfirm();
-    } else if (closeModal) {
+    }
+    if (closeModal) {
       closeModal();
     }
   };

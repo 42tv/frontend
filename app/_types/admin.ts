@@ -31,7 +31,6 @@ export interface PolicyFormData {
   title: string;
   content: string;
   versionIncrementType: VersionIncrementType;
-  is_active: boolean;
 }
 
 // CreatePolicyDto (백엔드 DTO와 동일)
@@ -40,7 +39,6 @@ export interface CreatePolicyDto {
   title: string;
   content: string;
   versionIncrementType: VersionIncrementType;
-  is_active?: boolean;
 }
 
 // UpdatePolicyDto 
