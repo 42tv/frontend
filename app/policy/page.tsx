@@ -108,7 +108,7 @@ export default function Policy() {
                             </div>
                         )}
                         <div
-                            className="text-left"
+                            className="policy-document"
                             dangerouslySetInnerHTML={{ __html: getContent() }}
                         />
                     </div>

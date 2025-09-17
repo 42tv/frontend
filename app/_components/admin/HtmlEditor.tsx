@@ -38,8 +38,8 @@ export default function HtmlEditor({ value, onChange, placeholder, className }: 
       <div className="relative">
         {isPreviewMode ? (
           <div className="min-h-96 p-4 bg-background">
-            <div 
-              className="prose prose-sm max-w-none"
+            <div
+              className="policy-document"
               dangerouslySetInnerHTML={{ __html: value }}
             />
           </div>
