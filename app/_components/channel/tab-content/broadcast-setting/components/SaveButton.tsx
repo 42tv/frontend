@@ -8,7 +8,7 @@ const SaveButton: React.FC<SaveButtonProps> = ({ onSave }) => {
     return (
         <div className="flex justify-start my-4">
             <button
-                className="font-bold py-2 px-6 rounded-md transition-colors bg-primary text-white hover:bg-accent"
+                className="font-bold py-2 px-6 rounded-md transition-colors bg-accent text-white hover:bg-accent-light"
                 onClick={onSave}
             >
                 저장하기

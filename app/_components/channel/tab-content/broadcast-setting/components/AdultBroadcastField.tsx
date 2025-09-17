@@ -21,7 +21,8 @@ const AdultBroadcastField: React.FC<AdultBroadcastFieldProps> = ({
                         id="adultBroadcast"
                         checked={isAdult}
                         onChange={(e) => onAdultChange(e.target.checked)}
-                        className="h-4 w-4 focus:outline-none accent-primary"
+                        className="h-4 w-4 focus:outline-none"
+                        style={{ accentColor: 'var(--accent)' }}
                     />
                 </div>
             </div>

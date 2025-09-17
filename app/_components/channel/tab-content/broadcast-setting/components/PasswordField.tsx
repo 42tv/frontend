@@ -25,7 +25,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
                         id="hasPassword"
                         checked={isPrivate}
                         onChange={(e) => onPrivateChange(e.target.checked)}
-                        className="h-4 w-4 focus:outline-none accent-primary"
+                        className="h-4 w-4 focus:outline-none"
+                        style={{ accentColor: 'var(--accent)' }}
                     />
                 </div>
                 <div className="flex col-span-4 items-center ml-4 space-x-2 h-full">

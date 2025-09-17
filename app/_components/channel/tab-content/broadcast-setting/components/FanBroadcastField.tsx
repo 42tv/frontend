@@ -33,7 +33,8 @@ const FanBroadcastField: React.FC<FanBroadcastFieldProps> = ({
                         id="fanBroadcast"
                         checked={isFanClub}
                         onChange={(e) => onFanClubChange(e.target.checked)}
-                        className="h-4 w-4 focus:outline-none accent-primary"
+                        className="h-4 w-4 focus:outline-none"
+                        style={{ accentColor: 'var(--accent)' }}
                     />
                 </div>
                 {isFanClub && (
@@ -46,7 +47,8 @@ const FanBroadcastField: React.FC<FanBroadcastFieldProps> = ({
                                     value={level.value}
                                     checked={fanLevel === level.value}
                                     onChange={(e) => onFanLevelChange(parseInt(e.target.value))}
-                                    className="h-4 w-4 mr-1 focus:outline-none accent-primary"
+                                    className="h-4 w-4 mr-1 focus:outline-none"
+                                    style={{ accentColor: 'var(--accent)' }}
                                 />
                                 <span className="text-text-primary">{level.label}</span>
                             </label>
