@@ -4,6 +4,7 @@ import {
   UpdatePolicyDto,
   PolicyResponseDto,
   PolicyListResponseDto,
+  PolicyCreateSuccessResponseDto,
   PolicyPageType
 } from "@/app/_types/admin";
 
@@ -38,7 +39,7 @@ export async function getAllPolicies(): Promise<PolicyListResponseDto> {
  * @param page - 정책 페이지 타입
  * @returns Promise<PolicyResponseDto>
  */
-export async function getPolicyByPage(page: PolicyPageType): Promise<PolicyResponseDto> {
+export async function getPolicyByPage(page: PolicyPageType): Promise<PolicyResponseDto | null> {
   try {
     const response = await api.get(`/api/policy?page=${page}`, {
       withCredentials: true,
@@ -50,11 +51,7 @@ export async function getPolicyByPage(page: PolicyPageType): Promise<PolicyRespo
     return response.data;
   } catch (error: unknown) {
     console.error("Failed to fetch policy by page:", error);
-    return {
-      success: false,
-      message: `${page === 'terms' ? '이용약관' : '개인정보처리방침'}을 가져오는데 실패했습니다.`,
-      data: undefined
-    };
+    return null;
   }
 }
 
@@ -111,9 +108,9 @@ export async function getActivePolicy(page: PolicyPageType): Promise<PolicyRespo
 /**
  * 정책 생성
  * @param createPolicyDto - 정책 생성 데이터
- * @returns Promise<PolicyResponseDto>
+ * @returns Promise<PolicyCreateSuccessResponseDto>
  */
-export async function createPolicy(createPolicyDto: CreatePolicyDto): Promise<PolicyResponseDto> {
+export async function createPolicy(createPolicyDto: CreatePolicyDto): Promise<PolicyCreateSuccessResponseDto> {
   try {
     const response = await api.post("/api/policy", createPolicyDto, {
       withCredentials: true,

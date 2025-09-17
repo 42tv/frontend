@@ -1,15 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { 
-  Policy, 
-  PolicyFormData, 
-  PolicyPageType, 
+import {
+  Policy,
+  PolicyFormData,
+  PolicyPageType,
   CreatePolicyDto,
   VersionIncrementType
 } from '@/app/_types/admin';
-import { 
-  createPolicy, 
-  getAllPolicies 
+import {
+  createPolicy,
+  getAllPolicies
 } from '@/app/_apis/admin/policy';
 import HtmlEditor from '@/app/_components/admin/HtmlEditor';
 import { 
@@ -152,14 +152,14 @@ export default function PolicyManagement() {
       };
       
       const response = await createPolicy(createDto);
-      
+
       if (response.success) {
         // 전체 정책 목록을 다시 로드하여 최신 데이터 동기화
         await loadPolicies();
-        
+
         showSuccessNotification(`${currentData.title}이(가) 저장되었습니다.`);
       } else {
-        showErrorNotification(response.message || '저장에 실패했습니다.');
+        showErrorNotification('저장에 실패했습니다.');
       }
     } catch (error) {
       console.error('Failed to save policy:', error);

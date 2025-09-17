@@ -49,15 +49,16 @@ export interface UpdatePolicyDto {
   is_active?: boolean;
 }
 
-// API 응답 타입
-export interface PolicyResponseDto {
-  success: boolean;
-  message: string;
-  data?: Policy;
-}
+// API 응답 타입 (백엔드와 정확히 일치)
+export type PolicyResponseDto = Policy;
 
 export interface PolicyListResponseDto {
   success: boolean;
   message: string;
   data?: Policy[];
+}
+
+export interface PolicyCreateSuccessResponseDto {
+  success: string;
+  policy: PolicyResponseDto;
 }
