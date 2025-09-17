@@ -70,7 +70,7 @@ export default function ProfileIcon() {
             >
                 {/* 프로필 정보 */}
                 <div className="flex items-center border-b pb-3 border-bg-300">
-                    <FiUser className="w-10 h-10 text-accent-100" />
+                    <FiUser className="w-10 h-10 text-accent" />
                     <div className="ml-3">
                         <p className="text-lg font-semibold text-text-100">{nickname}</p>
                         <p className="text-sm text-text-200">0개 | 0개</p>

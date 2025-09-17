@@ -73,10 +73,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
             </button>
 
             <div className="mt-4 text-center">
-                <a href="#" className="mr-4 hover:underline text-accent-100">
+                <a href="#" className="mr-4 hover:underline text-accent">
                     아이디 찾기
                 </a>
-                <a href="#" className="hover:underline text-accent-100">
+                <a href="#" className="hover:underline text-accent">
                     비밀번호 찾기
                 </a>
             </div>

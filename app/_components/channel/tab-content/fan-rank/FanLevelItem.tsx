@@ -80,24 +80,24 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   };
 
   return (
-    <div className="p-4 rounded-lg transition-colors flex items-center gap-4 relative" style={{ backgroundColor: 'var(--bg-300)', border: '1px solid var(--bg-300)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--bg-200)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--bg-300)'}>
-      <span className="font-bold text-lg w-8 text-center flex-shrink-0" style={{ color: 'var(--text-100)' }}>{index + 1}</span>
+    <div className="p-4 rounded-lg transition-colors flex items-center gap-4 relative bg-bg-tertiary border border-border-primary hover:border-border-secondary">
+      <span className="font-bold text-lg w-8 text-center flex-shrink-0 text-text-primary">{index + 1}</span>
       <div className="relative color-picker-container">
         <button
           onClick={() => onToggleColorPicker(level.id)}
           className="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-lg flex-shrink-0 hover:scale-105 transition-transform cursor-pointer border-2"
-          style={{ 
-            backgroundColor: displayColor, 
-            color: 'var(--text-100)',
-            borderColor: previewLevelId === level.id && previewColor 
-              ? 'var(--accent-100)' 
-              : hasColorChange 
-                ? 'var(--primary-200)' 
+          style={{
+            backgroundColor: displayColor,
+            color: 'var(--text-primary)',
+            borderColor: previewLevelId === level.id && previewColor
+              ? 'var(--accent)'
+              : hasColorChange
+                ? 'var(--primary-hover)'
                 : 'transparent'
           }}
           onMouseEnter={(e) => {
             if (!(previewLevelId === level.id && previewColor) && !hasColorChange) {
-              e.currentTarget.style.borderColor = 'var(--text-200)';
+              e.currentTarget.style.borderColor = 'var(--text-secondary)';
             }
           }}
           onMouseLeave={(e) => {
@@ -130,7 +130,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
               value={tempName}
               onChange={(e) => setTempName(e.target.value)}
               onKeyDown={handleNameKeyDown}
-              onBlur={handleNameSave}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--bg-300)'; handleNameSave(); }}
               className="flex-1 px-2 py-1 rounded focus:outline-none"
               style={{
                 backgroundColor: 'var(--bg-100)',
@@ -138,7 +138,6 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
                 color: 'var(--text-100)'
               }}
               onFocus={(e) => e.target.style.borderColor = 'var(--primary-100)'}
-              onBlur={(e) => { e.target.style.borderColor = 'var(--bg-300)'; handleNameSave(); }}
               autoFocus
               maxLength={20}
             />

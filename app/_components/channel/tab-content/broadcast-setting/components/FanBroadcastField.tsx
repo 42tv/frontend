@@ -24,17 +24,16 @@ const FanBroadcastField: React.FC<FanBroadcastFieldProps> = ({
     return (
         <div className="grid grid-cols-6 my-2">
             <div className="flex col-span-1 text-center items-center">
-                <label className="w-[100px]" style={{ color: 'var(--text-100)' }}>팬방송</label>
+                <label className="w-[100px] text-text-primary">팬방송</label>
             </div>
             <div className="flex col-span-5 items-center">
                 <div className="flex items-center space-x-2">
-                    <input 
+                    <input
                         type="checkbox"
                         id="fanBroadcast"
                         checked={isFanClub}
                         onChange={(e) => onFanClubChange(e.target.checked)}
-                        className="h-4 w-4 focus:outline-none"
-                        style={{ accentColor: 'var(--primary-100)' }}
+                        className="h-4 w-4 focus:outline-none accent-primary"
                     />
                 </div>
                 {isFanClub && (
@@ -47,10 +46,9 @@ const FanBroadcastField: React.FC<FanBroadcastFieldProps> = ({
                                     value={level.value}
                                     checked={fanLevel === level.value}
                                     onChange={(e) => onFanLevelChange(parseInt(e.target.value))}
-                                    className="h-4 w-4 mr-1 focus:outline-none"
-                                    style={{ accentColor: 'var(--primary-100)' }}
+                                    className="h-4 w-4 mr-1 focus:outline-none accent-primary"
                                 />
-                                <span style={{ color: 'var(--text-100)' }}>{level.label}</span>
+                                <span className="text-text-primary">{level.label}</span>
                             </label>
                         ))}
                     </div>

@@ -78,7 +78,7 @@ export const BjArticle: React.FC<BjArticleProps> = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div style={{ color: 'var(--text-200)' }}>
+        <div className="text-text-secondary">
           게시글을 불러오는 중...
         </div>
       </div>
