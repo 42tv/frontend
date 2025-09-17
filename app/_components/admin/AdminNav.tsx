@@ -5,15 +5,15 @@ import { usePathname } from "next/navigation";
 interface NavItem {
   href: string;
   label: string;
-  icon?: string;
+  description: string;
 }
 
 const adminNavItems: NavItem[] = [
-  { href: '/admin', label: '대시보드', icon: '📊' },
-  { href: '/admin/policy', label: '정책 관리', icon: '📋' },
-  { href: '/admin/users', label: '사용자 관리', icon: '👥' },
-  { href: '/admin/channels', label: '채널 관리', icon: '📺' },
-  { href: '/admin/system', label: '시스템 설정', icon: '⚙️' },
+  { href: '/admin', label: '대시보드', description: '전체 현황' },
+  { href: '/admin/policy', label: '정책 관리', description: '서비스 정책' },
+  { href: '/admin/users', label: '사용자 관리', description: '계정 관리' },
+  { href: '/admin/channels', label: '채널 관리', description: '방송 관리' },
+  { href: '/admin/system', label: '시스템 설정', description: '환경 설정' },
 ];
 
 export default function AdminNav() {
@@ -26,22 +26,30 @@ export default function AdminNav() {
         <p className="text-sm text-muted-foreground">시스템 관리</p>
       </div>
       
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {adminNavItems.map((item) => {
           const isActive = pathname === item.href;
-          
+
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`block px-4 py-4 rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-accent text-accent-foreground'
-                    : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span className="font-medium">{item.label}</span>
+                <div className="space-y-1">
+                  <div className="font-semibold">{item.label}</div>
+                  <div className={`text-sm ${
+                    isActive
+                      ? 'text-primary-foreground/80'
+                      : 'text-muted-foreground'
+                  }`}>
+                    {item.description}
+                  </div>
+                </div>
               </Link>
             </li>
           );
@@ -51,10 +59,12 @@ export default function AdminNav() {
       <div className="mt-auto pt-8">
         <Link
           href="/"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground transition-colors"
+          className="block px-4 py-4 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
         >
-          <span className="text-lg">🏠</span>
-          <span className="font-medium">메인으로 돌아가기</span>
+          <div className="space-y-1">
+            <div className="font-semibold">메인 페이지</div>
+            <div className="text-sm text-muted-foreground">일반 사용자 화면으로</div>
+          </div>
         </Link>
       </div>
     </nav>
