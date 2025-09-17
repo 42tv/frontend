@@ -1,50 +1,76 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { getAllPolicies } from "@/app/_apis/admin/policy";
+import { PolicyPageType } from "@/app/_types/admin";
+import type { Policy } from "@/app/_types/admin";
 
 export default function Policy() {
     const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState<string>('terms');
-    const [htmlContent, setHtmlContent] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    const [policies, setPolicies] = useState<{[key: string]: Policy}>({});
+    const [loading, setLoading] = useState<boolean>(true);
 
     const tabs = [
         { id: 'terms', label: '이용약관' },
         { id: 'privacy', label: '개인정보처리방침' }
     ];
 
-    const fetchPolicyContent = async (type: string) => {
+    const fetchAllPolicies = async () => {
         setLoading(true);
-        
-        // 더미 데이터로 UI 구현
-        setTimeout(() => {
-            switch (type) {
-                case 'privacy':
-                    setHtmlContent('<h2>개인정보처리방침</h2><p>개인정보처리방침 내용이 여기에 표시됩니다.</p>');
-                    break;
-                case 'terms':
-                    setHtmlContent('<h2>이용약관</h2><p>이용약관 내용이 여기에 표시됩니다.</p>');
-                    break;
-                default:
-                    setHtmlContent('<p>콘텐츠를 찾을 수 없습니다.</p>');
+        try {
+            const response = await getAllPolicies();
+            if (response.success && response.data) {
+                const policyMap: {[key: string]: Policy} = {};
+                response.data.forEach(policy => {
+                    if (policy.page === PolicyPageType.TERMS) {
+                        policyMap['terms'] = policy;
+                    } else if (policy.page === PolicyPageType.PRIVACY) {
+                        policyMap['privacy'] = policy;
+                    }
+                });
+                setPolicies(policyMap);
             }
+        } catch (error) {
+            console.error('Failed to fetch policies:', error);
+        } finally {
             setLoading(false);
-        }, 500);
+        }
     };
 
     useEffect(() => {
         const type = searchParams.get('type') || 'terms';
         setActiveTab(type);
-        fetchPolicyContent(type);
+        fetchAllPolicies();
     }, [searchParams]);
 
     const handleTabClick = (tabId: string) => {
         setActiveTab(tabId);
-        fetchPolicyContent(tabId);
-        
+
         const url = new URL(window.location.href);
         url.searchParams.set('type', tabId);
         window.history.pushState({}, '', url.toString());
+    };
+
+    const getCurrentPolicy = () => {
+        return policies[activeTab] || null;
+    };
+
+    const getContent = () => {
+        const policy = getCurrentPolicy();
+        if (policy) {
+            return policy.content;
+        }
+
+        // 기본 내용
+        switch (activeTab) {
+            case 'privacy':
+                return '<h2>개인정보처리방침</h2><p>개인정보처리방침 내용이 여기에 표시됩니다.</p>';
+            case 'terms':
+                return '<h2>이용약관</h2><p>이용약관 내용이 여기에 표시됩니다.</p>';
+            default:
+                return '<p>콘텐츠를 찾을 수 없습니다.</p>';
+        }
     };
 
     return (
@@ -73,10 +99,19 @@ export default function Policy() {
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                     </div>
                 ) : (
-                    <div 
-                        className="text-left"
-                        dangerouslySetInnerHTML={{ __html: htmlContent }}
-                    />
+                    <div>
+                        {getCurrentPolicy()?.version && (
+                            <div className="mb-4 text-right">
+                                <span className="text-sm text-muted-foreground">
+                                    현재 버전: <span className="font-medium">{getCurrentPolicy()?.version}</span>
+                                </span>
+                            </div>
+                        )}
+                        <div
+                            className="text-left"
+                            dangerouslySetInnerHTML={{ __html: getContent() }}
+                        />
+                    </div>
                 )}
             </div>
         </div>
