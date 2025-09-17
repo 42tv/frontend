@@ -23,6 +23,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
       <Toolbar />
       <div className="flex flex-1 pt-[65px] overflow-auto">
         <LeftContainer />
+        <div className="w-px bg-[var(--border-primary)]"></div>
         <div className="flex-1 flex flex-col overflow-x-auto overflow-y-auto">
           <main className="flex-1">
             {children}
