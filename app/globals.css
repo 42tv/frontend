@@ -239,13 +239,15 @@ input {
 }
 
 .policy-document ol {
-  padding-left: 20px;
+  padding-left: 25px;
   margin-bottom: 12px;
+  list-style-type: decimal;
 }
 
 .policy-document ul {
-  padding-left: 20px;
+  padding-left: 25px;
   margin-bottom: 12px;
+  list-style-type: disc;
 }
 
 .policy-document li {
@@ -282,4 +284,10 @@ input {
 .policy-document strong {
   font-weight: 700;
   color: var(--foreground);
+}
+
+.policy-document .section-divider {
+  border: none;
+  border-top: 1px solid var(--border-primary);
+  margin: 20px 0;
 }
