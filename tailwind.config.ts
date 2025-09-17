@@ -15,26 +15,40 @@ export default {
         
         // Primary brand colors
         primary: {
-          DEFAULT: "rgb(75, 85, 99)", // gray-600
-          hover: "rgb(31, 41, 55)", // gray-800 - darker for better contrast  
-          light: "rgb(107, 114, 128)", // gray-500
-          foreground: "rgb(255, 255, 255)", // White text on primary background
-          50: "rgb(249, 250, 251)", // gray-50
-          100: "rgb(243, 244, 246)", // gray-100
-          500: "rgb(107, 114, 128)", // gray-500
-          600: "rgb(75, 85, 99)", // gray-600
-          700: "rgb(55, 65, 81)", // gray-700
+          DEFAULT: "var(--primary)",
+          hover: "var(--primary-hover)", 
+          light: "var(--primary-light)",
+          foreground: "rgb(255, 255, 255)",
+          100: "var(--primary-100)",
+          200: "var(--primary-200)",
+          300: "var(--primary-300)",
+          50: "rgb(249, 250, 251)",
+          500: "rgb(107, 114, 128)",
+          600: "rgb(75, 85, 99)",
+          700: "rgb(55, 65, 81)",
+        },
+        
+        // Accent colors
+        accent: {
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-light)",
+          light: "var(--accent-light)",
+          100: "var(--accent-100)",
+          200: "var(--accent-200)",
         },
         
         // Secondary colors
         secondary: {
-          DEFAULT: "rgb(107, 114, 128)", // gray-500
-          hover: "rgb(75, 85, 99)", // gray-600
-          light: "rgb(156, 163, 175)", // gray-400
+          DEFAULT: "rgb(107, 114, 128)",
+          hover: "rgb(75, 85, 99)",
+          light: "rgb(156, 163, 175)",
         },
         
         // Background colors
         bg: {
+          100: "var(--bg-100)",
+          200: "var(--bg-200)",
+          300: "var(--bg-300)",
           primary: {
             DEFAULT: "var(--bg-primary)",
             dark: "var(--bg-primary)",
@@ -59,13 +73,15 @@ export default {
         
         // Text colors
         text: {
+          100: "var(--text-100)",
+          200: "var(--text-200)",
           primary: {
-            DEFAULT: "rgb(17, 24, 39)", // gray-900
-            dark: "rgb(243, 244, 246)", // gray-100
+            DEFAULT: "var(--text-primary)",
+            dark: "var(--text-primary)",
           },
           secondary: {
-            DEFAULT: "rgb(75, 85, 99)", // gray-600
-            dark: "rgb(156, 163, 175)", // gray-400
+            DEFAULT: "var(--text-secondary)",
+            dark: "var(--text-secondary)",
           },
           tertiary: {
             DEFAULT: "rgb(107, 114, 128)", // gray-500

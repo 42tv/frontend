@@ -17,22 +17,22 @@ export default function BlockAlertComponent(
   }
   return (
     <div
-      className="flex flex-col max-w-md w-[500px] h-[200px] p-5 border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-contentBg"
+      className="flex flex-col max-w-md w-[500px] h-[200px] p-5 border rounded-lg border-[var(--bg-300)] bg-[var(--bg-200)]"
     >
       {/* 세로 중앙 정렬을 위해 flex-col, items-center, justify-center 추가 */}
-      <div className='flex flex-col w-full h-[80px] text-center items-center justify-center'>
+      <div className='flex flex-col w-full h-[80px] text-center items-center justify-center text-[var(--text-100)]'>
           {blockedNickname}({blockUserId})님을 차단하시겠습니까?
       </div>
       
       <div className='flex flex-row justify-center items-center space-x-5 mt-5'>
         <button 
-          className="w-[100px] p-2 rounded bg-color-darkBlue"
+          className="w-[100px] p-2 rounded bg-[var(--primary-100)] hover:bg-[var(--primary-200)] text-[var(--text-100)] transition-colors"
           onClick={() => blockUser()}
         >
           차단
         </button>
         <button 
-          className="w-[100px] p-2 rounded bg-textBase dark:textBase-dark"
+          className="w-[100px] p-2 rounded bg-[var(--bg-300)] hover:bg-[var(--bg-100)] text-[var(--text-200)] transition-colors"
           onClick={closePopup}
         >
           취소

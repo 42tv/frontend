@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Toolbar from "./_components/toolbar/toolbar";
 import { ThemeProvider } from "./_components/theme-provider";
-import LeftContainer from "./_components/left-container/left-container";
 import OverlayProviderWrapper from "./_components/providers/OverlayProviderWrapper";
+import ConditionalLayout from "./_components/ConditionalLayout";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,19 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`antialiased flex flex-col h-screen overflow-x-auto overflow-y-auto`}
-      >
+      <body className="antialiased min-h-screen">
         <ThemeProvider>
           <OverlayProviderWrapper>
-            <Toolbar />
-            <div className="flex flex-1 pt-[65px] overflow-auto">
-              <LeftContainer />
-              <div className="flex-1 overflow-x-auto overflow-y-auto">
-                {children}
-                {/* <FooterContainer /> */}
-              </div>
-            </div>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
           </OverlayProviderWrapper>
         </ThemeProvider>
       </body>

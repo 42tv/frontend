@@ -68,10 +68,23 @@ export interface FanLevelSimple {
 }
 
 /**
+ * 채널 정보
+ */
+export interface ChannelInfo {
+  title: string;
+  bookmark: number;
+  recommend: number;
+  watch: number;
+  month_time: number;
+  total_time: number;
+}
+
+/**
  * 채널 조회 응답
  */
 export interface GetChannelResponse {
   user: ChannelUser;
+  channel: ChannelInfo | null;
   articles: ArticleResponse;
   fanLevel: FanLevelSimple[];
 }

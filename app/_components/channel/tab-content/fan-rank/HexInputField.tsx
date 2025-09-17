@@ -22,11 +22,11 @@ export const HexInputField: React.FC<HexInputFieldProps> = ({
 
   return (
     <div className="mt-4">
-      <label htmlFor="hex-input" className="block text-xs text-gray-400 mb-2 font-medium">
+      <label htmlFor="hex-input" className="block text-xs mb-2 font-medium" style={{ color: 'var(--text-200)' }}>
         HEX 색상 코드
       </label>
-      <div className="flex items-center bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus-within:border-blue-500 transition-colors">
-        <span className="text-gray-300 font-mono text-sm mr-1">#</span>
+      <div className="flex items-center rounded-lg px-3 py-2 transition-colors" style={{ backgroundColor: 'var(--bg-100)', border: '1px solid var(--bg-300)' }} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--primary-100)'} onBlur={(e) => e.currentTarget.style.borderColor = 'var(--bg-300)'}>
+        <span className="font-mono text-sm mr-1" style={{ color: 'var(--text-100)' }}>#</span>
         <input
           id="hex-input"
           ref={hexInputRef}
@@ -35,8 +35,10 @@ export const HexInputField: React.FC<HexInputFieldProps> = ({
           onChange={onHexInputChange}
           placeholder="000000"
           maxLength={6}
-          className="bg-transparent border-none outline-none text-white font-mono text-sm flex-1 uppercase placeholder-gray-500"
-          style={{ fontFamily: 'monospace' }}
+          className="bg-transparent border-none outline-none font-mono text-sm flex-1 uppercase"
+          style={{ fontFamily: 'monospace', color: 'var(--text-100)' }}
+          onFocus={(e) => e.currentTarget.parentElement!.style.borderColor = 'var(--primary-100)'}
+          onBlur={(e) => e.currentTarget.parentElement!.style.borderColor = 'var(--bg-300)'}
         />
       </div>
     </div>

@@ -1,23 +1,31 @@
 export default function FooterContainer() {
     return (
-        <footer>
-            <div className="flex flex-col w-full justify-center items-center text-sm leading-6 p-5">
-                <div className="flex flex-row text-center">
-                    <p className="mb-2">
-                        <a href="/privacy-policy" className="text-text-secondary hover:text-text-primary transition-colors mr-2">개인정보처리방침</a> | 
-                        <a href="/terms-of-service" className="text-text-secondary hover:text-text-primary transition-colors ml-2">이용약관</a>
+        <footer className="bg-background border-t border-border">
+            <div className="max-w-7xl mx-auto px-4 py-6">
+                {/* 정책 링크 */}
+                <div className="flex justify-center space-x-6 mb-4">
+                    <a href="/policy?type=terms" className="text-foreground hover:text-accent-100 transition-colors text-sm">
+                        이용약관
+                    </a>
+                    <a href="/policy?type=privacy" className="text-foreground hover:text-accent-100 transition-colors text-sm">
+                        개인정보처리방침
+                    </a>
+                </div>
+
+                {/* 회사 정보 */}
+                <div className="text-center space-y-1 text-xs text-muted-foreground">
+                    <p>서비스명: Fairly | 회사명: 42미디어 / 성명: 박상흠</p>
+                    <p>사업자등록번호: 429-48-00770</p>
+                    <p>개인정보관리책임자: 박상흠 | Email: k1990121@gmail.com</p>
+                </div>
+
+                {/* 저작권 */}
+                <div className="text-center mt-4 pt-4 border-t border-border">
+                    <p className="text-xs text-muted-foreground">
+                        © 2024 42미디어. All rights reserved.
                     </p>
                 </div>
-              
-              <p>회사명: 주식회사 더블미디어 | 대표: 박호찬</p>
-              <p>사업자등록번호: 842-86-01445 | 통신판매업 신고번호: 제 2020-서울강남-03890 호</p>
-              <p>주소: 서울특별시 강남구 학동로 506(삼성동)</p>
-              <p>대표번호: 1668-1682 | 팩스: 02-2051-6269 | 이메일: help@pandalive.co.kr</p>
-              <p>개인정보관리 책임자: 이병근</p>
-              <p className="mt-2">Copyright © 2019 doublemedia Corp. All rights reserved.</p>
             </div>
         </footer>
-
-
     )
 }

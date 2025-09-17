@@ -59,15 +59,15 @@ export const FanRankContent = () => {
     };
 
     if (loading) {
-        return <div>로딩 중...</div>;
+        return <div style={{ color: 'var(--text-200)' }}>로딩 중...</div>;
     }
 
     if (error) {
-        return <div>오류: {error}</div>;
+        return <div style={{ color: 'var(--text-200)' }}>오류: {error}</div>;
     }
 
     return (
-        <div className="bg-gray-900 dark:bg-gray-900 p-6 rounded-lg border border-gray-700">
+        <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
             <FanRankHeader title="팬 등급 관리" />
 
             <FanLevelList

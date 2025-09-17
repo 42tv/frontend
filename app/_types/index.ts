@@ -34,5 +34,8 @@ export * from './api';
 // UI types
 export * from './ui';
 
+// Admin types
+export * from './admin';
+
 // Note: All interfaces previously in utils/interfaces.ts are now properly 
 // exported through the module exports above. No additional exports needed.

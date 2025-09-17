@@ -30,7 +30,7 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
 
         return [
             ...levelsWithData,
-            { level: 0, name: '제한없음', min_donation: 0, color: 'bg-text-tertiary' }
+            { level: 0, name: '제한없음', min_donation: 0, color: 'var(--bg-300)' }
         ];
     };
 
@@ -81,33 +81,33 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
     };
 
     return (
-            <div className="flex flex-col max-w-md w-[450px] h-[520px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
+            <div className="flex flex-col max-w-md w-[450px] h-[520px] border rounded-lg border-[var(--bg-300)] bg-[var(--bg-200)]">
                 {/* Header */}
-                <h2 className="text-lg font-bold mb-2 px-6 pt-5">쪽지 수신 설정</h2>
+                <h2 className="text-lg font-bold mb-2 px-6 pt-5 text-[var(--text-100)]">쪽지 수신 설정</h2>
                 
                 {/* Content */}
                 <div className="w-full h-[340px] pt-5 px-5 rounded-[8px] overflow-auto">
                     <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-textBase dark:text-textBase-dark mb-3">수신 설정 (선택한 등급 이상에서 수신)</h3>
+                        <h3 className="text-sm font-semibold text-[var(--text-100)] mb-3">수신 설정 (선택한 등급 이상에서 수신)</h3>
                         {getFanLevels().map((levelData) => (
                             <div key={levelData.level || 'unlimited'} className="group relative">
                                 <label className={`flex items-center space-x-4 p-3 rounded border transition-all duration-200 cursor-pointer
                                     ${selectedGrade === levelData.level 
-                                        ? 'border-color-darkBlue' 
-                                        : 'border-tableBorder dark:border-tableBorder-dark'
+                                        ? 'border-[var(--accent-100)] bg-[var(--bg-300)]' 
+                                        : 'border-[var(--bg-300)]'
                                     }`}>
                                     <input
                                         type="radio"
                                         id={levelData.level?.toString() || 'unlimited'}
                                         name="grade"
-                                        className="w-4 h-4 text-color-darkBlue bg-modalBg dark:bg-modalBg-dark border-tableBorder dark:border-tableBorder-dark"
+                                        className="w-4 h-4 text-[var(--primary-100)] bg-[var(--bg-200)] border-[var(--bg-300)]" style={{accentColor: 'var(--primary-100)'}}
                                         checked={selectedGrade === levelData.level}
                                         onChange={() => handleGradeToggle(levelData.level)}
                                     />
                                     <div className="flex items-center space-x-3 flex-1">
                                         <div 
-                                            className={`w-8 h-8 rounded-full flex items-center justify-center ${levelData.color.startsWith('bg-') ? levelData.color : ''}`}
-                                            style={levelData.color.startsWith('#') ? { backgroundColor: levelData.color } : {}}
+                                            className="w-8 h-8 rounded-full flex items-center justify-center"
+                                            style={{ backgroundColor: levelData.color.startsWith('#') ? levelData.color : (levelData.color.startsWith('var(') ? levelData.color : `var(${levelData.color})`) }}
                                         >
                                             {levelData.name === '제한없음' ? (
                                                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,10 +120,10 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                                             )}
                                         </div>
                                         <div className="flex-1">
-                                            <span className="text-textBase dark:text-textBase-dark font-medium">
+                                            <span className="text-[var(--text-100)] font-medium">
                                                 {levelData.name}
                                             </span>
-                                            <div className="text-xs text-textBase dark:text-textBase-dark opacity-70 mt-0.5">
+                                            <div className="text-xs text-[var(--text-200)] mt-0.5">
                                                 {levelData.name === '제한없음' ? '모든 사용자가 쪽지 발송 가능' : `${levelData.name} 등급 사용자`}
                                             </div>
                                         </div>
@@ -138,13 +138,13 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                 <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
                     <button
                         onClick={handleApply}
-                        className="w-full p-2 mt-2 rounded bg-primary text-primary-foreground"
+                        className="w-full p-2 mt-2 rounded bg-[var(--primary-100)] hover:bg-[var(--primary-200)] text-[var(--text-100)] transition-colors"
                     >
                         적용
                     </button>
                     <button
                         onClick={handleCancel}
-                        className="w-full p-2 mt-2 rounded bg-text-secondary dark:bg-text-secondary-dark text-primary-foreground"
+                        className="w-full p-2 mt-2 rounded bg-[var(--bg-300)] hover:bg-[var(--bg-100)] text-[var(--text-200)] transition-colors"
                     >
                         취소
                     </button>

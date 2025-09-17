@@ -7,19 +7,19 @@ export default function PostTab() {
     const [activeTab, setActiveTab] = useState('received');
     return (
         <div>
-            <div className="flex flex-row px-10 mx-auto h-[60px] items-center space-x-10 border-b border-contentBg">
+            <div className="flex flex-row px-10 mx-auto h-[60px] items-center space-x-10 border-b border-bg-300">
                 <button 
-                    className={`${activeTab === 'received' ? 'font-semibold text-text-primary dark:text-text-primary-dark' : 'text-textBase dark:text-textBase-dark'}`}
+                    className={`${activeTab === 'received' ? 'text-accent-100' : 'text-text-200'} transition-colors`}
                     onClick={() => setActiveTab('received')}>
                     받은 메세지
                 </button>
                 <button 
-                    className={`${activeTab === 'send' ? 'font-semibold text-text-primary dark:text-text-primary-dark' : 'text-textBase dark:text-textBase-dark'}`}
+                    className={`${activeTab === 'send' ? 'text-accent-100' : 'text-text-200'} transition-colors`}
                     onClick={() => setActiveTab('send')}>
                     보낸 메세지
                 </button>
                 <button 
-                    className={`${activeTab === 'block' ? 'font-semibold text-text-primary dark:text-text-primary-dark' : 'text-textBase dark:text-textBase-dark'}`}
+                    className={`${activeTab === 'block' ? 'text-accent-100' : 'text-text-200'} transition-colors`}
                     onClick={() => setActiveTab('block')}>
                     차단 목록
                 </button>

@@ -89,16 +89,68 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
               </span>
             )}
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
-              {channelData.user.nickname}
+              {channelData.channel?.title || `${channelData.user.nickname}님의 채널`}
             </h1>
             <p className="text-text-secondary dark:text-text-secondary-dark">
-              방송자 ID: {channelData.user.userId}
+              방송자: {channelData.user.nickname}
             </p>
           </div>
         </div>
       </div>
+
+      {/* Channel Stats Cards */}
+      {channelData.channel && (
+        <div className="mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+              <div className="text-2xl font-bold text-blue-500 mb-1">
+                {channelData.channel.bookmark.toLocaleString()}
+              </div>
+              <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+                북마크
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+              <div className="text-2xl font-bold text-red-500 mb-1">
+                {channelData.channel.recommend.toLocaleString()}
+              </div>
+              <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+                추천
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+              <div className="text-2xl font-bold text-green-500 mb-1">
+                {channelData.channel.watch.toLocaleString()}
+              </div>
+              <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+                조회수
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+              <div className="text-2xl font-bold text-purple-500 mb-1">
+                {Math.floor(channelData.channel.month_time / 60)}h
+              </div>
+              <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+                이달 방송
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+              <div className="text-2xl font-bold text-orange-500 mb-1">
+                {Math.floor(channelData.channel.total_time / 60)}h
+              </div>
+              <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+                총 방송시간
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tab Navigation */}
       <div className="border-b border-border-primary dark:border-border-primary-dark mb-6">

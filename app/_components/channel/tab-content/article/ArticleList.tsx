@@ -65,7 +65,10 @@ export default function ArticleList({
         {showCreateButton && (
           <button
             onClick={handleCreateClick}
-            className="bg-primary dark:bg-primary-dark text-white px-4 py-2 rounded-lg hover:bg-primary-hover dark:hover:bg-primary-hover-dark transition-colors"
+            className="px-4 py-2 rounded-lg transition-colors"
+            style={{ backgroundColor: 'var(--primary-100)', color: 'var(--text-100)' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-100)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-100)'}
           >
             새 게시글 작성
           </button>
@@ -74,8 +77,8 @@ export default function ArticleList({
 
       {/* Article List */}
       {!articles || articles.length === 0 ? (
-        <div className="text-center py-12 bg-background-secondary dark:bg-background-secondary-dark rounded-lg">
-          <div className="text-text-secondary dark:text-text-secondary-dark">
+        <div className="text-center py-12 rounded-lg" style={{ backgroundColor: 'var(--bg-200)' }}>
+          <div style={{ color: 'var(--text-200)' }}>
             작성된 게시글이 없습니다.
           </div>
         </div>

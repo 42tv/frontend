@@ -53,7 +53,7 @@ export default function LoginComponent() {
     };
 
     return (
-        <div className="max-w-md mx-auto p-5 border rounded-lg border-contentBg bg-contentBg relative text-left">
+        <div className="max-w-md mx-auto p-5 border rounded-lg border-bg-300 bg-bg-200 relative text-left">
             <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
             {activeTab === 'login' ? (
