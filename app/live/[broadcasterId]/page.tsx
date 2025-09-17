@@ -228,21 +228,25 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     }, [socket, router]); // socket이 변경될 때만 실행
 
     return (
-        <div className="flex flex-row w-full h-full">
-            <div className="flex flex-col flex-1">
+        <div className="flex flex-row w-full h-[calc(100vh-65px)]">
+            <div className="flex flex-col flex-1 min-h-0">
                 {/* 스트림 플레이어 영역 */}
-                <StreamPlayer streamData={streamData} userData={userData} />
+                <div className="flex-shrink-0">
+                    <StreamPlayer streamData={streamData} userData={userData} />
+                </div>
                 {/* 스트림 정보 영역 */}
-                <StreamInfo 
-                    playDataState={playDataState}
-                    onToggleBookmark={toggleBookmark}
-                    onSendPost={handleSendPost}
-                    onRecommend={handleRecommend}
-                />
+                <div className="flex-shrink-0">
+                    <StreamInfo
+                        playDataState={playDataState}
+                        onToggleBookmark={toggleBookmark}
+                        onSendPost={handleSendPost}
+                        onRecommend={handleRecommend}
+                    />
+                </div>
             </div>
              {/* 채팅 영역 컨테이너 */}
-             <div className="flex flex-col h-full w-80 border-l border-border-secondary dark:border-border-secondary-dark overflow-auto">
-                <div className="flex-1 h-full">
+             <div className="flex flex-col w-80 border-l border-border-secondary dark:border-border-secondary-dark min-h-0">
+                <div className="flex-1 overflow-auto">
                     {playDataState && (
                         <Chat
                             broadcasterId={broadcasterId}
