@@ -19,7 +19,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
 
   // 일반 페이지는 기존 레이아웃 사용
   return (
-    <>
+    <div className="bg-[var(--background)] min-h-screen">
       <Toolbar />
       <div className="flex flex-1 pt-[65px] overflow-auto">
         <LeftContainer />
@@ -30,6 +30,6 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
           {(pathname === '/' || pathname === '/live') && <FooterContainer />}
         </div>
       </div>
-    </>
+    </div>
   );
 }
