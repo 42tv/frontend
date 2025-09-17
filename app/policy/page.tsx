@@ -39,9 +39,12 @@ export default function Policy() {
     };
 
     useEffect(() => {
+        fetchAllPolicies();
+    }, []);
+
+    useEffect(() => {
         const type = searchParams.get('type') || 'terms';
         setActiveTab(type);
-        fetchAllPolicies();
     }, [searchParams]);
 
     const handleTabClick = (tabId: string) => {
