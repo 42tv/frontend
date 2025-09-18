@@ -70,31 +70,31 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
   }
 
   return (
-    <div className="flex flex-col max-w-md w-[450px] h-[500px] border rounded-lg border-tableBorder dark:border-tableBorder-dark bg-modalBg dark:bg-modalBg-dark">
-      <h2 className="text-lg font-bold mb-2 px-1 pt-5 px-6">쪽지</h2>
+    <div className="flex flex-col max-w-md w-[450px] h-[500px] border rounded-lg border-border-primary bg-bg-secondary">
+      <h2 className="text-lg font-bold mb-2 px-1 pt-5 px-6 text-text-primary">쪽지</h2>
       <div className="w-full h-[360px] pt-5 px-5 rounded-[8px] overflow-auto">
-        <div className="mt-2 flex justify-between items-center border-b-[2px] border-b-tableBorder-dark pb-[13px]">
-          <div>
-            {`${nickname}(${maskString(userId)})`} 
+        <div className="mt-2 flex justify-between items-center border-b-[2px] border-b-border-primary pb-[13px]">
+          <div className="text-text-primary">
+            {`${nickname}(${maskString(userId)})`}
           </div>
           <div className="flex items-center gap-2">
-            <span>{formatTimestamp(sentAt)}</span>
+            <span className="text-text-secondary">{formatTimestamp(sentAt)}</span>
             <button
               onClick={handleBlockUser}
-              className="p-1 text-gray-500 hover:text-red-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed rounded transition-colors"
+              className="p-1 text-text-muted hover:text-red-500 hover:bg-bg-tertiary disabled:text-text-muted disabled:cursor-not-allowed rounded transition-colors"
               title={'차단'}
             >
               <MdBlock className="w-4 h-4" />
             </button>
           </div>
         </div>
-        <div className="mt-[22px] h-[240px] whitespace-pre-line break-all text-[15px] text-textBase dark:text-textBase-dark ">
+        <div className="mt-[22px] h-[240px] whitespace-pre-line break-all text-[15px] text-text-primary">
           {message}
         </div>
       </div>
       <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
         <button
-          className={`w-full p-2 mt-2 rounded bg-textBase dark:textBase-dark`}
+          className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-border-hover text-text-primary transition-colors"
           onClick={() => {
             deleteSinglePost(postId);
             closeModal?.();
@@ -105,7 +105,7 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
         {
           responsePost && (
             <button
-              className={`w-full p-2 mt-2 rounded bg-color-darkBlue`}
+              className="w-full p-2 mt-2 rounded bg-accent hover:bg-accent-light text-white transition-colors"
               onClick={() => handleResponsePost()}
             >
               답장
