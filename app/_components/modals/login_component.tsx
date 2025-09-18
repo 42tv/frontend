@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { openModal } from '../utils/overlay/overlayHelpers';
+import { openModal, openPopupModal } from '../utils/overlay/overlayHelpers';
 import ErrorMessage from './error_component';
 import { useLoginForm } from './login_component/useLoginForm';
 import TabNavigation from './login_component/TabNavigation';
@@ -36,18 +36,18 @@ export default function LoginComponent() {
     const handleLoginWithErrorHandling = async () => {
         const result = await handleLogin();
         if (result.error) {
-            openModal(<ErrorMessage message={result.error} />, { closeButtonSize: "w-[16px] h-[16px]" });
+            openPopupModal(<ErrorMessage message={result.error} />);
         }
     };
 
     const handleSignUpWithErrorHandling = async () => {
         const result = await handleSignUp();
         if ('error' in result && result.error) {
-            openModal(<ErrorMessage message={result.error} />, { closeButtonSize: "w-[16px] h-[16px]" });
+            openPopupModal(<ErrorMessage message={result.error} />);
         } else if ('success' in result && result.success) {
             setActiveTab('login');
             if ('message' in result && result.message) {
-                openModal(<ErrorMessage message={result.message} />, { closeButtonSize: "w-[16px] h-[16px]" });
+                openPopupModal(<ErrorMessage message={result.message} />);
             }
         }
     };
