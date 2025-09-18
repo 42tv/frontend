@@ -27,7 +27,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
             />
             <button
                 type="submit"
-                className="bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-1 rounded-r text-sm font-semibold"
+                className="bg-accent hover:bg-accent-light text-white px-4 py-1 rounded-r text-sm font-semibold"
             >
                 전송
             </button>

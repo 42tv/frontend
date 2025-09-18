@@ -19,8 +19,8 @@
   --dark-primary-100: #6A00FF;
   --dark-primary-200: #8A2BE2;
   --dark-primary-300: #9370DB;
-  --dark-accent-100: #00E5FF;
-  --dark-accent-200: #00829b;
+  --dark-accent-100: #00829b;
+  --dark-accent-200: #00B8D4;
   --dark-text-100: #FFFFFF;
   --dark-text-200: #e0e0e0;
   --dark-bg-100: #1A1A1A;
@@ -74,7 +74,7 @@
   /* Background variants */
   --bg-primary: var(--dark-bg-200);
   --bg-secondary: var(--dark-bg-300);
-  --bg-tertiary: var(--dark-bg-100);
+  --bg-tertiary: var(--dark-bg-200);
 
   /* Text colors */
   --text-primary: var(--dark-text-100);
@@ -105,7 +105,7 @@
   /* Background variants */
   --bg-primary: var(--dark-bg-200);
   --bg-secondary: var(--dark-bg-300);
-  --bg-tertiary: var(--dark-bg-100);
+  --bg-tertiary: var(--dark-bg-200);
 
   /* Text colors */
   --text-primary: var(--dark-text-100);

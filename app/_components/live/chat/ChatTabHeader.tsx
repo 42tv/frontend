@@ -21,8 +21,8 @@ const ChatTabHeader: React.FC<ChatTabHeaderProps> = ({
                 <button
                     onClick={() => setActiveTab('chat')}
                     className={`flex-1 p-3 text-center font-semibold transition-colors duration-150 ${
-                        activeTab === 'chat' 
-                            ? 'bg-bg-tertiary dark:bg-bg-tertiary-dark border-b-2 border-primary' 
+                        activeTab === 'chat'
+                            ? 'bg-bg-tertiary dark:bg-bg-tertiary-dark border-b-2 border-accent'
                             : 'hover:bg-bg-tertiary dark:hover:bg-bg-tertiary-dark'
                     }`}
                 >
@@ -32,8 +32,8 @@ const ChatTabHeader: React.FC<ChatTabHeaderProps> = ({
                     <button
                         onClick={() => setActiveTab('viewers')}
                         className={`flex-1 p-3 text-center font-semibold transition-colors duration-150 ${
-                            activeTab === 'viewers' 
-                                ? 'bg-bg-tertiary dark:bg-bg-tertiary-dark border-b-2 border-primary' 
+                            activeTab === 'viewers'
+                                ? 'bg-bg-tertiary dark:bg-bg-tertiary-dark border-b-2 border-accent'
                                 : 'hover:bg-bg-tertiary dark:hover:bg-bg-tertiary-dark'
                         }`}
                     >
