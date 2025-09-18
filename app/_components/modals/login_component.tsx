@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { openModal, openPopupModal } from '../utils/overlay/overlayHelpers';
+import { openPopupModal } from '../utils/overlay/overlayHelpers';
 import ErrorMessage from './error_component';
 import { useLoginForm } from './login_component/useLoginForm';
 import TabNavigation from './login_component/TabNavigation';
