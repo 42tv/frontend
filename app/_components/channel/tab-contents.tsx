@@ -101,19 +101,19 @@ export const BjArticle: React.FC<BjArticleProps> = ({
 
 export const StatsContent = () => {
   return (
-    <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
-      <h3 className="font-bold text-xl mb-4" style={{ color: 'var(--text-100)' }}>통계</h3>
+    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
+      <h3 className="font-bold text-xl mb-4 text-text-primary">통계</h3>
       <div className="space-y-4">
-        <div className="p-4 rounded" style={{ backgroundColor: 'var(--bg-300)' }}>
-          <p className="font-medium" style={{ color: 'var(--text-100)' }}>일간 시청자 수</p>
+        <div className="p-4 rounded bg-bg-tertiary">
+          <p className="font-medium text-text-primary">일간 시청자 수</p>
           <div className="h-40 mt-2 flex items-end">
             {[30, 45, 25, 60, 40, 75, 35].map((height, i) => (
               <div key={i} className="flex-1 mx-1">
-                <div style={{ height: `${height}%`, backgroundColor: 'var(--primary-100)' }} className="rounded-t"></div>
+                <div style={{ height: `${height}%` }} className="rounded-t bg-accent"></div>
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-2" style={{ color: 'var(--text-200)' }}>
+          <div className="flex justify-between mt-2 text-text-secondary">
             <span>월</span>
             <span>일</span>
           </div>
@@ -130,15 +130,15 @@ export { BlacklistManager as BlacklistContent } from "./tab-content/black-list";
 
 export const ClipsContent = () => {
   return (
-    <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
-      <h3 className="font-bold text-xl mb-4" style={{ color: 'var(--text-100)' }}>클립</h3>
+    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
+      <h3 className="font-bold text-xl mb-4 text-text-primary">클립</h3>
       <div className="grid grid-cols-2 gap-4">
         {[1, 2, 3, 4].map((clip) => (
-          <div key={clip} className="rounded overflow-hidden" style={{ backgroundColor: 'var(--bg-300)' }}>
-            <div className="h-32" style={{ backgroundColor: 'var(--bg-100)' }}></div>
+          <div key={clip} className="rounded overflow-hidden bg-bg-tertiary">
+            <div className="h-32 bg-background"></div>
             <div className="p-3">
-              <p className="font-medium" style={{ color: 'var(--text-100)' }}>클립 제목 {clip}</p>
-              <p className="text-sm" style={{ color: 'var(--text-200)' }}>조회수 {clip * 100}</p>
+              <p className="font-medium text-text-primary">클립 제목 {clip}</p>
+              <p className="text-sm text-text-secondary">조회수 {clip * 100}</p>
             </div>
           </div>
         ))}
@@ -149,14 +149,14 @@ export const ClipsContent = () => {
 
 export const CommunityContent = () => {
   return (
-    <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
-      <h3 className="font-bold text-xl mb-4" style={{ color: 'var(--text-100)' }}>커뮤니티</h3>
+    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
+      <h3 className="font-bold text-xl mb-4 text-text-primary">커뮤니티</h3>
       <div className="space-y-4">
         {[1, 2, 3].map((post) => (
-          <div key={post} className="p-4 rounded" style={{ backgroundColor: 'var(--bg-300)' }}>
-            <p className="font-medium" style={{ color: 'var(--text-100)' }}>게시글 제목 {post}</p>
-            <p className="text-sm mt-1" style={{ color: 'var(--text-200)' }}>작성자: 유저{post} • 좋아요: {post * 5}</p>
-            <p className="mt-2" style={{ color: 'var(--text-100)' }}>게시글 내용 예시입니다...</p>
+          <div key={post} className="p-4 rounded bg-bg-tertiary">
+            <p className="font-medium text-text-primary">게시글 제목 {post}</p>
+            <p className="text-sm mt-1 text-text-secondary">작성자: 유저{post} • 좋아요: {post * 5}</p>
+            <p className="mt-2 text-text-primary">게시글 내용 예시입니다...</p>
           </div>
         ))}
       </div>
@@ -166,29 +166,21 @@ export const CommunityContent = () => {
 
 export const ExchangeContent = () => {
   return (
-    <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
-      <h3 className="font-bold text-xl mb-4" style={{ color: 'var(--text-100)' }}>환전</h3>
+    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
+      <h3 className="font-bold text-xl mb-4 text-text-primary">환전</h3>
       <div className="space-y-4">
-        <div className="p-4 rounded" style={{ backgroundColor: 'var(--bg-300)' }}>
-          <p className="font-medium" style={{ color: 'var(--text-100)' }}>현재 보유 포인트</p>
-          <p className="text-2xl font-bold mt-1" style={{ color: 'var(--text-100)' }}>12,345 P</p>
+        <div className="p-4 rounded bg-bg-tertiary">
+          <p className="font-medium text-text-primary">현재 보유 포인트</p>
+          <p className="text-2xl font-bold mt-1 text-text-primary">12,345 P</p>
         </div>
-        <div className="p-4 rounded" style={{ backgroundColor: 'var(--bg-300)' }}>
-          <p className="font-medium mb-2" style={{ color: 'var(--text-100)' }}>환전 신청</p>
-          <input 
-            className="w-full p-2 rounded mb-2" 
-            style={{ 
-              backgroundColor: 'var(--bg-100)', 
-              color: 'var(--text-100)', 
-              border: '1px solid var(--bg-300)' 
-            }} 
-            placeholder="환전할 포인트" 
+        <div className="p-4 rounded bg-bg-tertiary">
+          <p className="font-medium mb-2 text-text-primary">환전 신청</p>
+          <input
+            className="w-full p-2 rounded mb-2 bg-background text-text-primary border border-border-primary focus:outline-none focus:ring-2 focus:ring-accent"
+            placeholder="환전할 포인트"
           />
-          <button 
-            className="w-full py-2 rounded transition-colors" 
-            style={{ backgroundColor: 'var(--primary-100)', color: 'var(--text-100)' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-100)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-100)'}
+          <button
+            className="w-full py-2 rounded transition-colors bg-accent hover:bg-accent-light text-white"
           >
             환전 신청
           </button>
@@ -200,7 +192,7 @@ export const ExchangeContent = () => {
 
 export const EmptyStateContent = () => {
   return (
-    <div className="flex flex-col items-center text-center mt-20" style={{ color: 'var(--text-200)' }}>
+    <div className="flex flex-col items-center text-center mt-20 text-text-secondary">
       <Image
         src="/images/empty_character.png"
         alt="Empty Character"

@@ -85,25 +85,15 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
       <div className="relative color-picker-container">
         <button
           onClick={() => onToggleColorPicker(level.id)}
-          className="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-lg flex-shrink-0 hover:scale-105 transition-transform cursor-pointer border-2"
-          style={{
-            backgroundColor: displayColor,
-            color: 'var(--text-primary)',
-            borderColor: previewLevelId === level.id && previewColor
-              ? 'var(--accent)'
+          className={`w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-lg flex-shrink-0 hover:scale-105 transition-all cursor-pointer border-2 text-text-primary ${
+            previewLevelId === level.id && previewColor
+              ? 'border-accent'
               : hasColorChange
-                ? 'var(--primary-hover)'
-                : 'transparent'
-          }}
-          onMouseEnter={(e) => {
-            if (!(previewLevelId === level.id && previewColor) && !hasColorChange) {
-              e.currentTarget.style.borderColor = 'var(--text-secondary)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!(previewLevelId === level.id && previewColor) && !hasColorChange) {
-              e.currentTarget.style.borderColor = 'transparent';
-            }
+                ? 'border-accent-light'
+                : 'border-transparent hover:border-text-secondary'
+          }`}
+          style={{
+            backgroundColor: displayColor
           }}
           title="색상 변경하기"
         >
@@ -130,53 +120,38 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
               value={tempName}
               onChange={(e) => setTempName(e.target.value)}
               onKeyDown={handleNameKeyDown}
-              onBlur={(e) => { e.target.style.borderColor = 'var(--bg-300)'; handleNameSave(); }}
-              className="flex-1 px-2 py-1 rounded focus:outline-none"
-              style={{
-                backgroundColor: 'var(--bg-100)',
-                border: '1px solid var(--bg-300)',
-                color: 'var(--text-100)'
-              }}
-              onFocus={(e) => e.target.style.borderColor = 'var(--primary-100)'}
+              onBlur={handleNameSave}
+              className="flex-1 px-2 py-1 rounded focus:outline-none bg-background border border-bg-tertiary text-text-primary focus:border-accent"
               autoFocus
               maxLength={20}
             />
             <button
               onClick={handleNameSave}
-              className="px-2 py-1 rounded text-xs transition-colors"
-              style={{ backgroundColor: 'var(--primary-100)', color: 'var(--text-100)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-200)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-100)'}
+              className="px-2 py-1 rounded text-xs transition-colors bg-accent text-text-primary hover:bg-accent-light"
               title="저장"
             >
               ✓
             </button>
             <button
               onClick={handleNameCancel}
-              className="px-2 py-1 rounded text-xs transition-colors"
-              style={{ backgroundColor: 'var(--bg-200)', color: 'var(--text-100)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-100)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-200)'}
+              className="px-2 py-1 rounded text-xs transition-colors bg-bg-secondary text-text-primary hover:bg-background"
               title="취소"
             >
               ✕
             </button>
           </div>
         ) : (
-          <p 
-            className="font-medium truncate cursor-pointer transition-colors"
-            style={{ color: 'var(--text-100)' }}
-            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-100)'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-100)'}
+          <p
+            className="font-medium truncate cursor-pointer transition-colors text-text-primary hover:text-accent"
             onClick={handleNameEdit}
             title="클릭하여 이름 편집"
           >
             {level.name}
             {previewLevelId === level.id && previewColor && (
-              <span className="ml-2 text-xs" style={{ color: 'var(--accent-100)' }}>(미리보기)</span>
+              <span className="ml-2 text-xs text-accent">(미리보기)</span>
             )}
             {hasColorChange && previewLevelId !== level.id && (
-              <span className="ml-2 text-xs" style={{ color: 'var(--primary-200)' }}>(변경됨)</span>
+              <span className="ml-2 text-xs text-accent-light">(변경됨)</span>
             )}
           </p>
         )}
@@ -191,14 +166,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
             const newValue = parseInt(numbersOnly) || 0;
             onUpdate(level.id, level.name, newValue);
           }}
-          className="w-24 px-2 py-1 rounded focus:outline-none text-center"
-          style={{
-            backgroundColor: 'var(--bg-100)',
-            border: '1px solid var(--bg-300)',
-            color: 'var(--text-100)'
-          }}
-          onFocus={(e) => e.target.style.borderColor = 'var(--primary-100)'}
-          onBlur={(e) => e.target.style.borderColor = 'var(--bg-300)'}
+          className="w-24 px-2 py-1 rounded focus:outline-none text-center bg-background border border-bg-tertiary text-text-primary focus:border-accent"
         />
       </div>
     </div>

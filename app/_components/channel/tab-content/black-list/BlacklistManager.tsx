@@ -97,16 +97,16 @@ export const BlacklistManager = () => {
   };
 
   return (
-    <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--bg-200)', border: '1px solid var(--bg-300)' }}>
+    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
       <div className="space-y-6">
         {/* 제목 */}
-        <div className="pb-4" style={{ borderBottom: '1px solid var(--bg-300)' }}>
-          <h2 className="text-xl font-semibold" style={{ color: 'var(--text-100)' }}>블랙리스트 관리</h2>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-200)' }}>차단된 사용자를 관리할 수 있습니다.</p>
+        <div className="pb-4 border-b border-border-primary">
+          <h2 className="text-xl font-semibold text-text-primary">블랙리스트 관리</h2>
+          <p className="text-sm mt-1 text-text-secondary">차단된 사용자를 관리할 수 있습니다.</p>
         </div>
-        
+
         {/* 전체 차단 회원 통계 */}
-        <p style={{ color: 'var(--text-200)' }}>
+        <p className="text-text-secondary">
           {searchTerm ? '검색 결과' : '차단 수'}: {filteredBlacklist.length}
           {searchTerm && (
             <span className="ml-2">(전체 {blacklist.length}명 중)</span>
