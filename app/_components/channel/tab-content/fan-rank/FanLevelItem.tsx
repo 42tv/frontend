@@ -80,7 +80,7 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   };
 
   return (
-    <div className="p-4 rounded-lg transition-colors flex items-center gap-4 relative bg-bg-tertiary border border-border-primary hover:border-border-secondary">
+    <div className="p-4 rounded-lg transition-colors flex items-center gap-4 relative border border-border-primary hover:border-border-secondary">
       <span className="font-bold text-lg w-8 text-center flex-shrink-0 text-text-primary">{index + 1}</span>
       <div className="relative color-picker-container">
         <button

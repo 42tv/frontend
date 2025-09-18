@@ -43,7 +43,7 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className="rounded-lg p-8 bg-bg-tertiary border border-bg-tertiary">
+      <div className="rounded-lg p-8 border border-border-primary">
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
           <span className="ml-3 text-text-secondary">로딩 중...</span>
@@ -54,7 +54,7 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
 
   if (users.length === 0) {
     return (
-      <div className="rounded-lg p-12 bg-bg-tertiary border border-bg-tertiary">
+      <div className="rounded-lg p-12 border border-border-primary">
         <div className="flex flex-col items-center text-center">
           <div className="w-16 h-16 mb-4 rounded-full flex items-center justify-center bg-bg-primary">
             <svg className="w-8 h-8 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
   }
 
   return (
-    <div className="rounded-lg overflow-hidden transition-colors bg-bg-tertiary border border-bg-tertiary hover:border-bg-secondary">
+    <div className="rounded-lg overflow-hidden transition-colors border border-border-primary hover:border-bg-secondary">
 
       <div className="overflow-x-auto">
         <table className="w-full">

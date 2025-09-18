@@ -12,7 +12,7 @@ export const BlacklistSearchForm: React.FC<BlacklistSearchFormProps> = ({
   onSearchChange,
 }) => {
   return (
-    <div className="p-3 rounded-lg transition-colors bg-bg-tertiary border border-border-primary hover:border-bg-secondary">
+    <div className="p-3 rounded-lg transition-colors border border-border-primary hover:border-bg-secondary">
       <h3 className="text-sm font-medium mb-2 text-text-primary">차단 목록 검색</h3>
       <div className="flex gap-2">
         <div className="flex-1 relative">

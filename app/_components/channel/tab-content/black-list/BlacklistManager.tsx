@@ -97,7 +97,7 @@ export const BlacklistManager = () => {
   };
 
   return (
-    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
+    <div className="p-6">
       <div className="space-y-6">
         {/* 제목 */}
         <div className="pb-4 border-b border-border-primary">
