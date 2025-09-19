@@ -13,4 +13,5 @@ export interface FanLevel {
   name: string;
   min_donation: number;
   color: string;
+  count?: number;
 }

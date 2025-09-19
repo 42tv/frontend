@@ -67,7 +67,7 @@ export const FanRankContent = () => {
     }
 
     return (
-        <div className="p-6">
+        <div className="max-w-3xl mx-auto p-6 bg-background border border-border-primary rounded-lg">
             <FanRankHeader title="팬 등급 관리" />
 
             <FanLevelList

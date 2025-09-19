@@ -80,95 +80,104 @@ export const FanLevelItem: React.FC<FanLevelItemProps> = ({
   };
 
   return (
-    <div className="p-4 rounded-lg transition-colors flex items-center gap-4 relative border border-border-primary hover:border-border-secondary">
-      <span className="font-bold text-lg w-8 text-center flex-shrink-0 text-text-primary">{index + 1}</span>
-      <div className="relative color-picker-container">
-        <button
-          onClick={() => onToggleColorPicker(level.id)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-lg flex-shrink-0 hover:scale-105 transition-all cursor-pointer border-2 text-text-primary ${
-            previewLevelId === level.id && previewColor
-              ? 'border-accent'
-              : hasColorChange
-                ? 'border-accent-light'
-                : 'border-transparent hover:border-text-secondary'
-          }`}
-          style={{
-            backgroundColor: displayColor
-          }}
-          title="색상 변경하기"
-        >
-          {level.name.charAt(0).toUpperCase()}
-        </button>
-        <ColorPicker 
-          levelId={level.id}
-          currentColor={level.color}
-          colorPickerOpen={colorPickerOpen}
-          previewColor={previewColor}
-          previewLevelId={previewLevelId}
-          hexInput={hexInput}
-          onColorPreview={onColorPreview}
-          onColorConfirm={onColorConfirm}
-          onCancel={onCloseColorPicker}
-          onHexInputChange={onHexInputChange}
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        {isEditingName ? (
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
-              onKeyDown={handleNameKeyDown}
-              onBlur={handleNameSave}
-              className="flex-1 px-2 py-1 rounded focus:outline-none bg-background border border-bg-tertiary text-text-primary focus:border-accent"
-              autoFocus
-              maxLength={20}
-            />
-            <button
-              onClick={handleNameSave}
-              className="px-2 py-1 rounded text-xs transition-colors bg-accent text-text-primary hover:bg-accent-light"
-              title="저장"
-            >
-              ✓
-            </button>
-            <button
-              onClick={handleNameCancel}
-              className="px-2 py-1 rounded text-xs transition-colors bg-bg-secondary text-text-primary hover:bg-background"
-              title="취소"
-            >
-              ✕
-            </button>
-          </div>
-        ) : (
-          <p
-            className="font-medium truncate cursor-pointer transition-colors text-text-primary hover:text-accent"
-            onClick={handleNameEdit}
-            title="클릭하여 이름 편집"
+      <div className="p-4 rounded-lg transition-colors flex items-center gap-4 relative border border-border-primary hover:border-border-secondary max-w-4xl">
+        {/* 순번 */}
+        <div className="w-12 flex-shrink-0">
+          <span className="font-bold text-lg text-center block text-text-primary">{index + 1}</span>
+        </div>
+
+        {/* 색상 버튼 */}
+        <div className="relative color-picker-container flex-shrink-0">
+          <button
+            onClick={() => onToggleColorPicker(level.id)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-lg hover:scale-105 transition-all cursor-pointer border-2 text-text-primary ${
+              previewLevelId === level.id && previewColor
+                ? 'border-accent'
+                : hasColorChange
+                  ? 'border-accent-light'
+                  : 'border-transparent hover:border-text-secondary'
+            }`}
+            style={{
+              backgroundColor: displayColor
+            }}
+            title="색상 변경하기"
           >
-            {level.name}
-            {previewLevelId === level.id && previewColor && (
-              <span className="ml-2 text-xs text-accent">(미리보기)</span>
-            )}
-            {hasColorChange && previewLevelId !== level.id && (
-              <span className="ml-2 text-xs text-accent-light">(변경됨)</span>
-            )}
-          </p>
-        )}
+            {level.name.charAt(0).toUpperCase()}
+          </button>
+          <ColorPicker
+            levelId={level.id}
+            currentColor={level.color}
+            colorPickerOpen={colorPickerOpen}
+            previewColor={previewColor}
+            previewLevelId={previewLevelId}
+            hexInput={hexInput}
+            onColorPreview={onColorPreview}
+            onColorConfirm={onColorConfirm}
+            onCancel={onCloseColorPicker}
+            onHexInputChange={onHexInputChange}
+          />
+        </div>
+
+        {/* 등급명 */}
+        <div className="flex-1 min-w-0 max-w-xs">
+          {isEditingName ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                onKeyDown={handleNameKeyDown}
+                onBlur={handleNameSave}
+                className="flex-1 px-2 py-1 rounded focus:outline-none bg-background border border-bg-tertiary text-text-primary focus:border-accent"
+                autoFocus
+                maxLength={20}
+              />
+              <button
+                onClick={handleNameSave}
+                className="px-2 py-1 rounded text-xs transition-colors bg-accent text-text-primary hover:bg-accent-light"
+                title="저장"
+              >
+                ✓
+              </button>
+              <button
+                onClick={handleNameCancel}
+                className="px-2 py-1 rounded text-xs transition-colors bg-bg-secondary text-text-primary hover:bg-background"
+                title="취소"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <p
+              className="font-medium truncate cursor-pointer transition-colors text-text-primary hover:text-accent"
+              onClick={handleNameEdit}
+              title="클릭하여 이름 편집"
+            >
+              {level.name}
+              {previewLevelId === level.id && previewColor && (
+                <span className="ml-2 text-xs text-accent">(미리보기)</span>
+              )}
+              {hasColorChange && previewLevelId !== level.id && (
+                <span className="ml-2 text-xs text-accent-light">(변경됨)</span>
+              )}
+            </p>
+          )}
+        </div>
+
+        {/* 최소 후원금액, 쓸데없는 라벨 넣지 말것*/}
+        <div className="flex-shrink-0 ml-auto">
+          <input
+            type="text"
+            value={level.min_donation}
+            onChange={(e) => {
+              // 입력값에서 숫자만 추출
+              const numbersOnly = e.target.value.replace(/\D/g, '');
+              const newValue = parseInt(numbersOnly) || 0;
+              onUpdate(level.id, level.name, newValue);
+            }}
+            className="w-24 px-2 py-1 rounded focus:outline-none text-center bg-background border border-bg-tertiary text-text-primary focus:border-accent"
+          />
+        </div>
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <input
-          type="text"
-          value={level.min_donation}
-          onChange={(e) => {
-            // 입력값에서 숫자만 추출
-            const numbersOnly = e.target.value.replace(/\D/g, '');
-            const newValue = parseInt(numbersOnly) || 0;
-            onUpdate(level.id, level.name, newValue);
-          }}
-          className="w-24 px-2 py-1 rounded focus:outline-none text-center bg-background border border-bg-tertiary text-text-primary focus:border-accent"
-        />
-      </div>
-    </div>
   );
 };
