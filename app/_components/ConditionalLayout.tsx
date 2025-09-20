@@ -24,7 +24,6 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
       <div className="bg-background min-w-[1364px] min-h-screen">
         <div className="flex pt-[65px]">
           <LeftContainer />
-          <div className="w-px bg-border-primary"></div>
           <div className="flex-1 flex flex-col">
             <main className="flex-1">
               {children}
