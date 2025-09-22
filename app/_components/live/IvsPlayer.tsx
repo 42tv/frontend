@@ -51,8 +51,8 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   }, []);
 
   return (
-    <div 
-      className="relative w-full bg-black"
+    <div
+      className="relative w-full h-full bg-black"
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -60,7 +60,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
       <video
         ref={videoRef}
         playsInline
-        className="w-full rounded-lg block"
+        className="w-full h-full rounded-lg block object-cover"
       />
       {showControls && (
         <PlayerControls

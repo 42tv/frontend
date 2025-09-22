@@ -19,9 +19,11 @@ interface StreamPlayerProps {
 
 const StreamPlayer: React.FC<StreamPlayerProps> = ({ streamData }) => {
     return (
-        <div className="aspect-video bg-black flex items-center justify-center text-white">
+        <div className="w-full h-full bg-black flex items-center justify-center text-white">
             {/* IvsPlayer 컴포넌트를 사용하여 비디오 스트림 재생 */}
-            <IvsPlayer streamUrl={streamData.streamUrl} />
+            <div className="w-full h-full max-w-full max-h-full">
+                <IvsPlayer streamUrl={streamData.streamUrl} />
+            </div>
         </div>
     );
 };
