@@ -47,19 +47,19 @@ export default function ArticleListItem({
   };
 
   return (
-    <div className="rounded-lg p-4 transition-colors min-h-[180px]" style={{ border: '1px solid var(--bg-300)' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-200)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+    <div className="rounded-lg p-4 transition-colors min-h-[180px] border border-border-primary hover:bg-bg-secondary">
       <div className="flex justify-between items-start gap-4 h-full">
-        <div 
+        <div
           className="flex-1 cursor-pointer flex flex-col h-full"
           onClick={() => onSelect(article)}
         >
-          <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-100)' }}>
+          <h3 className="text-lg font-semibold mb-2 text-text-primary">
             {article.title}
           </h3>
-          <p className="flex-1 mb-3 overflow-hidden" style={{ color: 'var(--text-200)' }}>
+          <p className="flex-1 mb-3 overflow-hidden text-text-secondary">
             {truncateContent(article.content)}
           </p>
-          <div className="flex items-center space-x-4 text-sm mt-auto" style={{ color: 'var(--text-200)' }}>
+          <div className="flex items-center space-x-4 text-sm mt-auto text-text-secondary">
             <span>{formatDate(article.createdAt)}</span>
             {article.images && article.images.length > 0 && (
               <span>이미지 {article.images.length}개</span>
@@ -69,7 +69,7 @@ export default function ArticleListItem({
 
         {/* Image Carousel - Right side */}
         {article.images && article.images.length > 0 && (
-          <div className="flex-shrink-0 h-full aspect-[16/9] relative overflow-hidden rounded-md" style={{ border: '1px solid var(--bg-300)' }}>
+          <div className="flex-shrink-0 h-full aspect-[16/9] relative overflow-hidden rounded-md border border-border-primary">
             <img
               src={article.images[currentImageIndex].imageUrl}
               alt="게시글 이미지"
@@ -129,10 +129,7 @@ export default function ArticleListItem({
                 e.stopPropagation();
                 onEdit?.(article);
               }}
-              className="transition-colors"
-              style={{ color: 'var(--text-200)' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-100)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-200)'}
+              className="transition-colors text-text-secondary hover:text-accent"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -143,10 +140,7 @@ export default function ArticleListItem({
                 e.stopPropagation();
                 onDelete?.(article);
               }}
-              className="transition-colors"
-              style={{ color: 'var(--text-200)' }}
-              onMouseEnter={(e) => e.currentTarget.style.color = '#ef4444'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-200)'}
+              className="transition-colors text-text-secondary hover:text-red-500"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

@@ -229,19 +229,23 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     return (
         <div className="flex flex-row w-full h-[calc(100vh-65px)]">
-            <div className="flex flex-col flex-1 min-h-0">
+            <div className="flex flex-col flex-1 min-h-0 min-w-0">
                 {/* 스트림 플레이어 영역 */}
-                <div className="flex-shrink-0">
+                <div className="flex-1 min-h-0 max-h-[calc(100vh-250px)]">
                     <StreamPlayer streamData={streamData} userData={userData} />
                 </div>
                 {/* 스트림 정보 영역 */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 min-h-[120px]">
                     <StreamInfo
                         playDataState={playDataState}
                         onToggleBookmark={toggleBookmark}
                         onSendPost={handleSendPost}
                         onRecommend={handleRecommend}
                     />
+                </div>
+                {/* 추가 컴포넌트 영역 */}
+                <div className="flex-shrink-0 h-[50px]">
+                    {/* 여기에 새로운 컴포넌트가 들어갈 예정 */}
                 </div>
             </div>
              {/* 채팅 영역 컨테이너 */}

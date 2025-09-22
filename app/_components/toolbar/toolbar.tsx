@@ -18,7 +18,7 @@ const Toolbar: React.FC = () => {
     }, []);
 
   return (
-    <div className="fixed top-0 left-0 z-50 flex w-full h-[65px] items-center justify-between shadow-md border-border-primary dark:border-border-primary-dark border-b bg-background dark:bg-background-dark flex-shrink-0">
+    <div className="fixed top-0 left-0 z-40 flex w-[calc(100%-17px)] h-[65px] items-center justify-between shadow-md border-border-primary dark:border-border-primary-dark border-b bg-background dark:bg-background-dark flex-shrink-0">
       <Logo width='40pt' height='40pt'/>
       <Search />
       <div className="flex h-full gap-4 text-center items-center ml-auto mr-4">

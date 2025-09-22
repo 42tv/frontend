@@ -3,106 +3,120 @@
 @tailwind utilities;
 
 :root {
-  /* Light theme colors */
-  --background: white;
-  --foreground: #080808;
-  
+  /* Light mode color palette */
+  --primary-100: #d4eaf7;
+  --primary-200: #b6ccd8;
+  --primary-300: #3b3c3d;
+  --accent-100: #0066cc;
+  --accent-200: #004d99;
+  --text-100: #1d1c1c;
+  --text-200: #4a5568;
+  --bg-100: #fffefb;
+  --bg-200: #f5f4f1;
+  --bg-300: #cccbc8;
+
+  /* Dark mode color palette */
+  --dark-primary-100: #6A00FF;
+  --dark-primary-200: #8A2BE2;
+  --dark-primary-300: #9370DB;
+  --dark-accent-100: #00829b;
+  --dark-accent-200: #00B8D4;
+  --dark-text-100: #FFFFFF;
+  --dark-text-200: #e0e0e0;
+  --dark-bg-100: #1A1A1A;
+  --dark-bg-200: #292929;
+  --dark-bg-300: #404040;
+
+  /* Light theme active colors */
+  --background: var(--bg-100);
+  --foreground: var(--text-100);
+
   /* Primary colors */
-  --primary-100: #6A00FF;
-  --primary-200: #8A2BE2;
-  --primary-300: #9370DB;
-  --primary: var(--primary-100);
+  --primary: var(--primary-300);
   --primary-hover: var(--primary-200);
-  --primary-light: var(--primary-300);
-  
+  --primary-light: var(--primary-100);
+
   /* Accent colors */
-  --accent-100: #00E5FF;
-  --accent-200: #00829b;
   --accent: var(--accent-100);
   --accent-light: var(--accent-200);
-  
+
   /* Text colors */
-  --text-100: #FFFFFF;
-  --text-200: #e0e0e0;
-  --text-primary: rgb(17, 24, 39);
-  --text-secondary: rgb(75, 85, 99);
+  --text-primary: var(--text-100);
+  --text-secondary: var(--text-200);
   --text-tertiary: rgb(107, 114, 128);
   --text-muted: rgb(156, 163, 175);
-  
+
   /* Background colors */
-  --bg-100: #1A1A1A;
-  --bg-200: #292929;
-  --bg-300: #404040;
-  --bg-primary: rgb(249, 250, 251);
-  --bg-secondary: rgb(243, 244, 246);
-  --bg-tertiary: rgb(229, 231, 235);
-  
+  --bg-primary: var(--bg-100);
+  --bg-secondary: var(--bg-200);
+  --bg-tertiary: var(--bg-300);
+
   /* Border colors */
-  --border-primary: rgb(229, 231, 235);
-  --border-secondary: rgb(209, 213, 219);
-  --border-hover: rgb(156, 163, 175);
+  --border-primary: var(--bg-300);
+  --border-secondary: var(--primary-200);
+  --border-hover: var(--primary-300);
 }
 
 [data-theme="dark"] {
   /* Dark theme colors */
-  --background: var(--bg-100);
-  --foreground: var(--text-100);
-  
+  --background: var(--dark-bg-100);
+  --foreground: var(--dark-text-100);
+
   /* Primary colors */
-  --primary: var(--primary-300);
-  --primary-hover: var(--primary-200);
-  --primary-light: var(--primary-100);
-  
+  --primary: var(--dark-primary-300);
+  --primary-hover: var(--dark-primary-200);
+  --primary-light: var(--dark-primary-100);
+
   /* Accent colors */
-  --accent: var(--accent-200);
-  --accent-light: var(--accent-100);
-  
+  --accent: var(--dark-accent-100);
+  --accent-light: var(--dark-accent-200);
+
   /* Background variants */
-  --bg-primary: var(--bg-200);
-  --bg-secondary: var(--bg-300);
-  --bg-tertiary: var(--bg-100);
-  
+  --bg-primary: var(--dark-bg-200);
+  --bg-secondary: var(--dark-bg-300);
+  --bg-tertiary: var(--dark-bg-200);
+
   /* Text colors */
-  --text-primary: var(--text-100);
-  --text-secondary: var(--text-200);
+  --text-primary: var(--dark-text-100);
+  --text-secondary: var(--dark-text-200);
   --text-tertiary: rgb(156, 163, 175);
   --text-muted: rgb(107, 114, 128);
-  
+
   /* Border colors */
-  --border-primary: var(--bg-300);
-  --border-secondary: var(--primary-200);
-  --border-hover: var(--primary-300);
+  --border-primary: var(--dark-bg-300);
+  --border-secondary: var(--dark-primary-200);
+  --border-hover: var(--dark-primary-300);
 }
 
 .dark {
   /* Dark theme colors */
-  --background: var(--bg-100);
-  --foreground: var(--text-100);
-  
+  --background: var(--dark-bg-100);
+  --foreground: var(--dark-text-100);
+
   /* Primary colors */
-  --primary: var(--primary-300);
-  --primary-hover: var(--primary-200);
-  --primary-light: var(--primary-100);
-  
+  --primary: var(--dark-primary-300);
+  --primary-hover: var(--dark-primary-200);
+  --primary-light: var(--dark-primary-100);
+
   /* Accent colors */
-  --accent: var(--accent-200);
-  --accent-light: var(--accent-100);
-  
+  --accent: var(--dark-accent-100);
+  --accent-light: var(--dark-accent-200);
+
   /* Background variants */
-  --bg-primary: var(--bg-200);
-  --bg-secondary: var(--bg-300);
-  --bg-tertiary: var(--bg-100);
-  
+  --bg-primary: var(--dark-bg-200);
+  --bg-secondary: var(--dark-bg-300);
+  --bg-tertiary: var(--dark-bg-200);
+
   /* Text colors */
-  --text-primary: var(--text-100);
-  --text-secondary: var(--text-200);
+  --text-primary: var(--dark-text-100);
+  --text-secondary: var(--dark-text-200);
   --text-tertiary: rgb(156, 163, 175);
   --text-muted: rgb(107, 114, 128);
-  
+
   /* Border colors */
-  --border-primary: var(--bg-300);
-  --border-secondary: var(--primary-200);
-  --border-hover: var(--primary-300);
+  --border-primary: var(--dark-bg-300);
+  --border-secondary: var(--dark-primary-200);
+  --border-hover: var(--dark-primary-300);
 }
 
 /* 전체 레이아웃 설정 - 제거 또는 주석 처리 */

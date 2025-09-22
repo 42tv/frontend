@@ -28,10 +28,18 @@ export default function LivePage() {
         <div className="p-4 bg-background dark:bg-background-dark min-h-screen">
             <h1 className="text-2xl font-bold mb-6">Live Streams</h1>
             {lives.length > 0 ? (
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(275px,1fr))] gap-4 justify-start">
-                    {lives.map((live, index) => (
-                        <LiveStreamCard key={index} live={live} index={index} />
-                    ))}
+                <div className="overflow-x-auto">
+                    <div
+                        className="grid gap-4"
+                        style={{
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(275px, 1fr))',
+                            minWidth: '1140px'
+                        }}
+                    >
+                        {lives.map((live, index) => (
+                            <LiveStreamCard key={index} live={live} index={index} />
+                        ))}
+                    </div>
                 </div>
             ) : (
                 <p className="text-center text-text-secondary dark:text-text-secondary-dark">No live streams available right now.</p>

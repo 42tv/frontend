@@ -81,26 +81,31 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
     };
 
     return (
-            <div className="flex flex-col max-w-md w-[450px] h-[520px] border rounded-lg border-[var(--bg-300)] bg-[var(--bg-200)]">
+            <div className="flex flex-col max-w-md w-[450px] h-[520px] border rounded-lg border-border-primary bg-bg-secondary">
                 {/* Header */}
-                <h2 className="text-lg font-bold mb-2 px-6 pt-5 text-[var(--text-100)]">쪽지 수신 설정</h2>
-                
+                <div className="px-6 pt-5 pb-4 bg-background rounded-t-lg">
+                    <h2 className="text-lg font-bold text-text-primary">쪽지 수신 설정</h2>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-border-primary"></div>
+
                 {/* Content */}
-                <div className="w-full h-[340px] pt-5 px-5 rounded-[8px] overflow-auto">
+                <div className="w-full h-[340px] pt-5 px-5 rounded-[8px] overflow-auto bg-bg-secondary">
                     <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-[var(--text-100)] mb-3">수신 설정 (선택한 등급 이상에서 수신)</h3>
+                        <h3 className="text-sm font-semibold text-text-primary mb-3">수신 설정 (선택한 등급 이상에서 수신)</h3>
                         {getFanLevels().map((levelData) => (
                             <div key={levelData.level || 'unlimited'} className="group relative">
                                 <label className={`flex items-center space-x-4 p-3 rounded border transition-all duration-200 cursor-pointer
-                                    ${selectedGrade === levelData.level 
-                                        ? 'border-[var(--accent-100)] bg-[var(--bg-300)]' 
-                                        : 'border-[var(--bg-300)]'
+                                    ${selectedGrade === levelData.level
+                                        ? 'border-accent bg-bg-tertiary'
+                                        : 'border-border-primary'
                                     }`}>
                                     <input
                                         type="radio"
                                         id={levelData.level?.toString() || 'unlimited'}
                                         name="grade"
-                                        className="w-4 h-4 text-[var(--primary-100)] bg-[var(--bg-200)] border-[var(--bg-300)]" style={{accentColor: 'var(--primary-100)'}}
+                                        className="w-4 h-4 text-primary bg-bg-secondary border-border-primary" style={{accentColor: 'var(--accent)'}}
                                         checked={selectedGrade === levelData.level}
                                         onChange={() => handleGradeToggle(levelData.level)}
                                     />
@@ -120,10 +125,10 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                                             )}
                                         </div>
                                         <div className="flex-1">
-                                            <span className="text-[var(--text-100)] font-medium">
+                                            <span className="text-text-primary font-medium">
                                                 {levelData.name}
                                             </span>
-                                            <div className="text-xs text-[var(--text-200)] mt-0.5">
+                                            <div className="text-xs text-text-secondary mt-0.5">
                                                 {levelData.name === '제한없음' ? '모든 사용자가 쪽지 발송 가능' : `${levelData.name} 등급 사용자`}
                                             </div>
                                         </div>
@@ -134,17 +139,22 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                     </div>
                 </div>
 
+                {/* Divider */}
+                <div className="px-5 py-4 bg-background">
+                    <div className="border-t border-border-primary"></div>
+                </div>
+
                 {/* Footer Buttons */}
-                <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
+                <div className="flex flex-row h-[100px] items-center space-x-5 px-5 bg-background rounded-b-lg">
                     <button
                         onClick={handleApply}
-                        className="w-full p-2 mt-2 rounded bg-[var(--primary-100)] hover:bg-[var(--primary-200)] text-[var(--text-100)] transition-colors"
+                        className="w-full p-2 mt-2 rounded bg-accent hover:bg-accent-light text-white transition-colors"
                     >
                         적용
                     </button>
                     <button
                         onClick={handleCancel}
-                        className="w-full p-2 mt-2 rounded bg-[var(--bg-300)] hover:bg-[var(--bg-100)] text-[var(--text-200)] transition-colors"
+                        className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-background text-text-secondary transition-colors"
                     >
                         취소
                     </button>

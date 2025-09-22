@@ -20,38 +20,16 @@ const ChannelNav = () => {
   const pathname = usePathname();
   
   return (
-    <div className="flex w-full space-x-6 pb-2 mb-8 overflow-x-auto" style={{ borderBottom: '1px solid var(--bg-300)' }}>
+    <div className="flex w-full space-x-6 pb-2 mb-8 overflow-x-auto border-b border-border-primary">
       {tabRoutes.map((tab) => (
         <Link
           key={tab.name}
           href={tab.path}
           className={`font-medium pb-2 transition-colors whitespace-nowrap ${
-            pathname === tab.path 
-              ? "border-b-2" 
-              : "hover:border-b-2"
+            pathname === tab.path
+              ? "border-b-2 border-accent text-accent"
+              : "text-text-secondary hover:text-accent hover:border-b-2 hover:border-accent"
           }`}
-          style={{
-            color: pathname === tab.path ? 'var(--accent-100)' : 'var(--text-200)',
-            borderBottomColor: pathname === tab.path ? 'var(--accent-100)' : 'transparent',
-            ...(pathname !== tab.path && {
-              ':hover': {
-                color: 'var(--accent-100)',
-                borderBottomColor: 'var(--accent-100)'
-              }
-            })
-          }}
-          onMouseEnter={(e) => {
-            if (pathname !== tab.path) {
-              e.currentTarget.style.color = 'var(--accent-100)';
-              e.currentTarget.style.borderBottomColor = 'var(--accent-100)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (pathname !== tab.path) {
-              e.currentTarget.style.color = 'var(--text-200)';
-              e.currentTarget.style.borderBottomColor = 'transparent';
-            }
-          }}
         >
           {tab.name}
         </Link>

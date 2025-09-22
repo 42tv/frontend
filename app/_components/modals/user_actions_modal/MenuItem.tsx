@@ -15,9 +15,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
 }) => {
   const baseClasses = "w-full px-4 py-3 flex items-center gap-3 text-left transition-colors";
   const variantClasses = {
-    default: "text-[var(--text-100)] hover:bg-[var(--bg-300)]",
+    default: "text-text-primary hover:bg-bg-tertiary",
     danger: "text-red-400 hover:bg-red-900/20",
-    primary: "text-[var(--accent-100)] hover:bg-[var(--accent-200)]/20"
+    primary: "text-accent hover:bg-accent/20"
   };
 
   return (

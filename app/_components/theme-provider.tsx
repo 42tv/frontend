@@ -5,7 +5,13 @@ import { type ThemeProviderProps } from 'next-themes';
  
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return (
-    <NextThemesProvider attribute='class' defaultTheme='dark' {...props}>
+    <NextThemesProvider
+      attribute='data-theme'
+      defaultTheme='light'
+      enableSystem={true}
+      themes={['light', 'dark']}
+      {...props}
+    >
       {children}
     </NextThemesProvider>
   );

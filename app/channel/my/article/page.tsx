@@ -10,7 +10,7 @@ export default function ArticlePage() {
   if (!userIdx || userIdx === 0 || !userId) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-text-secondary dark:text-text-secondary-dark">
+        <div className="text-text-secondary">
           로그인이 필요합니다.
         </div>
       </div>

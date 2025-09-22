@@ -36,8 +36,8 @@ export const UserSearchSection: React.FC<UserSearchSectionProps> = ({
   };
 
   return (
-    <div className="p-4 rounded-lg transition-colors" style={{ backgroundColor: 'var(--bg-300)', border: '1px solid var(--bg-300)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--bg-200)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--bg-300)'}>
-      <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--text-100)' }}>사용자 차단</h3>
+    <div className="p-4 rounded-lg bg-bg-tertiary border border-border-primary hover:border-border-secondary transition-colors">
+      <h3 className="text-lg font-medium mb-4 text-text-primary">사용자 차단</h3>
       
       <div className="relative" ref={popoverRef}>
         <SearchInput 

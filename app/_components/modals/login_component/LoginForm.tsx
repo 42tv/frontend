@@ -22,20 +22,20 @@ const LoginForm: React.FC<LoginFormProps> = ({
     return (
         <div>
             <div className="mb-4">
-                <label className="block mb-2 text-sm font-medium text-left text-text-200">
+                <label className="block mb-2 text-sm font-medium text-left text-text-secondary">
                     아이디
                 </label>
                 <input
                     type="text"
                     value={userId}
                     onChange={(e) => onUserIdChange(e.target.value)}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-border-primary bg-bg-tertiary text-text-primary focus:ring-accent"
                     placeholder="아이디를 입력하세요"
                 />
             </div>
 
             <div className="mb-4">
-                <label className="block mb-2 text-sm font-medium text-left text-text-200">
+                <label className="block mb-2 text-sm font-medium text-left text-text-secondary">
                     비밀번호
                 </label>
                 <input
@@ -47,7 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
                             onLogin();
                         }
                     }}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-bg-300 bg-bg-300 text-text-100 focus:ring-primary-100"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 border-border-primary bg-bg-tertiary text-text-primary focus:ring-accent"
                     placeholder="비밀번호를 입력하세요"
                 />
             </div>
@@ -58,25 +58,26 @@ const LoginForm: React.FC<LoginFormProps> = ({
                     checked={rememberId}
                     onChange={(e) => onRememberIdChange(e.target.checked)}
                     className="mr-2"
+                    style={{accentColor: 'var(--accent)'}}
                 />
-                <label htmlFor="rememberId" className="text-text-200">
+                <label htmlFor="rememberId" className="text-text-secondary">
                     아이디 저장
                 </label>
             </div>
 
             <button
                 type="submit"
-                className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-primary-100 text-text-100 hover:bg-primary-200 focus:ring-primary-100 transition-colors"
+                className="w-full py-2 font-semibold rounded focus:outline-none focus:ring bg-accent text-white hover:bg-accent-light focus:ring-accent transition-colors"
                 onClick={onLogin}
             >
                 로그인
             </button>
 
             <div className="mt-4 text-center">
-                <a href="#" className="mr-4 hover:underline text-accent-100">
+                <a href="#" className="mr-4 hover:underline text-accent">
                     아이디 찾기
                 </a>
-                <a href="#" className="hover:underline text-accent-100">
+                <a href="#" className="hover:underline text-accent">
                     비밀번호 찾기
                 </a>
             </div>

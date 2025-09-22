@@ -62,30 +62,18 @@ export default function Pagination({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className={`flex items-center justify-center gap-1 mt-8 ${className}`} style={{ border: '1px solid var(--bg-300)' }}>
+    <div className={`flex items-center justify-center gap-1 mt-8 border border-border-primary ${className}`}>
       <div className="flex items-center rounded-lg p-1">
         {/* 페이지 번호들 */}
         {visiblePages.map((page) => (
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className="min-w-[32px] h-8 px-2 text-sm font-medium transition-colors rounded-md"
-            style={{
-              color: currentPage === page ? 'var(--text-100)' : 'var(--text-200)',
-              backgroundColor: currentPage === page ? 'var(--bg-300)' : 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              if (currentPage !== page) {
-                e.currentTarget.style.backgroundColor = 'var(--bg-300)';
-                e.currentTarget.style.color = 'var(--text-100)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentPage !== page) {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--text-200)';
-              }
-            }}
+            className={`min-w-[32px] h-8 px-2 text-sm font-medium transition-colors rounded-md ${
+              currentPage === page
+                ? 'text-text-primary bg-bg-tertiary'
+                : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'
+            }`}
           >
             {page}
           </button>
@@ -95,21 +83,12 @@ export default function Pagination({
         {currentPage < totalPages && (
           <button
             onClick={() => onPageChange(currentPage + 1)}
-            className="min-w-[32px] h-8 px-2 rounded-md transition-colors"
-            style={{ color: 'var(--text-200)' }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--bg-300)';
-              e.currentTarget.style.color = 'var(--text-100)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--text-200)';
-            }}
+            className="min-w-[32px] h-8 px-2 rounded-md transition-colors text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
           >
-            <svg 
-              className="w-4 h-4" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -125,27 +104,11 @@ export default function Pagination({
           value={inputPage}
           onChange={handleInputChange}
           placeholder={currentPage.toString()}
-          className="w-14 h-8 px-2 text-center text-sm rounded focus:outline-none transition-colors"
-          style={{
-            backgroundColor: 'var(--bg-200)',
-            border: '1px solid var(--bg-300)',
-            color: 'var(--text-100)'
-          }}
-          onFocus={(e) => e.target.style.borderColor = 'var(--primary-100)'}
-          onBlur={(e) => e.target.style.borderColor = 'var(--bg-300)'}
+          className="w-14 h-8 px-2 text-center text-sm rounded focus:outline-none focus:ring-2 focus:ring-accent transition-colors bg-bg-secondary border border-border-primary text-text-primary"
         />
         <button
           type="submit"
-          className="h-8 px-3 rounded text-sm font-medium transition-colors"
-          style={{ backgroundColor: 'var(--bg-300)', color: 'var(--text-100)' }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--bg-200)';
-            e.currentTarget.style.color = 'var(--text-100)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--bg-300)';
-            e.currentTarget.style.color = 'var(--text-100)';
-          }}
+          className="h-8 px-3 rounded text-sm font-medium transition-colors bg-bg-tertiary hover:bg-bg-secondary text-text-primary"
         >
           이동
         </button>

@@ -27,9 +27,9 @@ const SearchResultPopover: React.FC<SearchResultPopoverProps> = ({
 
   return (
     <div className="absolute top-full left-0 right-0 mt-2 z-50">
-      <div className="rounded-lg shadow-2xl overflow-hidden" style={{ backgroundColor: 'var(--bg-300)', border: '1px solid var(--bg-300)' }}>
+      <div className="rounded-lg shadow-2xl overflow-hidden bg-bg-tertiary border border-border-primary">
         {/* 화살표 */}
-        <div className="absolute -top-2 left-6 w-4 h-4 transform rotate-45" style={{ backgroundColor: 'var(--bg-300)', borderLeft: '1px solid var(--bg-300)', borderTop: '1px solid var(--bg-300)' }}></div>
+        <div className="absolute -top-2 left-6 w-4 h-4 transform rotate-45 bg-bg-tertiary border-l border-t border-border-primary"></div>
         
         <div className="p-4">
           {searching && <LoadingState />}

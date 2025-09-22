@@ -33,47 +33,20 @@ const SearchInput: React.FC<SearchInputProps> = ({
         onKeyDown={(e) => e.key === 'Enter' && onSearch()}
         onFocus={onInputFocus}
         placeholder="차단할 사용자 닉네임을 입력하세요"
-        className="flex-1 px-4 py-2 rounded focus:outline-none"
-        style={{
-          backgroundColor: 'var(--bg-100)',
-          color: 'var(--text-100)',
-          border: '1px solid var(--bg-300)',
-          opacity: searching ? 0.6 : 1
-        }}
-        onFocus={(e) => e.target.style.borderColor = 'var(--primary-100)'}
-        onBlur={(e) => e.target.style.borderColor = 'var(--bg-300)'}
+        className="flex-1 px-4 py-2 rounded bg-background text-text-primary border border-border-primary focus:border-accent focus:outline-none disabled:opacity-60"
         disabled={searching}
       />
       <button
         onClick={onSearch}
         disabled={searching || !searchNickname.trim()}
-        className="px-6 py-2 rounded transition-colors"
-        style={{
-          backgroundColor: (searching || !searchNickname.trim()) ? 'var(--bg-200)' : 'var(--primary-100)',
-          color: 'var(--text-100)',
-          cursor: (searching || !searchNickname.trim()) ? 'not-allowed' : 'pointer',
-          opacity: (searching || !searchNickname.trim()) ? 0.6 : 1
-        }}
-        onMouseEnter={(e) => {
-          if (!searching && searchNickname.trim()) {
-            e.currentTarget.style.backgroundColor = 'var(--accent-100)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!searching && searchNickname.trim()) {
-            e.currentTarget.style.backgroundColor = 'var(--primary-100)';
-          }
-        }}
+        className="px-6 py-2 rounded bg-accent text-white hover:bg-accent-light transition-colors disabled:bg-bg-secondary disabled:text-text-secondary disabled:cursor-not-allowed disabled:opacity-60"
       >
         {searching ? "검색 중..." : "검색"}
       </button>
       {(userInfo || notFound) && (
         <button
           onClick={onClearSearch}
-          className="px-4 py-2 rounded transition-colors"
-          style={{ backgroundColor: 'var(--bg-200)', color: 'var(--text-100)' }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-100)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-200)'}
+          className="px-4 py-2 rounded bg-bg-secondary text-text-primary hover:bg-bg-tertiary transition-colors"
         >
           초기화
         </button>

@@ -58,49 +58,49 @@ export default function ProfileIcon() {
                 
             ) : (
                 <div className="w-[40px] h-[40px] flex">
-                    <div className="flex w-full h-full rounded-full hover:bg-bg-300 items-center justify-center text-text-200">
+                    <div className="flex w-full h-full rounded-full hover:bg-bg-tertiary items-center justify-center text-text-secondary">
                         <CgProfile size={32}/>
                     </div>
                 </div>
                 // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
             <div
-                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-bg-200 border border-bg-300 shadow-lg p-2 transition-opacity duration-100 z-10 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-bg-secondary border border-border-primary shadow-lg p-2 transition-opacity duration-100 z-10 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={handleMenuClick}
             >
                 {/* 프로필 정보 */}
-                <div className="flex items-center border-b pb-3 border-bg-300">
-                    <FiUser className="w-10 h-10 text-accent-100" />
+                <div className="flex items-center border-b pb-3 border-border-primary">
+                    <FiUser className="w-10 h-10 text-accent" />
                     <div className="ml-3">
-                        <p className="text-lg font-semibold text-text-100">{nickname}</p>
-                        <p className="text-sm text-text-200">0개 | 0개</p>
+                        <p className="text-lg font-semibold text-text-primary">{nickname}</p>
+                        <p className="text-sm text-text-secondary">0개 | 0개</p>
                     </div>
                 </div>
                 {/* 메뉴 리스트 */}
                 <div className="mt-3 space-y-3">
-                    <MenuItem 
-                        icon={<FiUser className="text-text-200" />} 
+                    <MenuItem
+                        icon={<FiUser className="text-text-secondary" />}
                         text="마이페이지"
                         href="/my/info"
                     />
-                    <MenuItem 
-                        icon={<GrChannel className="text-text-200" />} 
-                        text="채널" 
+                    <MenuItem
+                        icon={<GrChannel className="text-text-secondary" />}
+                        text="채널"
                         href="/channel"
                     />
-                    <MenuItem 
-                        icon={<FiSettings className="text-text-200" />} 
-                        text="설정" 
+                    <MenuItem
+                        icon={<FiSettings className="text-text-secondary" />}
+                        text="설정"
                         href="/settings"
                     />
-                    <div 
-                        className="flex items-center space-x-3 p-2 hover:bg-bg-300 rounded-lg cursor-pointer transition-colors"
+                    <div
+                        className="flex items-center space-x-3 p-2 hover:bg-bg-tertiary rounded-lg cursor-pointer transition-colors"
                         onClick={() => handleLogout()}
                     >
-                        <BiLogOut className="text-text-200" />
-                        <span className="text-sm text-text-200">{"로그아웃"}</span>
+                        <BiLogOut className="text-text-secondary" />
+                        <span className="text-sm text-text-secondary">{"로그아웃"}</span>
                     </div>
-                    
+
                 </div>
             </div>
             
@@ -116,12 +116,12 @@ function MenuItem({ icon, text, href }: { icon: JSX.Element; text: string; href:
     };
     
     return (
-        <div 
-            className="flex items-center space-x-3 p-2 hover:bg-bg-300 rounded-lg cursor-pointer transition-colors"
+        <div
+            className="flex items-center space-x-3 p-2 hover:bg-bg-tertiary rounded-lg cursor-pointer transition-colors"
             onClick={handleClick}
         >
             {icon}
-            <span className="text-sm text-text-200">{text}</span>
+            <span className="text-sm text-text-secondary">{text}</span>
         </div>
     );
 }
