@@ -4,6 +4,7 @@ export interface Product {
   id: number;
   name: string;
   description?: string;
+  image_url?: string;
   base_coins: number;
   bonus_coins: number;
   total_coins: number;
@@ -17,6 +18,7 @@ export interface Product {
 export interface CreateProductRequest {
   name: string;
   description?: string;
+  image_url?: string;
   base_coins: number;
   bonus_coins?: number;
   price: number;
@@ -79,5 +81,18 @@ export const productAPI = {
   // 상품 순서 변경
   async updateProductOrder(updates: { id: number; sort_order: number }[]): Promise<void> {
     await api.patch("/api/products/order", { updates });
+  },
+
+  // 상품 이미지 업로드
+  async uploadProductImage(imageFile: File): Promise<{ imageUrl: string }> {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    const response = await api.post("/api/products/upload-image", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
   },
 };

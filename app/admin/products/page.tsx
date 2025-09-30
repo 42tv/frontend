@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { productAPI, Product } from "@/app/_apis/admin";
+import ImageUploader from "@/app/_components/admin/ImageUploader";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -161,7 +163,7 @@ export default function ProductManagement() {
             <thead className="bg-muted">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  상품명
+                  상품 정보
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   기본 코인
@@ -187,11 +189,28 @@ export default function ProductManagement() {
               {filteredProducts.map((product) => (
                 <tr key={product.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="space-y-1">
-                      <div className="text-sm font-medium text-foreground">{product.name}</div>
-                      {product.description && (
-                        <div className="text-sm text-muted-foreground">{product.description}</div>
-                      )}
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
+                        {product.image_url ? (
+                          <Image
+                            src={product.image_url}
+                            alt={product.name}
+                            width={64}
+                            height={64}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-muted-foreground text-xs text-center">
+                            이미지<br />없음
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-sm font-medium text-foreground">{product.name}</div>
+                        {product.description && (
+                          <div className="text-sm text-muted-foreground">{product.description}</div>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-foreground">
@@ -273,6 +292,7 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
   const [formData, setFormData] = useState({
     name: product?.name || '',
     description: product?.description || '',
+    image_url: product?.image_url || '',
     base_coins: product?.base_coins || 0,
     bonus_coins: product?.bonus_coins || 0,
     price: product?.price || 0,
@@ -342,6 +362,20 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
               className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="상품 설명을 입력하세요"
               rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-3">
+              상품 이미지
+            </label>
+            <ImageUploader
+              currentImageUrl={formData.image_url}
+              onImageChange={(imageUrl) => setFormData({ ...formData, image_url: imageUrl })}
+              onImageRemove={() => setFormData({ ...formData, image_url: '' })}
+              uploadFunction={productAPI.uploadProductImage}
+              previewSize="medium"
+              maxSizeMB={5}
             />
           </div>
 
