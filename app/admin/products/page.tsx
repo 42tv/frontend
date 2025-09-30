@@ -100,7 +100,7 @@ export default function ProductManagement() {
         </div>
         <button
           onClick={() => openModal('create')}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
         >
           새 상품 추가
         </button>
@@ -310,8 +310,9 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-card border border-border rounded-lg max-w-md w-full p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative bg-background border border-border rounded-lg max-w-md w-full p-6 shadow-xl">
         <h2 className="text-xl font-semibold text-foreground mb-6">
           {mode === 'create' ? '새 상품 추가' : '상품 수정'}
         </h2>
