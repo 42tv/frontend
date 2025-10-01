@@ -310,23 +310,44 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
     setSaving(true);
 
     try {
-      let imageUrl = formData.image_url;
-
-      // 새 이미지 파일이 있으면 먼저 업로드
-      if (imageFile) {
-        const uploadResult = await productAPI.uploadProductImage(imageFile);
-        imageUrl = uploadResult.imageUrl;
-      }
-
-      const data = {
-        ...formData,
-        image_url: imageUrl,
-        total_coins: totalCoins,
-      };
-
       if (mode === 'create') {
-        await productAPI.createProduct(data);
+        // FormData 생성
+        const formDataToSend = new FormData();
+
+        // 이미지 파일 추가 (있는 경우)
+        if (imageFile) {
+          formDataToSend.append('image', imageFile);
+        }
+
+        // 상품 정보 추가 (숫자는 문자열로, boolean도 문자열로)
+        formDataToSend.append('name', formData.name);
+        if (formData.description) {
+          formDataToSend.append('description', formData.description);
+        }
+        formDataToSend.append('base_coins', String(formData.base_coins));
+        formDataToSend.append('bonus_coins', String(formData.bonus_coins));
+        formDataToSend.append('price', String(formData.price));
+        formDataToSend.append('is_active', String(formData.is_active));
+        formDataToSend.append('sort_order', String(formData.sort_order));
+
+        // 단일 요청으로 상품 생성
+        await productAPI.createProduct(formDataToSend);
       } else if (product) {
+        // 수정 시 기존 방식 유지
+        let imageUrl = formData.image_url;
+
+        // 새 이미지 파일이 있으면 먼저 업로드
+        if (imageFile) {
+          const uploadResult = await productAPI.uploadProductImage(imageFile);
+          imageUrl = uploadResult.imageUrl;
+        }
+
+        const data = {
+          ...formData,
+          image_url: imageUrl,
+          total_coins: totalCoins,
+        };
+
         await productAPI.updateProduct({ ...data, id: product.id });
       }
 

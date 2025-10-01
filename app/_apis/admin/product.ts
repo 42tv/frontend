@@ -54,9 +54,13 @@ export const productAPI = {
     return response.data;
   },
 
-  // 상품 생성
-  async createProduct(data: CreateProductRequest): Promise<Product> {
-    const response = await api.post("/api/products", data);
+  // 상품 생성 - FormData 방식
+  async createProduct(formData: FormData): Promise<Product> {
+    const response = await api.post("/api/products", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 
