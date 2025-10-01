@@ -332,134 +332,142 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-background border border-border rounded-lg max-w-md w-full p-6 shadow-xl">
+      <div className="relative bg-background border border-border rounded-lg max-w-3xl w-full p-6 shadow-xl">
         <h2 className="text-xl font-semibold text-foreground mb-6">
           {mode === 'create' ? '새 상품 추가' : '상품 수정'}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              상품명 *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="상품명을 입력하세요"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              설명
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="상품 설명을 입력하세요"
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-3">
-              상품 이미지
-            </label>
-            <ImageUploader
-              currentImageUrl={formData.image_url}
-              onImageChange={(imageUrl) => setFormData({ ...formData, image_url: imageUrl })}
-              onImageRemove={() => setFormData({ ...formData, image_url: '' })}
-              uploadFunction={productAPI.uploadProductImage}
-              previewSize="medium"
-              maxSizeMB={5}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                기본 코인 *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                value={formData.base_coins}
-                onChange={(e) => setFormData({ ...formData, base_coins: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-2 gap-6">
+            {/* 왼쪽 컬럼 - 이미지 업로드 */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-3">
+                  상품 이미지
+                </label>
+                <ImageUploader
+                  currentImageUrl={formData.image_url}
+                  onImageChange={(imageUrl) => setFormData({ ...formData, image_url: imageUrl })}
+                  onImageRemove={() => setFormData({ ...formData, image_url: '' })}
+                  uploadFunction={productAPI.uploadProductImage}
+                  previewSize="large"
+                  maxSizeMB={5}
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                보너스 코인
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.bonus_coins}
-                onChange={(e) => setFormData({ ...formData, bonus_coins: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
+            {/* 오른쪽 컬럼 - 상품 정보 */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  상품명 *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="상품명을 입력하세요"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              총 코인 (자동 계산)
-            </label>
-            <input
-              type="text"
-              disabled
-              value={totalCoins.toLocaleString()}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-muted-foreground"
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  설명
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="상품 설명을 입력하세요"
+                  rows={2}
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              가격 (원) *
-            </label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    기본 코인 *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    value={formData.base_coins}
+                    onChange={(e) => setFormData({ ...formData, base_coins: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                정렬 순서
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.sort_order}
-                onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    보너스 코인
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.bonus_coins}
+                    onChange={(e) => setFormData({ ...formData, bonus_coins: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                상태
-              </label>
-              <select
-                value={formData.is_active ? 'active' : 'inactive'}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="active">활성</option>
-                <option value="inactive">비활성</option>
-              </select>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  총 코인 (자동 계산)
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  value={totalCoins.toLocaleString()}
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-muted-foreground"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  가격 (원) *
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    정렬 순서
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.sort_order}
+                    onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    상태
+                  </label>
+                  <select
+                    value={formData.is_active ? 'active' : 'inactive'}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="active">활성</option>
+                    <option value="inactive">비활성</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
