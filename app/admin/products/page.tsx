@@ -299,6 +299,7 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
     is_active: product?.is_active ?? true,
     sort_order: product?.sort_order || 0,
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
   // 총 코인 자동 계산
@@ -309,8 +310,17 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
     setSaving(true);
 
     try {
+      let imageUrl = formData.image_url;
+
+      // 새 이미지 파일이 있으면 먼저 업로드
+      if (imageFile) {
+        const uploadResult = await productAPI.uploadProductImage(imageFile);
+        imageUrl = uploadResult.imageUrl;
+      }
+
       const data = {
         ...formData,
+        image_url: imageUrl,
         total_coins: totalCoins,
       };
 
@@ -347,11 +357,14 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
                 </label>
                 <ImageUploader
                   currentImageUrl={formData.image_url}
-                  onImageChange={(imageUrl) => setFormData({ ...formData, image_url: imageUrl })}
-                  onImageRemove={() => setFormData({ ...formData, image_url: '' })}
-                  uploadFunction={productAPI.uploadProductImage}
+                  onFileSelect={(file) => setImageFile(file)}
+                  onImageRemove={() => {
+                    setImageFile(null);
+                    setFormData({ ...formData, image_url: '' });
+                  }}
                   previewSize="large"
                   maxSizeMB={5}
+                  immediateUpload={false}
                 />
               </div>
             </div>

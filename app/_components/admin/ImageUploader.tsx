@@ -5,25 +5,30 @@ import Image from 'next/image';
 
 interface ImageUploaderProps {
   currentImageUrl?: string;
-  onImageChange: (imageUrl: string) => void;
+  onImageChange?: (imageUrl: string) => void;
   onImageRemove: () => void;
-  uploadFunction: (file: File) => Promise<{ imageUrl: string }>;
+  onFileSelect?: (file: File) => void;
+  uploadFunction?: (file: File) => Promise<{ imageUrl: string }>;
   maxSizeMB?: number;
   acceptedTypes?: string[];
   previewSize?: 'small' | 'medium' | 'large';
+  immediateUpload?: boolean;
 }
 
 export default function ImageUploader({
   currentImageUrl,
   onImageChange,
   onImageRemove,
+  onFileSelect,
   uploadFunction,
   maxSizeMB = 5,
   acceptedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-  previewSize = 'medium'
+  previewSize = 'medium',
+  immediateUpload = true
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 프리뷰 크기 설정
@@ -56,15 +61,28 @@ export default function ImageUploader({
       return;
     }
 
-    setIsUploading(true);
-    try {
-      const result = await uploadFunction(file);
-      onImageChange(result.imageUrl);
-    } catch (error) {
-      console.error('이미지 업로드 실패:', error);
-      alert('이미지 업로드에 실패했습니다.');
-    } finally {
-      setIsUploading(false);
+    if (immediateUpload && uploadFunction && onImageChange) {
+      // 즉시 업로드 모드
+      setIsUploading(true);
+      try {
+        const result = await uploadFunction(file);
+        onImageChange(result.imageUrl);
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        alert('이미지 업로드에 실패했습니다.');
+      } finally {
+        setIsUploading(false);
+      }
+    } else if (onFileSelect) {
+      // 지연 업로드 모드 - 파일만 선택하고 미리보기 표시
+      onFileSelect(file);
+
+      // 미리보기 URL 생성
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -102,32 +120,17 @@ export default function ImageUploader({
     fileInputRef.current?.click();
   };
 
+  // 이미지 삭제 처리
+  const handleRemove = () => {
+    setPreviewUrl(null);
+    onImageRemove();
+  };
+
+  // 표시할 이미지 URL (미리보기 우선, 없으면 현재 이미지)
+  const displayImageUrl = previewUrl || currentImageUrl;
+
   return (
     <div className="space-y-4">
-      {/* 현재 이미지 표시 */}
-      {currentImageUrl && (
-        <div className="flex items-center justify-center">
-          <div className={`${previewClass} rounded-lg bg-muted flex items-center justify-center overflow-hidden relative group`}>
-            <Image
-              src={currentImageUrl}
-              alt="현재 이미지"
-              width={previewSize === 'small' ? 64 : previewSize === 'medium' ? 96 : 128}
-              height={previewSize === 'small' ? 64 : previewSize === 'medium' ? 96 : 128}
-              className="w-full h-full object-cover"
-            />
-            {/* 삭제 버튼 */}
-            <button
-              type="button"
-              onClick={onImageRemove}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-              title="이미지 삭제"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* 파일 업로드 영역 */}
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
@@ -183,6 +186,40 @@ export default function ImageUploader({
         onChange={handleFileSelect}
         className="hidden"
       />
+
+      {/* 현재 이미지 또는 미리보기 표시 */}
+      {displayImageUrl && (
+        <div className="w-full rounded-lg bg-muted p-4 flex items-center justify-center relative group">
+          <div className="relative max-w-full max-h-80 flex items-center justify-center">
+            {previewUrl ? (
+              // 미리보기 이미지 (로컬 파일)
+              <img
+                src={previewUrl}
+                alt="미리보기"
+                className="max-w-full max-h-80 object-contain rounded"
+              />
+            ) : (
+              // 기존 이미지 (URL)
+              <Image
+                src={currentImageUrl!}
+                alt="현재 이미지"
+                width={400}
+                height={320}
+                className="max-w-full max-h-80 object-contain rounded"
+              />
+            )}
+          </div>
+          {/* 삭제 버튼 */}
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+            title="이미지 삭제"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }
