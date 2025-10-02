@@ -64,10 +64,13 @@ export const productAPI = {
     return response.data;
   },
 
-  // 상품 수정
-  async updateProduct(data: UpdateProductRequest): Promise<Product> {
-    const { id, ...updateData } = data;
-    const response = await api.put(`/api/products/${id}`, updateData);
+  // 상품 수정 - FormData 방식 (이미지 포함)
+  async updateProduct(id: number, formData: FormData): Promise<Product> {
+    const response = await api.patch(`/api/products/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 
@@ -76,27 +79,20 @@ export const productAPI = {
     await api.delete(`/api/products/${id}`);
   },
 
-  // 상품 활성화/비활성화
-  async toggleProductStatus(id: number, is_active: boolean): Promise<Product> {
-    const response = await api.patch(`/api/products/${id}/status`, { is_active });
+  // 상품 활성화
+  async activateProduct(id: number): Promise<Product> {
+    const response = await api.patch(`/api/products/${id}/activate`);
+    return response.data;
+  },
+
+  // 상품 비활성화
+  async deactivateProduct(id: number): Promise<Product> {
+    const response = await api.patch(`/api/products/${id}/deactivate`);
     return response.data;
   },
 
   // 상품 순서 변경
   async updateProductOrder(updates: { id: number; sort_order: number }[]): Promise<void> {
     await api.patch("/api/products/order", { updates });
-  },
-
-  // 상품 이미지 업로드
-  async uploadProductImage(imageFile: File): Promise<{ imageUrl: string }> {
-    const formData = new FormData();
-    formData.append("image", imageFile);
-
-    const response = await api.post("/api/products/upload-image", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
   },
 };
