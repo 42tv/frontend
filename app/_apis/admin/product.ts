@@ -38,13 +38,13 @@ export interface ProductListResponse {
 }
 
 export const productAPI = {
-  // 상품 목록 조회
+  // 상품 목록 조회 (관리자용 - 모든 상품)
   async getProducts(params?: {
     page?: number;
     limit?: number;
     is_active?: boolean;
   }): Promise<ProductListResponse> {
-    const response = await api.get("/api/products", { params });
+    const response = await api.get("/api/products/all", { params });
     return response.data;
   },
 
