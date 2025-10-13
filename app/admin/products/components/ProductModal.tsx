@@ -24,8 +24,6 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
   const [shouldRemoveImage, setShouldRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const totalCoins = formData.base_coins + formData.bonus_coins;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -46,7 +44,7 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
         formDataToSend.append('description', formData.description);
       }
       formDataToSend.append('base_coins', String(formData.base_coins));
-      formDataToSend.append('bonus_coins', String(formData.bonus_coins));
+      formDataToSend.append('bonus_coins', '0');
       formDataToSend.append('price', String(formData.price));
       formDataToSend.append('is_active', String(formData.is_active));
       formDataToSend.append('sort_order', String(formData.sort_order));
@@ -128,44 +126,17 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    기본 코인 *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    value={formData.base_coins}
-                    onChange={(e) => setFormData({ ...formData, base_coins: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    보너스 코인
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.bonus_coins}
-                    onChange={(e) => setFormData({ ...formData, bonus_coins: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">
-                  총 코인 (자동 계산)
+                  코인 *
                 </label>
                 <input
-                  type="text"
-                  disabled
-                  value={totalCoins.toLocaleString()}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-muted-foreground"
+                  type="number"
+                  required
+                  min="0"
+                  value={formData.base_coins}
+                  onChange={(e) => setFormData({ ...formData, base_coins: parseInt(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
@@ -174,12 +145,15 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
                   가격 (원) *
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   required
-                  min="0"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
+                  value={formData.price.toLocaleString()}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setFormData({ ...formData, price: parseInt(value) || 0 });
+                  }}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="0"
                 />
               </div>
 
