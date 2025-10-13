@@ -131,12 +131,15 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
                   코인 *
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   required
-                  min="0"
-                  value={formData.base_coins}
-                  onChange={(e) => setFormData({ ...formData, base_coins: parseInt(e.target.value) || 0 })}
+                  value={formData.base_coins.toLocaleString()}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setFormData({ ...formData, base_coins: parseInt(value) || 0 });
+                  }}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="0"
                 />
               </div>
 
