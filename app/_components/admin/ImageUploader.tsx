@@ -11,7 +11,6 @@ interface ImageUploaderProps {
   uploadFunction?: (file: File) => Promise<{ imageUrl: string }>;
   maxSizeMB?: number;
   acceptedTypes?: string[];
-  previewSize?: 'small' | 'medium' | 'large';
   immediateUpload?: boolean;
 }
 
@@ -23,7 +22,6 @@ export default function ImageUploader({
   uploadFunction,
   maxSizeMB = 5,
   acceptedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-  previewSize = 'medium',
   immediateUpload = true
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
@@ -31,14 +29,13 @@ export default function ImageUploader({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 프리뷰 크기 설정
-  const previewSizes = {
-    small: 'w-16 h-16',
-    medium: 'w-24 h-24',
-    large: 'w-32 h-32'
-  };
-
-  const previewClass = previewSizes[previewSize];
+  // 프리뷰 크기 설정 (향후 사용을 위해 보관)
+  // const previewSizes = {
+  //   small: 'w-16 h-16',
+  //   medium: 'w-24 h-24',
+  //   large: 'w-32 h-32'
+  // };
+  // const previewClass = previewSizes[previewSize];
 
   // 파일 유효성 검사
   const validateFile = (file: File): string | null => {
@@ -123,6 +120,10 @@ export default function ImageUploader({
   // 이미지 삭제 처리
   const handleRemove = () => {
     setPreviewUrl(null);
+    // 파일 입력 초기화
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
     onImageRemove();
   };
 

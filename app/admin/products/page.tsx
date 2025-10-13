@@ -304,6 +304,7 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
     sort_order: product?.sort_order || 0,
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [shouldRemoveImage, setShouldRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
 
   // 총 코인 자동 계산
@@ -320,6 +321,11 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
       // 이미지 파일 추가 (있는 경우)
       if (imageFile) {
         formDataToSend.append('image', imageFile);
+      }
+
+      // 이미지 삭제 플래그 추가 (수정 모드이고 이미지 삭제를 원하는 경우)
+      if (mode === 'edit' && shouldRemoveImage) {
+        formDataToSend.append('remove_image', 'true');
       }
 
       // 상품 정보 추가 (숫자는 문자열로, boolean도 문자열로)
@@ -368,12 +374,15 @@ function ProductModal({ mode, product, onClose }: ProductModalProps) {
                 </label>
                 <ImageUploader
                   currentImageUrl={formData.image_url}
-                  onFileSelect={(file) => setImageFile(file)}
+                  onFileSelect={(file) => {
+                    setImageFile(file);
+                    setShouldRemoveImage(false);
+                  }}
                   onImageRemove={() => {
                     setImageFile(null);
                     setFormData({ ...formData, image_url: '' });
+                    setShouldRemoveImage(true);
                   }}
-                  previewSize="large"
                   maxSizeMB={5}
                   immediateUpload={false}
                 />
