@@ -1,4 +1,4 @@
-import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
+import PostDetail from "@/app/my/info/components/tabs/post_tabs_component/post_detail";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { usePosts } from "./sent_message/usePosts";

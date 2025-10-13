@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { productAPI, Product } from '@/app/_apis/admin';
-import ImageUploader from '@/app/_components/admin/ImageUploader';
+import ImageUploader from '@/app/admin/components-shared/ImageUploader';
 import { ProductFormData } from '../types';
 
 interface ProductModalProps {

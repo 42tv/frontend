@@ -1,4 +1,4 @@
-import { StatsContent } from "../../../_components/channel/tab-contents";
+import { StatsContent } from "@/app/channel/components/tab-contents";
 
 export default function StatsPage() {
   return <StatsContent />;

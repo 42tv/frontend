@@ -3,10 +3,10 @@ import { reqeustChat } from '@/app/_apis/live';
 import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
 import { useUserStore } from "@/app/_lib/stores"
-import LoginComponent from '../../modals/login_component';
-import UserActionsModal from '../../modals/user_actions_modal';
-import SendMessageForm from '../../common/SendMessageForm';
-import { openPopupModal, closeAllModals } from '../../utils/overlay/overlayHelpers';
+import LoginComponent from '@/app/_components/modals/login_component';
+import UserActionsModal from '@/app/_components/modals/user_actions_modal';
+import SendMessageForm from '@/app/_components/common/SendMessageForm';
+import { openPopupModal, closeAllModals } from '@/app/_components/utils/overlay/overlayHelpers';
 import { ChatMessage, MyRole, TabType, Viewer } from '@/app/_types';
 
 // 분리된 컴포넌트들 import

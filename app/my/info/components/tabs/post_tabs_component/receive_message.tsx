@@ -1,7 +1,7 @@
 import { deletePost, deletePosts, getPosts, getPostSetting, readPost } from "@/app/_apis/posts";
 import BlockAlertComponent from "@/app/_components/modals/block_alert";
 import MessageSettingsModal from "@/app/_components/modals/message_settings_modal";
-import PostDetail from "@/app/_components/info/tabs/post_tabs_component/post_detail";
+import PostDetail from "@/app/my/info/components/tabs/post_tabs_component/post_detail";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";

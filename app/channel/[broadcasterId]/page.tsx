@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { use } from 'react';
-import ChannelLayout from '../../_components/channel/channel-layout';
-import { BjArticle } from '../../_components/channel/tab-contents';
-import FanLevel from '../../_components/channel/FanLevel';
+import ChannelLayout from '@/app/channel/components/channel-layout';
+import { BjArticle } from '@/app/channel/components/tab-contents';
+import FanLevel from '@/app/channel/components/FanLevel';
 import { getChannel, GetChannelResponse } from '../../_apis/channel';
 
 interface ChannelPageProps {

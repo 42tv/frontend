@@ -1,4 +1,4 @@
-import { EmptyStateContent } from "../../../_components/channel/tab-contents";
+import { EmptyStateContent } from "@/app/channel/components/tab-contents";
 
 export default function NotificationsPage() {
   return <EmptyStateContent />;

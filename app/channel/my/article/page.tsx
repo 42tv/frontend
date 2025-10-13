@@ -1,6 +1,6 @@
 'use client';
 
-import { BjArticle } from "../../../_components/channel/tab-contents";
+import { BjArticle } from "@/app/channel/components/tab-contents";
 import { useUserStore } from "../../../_lib/stores";
 
 export default function ArticlePage() {

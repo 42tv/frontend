@@ -1,7 +1,7 @@
 'use client'
 
-import MyLayOut from "@/app/_components/info/layout";
-import UserTab from "@/app/_components/info/tabs/user";
+import MyLayOut from "@/app/my/info/components/layout";
+import UserTab from "@/app/my/info/components/tabs/user";
 
 
 export default function InfoPage() {

@@ -5,8 +5,8 @@ import { BsPlayFill } from 'react-icons/bs'; // react-icons에서 아이콘 가�
 import { useEffect, useState } from 'react'; // useState, useEffect 추가
 import { requestLobyPlay } from "@/app/_apis/live";
 import { usePlayStore } from "@/app/_lib";
-import { openModal } from "../utils/overlay/overlayHelpers";
-import ErrorMessage from "../modals/error_component";
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
+import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_lib/api";
 import { useRouter } from 'next/navigation'; // next/router 대신 next/navigation 사용
 import { Live } from "@/app/_types";
