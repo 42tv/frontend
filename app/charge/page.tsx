@@ -1,23 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-
-interface CoinPackage {
-  id: string;
-  coins: number;
-  price: number;
-}
-
-const COIN_PACKAGES: CoinPackage[] = [
-  { id: '100', coins: 100, price: 11000 },
-  { id: '300', coins: 300, price: 33000 },
-  { id: '500', coins: 500, price: 55000 },
-  { id: '1000', coins: 1000, price: 110000 },
-  { id: '2000', coins: 2000, price: 220000 },
-  { id: '3000', coins: 3000, price: 330000 },
-  { id: '4000', coins: 4000, price: 440000 },
-  { id: '5000', coins: 5000, price: 550000 },
-];
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { getActiveProducts } from '../_apis/product';
+import { Product } from '../_types/product';
 
 const TABS = [
   { id: 'charge', label: '코인 충전' },
@@ -26,9 +12,27 @@ const TABS = [
 export default function ChargePage() {
   const [activeTab, setActiveTab] = useState<string>('charge');
   const [customCoins, setCustomCoins] = useState<number>(0);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // 1코인 = 100원 + 부가세 10% = 110원
   const COIN_PRICE_WITH_VAT = 110;
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await getActiveProducts();
+        setProducts(data.products);
+      } catch (error) {
+        console.error('상품 목록 조회 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const calculatePrice = (coins: number): number => {
     return coins * COIN_PRICE_WITH_VAT;
@@ -119,46 +123,88 @@ export default function ChargePage() {
         </div>
 
         {/* Package Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {COIN_PACKAGES.map((pkg) => (
-            <div
-              key={pkg.id}
-              className="bg-card dark:bg-card-dark rounded-2xl border border-border dark:border-border-dark p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:border-yellow-500/50"
-            >
-              {/* Icon */}
-              <div className="w-32 h-32 bg-background dark:bg-background-dark rounded-full flex items-center justify-center mb-4 border-2 border-border dark:border-border-dark">
-                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                  <circle cx="32" cy="32" r="28" fill="#F59E0B"/>
-                  <circle cx="32" cy="32" r="24" fill="#FBBF24"/>
-                  <circle cx="32" cy="32" r="20" fill="#F59E0B"/>
-                  <path d="M32 16 L28 24 L32 20 L36 24 Z M32 48 L28 40 L32 44 L36 40 Z" fill="#D97706"/>
-                  <ellipse cx="24" cy="24" rx="6" ry="4" fill="#FDE68A" opacity="0.5"/>
-                </svg>
-              </div>
-
-              {/* Divider */}
-              <div className="w-full border-t border-border dark:border-border-dark mb-4"></div>
-
-              {/* Amount */}
-              <div className="text-xl font-bold text-foreground dark:text-foreground-dark mb-2">
-                코인 {pkg.coins.toLocaleString()}개
-              </div>
-
-              {/* Price */}
-              <div className="text-yellow-500 font-bold text-lg mb-4">
-                {pkg.price.toLocaleString()} 원
-              </div>
-
-              {/* Purchase Button */}
-              <button
-                onClick={() => handlePurchase(pkg.coins, pkg.price)}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-colors shadow-sm hover:shadow-md"
-              >
-                구매하기
-              </button>
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="text-muted-foreground dark:text-muted-foreground-dark">
+              로딩 중...
             </div>
-          ))}
-        </div>
+          </div>
+        ) : products.length === 0 ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="text-muted-foreground dark:text-muted-foreground-dark">
+              등록된 상품이 없습니다.
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => {
+              const totalCoins = product.base_coins + product.bonus_coins;
+              return (
+                <div
+                  key={product.id}
+                  className="bg-card dark:bg-card-dark rounded-2xl border border-border dark:border-border-dark p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:border-yellow-500/50"
+                >
+                  {/* Icon or Image */}
+                  <div className="w-32 h-32 bg-background dark:bg-background-dark rounded-full flex items-center justify-center mb-4 border-2 border-border dark:border-border-dark overflow-hidden">
+                    {product.image_url ? (
+                      <Image
+                        src={product.image_url}
+                        alt={product.name}
+                        width={128}
+                        height={128}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                        <circle cx="32" cy="32" r="28" fill="#F59E0B"/>
+                        <circle cx="32" cy="32" r="24" fill="#FBBF24"/>
+                        <circle cx="32" cy="32" r="20" fill="#F59E0B"/>
+                        <path d="M32 16 L28 24 L32 20 L36 24 Z M32 48 L28 40 L32 44 L36 40 Z" fill="#D97706"/>
+                        <ellipse cx="24" cy="24" rx="6" ry="4" fill="#FDE68A" opacity="0.5"/>
+                      </svg>
+                    )}
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-full border-t border-border dark:border-border-dark mb-4"></div>
+
+                  {/* Name or Amount */}
+                  <div className="text-xl font-bold text-foreground dark:text-foreground-dark mb-2 text-center">
+                    {product.name}
+                  </div>
+
+                  {/* Coin Details */}
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground-dark mb-2">
+                    기본 {product.base_coins.toLocaleString()}개
+                    {product.bonus_coins > 0 && (
+                      <span className="text-yellow-500 ml-1">
+                        + 보너스 {product.bonus_coins.toLocaleString()}개
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Total Coins */}
+                  <div className="text-lg font-semibold text-foreground dark:text-foreground-dark mb-2">
+                    총 {totalCoins.toLocaleString()}개
+                  </div>
+
+                  {/* Price */}
+                  <div className="text-yellow-500 font-bold text-lg mb-4">
+                    {product.price.toLocaleString()} 원
+                  </div>
+
+                  {/* Purchase Button */}
+                  <button
+                    onClick={() => handlePurchase(totalCoins, product.price)}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-colors shadow-sm hover:shadow-md"
+                  >
+                    구매하기
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
