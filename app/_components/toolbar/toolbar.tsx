@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import ToggleTheme from './buttons/ToggleTheme';
 import Login from './buttons/loginButton';
+import ChargeButton from './buttons/ChargeButton';
 import Search from './search/search';
 import Logo from '../logo/logo';
 import ProfileIcon from './profile-icon/profile_icon';
@@ -23,6 +24,7 @@ const Toolbar: React.FC = () => {
       <Search />
       <div className="flex h-full gap-4 text-center items-center ml-auto mr-4">
         <ToggleTheme />
+        {nickname && <ChargeButton />}
         {
           nickname ? <ProfileIcon/> : <Login />
         }
