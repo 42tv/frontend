@@ -106,7 +106,7 @@ export default function ChargePage() {
               value={calculatePrice(customCoins).toLocaleString()}
               readOnly
               placeholder="0"
-              className="flex-1 bg-background dark:bg-background-dark border border-border dark:border-border-dark rounded px-4 py-2 text-foreground dark:text-foreground-dark cursor-not-allowed opacity-75"
+              className="flex-1 bg-background dark:bg-background-dark border border-border dark:border-border-dark rounded px-4 py-2 text-foreground dark:text-foreground-dark cursor-default opacity-75"
             />
             <span className="text-muted-foreground dark:text-muted-foreground-dark">원</span>
             <button
