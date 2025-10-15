@@ -19,6 +19,7 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
     price: product?.price || 0,
     is_active: product?.is_active ?? true,
     sort_order: product?.sort_order || 0,
+    product_type: product?.product_type || 'star',
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [shouldRemoveImage, setShouldRemoveImage] = useState(false);
@@ -48,6 +49,7 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
       formDataToSend.append('price', String(formData.price));
       formDataToSend.append('is_active', String(formData.is_active));
       formDataToSend.append('sort_order', String(formData.sort_order));
+      formDataToSend.append('product_type', formData.product_type);
 
       if (mode === 'create') {
         await productAPI.createProduct(formDataToSend);
@@ -158,6 +160,20 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="0"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  코인 타입 *
+                </label>
+                <select
+                  value={formData.product_type}
+                  onChange={(e) => setFormData({ ...formData, product_type: e.target.value as 'normal' | 'star' })}
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="normal">일반</option>
+                  <option value="star">스타 코인</option>
+                </select>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

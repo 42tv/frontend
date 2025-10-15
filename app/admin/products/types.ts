@@ -1,4 +1,5 @@
 export type StatusFilter = 'all' | 'active' | 'inactive';
+export type ProductType = 'normal' | 'star';
 
 export interface ProductFormData {
   name: string;
@@ -9,4 +10,5 @@ export interface ProductFormData {
   price: number;
   is_active: boolean;
   sort_order: number;
+  product_type: ProductType;
 }

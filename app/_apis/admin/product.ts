@@ -1,5 +1,7 @@
 import api from "../auto_refresh_axios";
 
+export type ProductType = 'normal' | 'star';
+
 export interface Product {
   id: number;
   name: string;
@@ -11,6 +13,7 @@ export interface Product {
   price: number;
   is_active: boolean;
   sort_order: number;
+  product_type: ProductType;
   created_at: string;
   updated_at: string;
 }
@@ -24,6 +27,7 @@ export interface CreateProductRequest {
   price: number;
   is_active?: boolean;
   sort_order?: number;
+  product_type: ProductType;
 }
 
 export interface UpdateProductRequest extends Partial<CreateProductRequest> {
