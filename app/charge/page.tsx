@@ -26,7 +26,32 @@ const TABS = [
 export default function ChargePage() {
   const [activeTab, setActiveTab] = useState<string>('charge');
   const [customCoins, setCustomCoins] = useState<number>(0);
-  const [customPrice, setCustomPrice] = useState<number>(0);
+
+  // 1코인 = 100원 + 부가세 10% = 110원
+  const COIN_PRICE_WITH_VAT = 110;
+
+  const calculatePrice = (coins: number): number => {
+    return coins * COIN_PRICE_WITH_VAT;
+  };
+
+  const handleCoinsChange = (value: string) => {
+    // 빈 문자열이면 0으로 설정
+    if (value === '') {
+      setCustomCoins(0);
+      return;
+    }
+
+    // 숫자만 허용
+    if (!/^\d+$/.test(value)) {
+      return;
+    }
+
+    const coins = parseInt(value, 10);
+    // 양수만 허용
+    if (coins >= 0) {
+      setCustomCoins(coins);
+    }
+  };
 
   const handlePurchase = (coins: number, price: number) => {
     console.log(`구매: ${coins}개 코인, ${price}원`);
@@ -34,10 +59,11 @@ export default function ChargePage() {
   };
 
   const handleCustomPurchase = () => {
-    if (customCoins > 0 && customPrice > 0) {
-      handlePurchase(customCoins, customPrice);
+    if (customCoins > 0) {
+      const price = calculatePrice(customCoins);
+      handlePurchase(customCoins, price);
     } else {
-      alert('개수와 금액을 모두 입력해주세요.');
+      alert('코인 개수를 입력해주세요.');
     }
   };
 
@@ -68,19 +94,19 @@ export default function ChargePage() {
               코인 개수 입력
             </span>
             <input
-              type="number"
-              value={customCoins || ''}
-              onChange={(e) => setCustomCoins(parseInt(e.target.value) || 0)}
+              type="text"
+              value={customCoins === 0 ? '' : customCoins}
+              onChange={(e) => handleCoinsChange(e.target.value)}
               placeholder="0"
               className="flex-1 bg-background dark:bg-background-dark border border-border dark:border-border-dark rounded px-4 py-2 text-foreground dark:text-foreground-dark focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
             <span className="text-muted-foreground dark:text-muted-foreground-dark">개</span>
             <input
-              type="number"
-              value={customPrice || ''}
-              onChange={(e) => setCustomPrice(parseInt(e.target.value) || 0)}
+              type="text"
+              value={calculatePrice(customCoins).toLocaleString()}
+              readOnly
               placeholder="0"
-              className="flex-1 bg-background dark:bg-background-dark border border-border dark:border-border-dark rounded px-4 py-2 text-foreground dark:text-foreground-dark focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="flex-1 bg-background dark:bg-background-dark border border-border dark:border-border-dark rounded px-4 py-2 text-foreground dark:text-foreground-dark cursor-not-allowed opacity-75"
             />
             <span className="text-muted-foreground dark:text-muted-foreground-dark">원</span>
             <button
