@@ -72,7 +72,7 @@ export default function ChargePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background dark:bg-background-dark pt-[80px] pb-12">
+    <div className="min-h-screen bg-background dark:bg-background-dark pt-[20px] pb-12">
       <div className="max-w-7xl mx-auto px-6">
         {/* Tabs */}
         <div className="flex gap-8 mb-8 border-b border-border dark:border-border-dark">
