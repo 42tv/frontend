@@ -1,4 +1,4 @@
-import { ExchangeContent } from "../../../_components/channel/tab-contents";
+import { ExchangeContent } from "@/app/channel/components/tab-contents";
 
 export default function ExchangePage() {
   return <ExchangeContent />;

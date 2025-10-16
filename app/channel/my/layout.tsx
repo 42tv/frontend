@@ -1,7 +1,7 @@
 import React from "react";
-import ChannelLayout from "../../_components/channel/channel-layout";
-import ProfileHeader from "../../_components/channel/profile-header";
-import ChannelNav from "../../_components/channel/channel-nav";
+import ChannelLayout from "@/app/channel/components/channel-layout";
+import ProfileHeader from "@/app/channel/components/profile-header";
+import ChannelNav from "@/app/channel/components/channel-nav";
 
 export default function ChannelMyLayout({
   children,

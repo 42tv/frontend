@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import LiveStreamCard from "@/app/_components/live/LiveStreamCard";
+import LiveStreamCard from "@/app/live/components/LiveStreamCard";
 import { getLiveList } from "@/app/_apis/live";
 import { Live } from "@/app/_types";
 

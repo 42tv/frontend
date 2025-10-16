@@ -2,7 +2,7 @@
 
 import { updatePostSetting } from '@/app/_apis/posts';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
-import { PostSetting } from '@/app/_components/info/tabs/post_tabs_component/types/message';
+import { PostSetting } from '@/app/my/info/components/tabs/post_tabs_component/types/message';
 
 interface MessageSettingsModalProps {
     closeModal: () => void;

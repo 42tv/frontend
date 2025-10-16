@@ -5,7 +5,7 @@ import { BlacklistTable } from "./BlacklistTable";
 import { BlacklistSearchForm } from "./BlacklistSearchForm";
 import { UserSearchSection } from "./UserSearchSection";
 import { addToBlacklist, removeMultipleFromBlacklist, getBlacklist } from "../../../../_apis/user";
-import { openModal } from "../../../utils/overlay/overlayHelpers";
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { getApiErrorMessage } from "@/app/_lib/api";
 

@@ -1,4 +1,4 @@
-import { FanRankContent } from "../../../_components/channel/tab-contents";
+import { FanRankContent } from "@/app/channel/components/tab-contents";
 
 export default function FansPage() {
   return <FanRankContent />;

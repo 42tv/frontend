@@ -10,6 +10,7 @@ interface NavItem {
 
 const adminNavItems: NavItem[] = [
   { href: '/admin', label: '대시보드', description: '전체 현황' },
+  { href: '/admin/products', label: '상품 관리', description: '코인 상품' },
   { href: '/admin/policy', label: '정책 관리', description: '서비스 정책' },
   { href: '/admin/users', label: '사용자 관리', description: '계정 관리' },
   { href: '/admin/channels', label: '채널 관리', description: '방송 관리' },

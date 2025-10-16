@@ -1,6 +1,6 @@
 'use client'
-import MyLayOut from "@/app/_components/info/layout";
-import PostTab from "@/app/_components/info/tabs/post";
+import MyLayOut from "@/app/my/info/components/layout";
+import PostTab from "@/app/my/info/components/tabs/post";
 
 export default function PostPage() {
     return (

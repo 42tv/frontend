@@ -3,8 +3,8 @@ import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
 import { Button } from "@mui/material";
 import { getInfo, updateNickname, updatePassword } from "@/app/_apis/user";
-import { openModal } from "../../utils/overlay/overlayHelpers";
-import ErrorMessage from "../../modals/error_component";
+import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
+import ErrorMessage from "@/app/_components/modals/error_component";
 
 export default function UserTab() {
     const [nickname, setNickname ] = useState<string>("");

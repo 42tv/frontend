@@ -1,4 +1,4 @@
-import { CommunityContent } from "../../../_components/channel/tab-contents";
+import { CommunityContent } from "@/app/channel/components/tab-contents";
 
 export default function CommunityPage() {
   return <CommunityContent />;

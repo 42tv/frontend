@@ -11,7 +11,7 @@ import {
   createPolicy,
   getAllPolicies
 } from '@/app/_apis/admin/policy';
-import HtmlEditor from '@/app/_components/admin/HtmlEditor';
+import HtmlEditor from '@/app/admin/components-shared/HtmlEditor';
 import { 
   showSuccessNotification, 
   showErrorNotification 
