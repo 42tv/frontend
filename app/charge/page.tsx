@@ -166,16 +166,16 @@ export default function ChargePage() {
               return (
                 <div
                   key={product.id}
-                  className="w-64 bg-card dark:bg-card-dark rounded-2xl border border-border dark:border-border-dark p-6 flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:border-yellow-500/50"
+                  className="w-64 bg-card dark:bg-card-dark rounded-2xl border border-border dark:border-border-dark px-4 py-3 flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:border-yellow-500/50"
                 >
                   {/* Icon or Image */}
-                  <div className="w-32 h-32 bg-background dark:bg-background-dark rounded-full flex items-center justify-center mb-4 border-2 border-border dark:border-border-dark overflow-hidden">
+                  <div className="w-24 h-24 bg-background dark:bg-background-dark rounded-full flex items-center justify-center mb-2 border-2 border-border dark:border-border-dark overflow-hidden">
                     {product.image_url ? (
                       <Image
                         src={product.image_url}
                         alt={product.name}
-                        width={128}
-                        height={128}
+                        width={96}
+                        height={96}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -190,15 +190,15 @@ export default function ChargePage() {
                   </div>
 
                   {/* Divider */}
-                  <div className="w-full border-t border-border dark:border-border-dark mb-4"></div>
+                  <div className="w-full border-t border-border dark:border-border-dark mb-2"></div>
 
                   {/* Name or Amount */}
-                  <div className="text-xl font-bold text-foreground dark:text-foreground-dark mb-2 text-center">
+                  <div className="text-lg font-bold text-foreground dark:text-foreground-dark mb-0.5 text-center">
                     {product.name}
                   </div>
 
                   {/* Coin Details */}
-                  <div className="text-sm text-muted-foreground dark:text-muted-foreground-dark mb-2">
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground-dark mb-0.5">
                     기본 {product.base_coins.toLocaleString()}개
                     {product.bonus_coins > 0 && (
                       <span className="text-yellow-500 ml-1">
@@ -208,12 +208,12 @@ export default function ChargePage() {
                   </div>
 
                   {/* Total Coins */}
-                  <div className="text-lg font-semibold text-foreground dark:text-foreground-dark mb-2">
+                  <div className="text-base font-semibold text-foreground dark:text-foreground-dark mb-0.5">
                     총 {totalCoins.toLocaleString()}개
                   </div>
 
                   {/* Price */}
-                  <div className="text-yellow-500 font-bold text-lg mb-4">
+                  <div className="text-yellow-500 font-bold text-base mb-2">
                     {product.price.toLocaleString()} 원
                   </div>
 
@@ -221,7 +221,7 @@ export default function ChargePage() {
                   <button
                     onClick={() => handlePurchase(product.id, totalCoins, product.price)}
                     disabled={purchasing}
-                    className={`w-full font-bold py-3 rounded-lg transition-colors shadow-sm hover:shadow-md ${
+                    className={`w-full font-bold py-1.5 rounded-lg transition-colors shadow-sm hover:shadow-md ${
                       purchasing
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-yellow-400 hover:bg-yellow-500 text-black'
