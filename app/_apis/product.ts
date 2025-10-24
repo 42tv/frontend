@@ -9,3 +9,14 @@ export const getActiveProducts = async (): Promise<ProductsResponse> => {
   const response = await api.get<ProductsResponse>('/api/products');
   return response.data;
 };
+
+/**
+ * 상품 구매 (Mock 결제 + 충전)
+ * POST /api/payments/purchase
+ */
+export const purchaseProduct = async (product_id: number) => {
+  const response = await api.post('/api/payments/purchase', {
+    product_id,
+  });
+  return response.data;
+};
