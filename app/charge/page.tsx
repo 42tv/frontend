@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getActiveProducts, purchaseProduct } from '../_apis/product';
 import { Product } from '../_types/product';
+import { PaymentGatewayService } from '../_services/payment-gateway.service';
 
 const TABS = [
   { id: 'charge', label: '코인 충전' },
@@ -15,6 +16,7 @@ export default function ChargePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [purchasing, setPurchasing] = useState<boolean>(false);
+  const [selectedPg, setSelectedPg] = useState<'mock' | 'toss' | 'inicis' | 'kakaopay'>('mock');
 
   // 1코인 = 100원 + 부가세 10% = 110원
   const COIN_PRICE_WITH_VAT = 110;
@@ -69,16 +71,53 @@ export default function ChargePage() {
 
     try {
       setPurchasing(true);
-      const result = await purchaseProduct(productId);
 
-      if (result.success) {
-        alert(`충전 완료!\n${result.data.product.total_coins}개의 코인이 충전되었습니다.\n현재 잔액: ${result.data.wallet.coin_balance}개`);
+      // 1. 백엔드에 결제 준비 요청 (PG사 선택 포함)
+      const result = await purchaseProduct(productId, selectedPg);
 
-        // 성공 시 커스텀 입력 초기화
+      // 2-1. Mock 결제인 경우: 이미 완료됨
+      if (result.success && result.data.topup) {
+        alert(
+          `충전 완료!\n${result.data.product.total_coins}개의 코인이 충전되었습니다.\n현재 잔액: ${result.data.wallet.coin_balance}개`
+        );
         setCustomCoins(0);
-      } else {
-        alert('충전에 실패했습니다. 다시 시도해주세요.');
+        return;
       }
+
+      // 2-2. Real PG인 경우: 결제 창 호출
+      if (result.data.pg_transaction_id) {
+        try {
+          const paymentResult = await PaymentGatewayService.requestPayment({
+            pg_provider: result.data.pg_provider || 'mock',
+            pg_transaction_id: result.data.pg_transaction_id,
+            amount: price,
+            product_name: `${coins}개 코인`,
+            redirect_url: result.data.redirect_url,
+            app_scheme: result.data.app_scheme,
+            pg_data: result.data.pg_data,
+          });
+
+          if (paymentResult.success) {
+            alert('결제가 완료되었습니다!\n잠시 후 코인이 충전됩니다.');
+            setCustomCoins(0);
+            // TODO: 잔액 새로고침 또는 페이지 리로드
+            window.location.reload();
+          } else {
+            alert(`결제 실패: ${paymentResult.error || '알 수 없는 오류'}`);
+          }
+        } catch (pgError) {
+          console.error('PG 결제 실패:', pgError);
+          alert(
+            pgError instanceof Error
+              ? pgError.message
+              : '결제 모듈 연동 중 오류가 발생했습니다.'
+          );
+        }
+        return;
+      }
+
+      // 예상치 못한 응답
+      alert('충전에 실패했습니다. 다시 시도해주세요.');
     } catch (error: unknown) {
       console.error('구매 실패:', error);
       const errorMessage =
@@ -113,6 +152,47 @@ export default function ChargePage() {
               {tab.label}
             </button>
           ))}
+        </div>
+
+        {/* PG사 선택 */}
+        <div className="bg-card dark:bg-card-dark rounded-xl border border-border dark:border-border-dark p-6 mb-8 shadow-sm">
+          <h3 className="text-foreground dark:text-foreground-dark font-medium mb-4">결제 수단 선택</h3>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setSelectedPg('mock')}
+              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                selectedPg === 'mock'
+                  ? 'bg-yellow-400 text-black'
+                  : 'bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark border border-border dark:border-border-dark hover:border-yellow-500'
+              }`}
+            >
+              테스트 결제 (Mock)
+            </button>
+            <button
+              onClick={() => setSelectedPg('toss')}
+              disabled
+              className="px-6 py-2 rounded-lg font-medium bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed"
+              title="토스페이먼츠 준비 중"
+            >
+              토스페이먼츠 (준비중)
+            </button>
+            <button
+              onClick={() => setSelectedPg('inicis')}
+              disabled
+              className="px-6 py-2 rounded-lg font-medium bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed"
+              title="이니시스 준비 중"
+            >
+              이니시스 (준비중)
+            </button>
+            <button
+              onClick={() => setSelectedPg('kakaopay')}
+              disabled
+              className="px-6 py-2 rounded-lg font-medium bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed"
+              title="카카오페이 준비 중"
+            >
+              카카오페이 (준비중)
+            </button>
+          </div>
         </div>
 
         {/* Custom Input Section */}

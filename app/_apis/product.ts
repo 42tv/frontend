@@ -11,12 +11,18 @@ export const getActiveProducts = async (): Promise<ProductsResponse> => {
 };
 
 /**
- * 상품 구매 (Mock 결제 + 충전)
+ * 상품 구매 (결제 준비)
  * POST /api/payments/purchase
+ * @param product_id 구매할 상품 ID
+ * @param pg_provider PG사 선택 (선택사항, 기본값: mock)
  */
-export const purchaseProduct = async (product_id: number) => {
+export const purchaseProduct = async (
+  product_id: number,
+  pg_provider?: 'mock' | 'toss' | 'inicis' | 'kakaopay'
+) => {
   const response = await api.post('/api/payments/purchase', {
     product_id,
+    ...(pg_provider && { pg_provider }), // pg_provider가 있을 때만 포함
   });
   return response.data;
 };
