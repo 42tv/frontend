@@ -12,6 +12,7 @@ import { StarCoinIcon, PostIcon } from "@/app/_components/icons";
 export default function ProfileIcon() {
     const profile_img = useUserStore((state) => state.profile_img);
     const nickname = useUserStore((state) => state.nickname) || "Guest";
+    const coin = useUserStore((state) => state.coin);
     const [clicked, setClicked] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +78,7 @@ export default function ProfileIcon() {
                         <div className="flex items-center justify-center gap-2 text-sm text-text-secondary w-full">
                             <div className="flex items-center gap-1">
                                 <StarCoinIcon size={30} />
-                                <span>0개</span>
+                                <span>{coin?.balance ?? 0}개</span>
                             </div>
                             <span>|</span>
                             <div className="flex items-center gap-1">

@@ -1,12 +1,13 @@
 import { getLoginInfo } from '@/app/_apis/user';
 import { create } from 'zustand';
-import { User } from '@/app/_types';
+import { User, CoinInfo } from '@/app/_types';
 
 interface UserState extends User {
   setUser: (user: User) => void;
   setNickname: (newNickname: string) => void;
   setProfileImg: (newProfileImg: string) => void;
   setIsAdmin: (isAdmin: boolean) => void;
+  setCoin: (coin: CoinInfo) => void;
   fetchUser: () => Promise<void>;
   isAdminUser: () => boolean;
 }
@@ -18,13 +19,15 @@ const useUserStore = create<UserState>((set, get) => ({
   profile_img: '',
   is_guest: true,
   is_admin: false,
-  
+  coin: undefined,
+
   setUser: (user: User) => set({
     idx: user.idx,
     user_id: user.user_id,
     nickname: user.nickname,
     profile_img: user.profile_img,
     is_admin: user.is_admin,
+    coin: user.coin,
   }),
   
   setNickname: (newNickname) => set(() => ({
@@ -39,7 +42,11 @@ const useUserStore = create<UserState>((set, get) => ({
   setIsAdmin: (isAdmin) => set(() => ({
     is_admin: isAdmin,
   })),
-  
+
+  setCoin: (coin: CoinInfo) => set(() => ({
+    coin: coin,
+  })),
+
   fetchUser: async () => {
     try {
       const response = await getLoginInfo();
@@ -50,7 +57,8 @@ const useUserStore = create<UserState>((set, get) => ({
         nickname: response.user.nickname,
         profile_img: response.user.profile_img,
         is_guest: response.is_guest,
-        is_admin: response.is_admin || false
+        is_admin: response.is_admin || false,
+        coin: response.user.coin
       });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
