@@ -7,7 +7,7 @@ import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { logout } from "@/app/_apis/user";
 import { GrChannel } from "react-icons/gr";
-import { StarCoinIcon } from "@/app/_components/icons";
+import { StarCoinIcon, PostIcon } from "@/app/_components/icons";
 
 export default function ProfileIcon() {
     const profile_img = useUserStore((state) => state.profile_img);
@@ -72,15 +72,18 @@ export default function ProfileIcon() {
                 {/* 프로필 정보 */}
                 <div className="flex items-center border-b pb-3 border-border-primary">
                     <FiUser className="w-10 h-10 text-accent" />
-                    <div className="ml-3">
+                    <div className="ml-3 flex-1">
                         <p className="text-lg font-semibold text-text-primary">{nickname}</p>
-                        <div className="flex items-center gap-2 text-sm text-text-secondary">
+                        <div className="flex items-center justify-center gap-2 text-sm text-text-secondary w-full">
                             <div className="flex items-center gap-1">
-                                <StarCoinIcon size={16} />
+                                <StarCoinIcon size={30} />
                                 <span>0개</span>
                             </div>
                             <span>|</span>
-                            <span>0개</span>
+                            <div className="flex items-center gap-1">
+                                <PostIcon size={24} />
+                                <span>0개</span>
+                            </div>
                         </div>
                     </div>
                 </div>
