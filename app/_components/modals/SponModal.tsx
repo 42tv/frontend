@@ -1,12 +1,15 @@
 'use client';
 
 import React from 'react';
+import useUserStore from '@/app/_lib/stores/userStore';
 
 interface SponModalProps {
     closeModal?: () => void;
 }
 
 const SponModal: React.FC<SponModalProps> = () => {
+    const { coin } = useUserStore();
+
     return (
         <div className="bg-[#2a2a2a] rounded-lg w-[400px] overflow-hidden">
             {/* Header */}
@@ -49,6 +52,16 @@ const SponModal: React.FC<SponModalProps> = () => {
                                 className="bg-[#3a3a3a] text-white px-3 py-1 rounded text-right w-24 border border-[#4a4a4a] focus:outline-none focus:border-blue-500"
                             />
                         </div>
+                    </div>
+                </div>
+
+                {/* Coin Balance Display */}
+                <div className="mb-4 p-4 bg-[#1a1a1a] rounded-lg">
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">보유 코인</span>
+                        <span className="text-white font-semibold text-lg">
+                            {coin?.balance?.toLocaleString() ?? 0} 코인
+                        </span>
                     </div>
                 </div>
 
