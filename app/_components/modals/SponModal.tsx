@@ -1,14 +1,82 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import useUserStore from '@/app/_lib/stores/userStore';
+import { createDonation } from '@/app/_apis/donation';
+import { AxiosError } from 'axios';
 
 interface SponModalProps {
     closeModal?: () => void;
+    streamerUserId?: string;
 }
 
-const SponModal: React.FC<SponModalProps> = () => {
-    const { coin } = useUserStore();
+const SponModal: React.FC<SponModalProps> = ({ closeModal, streamerUserId }) => {
+    const { coin, fetchUser } = useUserStore();
+    const [coinAmount, setCoinAmount] = useState<string>('0');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+
+    const handleCoinAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        // 숫자만 입력되도록 필터링
+        if (/^\d*$/.test(value)) {
+            setCoinAmount(value);
+            setError('');
+        }
+    };
+
+    const handleDonate = async () => {
+        // 유효성 검사
+        if (!streamerUserId) {
+            setError('스트리머 정보를 찾을 수 없습니다');
+            return;
+        }
+
+        const amount = parseInt(coinAmount);
+
+        if (isNaN(amount) || amount <= 0) {
+            setError('후원 금액은 0보다 커야 합니다');
+            return;
+        }
+
+        if (coin && coin.balance < amount) {
+            setError('보유 코인이 부족합니다');
+            return;
+        }
+
+        setIsLoading(true);
+        setError('');
+
+        try {
+            // 후원 API 호출
+            const response = await createDonation({
+                coin_amount: amount,
+                streamer_user_id: streamerUserId,
+            });
+
+            // 사용자 정보 갱신 (코인 잔액 업데이트)
+            await fetchUser();
+
+            // 성공 메시지 표시
+            alert(`후원이 완료되었습니다!\n${response.donation.coin_amount} 코인을 후원했습니다.`);
+
+            // 모달 닫기
+            if (closeModal) {
+                closeModal();
+            }
+        } catch (err) {
+            console.error('Donation error:', err);
+
+            if (err instanceof AxiosError) {
+                const errorMessage = err.response?.data?.message || '후원 처리 중 오류가 발생했습니다';
+                setError(errorMessage);
+            } else {
+                setError('후원 처리 중 오류가 발생했습니다');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="bg-[#2a2a2a] rounded-lg w-[400px] overflow-hidden">
@@ -41,19 +109,29 @@ const SponModal: React.FC<SponModalProps> = () => {
                     </button>
                 </div>
 
-                {/* Bottom Section */}
+                {/* Bottom Section - Coin Amount */}
                 <div className="border-t border-[#3a3a3a] pt-4 mb-6">
                     <div className="bg-[#1a1a1a] rounded-lg p-4">
                         <div className="flex items-center justify-between text-sm text-white">
                             <span>코인</span>
                             <input
                                 type="text"
-                                defaultValue="0"
+                                value={coinAmount}
+                                onChange={handleCoinAmountChange}
+                                placeholder="0"
                                 className="bg-[#3a3a3a] text-white px-3 py-1 rounded text-right w-24 border border-[#4a4a4a] focus:outline-none focus:border-blue-500"
+                                disabled={isLoading}
                             />
                         </div>
                     </div>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg">
+                        <p className="text-red-400 text-sm">{error}</p>
+                    </div>
+                )}
 
                 {/* Coin Balance Display */}
                 <div className="mb-4 p-4 bg-[#1a1a1a] rounded-lg">
@@ -67,11 +145,18 @@ const SponModal: React.FC<SponModalProps> = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
-                    <button className="flex-1 py-3 rounded-lg bg-gray-600 text-white font-medium hover:bg-gray-500 transition-colors">
+                    <button
+                        className="flex-1 py-3 rounded-lg bg-gray-600 text-white font-medium hover:bg-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isLoading}
+                    >
                         하트선물목수
                     </button>
-                    <button className="flex-1 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-500 transition-colors">
-                        선물하기
+                    <button
+                        className="flex-1 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleDonate}
+                        disabled={isLoading || !streamerUserId}
+                    >
+                        {isLoading ? '처리 중...' : '선물하기'}
                     </button>
                 </div>
             </div>

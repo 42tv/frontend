@@ -48,10 +48,9 @@ export default function StreamInfo({
 
     const handleImageClick = () => {
         const imageUrl = playDataState?.broadcaster.profile_img || "/icons/anonymouse1.svg";
-        const ImageWrapper = ({ closeModal, ...props }: any) => <Image {...props} />;
-        
+
         openPopupModal(
-                <ImageWrapper
+                <Image
                     src={imageUrl}
                     alt="프로필 이미지 확대"
                     width={400}
@@ -68,7 +67,7 @@ export default function StreamInfo({
     };
 
     const handleGiftClick = () => {
-        openModal(<SponModal />);
+        openModal(<SponModal streamerUserId={playDataState?.broadcaster.user_id} />);
     };
 
     return (
