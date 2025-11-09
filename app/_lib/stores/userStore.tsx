@@ -50,18 +50,43 @@ const useUserStore = create<UserState>((set, get) => ({
   fetchUser: async () => {
     try {
       const response = await getLoginInfo();
-      console.log(response)
-      set({
-        idx: response.user.idx,
-        user_id: response.user.user_id,
-        nickname: response.user.nickname,
-        profile_img: response.user.profile_img,
-        is_guest: response.is_guest,
-        is_admin: response.is_admin || false,
-        coin: response.user.coin
-      });
+      console.log(response);
+
+      // 게스트 사용자인 경우
+      if (response.data.is_guest) {
+        set({
+          idx: 0,
+          user_id: '',
+          nickname: '',
+          profile_img: '',
+          is_guest: true,
+          is_admin: false,
+          coin: undefined
+        });
+      } else {
+        // 인증된 사용자인 경우
+        set({
+          idx: response.data.user.idx,
+          user_id: response.data.user.user_id,
+          nickname: response.data.user.nickname,
+          profile_img: response.data.user.profile_img,
+          is_guest: false,
+          is_admin: response.data.is_admin,
+          coin: response.data.user.coin
+        });
+      }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
+      // 에러 발생 시 게스트 상태로 초기화
+      set({
+        idx: 0,
+        user_id: '',
+        nickname: '',
+        profile_img: '',
+        is_guest: true,
+        is_admin: false,
+        coin: undefined
+      });
     }
   },
 

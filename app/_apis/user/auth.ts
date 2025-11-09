@@ -63,10 +63,48 @@ export async function logout() {
 }
 
 /**
- * login_info
- * @returns
+ * 로그인 정보 조회 응답 타입 정의
  */
-export async function getLoginInfo() {
+interface CoinInfo {
+  balance: number;
+  charged: number;
+  used: number;
+  received: number;
+}
+
+interface UserInfo {
+  idx: number;
+  user_id: string;
+  profile_img: string;
+  nickname: string;
+  coin: CoinInfo;
+}
+
+interface GuestLoginInfo {
+  is_guest: true;
+  guest_id?: string;
+}
+
+interface AuthenticatedLoginInfo {
+  is_guest: false;
+  is_admin: boolean;
+  user: UserInfo;
+}
+
+export type LoginInfo = GuestLoginInfo | AuthenticatedLoginInfo;
+
+interface LoginInfoResponse {
+  success: boolean;
+  data: LoginInfo;
+  message: string;
+}
+
+/**
+ * 로그인 정보 조회
+ * 현재 사용자의 로그인 정보를 조회하거나 게스트 정보를 반환
+ * @returns 로그인 정보 (인증된 사용자 또는 게스트)
+ */
+export async function getLoginInfo(): Promise<LoginInfoResponse> {
   const response = await api.get("/api/auth/login_info", {
     withCredentials: true,
   });
