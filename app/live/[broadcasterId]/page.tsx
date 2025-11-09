@@ -89,13 +89,13 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
         try {
             const response = await requestLike(playDataState.broadcaster.idx);
             console.log("Like response:", response);
-            // Update like count if the API returns it
-            if (response.recommend_cnt !== undefined) {
+            // 추천 성공 시 로컬 카운트 증가 (백엔드는 data: null만 반환)
+            if (response.success) {
                 setPlayDataState({
                     ...playDataState,
                     stream: {
                         ...playDataState.stream,
-                        recommend_cnt: response.recommend_cnt,
+                        recommend_cnt: playDataState.stream.recommend_cnt + 1,
                     }
                 });
             }
@@ -130,15 +130,15 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                     const response = await requestPlay(broadcasterId);
                     console.log("Response:", response);
                     setPlayDataState({
-                        broadcaster: response.broadcaster,
-                        stream: response.stream,
-                        user: response.user,
+                        broadcaster: response.data.broadcaster,
+                        stream: response.data.stream,
+                        user: response.data.user,
                         viewer_cnt: 0,
                     });
                     const newSocket: Socket = io(`ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`, {
                         withCredentials: true,
                         auth: {
-                            token: `Bearer ${response.user.play_token}`,
+                            token: `Bearer ${response.data.user.play_token}`,
                         },
                         transports: ['websocket'],
                     });

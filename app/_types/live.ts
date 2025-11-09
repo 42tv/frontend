@@ -56,6 +56,11 @@ export interface PlayData {
     play_token: string;
     is_guest: boolean;
     guest_id?: string;
+    fan_level?: {
+      name: string;
+      color: string;
+      total_donation: number;
+    };
   };
   viewer_cnt: number;
 }
