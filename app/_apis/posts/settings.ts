@@ -11,13 +11,13 @@ export async function getPostSetting() {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data.data || { fanLevels: [], minFanLevel: null };
 }
 
 /**
  * 쪽지 설정 업데이트 (팬 레벨 제한)
  * @param minFanLevel
- * @returns
+ * @returns 전체 응답 객체 { success, data, message }
  */
 export async function updatePostSetting(minFanLevel: number | null | undefined) {
   if (minFanLevel == -1) {
@@ -32,5 +32,5 @@ export async function updatePostSetting(minFanLevel: number | null | undefined) 
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 }

@@ -11,7 +11,7 @@ export async function getPosts() {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data.data || [];
 }
 
 /**
@@ -25,7 +25,7 @@ export async function getSendPosts() {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data.data || [];
 }
 
 /**
@@ -81,7 +81,7 @@ export async function deletePosts(postIds: number[], type: "receive" | "sent") {
  * 쪽지 보내기
  * @param userId
  * @param message
- * @returns
+ * @returns 전체 응답 객체 { success, data, message }
  */
 export async function sendPost(userId: string, message: string) {
   const requestBody = {
@@ -94,5 +94,5 @@ export async function sendPost(userId: string, message: string) {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 }
