@@ -27,7 +27,7 @@ export default function UserDefault({inputNickname, setInputNickname} : {inputNi
                 <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="text"
-                        value={inputNickname}
+                        value={inputNickname || ""}
                         onChange={(e) => {
                             setInputNickname(e.target.value)
                         }}
