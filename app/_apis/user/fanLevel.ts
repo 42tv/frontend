@@ -17,7 +17,8 @@ export async function getFanLevels() {
   const response = await api.get("/api/fan-level/", {
     withCredentials: true,
   });
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: [...], message: string }
+  return response.data?.data || response.data;
 }
 
 /**
@@ -33,7 +34,8 @@ export async function updateFanLevel(levels: FanLevelItem[]) {
   const response = await api.put("/api/fan-level", requestBody, {
     withCredentials: true,
   });
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: [...], message: string }
+  return response.data?.data || response.data;
 }
 
 /**
