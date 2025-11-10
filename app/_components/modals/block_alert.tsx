@@ -3,8 +3,8 @@ import { blockPostUser } from "@/app/_apis/posts";
 import DefaultAlertMessage from './default_alert_component';
 
 export default function BlockAlertComponent(
-  { blockedIdx, blockUserId, blockedNickname, closePopup, changePopupComponent }: 
-  { blockedIdx: number, blockUserId: string, blockedNickname: string, closePopup: () => void, changePopupComponent: any}) {
+  { blockedIdx, blockUserId, blockedNickname, closeModal, changePopupComponent }:
+  { blockedIdx: number, blockUserId: string, blockedNickname: string, closeModal?: () => void, changePopupComponent: any}) {
   async function blockUser() {
     try {
       const response = await blockPostUser(blockedIdx)
@@ -31,9 +31,9 @@ export default function BlockAlertComponent(
         >
           차단
         </button>
-        <button 
+        <button
           className="w-[100px] p-2 rounded bg-bg-tertiary hover:bg-background text-text-secondary transition-colors"
-          onClick={closePopup}
+          onClick={closeModal}
         >
           취소
         </button>
