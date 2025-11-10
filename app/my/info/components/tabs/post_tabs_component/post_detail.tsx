@@ -93,15 +93,6 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
         </div>
       </div>
       <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
-        <button
-          className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-border-hover text-text-primary transition-colors"
-          onClick={() => {
-            deleteSinglePost(postId);
-            closeModal?.();
-          }}
-        >
-          삭제
-        </button>
         {
           responsePost && (
             <button
@@ -112,6 +103,15 @@ export default function PostDetail({ nickname, userId, message, sentAt, postId, 
             </button>
           )
         }
+        <button
+          className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-border-hover text-text-primary transition-colors"
+          onClick={() => {
+            deleteSinglePost(postId);
+            closeModal?.();
+          }}
+        >
+          삭제
+        </button>
       </div>
     </div>
   );
