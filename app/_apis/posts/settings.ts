@@ -11,7 +11,7 @@ export async function getPostSetting() {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -32,5 +32,5 @@ export async function updatePostSetting(minFanLevel: number | null | undefined) 
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }

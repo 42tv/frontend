@@ -13,7 +13,7 @@ export async function blockPostUser(userIdx: number) {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -28,7 +28,7 @@ export async function getBlockedPostUser() {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -44,7 +44,7 @@ export async function unblockPostUser(userIdx: number) {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -62,5 +62,5 @@ export async function unblockPostUsers(userIdxs: number[]) {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }

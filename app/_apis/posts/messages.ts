@@ -11,7 +11,7 @@ export async function getPosts() {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -25,7 +25,7 @@ export async function getSendPosts() {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -40,7 +40,7 @@ export async function readPost(postId: number) {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -49,13 +49,13 @@ export async function readPost(postId: number) {
  * @returns
  */
 export async function deletePost(postId: number) {
-  const response = await api.delete(`/api/post/${postId}`, {
+  const response = await api.delete(`/api/post/${postId}?type=received`, {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -74,7 +74,7 @@ export async function deletePosts(postIds: number[], type: "receive" | "sent") {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -94,5 +94,5 @@ export async function sendPost(userId: string, message: string) {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
