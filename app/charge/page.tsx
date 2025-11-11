@@ -25,8 +25,8 @@ export default function ChargePage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await getActiveProducts();
-        setProducts(data.products);
+        const response = await getActiveProducts();
+        setProducts(response.data);
       } catch (error) {
         console.error('상품 목록 조회 실패:', error);
       } finally {
@@ -73,28 +73,36 @@ export default function ChargePage() {
       setPurchasing(true);
 
       // 1. 백엔드에 결제 준비 요청 (PG사 선택 포함)
-      const result = await purchaseProduct(productId, selectedPg);
+      const response = await purchaseProduct(productId, selectedPg);
 
-      // 2-1. Mock 결제인 경우: 이미 완료됨
-      if (result.success && result.data.topup) {
+      // 백엔드 응답 구조: { success, data: { success, message, data: PurchaseData }, message }
+      if (!response.success || !response.data?.data) {
+        alert('충전에 실패했습니다. 다시 시도해주세요.');
+        return;
+      }
+
+      const purchaseData = response.data.data;
+
+      // 2-1. Mock 결제인 경우: 이미 완료됨 (topup 필드 존재)
+      if ('topup' in purchaseData) {
         alert(
-          `충전 완료!\n${result.data.product.total_coins}개의 코인이 충전되었습니다.\n현재 잔액: ${result.data.wallet.coin_balance}개`
+          `충전 완료!\n${purchaseData.product.total_coins}개의 코인이 충전되었습니다.\n현재 잔액: ${purchaseData.wallet.coin_balance}개`
         );
         setCustomCoins(0);
         return;
       }
 
-      // 2-2. Real PG인 경우: 결제 창 호출
-      if (result.data.pg_transaction_id) {
+      // 2-2. Real PG인 경우: 결제 창 호출 (pg_transaction_id 필드 존재)
+      if ('pg_transaction_id' in purchaseData) {
         try {
           const paymentResult = await PaymentGatewayService.requestPayment({
-            pg_provider: result.data.pg_provider || 'mock',
-            pg_transaction_id: result.data.pg_transaction_id,
+            pg_provider: purchaseData.pg_provider || 'mock',
+            pg_transaction_id: purchaseData.pg_transaction_id,
             amount: price,
             product_name: `${coins}개 코인`,
-            redirect_url: result.data.redirect_url,
-            app_scheme: result.data.app_scheme,
-            pg_data: result.data.pg_data,
+            redirect_url: purchaseData.redirect_url,
+            app_scheme: purchaseData.app_scheme,
+            pg_data: purchaseData.pg_data as Record<string, unknown>,
           });
 
           if (paymentResult.success) {
