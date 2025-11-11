@@ -15,7 +15,7 @@ const CardGrid: React.FC<CardGridProps> = ({ items, isEditing, selectedItems, on
       <CardItem
         key={index}
         imageUrl={item.profile_img} // item에서 imageUrl 전달
-        title={item.user_id}
+        title={item.nickname}
         isLive={item.is_live}
         isEditing={isEditing}
         isSelected={selectedItems.includes(item.id)}
