@@ -1,4 +1,5 @@
 import api from "./auto_refresh_axios";
+import { ApiSuccessResponse } from "@/app/_types/api";
 import {
   Article,
   CreateArticleDto,
@@ -31,7 +32,7 @@ export async function createArticle(
     });
   }
 
-  const response = await api.post("/api/article", formData, {
+  const response = await api.post<ApiSuccessResponse<Article>>("/api/article", formData, {
     withCredentials: true,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -40,9 +41,9 @@ export async function createArticle(
 
   // 백엔드 응답 구조: { success: true, data: {...}, message: string }
   return {
-    success: response.data?.success || false,
-    data: response.data?.data,
-    message: response.data?.message
+    success: response.data.success,
+    data: response.data.data,
+    message: response.data.message
   };
 }
 
@@ -56,8 +57,8 @@ export async function getArticleById(params: GetArticleByIdParams): Promise<Arti
   if (params.incrementView) {
     queryParams.append('view', 'true');
   }
-  
-  const response = await api.get(
+
+  const response = await api.get<ApiSuccessResponse<Article>>(
     `/api/article/${params.id}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`,
     {
       withCredentials: true,
@@ -66,7 +67,7 @@ export async function getArticleById(params: GetArticleByIdParams): Promise<Arti
       },
     }
   );
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -88,7 +89,7 @@ export async function getArticles(params: GetArticlesParams): Promise<ArticleLis
     queryParams.append('limit', params.limit.toString());
   }
 
-  const response = await api.get(
+  const response = await api.get<ApiSuccessResponse<{ articles: Article[], pageMeta: any }>>(
     `/api/article?${queryParams.toString()}`,
     {
       withCredentials: true,
@@ -98,29 +99,11 @@ export async function getArticles(params: GetArticlesParams): Promise<ArticleLis
     }
   );
 
-  // 백엔드 응답 구조: { success: true, data: { articles: [], pageMeta: {} }, message: string, pagination: {} }
+  // 백엔드 응답 구조: { success: true, data: { articles: [], pageMeta: {} }, message: string }
   // 프론트엔드 기대 구조: { data: [], pagination: {} }
-  if (response.data?.success && response.data?.data) {
-    return {
-      data: response.data.data.articles || [],
-      pagination: response.data.data.pageMeta || response.data.pagination
-    };
-  }
-
-  // 폴백
   return {
-    data: [],
-    pagination: {
-      total: 0,
-      currentPage: 1,
-      totalPages: 0,
-      limit: params.limit || 5,
-      offset: params.offset || 0,
-      hasNext: false,
-      hasPrev: false,
-      nextOffset: null,
-      prevOffset: null,
-    }
+    data: response.data.data.articles,
+    pagination: response.data.data.pageMeta
   };
 }
 
@@ -138,8 +121,8 @@ export async function getArticlesByAuthor(params: ArticleListByAuthorParams): Pr
   if (params.limit) {
     queryParams.append('limit', params.limit.toString());
   }
-  
-  const response = await api.get(
+
+  const response = await api.get<ApiSuccessResponse<ArticleListResponse>>(
     `/api/article/author/${params.authorId}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`,
     {
       withCredentials: true,
@@ -148,7 +131,7 @@ export async function getArticlesByAuthor(params: ArticleListByAuthorParams): Pr
       },
     }
   );
-  return response.data;
+  return response.data.data;
 }
 
 /**
@@ -185,7 +168,7 @@ export async function editArticle(
     });
   }
 
-  const response = await api.put(`/api/article/${id}`, formData, {
+  const response = await api.put<ApiSuccessResponse<Article>>(`/api/article/${id}`, formData, {
     withCredentials: true,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -194,9 +177,9 @@ export async function editArticle(
 
   // 백엔드 응답 구조: { success: true, data: Article, message: string }
   return {
-    success: response.data?.success || false,
-    data: response.data?.data,
-    message: response.data?.message
+    success: response.data.success,
+    data: response.data.data,
+    message: response.data.message
   };
 }
 
@@ -211,13 +194,17 @@ export async function updateArticle(
   id: number,
   updateArticleDto: UpdateArticleDto
 ): Promise<ArticleResponse> {
-  const response = await api.put(`/api/article/${id}`, updateArticleDto, {
+  const response = await api.put<ApiSuccessResponse<Article>>(`/api/article/${id}`, updateArticleDto, {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return {
+    success: response.data.success,
+    data: response.data.data,
+    message: response.data.message
+  };
 }
 
 /**
@@ -226,7 +213,7 @@ export async function updateArticle(
  * @returns
  */
 export async function deleteArticle(id: number): Promise<ArticleResponse> {
-  const response = await api.delete(`/api/article/${id}`, {
+  const response = await api.delete<ApiSuccessResponse<null>>(`/api/article/${id}`, {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
@@ -235,8 +222,8 @@ export async function deleteArticle(id: number): Promise<ArticleResponse> {
 
   // 백엔드 응답 구조: { success: true, data: null, message: string }
   return {
-    success: response.data?.success || false,
-    data: response.data?.data,
-    message: response.data?.message
+    success: response.data.success,
+    data: response.data.data,
+    message: response.data.message
   };
 }
