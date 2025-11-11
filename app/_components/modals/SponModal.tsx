@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import useUserStore from '@/app/_lib/stores/userStore';
 import { createDonation } from '@/app/_apis/donation';
 import { AxiosError } from 'axios';
+import { showErrorNotification } from '@/app/_components/utils/overlay/notificationHelpers';
 
 interface SponModalProps {
     closeModal?: () => void;
@@ -14,51 +15,45 @@ const SponModal: React.FC<SponModalProps> = ({ closeModal, streamerUserId }) => 
     const { coin, fetchUser } = useUserStore();
     const [coinAmount, setCoinAmount] = useState<string>('0');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
 
     const handleCoinAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         // 숫자만 입력되도록 필터링
         if (/^\d*$/.test(value)) {
             setCoinAmount(value);
-            setError('');
         }
     };
 
     const handleDonate = async () => {
         // 유효성 검사
         if (!streamerUserId) {
-            setError('스트리머 정보를 찾을 수 없습니다');
+            showErrorNotification('스트리머 정보를 찾을 수 없습니다');
             return;
         }
 
         const amount = parseInt(coinAmount);
 
         if (isNaN(amount) || amount <= 0) {
-            setError('후원 금액은 0보다 커야 합니다');
+            showErrorNotification('후원 금액은 0보다 커야 합니다');
             return;
         }
 
         if (coin && coin.balance < amount) {
-            setError('보유 코인이 부족합니다');
+            showErrorNotification('보유 코인이 부족합니다');
             return;
         }
 
         setIsLoading(true);
-        setError('');
 
         try {
             // 후원 API 호출
-            const response = await createDonation({
+            await createDonation({
                 coin_amount: amount,
                 streamer_user_id: streamerUserId,
             });
 
             // 사용자 정보 갱신 (코인 잔액 업데이트)
             await fetchUser();
-
-            // 성공 메시지 표시
-            alert(`후원이 완료되었습니다!\n${response.donation.coin_amount} 코인을 후원했습니다.`);
 
             // 모달 닫기
             if (closeModal) {
@@ -69,9 +64,9 @@ const SponModal: React.FC<SponModalProps> = ({ closeModal, streamerUserId }) => 
 
             if (err instanceof AxiosError) {
                 const errorMessage = err.response?.data?.message || '후원 처리 중 오류가 발생했습니다';
-                setError(errorMessage);
+                showErrorNotification(errorMessage);
             } else {
-                setError('후원 처리 중 오류가 발생했습니다');
+                showErrorNotification('후원 처리 중 오류가 발생했습니다');
             }
         } finally {
             setIsLoading(false);
@@ -125,13 +120,6 @@ const SponModal: React.FC<SponModalProps> = ({ closeModal, streamerUserId }) => 
                         </div>
                     </div>
                 </div>
-
-                {/* Error Message */}
-                {error && (
-                    <div className="mb-4 p-3 bg-red-900/30 border border-red-700 rounded-lg">
-                        <p className="text-red-400 text-sm">{error}</p>
-                    </div>
-                )}
 
                 {/* Coin Balance Display */}
                 <div className="mb-4 p-4 bg-[#1a1a1a] rounded-lg">
