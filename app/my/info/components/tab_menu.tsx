@@ -17,10 +17,6 @@ export default function TabMenu() {
             name: '결제 내역',
             link: '/my/gift'
         },
-        {
-            name: '선물 내역',
-            link: '/my/gift'
-        },
     ]
     return (
         <div className="w-full h-[60px] items-center justify-center text-center">
