@@ -21,7 +21,7 @@ export default function UserTab() {
     }
 
     useEffect(() => {
-        setInputNickname(nickname || "");
+        setInputNickname(nickname ?? "");
     }, [nickname]);
 
     async function updateUserInfo() {
@@ -37,7 +37,7 @@ export default function UserTab() {
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             catch (e: any) {
-                setInputNickname(nickname);
+                setInputNickname(nickname ?? "");
                 openModal(<ErrorMessage message={e.response.data.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
                 return;
             }
