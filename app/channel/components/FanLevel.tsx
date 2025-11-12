@@ -29,20 +29,20 @@ export default function FanLevel({ fanLevels = [] }: FanLevelProps) {
               .map((level) => (
                 <div
                   key={level.id}
-                  className="bg-white dark:bg-gray-800 border border-border-primary dark:border-border-primary-dark rounded-xl p-6"
+                  className="bg-background-secondary dark:bg-background-secondary-dark border border-border-primary dark:border-border-primary-dark rounded-xl p-6"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-5">
                       <div className="relative">
                         <div
-                          className="w-12 h-12 rounded-full shadow-lg border-3 border-white dark:border-gray-700"
+                          className="w-12 h-12 rounded-full shadow-lg border-3 border-border-primary dark:border-border-primary-dark"
                           style={{ backgroundColor: level.color }}
                         ></div>
                         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-transparent"></div>
                       </div>
-                      
+
                       <div>
-                        <h3 
+                        <h3
                           className="text-2xl font-bold"
                           style={{ color: level.color }}
                         >
