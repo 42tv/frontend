@@ -104,7 +104,7 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
       {channelData.channel && (
         <div className="mb-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+            <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
               <div className="text-2xl font-bold text-blue-500 mb-1">
                 {channelData.channel.bookmark.toLocaleString()}
               </div>
@@ -112,8 +112,8 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
                 북마크
               </div>
             </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+
+            <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
               <div className="text-2xl font-bold text-red-500 mb-1">
                 {channelData.channel.recommend.toLocaleString()}
               </div>
@@ -121,8 +121,8 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
                 추천
               </div>
             </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+
+            <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
               <div className="text-2xl font-bold text-green-500 mb-1">
                 {channelData.channel.watch.toLocaleString()}
               </div>
@@ -130,8 +130,8 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
                 조회수
               </div>
             </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+
+            <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
               <div className="text-2xl font-bold text-purple-500 mb-1">
                 {Math.floor(channelData.channel.month_time / 60)}h
               </div>
@@ -139,8 +139,8 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
                 이달 방송
               </div>
             </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
+
+            <div className="bg-background-secondary dark:bg-background-secondary-dark rounded-lg p-4 border border-border-primary dark:border-border-primary-dark text-center">
               <div className="text-2xl font-bold text-orange-500 mb-1">
                 {Math.floor(channelData.channel.total_time / 60)}h
               </div>
