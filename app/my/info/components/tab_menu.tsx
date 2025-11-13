@@ -17,6 +17,10 @@ export default function TabMenu() {
             name: '결제 내역',
             link: '/my/gift'
         },
+        {
+            name: '후원 내역',
+            link: '/my/donation'
+        },
     ]
     return (
         <div className="w-full h-[60px] items-center justify-center text-center">
@@ -26,7 +30,7 @@ export default function TabMenu() {
                         const isActive = pathname === tab.link
                         return (
                             <li key={index} className="flex w-[100px] items-center justify-center text-text-secondary">
-                                <Link href={tab.link} className={`${isActive ? "font-bold text-accent border-b-2 border-accent pb-1" : "hover:text-accent"} transition-colors`}> {tab.name} </Link>
+                                <Link href={tab.link} className={`pb-1 ${isActive ? "font-bold text-accent border-b-2 border-accent" : "hover:text-accent"} transition-colors`}> {tab.name} </Link>
                             </li>
                         )
                     })

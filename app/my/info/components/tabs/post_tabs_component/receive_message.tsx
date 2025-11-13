@@ -214,7 +214,7 @@ export default function ReceiveMessage() {
 
     return (
         <div className="mb-20">
-            <div className="flex flex-row my-5 mx-5 justify-between">
+            <div className="flex flex-row my-5 px-6 justify-between">
                 <MessageActionButtons 
                     onOpenSettings={handleOpenSettings}
                     onDeletePosts={handleDeletePosts}
