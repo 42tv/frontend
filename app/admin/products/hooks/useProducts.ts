@@ -8,8 +8,8 @@ export function useProducts() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await productAPI.getProducts();
-      setProducts(response.products || []);
+      const products = await productAPI.getProducts();
+      setProducts(products || []);
     } catch (error) {
       console.error('상품 목록 로드 실패:', error);
       setProducts([]);

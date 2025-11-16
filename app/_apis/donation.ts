@@ -36,8 +36,11 @@ export interface DonationResponse {
 export const createDonation = async (
   data: CreateDonationRequest
 ): Promise<DonationResponse> => {
-  const response = await api.post<DonationResponse>('/api/donation', data);
-  return response.data;
+  const response = await api.post<{ success: boolean; data: { donation: DonationResponse['donation'] }; message: string }>('/api/donation', data);
+  return {
+    message: response.data.message || '',
+    donation: response.data.data.donation
+  };
 };
 
 /**
@@ -80,11 +83,11 @@ export interface ReceivedDonationsResponse {
 export const getReceivedDonations = async (
   query?: GetDonationsQuery
 ): Promise<ReceivedDonationsResponse> => {
-  const response = await api.get<ReceivedDonationsResponse>(
+  const response = await api.get<{ success: boolean; data: ReceivedDonationsResponse }>(
     '/api/donation/received',
     { params: query }
   );
-  return response.data;
+  return response.data.data;
 };
 
 /**
@@ -117,10 +120,10 @@ export interface SentDonationsResponse {
 export const getSentDonations = async (
   query?: GetDonationsQuery
 ): Promise<SentDonationsResponse> => {
-  const response = await api.get<SentDonationsResponse>('/api/donation/sent', {
+  const response = await api.get<{ success: boolean; data: SentDonationsResponse }>('/api/donation/sent', {
     params: query,
   });
-  return response.data;
+  return response.data.data;
 };
 
 /**
@@ -141,8 +144,8 @@ export const getDonationStats = async (query?: {
   startDate?: string;
   endDate?: string;
 }): Promise<DonationStats> => {
-  const response = await api.get<DonationStats>('/api/donation/stats', {
+  const response = await api.get<{ success: boolean; data: DonationStats }>('/api/donation/stats', {
     params: query,
   });
-  return response.data;
+  return response.data.data;
 };
