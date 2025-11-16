@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { getSentDonations, SentDonationsResponse } from '@/app/_apis/donation';
-import Image from 'next/image';
 
 export default function DonationTab() {
     const [donations, setDonations] = useState<SentDonationsResponse['donations']>([]);
@@ -97,8 +96,6 @@ export default function DonationTab() {
                                 <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">후원일시</th>
                                 <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">스트리머</th>
                                 <th className="px-6 py-4 text-center font-medium text-sm text-text-primary">후원 코인</th>
-                                <th className="px-6 py-4 text-right font-medium text-sm text-text-primary">금액</th>
-                                <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">메시지</th>
                             </tr>
                         </thead>
                         <tbody className="bg-bg-primary">
@@ -107,34 +104,11 @@ export default function DonationTab() {
                                     <td className="px-6 py-4 text-sm text-text-secondary">
                                         {formatDate(donation.donated_at)}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                                                <Image
-                                                    src={donation.streamer.profile_img || '/default-profile.png'}
-                                                    alt={donation.streamer.nickname}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-text-primary">
-                                                    {donation.streamer.nickname}
-                                                </span>
-                                                <span className="text-xs text-text-secondary">
-                                                    @{donation.streamer.user_id}
-                                                </span>
-                                            </div>
-                                        </div>
+                                    <td className="px-6 py-4 text-sm font-medium text-text-primary">
+                                        {donation.streamer.user_id}({donation.streamer.nickname})
                                     </td>
                                     <td className="px-6 py-4 text-sm text-center font-semibold text-accent">
                                         {formatAmount(donation.coin_amount)}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-right text-text-secondary">
-                                        {formatAmount(donation.coin_value)}원
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-text-secondary max-w-xs truncate">
-                                        {donation.message || '-'}
                                     </td>
                                 </tr>
                             ))}
