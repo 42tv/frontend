@@ -107,7 +107,7 @@ export default function DonationTab() {
                                     <td className="px-6 py-4 text-sm font-medium text-text-primary">
                                         {donation.streamer.user_id}({donation.streamer.nickname})
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-center font-semibold text-accent">
+                                    <td className="px-6 py-4 text-sm text-center font-medium text-text-primary">
                                         {formatAmount(donation.coin_amount)}
                                     </td>
                                 </tr>
