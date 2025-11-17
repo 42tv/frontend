@@ -137,16 +137,16 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                 {/* Footer Buttons */}
                 <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
                     <button
-                        onClick={handleCancel}
-                        className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-border-hover text-text-primary transition-colors"
-                    >
-                        취소
-                    </button>
-                    <button
                         onClick={handleApply}
                         className="w-full p-2 mt-2 rounded bg-accent hover:bg-accent-light text-white transition-colors"
                     >
                         적용
+                    </button>
+                    <button
+                        onClick={handleCancel}
+                        className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-border-hover text-text-primary transition-colors"
+                    >
+                        취소
                     </button>
                 </div>
             </div>
