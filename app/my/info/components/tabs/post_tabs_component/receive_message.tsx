@@ -4,7 +4,7 @@ import MessageSettingsModal from "@/app/_components/modals/message_settings_moda
 import PostDetail from "@/app/my/info/components/tabs/post_tabs_component/post_detail";
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
-import { openModal, closeAllModals } from "@/app/_components/utils/overlay/overlayHelpers";
+import { openModal, closeAllModals, openPopupModal } from "@/app/_components/utils/overlay/overlayHelpers";
 
 // Components
 import MessageActionButtons from "./components/MessageActionButtons";
@@ -95,18 +95,17 @@ export default function ReceiveMessage() {
 
     async function changePopupComponent(component: JSX.Element) {
         closeAllModals();
-        openModal(component);
+        openPopupModal(component);
     }
     // 차단 창 팝업으로 띄우기
     async function requestBlockUser(blockedIdx: number, blockUserId: string, blockedNickname: string) {
-        openModal((close) => 
-            BlockAlertComponent({ 
-                blockedIdx, 
-                blockUserId, 
-                blockedNickname, 
-                closePopup: close, 
-                changePopupComponent 
-            })
+        openModal(
+            <BlockAlertComponent
+                blockedIdx={blockedIdx}
+                blockUserId={blockUserId}
+                blockedNickname={blockedNickname}
+                changePopupComponent={changePopupComponent}
+            />
         );
     }
 
@@ -215,7 +214,7 @@ export default function ReceiveMessage() {
 
     return (
         <div className="mb-20">
-            <div className="flex flex-row my-5 mx-5 justify-between">
+            <div className="flex flex-row my-5 px-6 justify-between">
                 <MessageActionButtons 
                     onOpenSettings={handleOpenSettings}
                     onDeletePosts={handleDeletePosts}

@@ -94,10 +94,13 @@ export const useFanRankState = () => {
                     color: updateColor
                 };
             });
-            
+
             // 새로운 API로 모든 레벨 한 번에 업데이트
             await updateFanLevel(updatedLevels);
-            await loadFanLevels();
+
+            // 깜빡임 방지: 서버에서 다시 불러오지 않고 현재 상태를 원본으로 저장
+            setOriginalFanLevels(JSON.parse(JSON.stringify(fanLevels)));
+
             return { success: true };
         } catch (err: unknown) {
             console.error('일괄 업데이트 실패:', err);

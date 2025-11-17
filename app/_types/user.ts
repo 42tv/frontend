@@ -1,3 +1,10 @@
+export interface CoinInfo {
+  balance: number;
+  charged: number;
+  used: number;
+  received: number;
+}
+
 export interface User {
   idx: number | null;
   user_id: string | null;
@@ -6,6 +13,7 @@ export interface User {
   is_guest: boolean;
   role?: 'admin' | 'super_admin' | 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
   is_admin?: boolean;
+  coin?: CoinInfo;
 }
 
 export interface UserInfo {

@@ -16,5 +16,6 @@ export async function reCreateStreamKey() {
     }
   );
   console.log(response.data);
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: { streamKey: string, ... }, message: string }
+  return response.data?.data || response.data;
 }

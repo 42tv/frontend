@@ -26,7 +26,7 @@ export default function PasswordChange({passwordState} : Props) {
                 <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="password"
-                        value={passwordState.password}
+                        value={passwordState.password || ""}
                         onChange={(e) => passwordState.setPassword(e.target.value)}
                         className="w-full h-full px-3 py-2 text-[16px] focus-visible:outline-none rounded-lg"
                     />
@@ -39,7 +39,7 @@ export default function PasswordChange({passwordState} : Props) {
                 <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="password"
-                        value={passwordState.newPassword}
+                        value={passwordState.newPassword || ""}
                         onChange={(e) => passwordState.setNewPassword(e.target.value)}
                         className="w-full h-full px-3 py-2 text-[16px] focus-visible:outline-none rounded-lg"
                     />
@@ -52,7 +52,7 @@ export default function PasswordChange({passwordState} : Props) {
                 <div className="flex rounded-lg border border-tableBorder dark:border-tableBorder-dark w-[300px] h-[40px]">
                     <input
                         type="password"
-                        value={passwordState.passwordCheck}
+                        value={passwordState.passwordCheck || ""}
                         onChange={(e) => passwordState.setPasswordCheck(e.target.value)}
                         className="w-full h-full px-3 py-2 text-[16px] focus-visible:outline-none rounded-lg"
                     />

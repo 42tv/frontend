@@ -42,7 +42,7 @@ export default function LiveStreamCard({ live }: LiveStreamCardProps) {
     async function handlePlay() {
         try {
             const response = await requestLobyPlay(live.broadcaster.user_id)
-            setPlayData(response);
+            setPlayData(response.data);
 
             router.push(`/live/${live.broadcaster.user_id}`); // 재생 페이지로 이동
 

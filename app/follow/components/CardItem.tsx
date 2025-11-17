@@ -1,31 +1,42 @@
 import React from 'react';
-import { FaCheck } from 'react-icons/fa'; // FaCheck 아이콘 임포트
-import Image from 'next/image'; // Image 컴포넌트 임포트
+import { FaCheck } from 'react-icons/fa';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface CardItemProps {
+  broadcasterId: string;
   imageUrl: string;
   title: string;
   isLive?: boolean;
-  isEditing: boolean; // isEditing prop 추가
-  isSelected: boolean; // isSelected prop 추가
-  onClick: () => void; // onClick 핸들러 prop 추가
+  isEditing: boolean;
+  isSelected: boolean;
+  onClick: () => void;
 }
 
 const CardItem: React.FC<CardItemProps> = ({
+  broadcasterId,
   imageUrl,
   title,
   isLive = false,
-  isEditing, // isEditing prop 받기
-  isSelected, // isSelected prop 받기
-  onClick, // onClick 핸들러 받기
-}) => (
-  // group 클래스 추가하여 하위 요소에서 group-hover 사용 가능하게 함
-  // 편집 모드일 때만 onClick 핸들러 활성화
-  // w-[250px] 추가
-  <div
-    className={`flex flex-col relative rounded-lg overflow-hidden group ${isEditing ? 'cursor-pointer' : ''} w-[250px] `} // 배경색 및 flex-col 추가
-    onClick={isEditing ? onClick : undefined} // 편집 모드일 때만 클릭 가능
-  >
+  isEditing,
+  isSelected,
+  onClick,
+}) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (isEditing) {
+      onClick();
+    } else {
+      router.push(`/live/${broadcasterId}`);
+    }
+  };
+
+  return (
+    <div
+      className={`flex flex-col relative rounded-lg overflow-hidden group cursor-pointer w-[250px]`}
+      onClick={handleClick}
+    >
     {/* 편집 모드일 때만 보이는 오버레이 */}
     {isEditing && (
       <div className={`absolute inset-0 bg-black flex items-center justify-center transition-opacity duration-200 z-10 ${isSelected ? 'bg-opacity-50 opacity-100' : 'bg-opacity-0 group-hover:bg-opacity-50 opacity-0 group-hover:opacity-100'}`}>
@@ -55,11 +66,11 @@ const CardItem: React.FC<CardItemProps> = ({
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" // sizes 최적화
       />
     </div>
-    <div className="pt-2"> {/* flex-grow 추가 */}
-      {/* truncate 추가 */}
+    <div className="pt-2">
       <h3 className="truncate">{title}</h3>
     </div>
   </div>
-);
+  );
+};
 
 export default CardItem;

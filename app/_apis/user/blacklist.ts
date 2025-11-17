@@ -15,7 +15,8 @@ export async function addToBlacklist(user_id: string) {
       withCredentials: true,
     }
   );
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: {...}, message: string }
+  return response.data?.data || response.data;
 }
 
 /**
@@ -29,7 +30,8 @@ export async function removeFromBlacklist(user_id: string) {
       withCredentials: true,
       data: { blocked_user_id: user_id },
     });
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: {...}, message: string }
+  return response.data?.data || response.data;
 }
 
 /**
@@ -43,7 +45,8 @@ export async function removeMultipleFromBlacklist(user_ids: string[]) {
       withCredentials: true,
       data: { blocked_user_ids: user_ids },
     });
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: { deletedCount: number }, message: string }
+  return response.data?.data || response.data;
 }
 
 /**
@@ -54,5 +57,6 @@ export async function getBlacklist() {
   const response = await api.get("/api/user/blacklist", {
     withCredentials: true,
   });
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: { lists: [] }, message: string }
+  return response.data?.data || response.data;
 }

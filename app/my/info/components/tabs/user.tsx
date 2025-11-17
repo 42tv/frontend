@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
 import { Button } from "@mui/material";
-import { getInfo, updateNickname, updatePassword } from "@/app/_apis/user";
+import { updateNickname, updatePassword } from "@/app/_apis/user";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 import ErrorMessage from "@/app/_components/modals/error_component";
+import { useUserStore } from "@/app/_lib/stores";
 
 export default function UserTab() {
-    const [nickname, setNickname ] = useState<string>("");
+    const { nickname, setNickname } = useUserStore();
     const [inputNickname, setInputNickname] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -20,17 +21,8 @@ export default function UserTab() {
     }
 
     useEffect(() => {
-        async function fetchUserInfo() {
-            try {
-                const response = await getInfo();
-                setNickname(response.nickname);
-                setInputNickname(response.nickname);
-            } catch (error) {
-                console.error("Error fetching user info:", error);
-            }
-        }
-        fetchUserInfo();
-    }, []);
+        setInputNickname(nickname ?? "");
+    }, [nickname]);
 
     async function updateUserInfo() {
         const isNicknameChanged = nickname != inputNickname;
@@ -38,14 +30,14 @@ export default function UserTab() {
         if (isNicknameChanged) {
             try {
                 const response = await updateNickname(inputNickname);
+                setNickname(inputNickname);
                 if (!isPasswordChanged) {
-                    setNickname(inputNickname);
                     openModal(<ErrorMessage message={response.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
                 }
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             catch (e: any) {
-                setInputNickname(nickname);
+                setInputNickname(nickname ?? "");
                 openModal(<ErrorMessage message={e.response.data.message}/>, { closeButtonSize: "w-[16px] h-[16px]" });
                 return;
             }

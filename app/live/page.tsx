@@ -11,7 +11,7 @@ export default function LivePage() {
         async function fetchLiveList() {
             try {
                 const response = await getLiveList();
-                const fetchedLives = response.lives;
+                const fetchedLives = response.data;
                 console.log(fetchedLives)
 
                 const multipliedLives = Array.from({ length: 5 }).flatMap(() => fetchedLives);

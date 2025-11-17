@@ -23,7 +23,7 @@ export default function BookmarkContent() {
     setError(null);
     try {
       const response = await requestBookmarkList();
-      setCards(response.lists);
+      setCards(response.data.lists);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError(`북마크 데이터를 불러오는 데 실패했습니다: ${e.message}`);

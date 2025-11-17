@@ -1,12 +1,13 @@
 import api from "../auto_refresh_axios";
+import { ApiSuccessResponse } from "@/app/_types/api";
 
 /**
  * userIdx 유저의 쪽지 차단
  * @param userIdx
- * @returns
+ * @returns 전체 응답 객체 { success, data, message }
  */
 export async function blockPostUser(userIdx: number) {
-  const response = await api.post(`/api/post/block/user/${userIdx}`, {
+  const response = await api.post<ApiSuccessResponse<any>>(`/api/post/block/user/${userIdx}`, {
     data: {},
     withCredentials: true,
     headers: {
@@ -21,23 +22,23 @@ export async function blockPostUser(userIdx: number) {
  * @returns
  */
 export async function getBlockedPostUser() {
-  const response = await api.get(`/api/post/block/user`, {
+  const response = await api.get<ApiSuccessResponse<any[]>>(`/api/post/block/user`, {
     data: {},
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
  * 차단된 유저 쪽지 차단 해제
  * @param userIdx
- * @returns
+ * @returns 전체 응답 객체 { success, data, message }
  */
 export async function unblockPostUser(userIdx: number) {
-  const response = await api.delete(`/api/post/block/user/${userIdx}`, {
+  const response = await api.delete<ApiSuccessResponse<any>>(`/api/post/block/user/${userIdx}`, {
     data: {},
     withCredentials: true,
     headers: {
@@ -50,10 +51,10 @@ export async function unblockPostUser(userIdx: number) {
 /**
  * 여러 유저 쪽지 차단 해제
  * @param userIdxs
- * @returns
+ * @returns 전체 응답 객체 { success, data, message }
  */
 export async function unblockPostUsers(userIdxs: number[]) {
-  const response = await api.delete(`/api/post/block/user`, {
+  const response = await api.delete<ApiSuccessResponse<any>>(`/api/post/block/user`, {
     data: {
       blockedUserIdxs: userIdxs,
     },

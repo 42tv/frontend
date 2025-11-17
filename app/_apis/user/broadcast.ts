@@ -33,6 +33,7 @@ export async function updateBroadcastSetting(
       withCredentials: true,
     }
   );
+  // 백엔드 응답 구조: { success: true, data: null, message: string }
   return response.data;
 }
 
@@ -44,5 +45,6 @@ export async function getBroadcastSetting() {
   const response = await api.get("/api/user/broadcast-setting", {
     withCredentials: true,
   });
-  return response.data;
+  // 백엔드 응답 구조: { success: true, data: { ivs: {...}, broadcastSetting: {...} }, message: string }
+  return response.data?.data || response.data;
 }

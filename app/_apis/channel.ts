@@ -1,4 +1,5 @@
 import api from "./auto_refresh_axios";
+import { ApiSuccessResponse } from "@/app/_types/api";
 
 /**
  * 채널 사용자 정보
@@ -102,9 +103,9 @@ export interface GetChannelParams {
  * @returns 채널 정보
  */
 export async function getChannel(params: GetChannelParams): Promise<GetChannelResponse> {
-  const response = await api.get("/api/channel", {
+  const response = await api.get<ApiSuccessResponse<GetChannelResponse>>("/api/channel", {
     params,
     withCredentials: true,
   });
-  return response.data;
+  return response.data.data;
 }

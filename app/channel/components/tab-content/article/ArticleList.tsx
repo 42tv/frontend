@@ -77,8 +77,8 @@ export default function ArticleList({
 
       {/* Article List */}
       {!articles || articles.length === 0 ? (
-        <div className="text-center py-12 rounded-lg" style={{ backgroundColor: 'var(--bg-200)' }}>
-          <div style={{ color: 'var(--text-200)' }}>
+        <div className="text-center py-12 rounded-lg bg-background-secondary dark:bg-background-secondary-dark">
+          <div className="text-text-secondary dark:text-text-secondary-dark">
             작성된 게시글이 없습니다.
           </div>
         </div>

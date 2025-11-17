@@ -7,8 +7,9 @@ import { FiUser, FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import Image from 'next/image';
-import { openPopupModal } from '@/app/_components/utils/overlay/overlayHelpers';
+import { openPopupModal, openModal } from '@/app/_components/utils/overlay/overlayHelpers';
 import { useRouter } from 'next/navigation';
+import SponModal from '@/app/_components/modals/SponModal';
 
 interface StreamInfoProps {
     playDataState: PlayData | null | undefined;
@@ -47,10 +48,9 @@ export default function StreamInfo({
 
     const handleImageClick = () => {
         const imageUrl = playDataState?.broadcaster.profile_img || "/icons/anonymouse1.svg";
-        const ImageWrapper = ({ closeModal, ...props }: any) => <Image {...props} />;
-        
+
         openPopupModal(
-                <ImageWrapper
+                <Image
                     src={imageUrl}
                     alt="프로필 이미지 확대"
                     width={400}
@@ -64,6 +64,10 @@ export default function StreamInfo({
         if (playDataState?.broadcaster.user_id) {
             router.push(`/channel/${playDataState.broadcaster.user_id}`);
         }
+    };
+
+    const handleGiftClick = () => {
+        openModal(<SponModal streamerUserId={playDataState?.broadcaster.user_id} />);
     };
 
     return (
@@ -132,9 +136,10 @@ export default function StreamInfo({
                 >
                     <AiOutlineLike/>
                 </button>
-                <button 
-                    title="선물" 
+                <button
+                    title="선물"
                     className="hover:text-text-primary dark:hover:text-text-primary-dark transition-colors duration-200"
+                    onClick={handleGiftClick}
                 >
                     <GiPresent/>
                 </button>

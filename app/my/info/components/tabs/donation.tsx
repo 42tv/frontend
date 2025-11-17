@@ -1,37 +1,36 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { getMyCoinTopups } from '@/app/_apis/coin-topup';
-import { CoinTopup } from '@/app/_types/coin-topup';
+import { getSentDonations, SentDonationsResponse } from '@/app/_apis/donation';
 
-export default function GiftTab() {
-    const [allTopups, setAllTopups] = useState<CoinTopup[]>([]);
+export default function DonationTab() {
+    const [donations, setDonations] = useState<SentDonationsResponse['donations']>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const itemsPerPage = 10;
 
     useEffect(() => {
-        const fetchTopups = async () => {
+        const fetchDonations = async () => {
             try {
                 setLoading(true);
-                const response = await getMyCoinTopups(50);
-                setAllTopups(response.data.topups);
+                const response = await getSentDonations({ limit: 100 });
+                setDonations(response.donations);
             } catch (err: unknown) {
-                console.error('Failed to fetch coin topups:', err);
-                setError('코인 구매 내역을 불러오는데 실패했습니다.');
+                console.error('Failed to fetch donations:', err);
+                setError('후원 내역을 불러오는데 실패했습니다.');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchTopups();
+        fetchDonations();
     }, []);
 
     // 페이지네이션 계산
-    const totalPages = Math.ceil(allTopups.length / itemsPerPage);
+    const totalPages = Math.ceil(donations.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentTopups = allTopups.slice(startIndex, endIndex);
+    const currentDonations = donations.slice(startIndex, endIndex);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -50,40 +49,6 @@ export default function GiftTab() {
 
     const formatAmount = (amount: number): string => {
         return amount.toLocaleString('ko-KR');
-    };
-
-    const getStatusText = (status: string): string => {
-        switch (status) {
-            case 'COMPLETED':
-                return '완료';
-            case 'PENDING':
-                return '대기중';
-            case 'FAILED':
-                return '실패';
-            case 'REFUNDED':
-                return '환불';
-            case 'FROZEN':
-                return '동결';
-            default:
-                return status;
-        }
-    };
-
-    const getStatusColor = (status: string): string => {
-        switch (status) {
-            case 'COMPLETED':
-                return 'text-success-dark';
-            case 'PENDING':
-                return 'text-warning-dark';
-            case 'FAILED':
-                return 'text-error-dark';
-            case 'REFUNDED':
-                return 'text-text-secondary';
-            case 'FROZEN':
-                return 'text-accent';
-            default:
-                return 'text-text-secondary';
-        }
     };
 
     if (loading) {
@@ -105,14 +70,14 @@ export default function GiftTab() {
         );
     }
 
-    if (allTopups.length === 0) {
+    if (donations.length === 0) {
         return (
             <div className="flex flex-col w-full h-full p-6">
-                <h2 className="text-xl font-bold mb-6 text-text-primary">코인 구매 내역</h2>
+                <h2 className="text-xl font-bold mb-6 text-text-primary">후원 내역</h2>
                 <div className="rounded-lg p-12 border border-border-primary">
                     <div className="flex flex-col items-center text-center">
-                        <h3 className="text-lg font-medium mb-2 text-text-primary">코인 구매 내역이 없습니다</h3>
-                        <p className="text-sm text-text-secondary">코인을 구매하시면 내역이 여기에 표시됩니다.</p>
+                        <h3 className="text-lg font-medium mb-2 text-text-primary">후원 내역이 없습니다</h3>
+                        <p className="text-sm text-text-secondary">스트리머에게 후원하시면 내역이 여기에 표시됩니다.</p>
                     </div>
                 </div>
             </div>
@@ -121,37 +86,29 @@ export default function GiftTab() {
 
     return (
         <div className="flex flex-col w-full h-full p-6">
-            <h2 className="text-xl font-bold mb-6 text-text-primary">코인 구매 내역</h2>
+            <h2 className="text-xl font-bold mb-6 text-text-primary">후원 내역</h2>
 
             <div className="rounded-lg overflow-hidden border border-border-primary">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-bg-secondary">
                             <tr>
-                                <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">구매일시</th>
-                                <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">상품명</th>
-                                <th className="px-6 py-4 text-center font-medium text-sm text-text-primary">코인</th>
-                                <th className="px-6 py-4 text-right font-medium text-sm text-text-primary">결제금액</th>
-                                <th className="px-6 py-4 text-center font-medium text-sm text-text-primary">상태</th>
+                                <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">후원일시</th>
+                                <th className="px-6 py-4 text-left font-medium text-sm text-text-primary">스트리머</th>
+                                <th className="px-6 py-4 text-center font-medium text-sm text-text-primary">후원 코인</th>
                             </tr>
                         </thead>
                         <tbody className="bg-bg-primary">
-                            {currentTopups.map((topup: CoinTopup) => (
-                                <tr key={topup.id} className="border-t border-tableRowBorder">
+                            {currentDonations.map((donation) => (
+                                <tr key={donation.id} className="border-t border-tableRowBorder">
                                     <td className="px-6 py-4 text-sm text-text-secondary">
-                                        {formatDate(topup.topped_up_at)}
+                                        {formatDate(donation.donated_at)}
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-text-primary">
-                                        {topup.product_name}
+                                    <td className="px-6 py-4 text-sm font-medium text-text-primary">
+                                        {donation.streamer.user_id}({donation.streamer.nickname})
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-center font-semibold text-text-primary">
-                                        {formatAmount(topup.total_coins)}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-right text-text-secondary">
-                                        {formatAmount(topup.paid_amount)}원
-                                    </td>
-                                    <td className={`px-6 py-4 text-sm text-center font-semibold ${getStatusColor(topup.status)}`}>
-                                        {getStatusText(topup.status)}
+                                    <td className="px-6 py-4 text-sm text-center font-medium text-text-primary">
+                                        {formatAmount(donation.coin_amount)}
                                     </td>
                                 </tr>
                             ))}

@@ -1,5 +1,5 @@
 import api from './auto_refresh_axios';
-import { ProductsResponse } from '../_types/product';
+import { ProductsResponse, PurchaseResponse } from '../_types/product';
 
 /**
  * 활성화된 상품 목록 조회 (사용자용)
@@ -7,5 +7,22 @@ import { ProductsResponse } from '../_types/product';
  */
 export const getActiveProducts = async (): Promise<ProductsResponse> => {
   const response = await api.get<ProductsResponse>('/api/products');
+  return response.data;
+};
+
+/**
+ * 상품 구매 (결제 준비)
+ * POST /api/payments/purchase
+ * @param product_id 구매할 상품 ID
+ * @param pg_provider PG사 선택 (선택사항, 기본값: mock)
+ */
+export const purchaseProduct = async (
+  product_id: number,
+  pg_provider?: 'mock' | 'toss' | 'inicis' | 'kakaopay'
+): Promise<PurchaseResponse> => {
+  const response = await api.post<PurchaseResponse>('/api/payments/purchase', {
+    product_id,
+    ...(pg_provider && { pg_provider }), // pg_provider가 있을 때만 포함
+  });
   return response.data;
 };

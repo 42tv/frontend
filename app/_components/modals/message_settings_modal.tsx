@@ -81,37 +81,32 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
     };
 
     return (
-            <div className="flex flex-col max-w-md w-[450px] h-[520px] border rounded-lg border-border-primary bg-bg-secondary">
+            <div className="flex flex-col max-w-md w-[450px] border rounded-lg border-border-primary bg-bg-secondary">
                 {/* Header */}
-                <div className="px-6 pt-5 pb-4 bg-background rounded-t-lg">
-                    <h2 className="text-lg font-bold text-text-primary">쪽지 수신 설정</h2>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-border-primary"></div>
+                <h2 className="text-lg font-bold mb-2 px-6 pt-5 text-text-primary">쪽지 수신 설정</h2>
 
                 {/* Content */}
-                <div className="w-full h-[340px] pt-5 px-5 rounded-[8px] overflow-auto bg-bg-secondary">
+                <div className="w-full pt-5 px-5 rounded-[8px] overflow-auto">
                     <div className="space-y-3">
-                        <h3 className="text-sm font-semibold text-text-primary mb-3">수신 설정 (선택한 등급 이상에서 수신)</h3>
+                        <h3 className="text-sm font-medium text-text-secondary mb-4">수신 설정 (선택한 등급 이상에서 수신)</h3>
                         {getFanLevels().map((levelData) => (
                             <div key={levelData.level || 'unlimited'} className="group relative">
-                                <label className={`flex items-center space-x-4 p-3 rounded border transition-all duration-200 cursor-pointer
+                                <label className={`flex items-center space-x-3 p-3 rounded border transition-all duration-200 cursor-pointer
                                     ${selectedGrade === levelData.level
                                         ? 'border-accent bg-bg-tertiary'
-                                        : 'border-border-primary'
+                                        : 'border-border-primary hover:bg-bg-tertiary/50'
                                     }`}>
                                     <input
                                         type="radio"
                                         id={levelData.level?.toString() || 'unlimited'}
                                         name="grade"
-                                        className="w-4 h-4 text-primary bg-bg-secondary border-border-primary" style={{accentColor: 'var(--accent)'}}
+                                        className="w-4 h-4" style={{accentColor: 'var(--accent)'}}
                                         checked={selectedGrade === levelData.level}
                                         onChange={() => handleGradeToggle(levelData.level)}
                                     />
                                     <div className="flex items-center space-x-3 flex-1">
-                                        <div 
-                                            className="w-8 h-8 rounded-full flex items-center justify-center"
+                                        <div
+                                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                                             style={{ backgroundColor: levelData.color.startsWith('#') ? levelData.color : (levelData.color.startsWith('var(') ? levelData.color : `var(${levelData.color})`) }}
                                         >
                                             {levelData.name === '제한없음' ? (
@@ -139,13 +134,8 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                     </div>
                 </div>
 
-                {/* Divider */}
-                <div className="px-5 py-4 bg-background">
-                    <div className="border-t border-border-primary"></div>
-                </div>
-
                 {/* Footer Buttons */}
-                <div className="flex flex-row h-[100px] items-center space-x-5 px-5 bg-background rounded-b-lg">
+                <div className="flex flex-row h-[100px] items-center space-x-5 px-5">
                     <button
                         onClick={handleApply}
                         className="w-full p-2 mt-2 rounded bg-accent hover:bg-accent-light text-white transition-colors"
@@ -154,7 +144,7 @@ export default function MessageSettingsModal({ closeModal, postSetting, setPostS
                     </button>
                     <button
                         onClick={handleCancel}
-                        className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-background text-text-secondary transition-colors"
+                        className="w-full p-2 mt-2 rounded bg-bg-tertiary hover:bg-border-hover text-text-primary transition-colors"
                     >
                         취소
                     </button>

@@ -95,6 +95,13 @@ export const useBroadcastSettings = () => {
         }
         try {
             await updateBroadcastSetting(title, isAdult, isPrivate, isFanClub, fanLevel, password);
+            setCopiedText("방송 설정이 저장되었습니다");
+            setShowToast(true);
+
+            setTimeout(() => {
+                setShowToast(false);
+            }, 2000);
+
             return { success: true };
         } catch (e) {
             console.error(e);

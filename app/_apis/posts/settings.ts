@@ -1,23 +1,24 @@
 import api from "../auto_refresh_axios";
+import { ApiSuccessResponse } from "@/app/_types/api";
 
 /**
  * 쪽지 설정 가져오기
  * @returns
  */
 export async function getPostSetting() {
-  const response = await api.get("/api/post/setting", {
+  const response = await api.get<ApiSuccessResponse<{ fanLevels: any[], minFanLevel: number | null }>>("/api/post/setting", {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
     },
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**
  * 쪽지 설정 업데이트 (팬 레벨 제한)
  * @param minFanLevel
- * @returns
+ * @returns 전체 응답 객체 { success, data, message }
  */
 export async function updatePostSetting(minFanLevel: number | null | undefined) {
   if (minFanLevel == -1) {
@@ -26,7 +27,7 @@ export async function updatePostSetting(minFanLevel: number | null | undefined) 
   const requestBody = {
     minFanLevel: minFanLevel,
   };
-  const response = await api.put("/api/post/setting/level", requestBody, {
+  const response = await api.put<ApiSuccessResponse<any>>("/api/post/setting/level", requestBody, {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",

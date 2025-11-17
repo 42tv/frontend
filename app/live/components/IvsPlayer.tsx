@@ -60,6 +60,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
       <video
         ref={videoRef}
         playsInline
+        onClick={handlePlayPause}
         className="w-full h-full rounded-lg block object-cover"
       />
       {showControls && (
