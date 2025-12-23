@@ -16,9 +16,9 @@
 
 ## 개발 명령어
 ```bash
-npm run dev    # 개발 서버 (포트 8888)
+npm run dev    # 개발 서버 (포트 3001)
 npm run build  # 프로덕션 빌드
-npm start      # 프로덕션 서버 (포트 80)  
+npm start      # 프로덕션 서버 (포트 80)
 npm run lint   # ESLint 검사
 ```
 
