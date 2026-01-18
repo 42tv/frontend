@@ -45,12 +45,25 @@ export interface MockPurchaseData {
   };
 }
 
+export interface BootpayPGData {
+  application_id: string;
+  price: number;
+  order_name: string;
+  order_id: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    phone: string;
+  };
+}
+
 export interface RealPGPurchaseData {
   pg_provider: string;
   pg_transaction_id: string;
   redirect_url?: string;
   app_scheme?: string;
-  pg_data?: unknown;
+  pg_data?: BootpayPGData;
   product: {
     id: number;
     name: string;
