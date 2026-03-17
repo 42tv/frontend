@@ -77,6 +77,7 @@ interface UserInfo {
   user_id: string;
   profile_img: string;
   nickname: string;
+  identity_verified: boolean;
   coin: CoinInfo;
 }
 

@@ -1,9 +1,19 @@
 import { getLoginInfo } from '@/app/_apis/user';
 import { create } from 'zustand';
-import { User, CoinInfo } from '@/app/_types';
+import { CoinInfo } from '@/app/_types';
 
-interface UserState extends User {
-  setUser: (user: User) => void;
+const DEFAULT_COIN: CoinInfo = { balance: 0, charged: 0, used: 0, received: 0 };
+
+interface UserState {
+  idx: number;
+  user_id: string;
+  nickname: string;
+  profile_img: string;
+  is_guest: boolean;
+  is_admin: boolean;
+  coin: CoinInfo;
+  identity_verified: boolean;
+
   setNickname: (newNickname: string) => void;
   setProfileImg: (newProfileImg: string) => void;
   setIsAdmin: (isAdmin: boolean) => void;
@@ -20,26 +30,16 @@ const useUserStore = create<UserState>((set, get) => ({
   profile_img: '',
   is_guest: true,
   is_admin: false,
-  coin: undefined,
+  coin: DEFAULT_COIN,
   identity_verified: false,
 
-  setUser: (user: User) => set({
-    idx: user.idx,
-    user_id: user.user_id,
-    nickname: user.nickname,
-    profile_img: user.profile_img,
-    is_admin: user.is_admin,
-    coin: user.coin,
-  }),
-  
   setNickname: (newNickname) => set(() => ({
     nickname: newNickname,
   })),
-  
+
   setProfileImg: (newProfileImg) => set(() => ({
     profile_img: newProfileImg,
   })),
-
 
   setIsAdmin: (isAdmin) => set(() => ({
     is_admin: isAdmin,
@@ -67,7 +67,8 @@ const useUserStore = create<UserState>((set, get) => ({
           profile_img: '',
           is_guest: true,
           is_admin: false,
-          coin: undefined
+          coin: DEFAULT_COIN,
+          identity_verified: false,
         });
       } else {
         // 인증된 사용자인 경우
@@ -78,7 +79,8 @@ const useUserStore = create<UserState>((set, get) => ({
           profile_img: response.data.user.profile_img,
           is_guest: false,
           is_admin: response.data.is_admin,
-          coin: response.data.user.coin
+          coin: response.data.user.coin,
+          identity_verified: response.data.user.identity_verified ?? false,
         });
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -91,11 +93,11 @@ const useUserStore = create<UserState>((set, get) => ({
         profile_img: '',
         is_guest: true,
         is_admin: false,
-        coin: undefined
+        coin: DEFAULT_COIN,
+        identity_verified: false,
       });
     }
   },
-
 
   isAdminUser: () => {
     const state = get();
