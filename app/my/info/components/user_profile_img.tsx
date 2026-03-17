@@ -2,8 +2,7 @@ import Image from 'next/image'
 import { useState, useRef } from 'react'
 import { uploadProfileImage } from '@/app/_apis/user';
 import { useUserStore } from "@/app/_lib/stores"
-import { openModal } from '@/app/_components/utils/overlay/overlayHelpers';
-import DefaultAlertMessage from '@/app/_components/modals/default_alert_component';
+import { showErrorNotification } from '@/app/_components/utils/overlay/notificationHelpers';
 import { getApiErrorMessage } from '@/app/_lib/api';
 
 export default function UserProfileImg({profilePath, width, height} : {profilePath: string, width: number, height: number}) {
@@ -28,7 +27,7 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
             console.log(data);
         } catch (e) {
             const message = getApiErrorMessage(e);
-            openModal(<DefaultAlertMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
+            showErrorNotification(message);
         } finally {
             setUploading(false);
         }
@@ -36,8 +35,8 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
 
     return (
         <div className="flex w-full h-full justify-center items-center relative">
-            <div 
-                className="rounded-full overflow-hidden border-contentBg border-[1px]" 
+            <div
+                className="rounded-full overflow-hidden border-contentBg border-[1px]"
                 style={{ width: `${width}px`, height: `${height}px`, backgroundColor: 'white' }}
             >
                 <Image
@@ -48,9 +47,9 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
                     className="w-full h-full object-cover"
                 />
             </div>
-            
+
             {/* Upload button */}
-            <button 
+            <button
                 onClick={handleUploadClick}
                 className="absolute bottom-0 right-1/2 translate-x-10 translate-y-1 bg-primary hover:bg-primary-hover text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md transition-colors"
                 title="프로필 이미지 변경"
@@ -64,7 +63,7 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
                     </svg>
                 )}
             </button>
-            
+
             {/* Hidden file input */}
             <input
                 type="file"
