@@ -8,6 +8,7 @@ interface UserState extends User {
   setProfileImg: (newProfileImg: string) => void;
   setIsAdmin: (isAdmin: boolean) => void;
   setCoin: (coin: CoinInfo) => void;
+  setIdentityVerified: (verified: boolean) => void;
   fetchUser: () => Promise<void>;
   isAdminUser: () => boolean;
 }
@@ -20,6 +21,7 @@ const useUserStore = create<UserState>((set, get) => ({
   is_guest: true,
   is_admin: false,
   coin: undefined,
+  identity_verified: false,
 
   setUser: (user: User) => set({
     idx: user.idx,
@@ -45,6 +47,10 @@ const useUserStore = create<UserState>((set, get) => ({
 
   setCoin: (coin: CoinInfo) => set(() => ({
     coin: coin,
+  })),
+
+  setIdentityVerified: (verified: boolean) => set(() => ({
+    identity_verified: verified,
   })),
 
   fetchUser: async () => {

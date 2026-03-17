@@ -11,9 +11,10 @@ export interface User {
   nickname: string | null;
   profile_img: string | null;
   is_guest: boolean;
-  role?: 'admin' | 'super_admin' | 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
-  is_admin?: boolean;
-  coin?: CoinInfo;
+  role: 'admin' | 'super_admin' | 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
+  is_admin: boolean;
+  coin: CoinInfo;
+  identity_verified: boolean;
 }
 
 export interface UserInfo {
