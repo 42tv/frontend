@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const tabRoutes = [
   { name: "BJ공지사항", path: "/channel/my/article" },
   { name: "방송설정", path: "/channel/my/broadcast" },
+  { name: "방송 위젯", path: "/channel/my/widget" },
   { name: "통계", path: "/channel/my/stats" },
   { name: "BJ알림", path: "/channel/my/notifications" },
   { name: "팬등급", path: "/channel/my/fans" },
