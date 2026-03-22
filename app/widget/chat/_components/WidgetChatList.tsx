@@ -29,7 +29,7 @@ const WidgetChatList: React.FC<WidgetChatListProps> = ({ messages, config }) => 
           message={message}
           showProfileImage={config.showProfileImage}
           fontSize={config.fontSize}
-          style={config.style === 'bubble' ? 'bubble' : 'compact'}
+          style={config.style}
         />
       ))}
       <div ref={bottomRef} />

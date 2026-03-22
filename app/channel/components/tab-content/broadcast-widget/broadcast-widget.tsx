@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useUserStore } from "@/app/_lib/stores";
 
 type WidgetTab = "chat" | "support";
-type ChatStyle = "compact" | "bubble" | "notice";
 type SupportStyle = "banner" | "card" | "goal";
 
 type TabItem = {
@@ -14,7 +13,7 @@ type TabItem = {
 };
 
 type ChatOption = {
-  id: ChatStyle;
+  id: "compact";
   name: string;
   badge: string;
   description: string;
@@ -121,7 +120,7 @@ function SectionTitle({
   );
 }
 
-function ChatPreview({ style }: { style: ChatStyle }) {
+function ChatPreview({ style }: { style: "compact" }) {
   if (style === "compact") {
     return (
       <div className="absolute right-4 top-16 w-[260px] space-y-2">
@@ -263,7 +262,7 @@ function SupportPreview({ style }: { style: SupportStyle }) {
   );
 }
 
-function buildWidgetUrl(broadcasterId: string, style: ChatStyle): string {
+function buildWidgetUrl(broadcasterId: string, style: "compact"): string {
   const base = typeof window !== 'undefined' ? window.location.origin : '';
   const params = new URLSearchParams({
     broadcasterId,
@@ -277,7 +276,7 @@ function buildWidgetUrl(broadcasterId: string, style: ChatStyle): string {
 
 export default function BroadcastWidget() {
   const [activeTab, setActiveTab] = useState<WidgetTab>("chat");
-  const [chatStyle, setChatStyle] = useState<ChatStyle>("compact");
+  const chatStyle = "compact" as const;
   const [supportStyle, setSupportStyle] = useState<SupportStyle>("banner");
   const [copied, setCopied] = useState(false);
   const { user_id } = useUserStore();
@@ -346,58 +345,73 @@ export default function BroadcastWidget() {
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
               <SectionTitle
                 title={`${activeTabMeta.label} UI 선택`}
-                description="원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
+                description={
+                  activeTab === "chat"
+                    ? "채팅 위젯은 미니 오버레이(compact) 스타일로 제공됩니다."
+                    : "원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
+                }
               />
 
-              <div className="space-y-3">
-                {(activeTab === "chat" ? chatOptions : supportOptions).map((option) => {
-                  const checked =
-                    activeTab === "chat"
-                      ? chatStyle === option.id
-                      : supportStyle === option.id;
-
-                  return (
-                    <label
-                      key={option.id}
-                      className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors ${
-                        checked
-                          ? "border-accent bg-background"
-                          : "border-border-primary bg-background hover:border-accent"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={activeTab === "chat" ? "chat-widget-style" : "support-widget-style"}
-                        checked={checked}
-                        onChange={() =>
-                          activeTab === "chat"
-                            ? setChatStyle(option.id as ChatStyle)
-                            : setSupportStyle(option.id as SupportStyle)
-                        }
-                        className="mt-1 h-4 w-4"
-                        style={{ accentColor: "var(--accent)" }}
-                      />
-
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <div className="font-semibold text-text-primary">
-                            {option.name}
+              {activeTab === "chat" ? (
+                <div className="flex items-start gap-4 rounded-xl border border-accent bg-background p-4">
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="font-semibold text-text-primary">{chatOptions[0].name}</div>
+                      <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
+                        {chatOptions[0].badge}
+                      </span>
+                      <span className="rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">
+                        고정
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-text-secondary">
+                      {chatOptions[0].description}
+                    </p>
+                    <div className="mt-3 text-xs text-text-secondary">
+                      권장 상황: {chatOptions[0].useCase}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {supportOptions.map((option) => {
+                    const checked = supportStyle === option.id;
+                    return (
+                      <label
+                        key={option.id}
+                        className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors ${
+                          checked
+                            ? "border-accent bg-background"
+                            : "border-border-primary bg-background hover:border-accent"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="support-widget-style"
+                          checked={checked}
+                          onChange={() => setSupportStyle(option.id as SupportStyle)}
+                          className="mt-1 h-4 w-4"
+                          style={{ accentColor: "var(--accent)" }}
+                        />
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="font-semibold text-text-primary">{option.name}</div>
+                            <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
+                              {option.badge}
+                            </span>
                           </div>
-                          <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
-                            {option.badge}
-                          </span>
+                          <p className="mt-2 text-sm leading-6 text-text-secondary">
+                            {option.description}
+                          </p>
+                          <div className="mt-3 text-xs text-text-secondary">
+                            권장 상황: {option.useCase}
+                          </div>
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-text-secondary">
-                          {option.description}
-                        </p>
-                        <div className="mt-3 text-xs text-text-secondary">
-                          권장 상황: {option.useCase}
-                        </div>
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
             </section>
 
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">

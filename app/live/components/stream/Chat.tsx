@@ -140,7 +140,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     return (
         <div className="flex flex-col h-full bg-bg-secondary dark:bg-bg-secondary-dark text-text-primary dark:text-text-primary-dark">
             {/* 탭 헤더 */}
-            <ChatTabHeader 
+            <ChatTabHeader
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 viewersCount={viewers.length}
@@ -150,9 +150,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
             {/* 탭 컨텐츠 영역 */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden">
                 {activeTab === 'chat' ? (
-                    <ChatMessageList 
+                    <ChatMessageList
                         messages={messages}
                         onChatClick={handleChatClick}
+                        chatStyle="compact"
                     />
                 ) : (
                     <ViewersList 
@@ -164,7 +165,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
             {/* 메시지 입력 - 채팅 탭에서만 표시 */}
             {activeTab === 'chat' && (
-                <MessageInput onSendMessage={handleSendMessage} />
+                <MessageInput onSendMessage={handleSendMessage} chatStyle="compact" />
             )}
         </div>
     );
