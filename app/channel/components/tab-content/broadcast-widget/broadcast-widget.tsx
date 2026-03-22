@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useUserStore } from "@/app/_lib/stores";
 
 type WidgetTab = "chat" | "support";
 type ChatStyle = "compact" | "bubble" | "notice";
@@ -262,10 +263,33 @@ function SupportPreview({ style }: { style: SupportStyle }) {
   );
 }
 
+function buildWidgetUrl(broadcasterId: string, style: ChatStyle): string {
+  const base = typeof window !== 'undefined' ? window.location.origin : '';
+  const params = new URLSearchParams({
+    broadcasterId,
+    style,
+    maxMessages: '5',
+    showProfileImage: 'true',
+    fontSize: 'sm',
+  });
+  return `${base}/widget/chat?${params.toString()}`;
+}
+
 export default function BroadcastWidget() {
   const [activeTab, setActiveTab] = useState<WidgetTab>("chat");
   const [chatStyle, setChatStyle] = useState<ChatStyle>("compact");
   const [supportStyle, setSupportStyle] = useState<SupportStyle>("banner");
+  const [copied, setCopied] = useState(false);
+  const { user_id } = useUserStore();
+
+  function handleCopyUrl() {
+    if (!user_id) return;
+    const url = buildWidgetUrl(user_id, chatStyle);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   const selectedChatOption =
     chatOptions.find((option) => option.id === chatStyle) ?? chatOptions[0];
@@ -402,6 +426,27 @@ export default function BroadcastWidget() {
                   </div>
                 </div>
               </div>
+
+              {activeTab === "chat" && (
+                <div className="mt-4">
+                  <div className="mb-2 text-xs text-text-secondary">OBS 브라우저 소스 URL</div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 rounded-lg border border-border-primary bg-background px-3 py-2 text-xs text-text-secondary truncate font-mono">
+                      {user_id
+                        ? buildWidgetUrl(user_id, chatStyle)
+                        : '로그인이 필요합니다'}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCopyUrl}
+                      disabled={!user_id}
+                      className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      {copied ? '복사됨 ✓' : 'URL 복사'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </section>
           </div>
 

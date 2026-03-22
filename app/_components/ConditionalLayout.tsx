@@ -11,9 +11,10 @@ interface ConditionalLayoutProps {
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname();
   const isAdminPage = pathname?.startsWith('/admin');
+  const isWidgetPage = pathname?.startsWith('/widget');
 
-  if (isAdminPage) {
-    // Admin 페이지는 완전히 독립적인 레이아웃
+  if (isAdminPage || isWidgetPage) {
+    // Admin/Widget 페이지는 완전히 독립적인 레이아웃
     return <>{children}</>;
   }
 

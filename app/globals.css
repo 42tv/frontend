@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* OBS 위젯 페이지: 투명 배경 */
+body:has(#widget-root) {
+  background: transparent !important;
+}
+
 :root {
   /* Light mode color palette */
   --primary-100: #d4eaf7;
