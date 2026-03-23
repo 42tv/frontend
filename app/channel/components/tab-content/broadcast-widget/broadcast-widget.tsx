@@ -12,8 +12,10 @@ type TabItem = {
   description: string;
 };
 
+type ChatStyle = "compact" | "bubble" | "notice";
+
 type ChatOption = {
-  id: "compact";
+  id: ChatStyle;
   name: string;
   badge: string;
   description: string;
@@ -120,7 +122,7 @@ function SectionTitle({
   );
 }
 
-function ChatPreview({ style }: { style: "compact" }) {
+function ChatPreview({ style }: { style: ChatStyle }) {
   if (style === "compact") {
     return (
       <div className="absolute right-4 top-16 w-[260px] space-y-2">
@@ -262,7 +264,7 @@ function SupportPreview({ style }: { style: SupportStyle }) {
   );
 }
 
-function buildWidgetUrl(broadcasterId: string, style: "compact"): string {
+function buildWidgetUrl(broadcasterId: string, style: ChatStyle, dev = false): string {
   const base = typeof window !== 'undefined' ? window.location.origin : '';
   const params = new URLSearchParams({
     broadcasterId,
@@ -271,14 +273,16 @@ function buildWidgetUrl(broadcasterId: string, style: "compact"): string {
     showProfileImage: 'true',
     fontSize: 'sm',
   });
+  if (dev) params.set('dev', 'true');
   return `${base}/widget/chat?${params.toString()}`;
 }
 
 export default function BroadcastWidget() {
   const [activeTab, setActiveTab] = useState<WidgetTab>("chat");
-  const chatStyle = "compact" as const;
+  const [chatStyle, setChatStyle] = useState<ChatStyle>("compact");
   const [supportStyle, setSupportStyle] = useState<SupportStyle>("banner");
   const [copied, setCopied] = useState(false);
+  const [copiedDev, setCopiedDev] = useState(false);
   const { user_id } = useUserStore();
 
   function handleCopyUrl() {
@@ -287,6 +291,15 @@ export default function BroadcastWidget() {
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  function handleCopyDevUrl() {
+    if (!user_id) return;
+    const url = buildWidgetUrl(user_id, chatStyle, true);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedDev(true);
+      setTimeout(() => setCopiedDev(false), 2000);
     });
   }
 
@@ -347,30 +360,49 @@ export default function BroadcastWidget() {
                 title={`${activeTabMeta.label} UI 선택`}
                 description={
                   activeTab === "chat"
-                    ? "채팅 위젯은 미니 오버레이(compact) 스타일로 제공됩니다."
+                    ? "원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
                     : "원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
                 }
               />
 
               {activeTab === "chat" ? (
-                <div className="flex items-start gap-4 rounded-xl border border-accent bg-background p-4">
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="font-semibold text-text-primary">{chatOptions[0].name}</div>
-                      <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
-                        {chatOptions[0].badge}
-                      </span>
-                      <span className="rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">
-                        고정
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-text-secondary">
-                      {chatOptions[0].description}
-                    </p>
-                    <div className="mt-3 text-xs text-text-secondary">
-                      권장 상황: {chatOptions[0].useCase}
-                    </div>
-                  </div>
+                <div className="space-y-3">
+                  {chatOptions.map((option) => {
+                    const checked = chatStyle === option.id;
+                    return (
+                      <label
+                        key={option.id}
+                        className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors ${
+                          checked
+                            ? "border-accent bg-background"
+                            : "border-border-primary bg-background hover:border-accent"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="chat-widget-style"
+                          checked={checked}
+                          onChange={() => setChatStyle(option.id)}
+                          className="mt-1 h-4 w-4"
+                          style={{ accentColor: "var(--accent)" }}
+                        />
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="font-semibold text-text-primary">{option.name}</div>
+                            <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
+                              {option.badge}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-sm leading-6 text-text-secondary">
+                            {option.description}
+                          </p>
+                          <div className="mt-3 text-xs text-text-secondary">
+                            권장 상황: {option.useCase}
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -442,22 +474,42 @@ export default function BroadcastWidget() {
               </div>
 
               {activeTab === "chat" && (
-                <div className="mt-4">
-                  <div className="mb-2 text-xs text-text-secondary">OBS 브라우저 소스 URL</div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 rounded-lg border border-border-primary bg-background px-3 py-2 text-xs text-text-secondary truncate font-mono">
-                      {user_id
-                        ? buildWidgetUrl(user_id, chatStyle)
-                        : '로그인이 필요합니다'}
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <div className="mb-1.5 text-xs text-text-secondary">미리보기 URL <span className="text-text-tertiary">(목업 채팅 — 백엔드 연결 불필요)</span></div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 rounded-lg border border-border-primary bg-background px-3 py-2 text-xs text-text-secondary truncate font-mono">
+                        {user_id
+                          ? buildWidgetUrl(user_id, chatStyle, true)
+                          : '로그인이 필요합니다'}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyDevUrl}
+                        disabled={!user_id}
+                        className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        {copiedDev ? '복사됨 ✓' : '복사'}
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleCopyUrl}
-                      disabled={!user_id}
-                      className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      {copied ? '복사됨 ✓' : 'URL 복사'}
-                    </button>
+                  </div>
+                  <div>
+                    <div className="mb-1.5 text-xs text-text-secondary">OBS 브라우저 소스 URL <span className="text-text-tertiary">(실제 방송용)</span></div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 rounded-lg border border-border-primary bg-background px-3 py-2 text-xs text-text-secondary truncate font-mono">
+                        {user_id
+                          ? buildWidgetUrl(user_id, chatStyle)
+                          : '로그인이 필요합니다'}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyUrl}
+                        disabled={!user_id}
+                        className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        {copied ? '복사됨 ✓' : '복사'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
