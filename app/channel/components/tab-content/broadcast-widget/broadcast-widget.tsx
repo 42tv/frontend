@@ -13,7 +13,6 @@ import {
   WidgetDonationConfig,
   WidgetChatStyle,
   WidgetDonationStyle,
-  WidgetFontSize,
 } from "@/app/_types/widget";
 
 type WidgetTab = "chat" | "support";
@@ -54,6 +53,7 @@ const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
   fontColor: '#ffffff',
   messageDuration: 5000,
   showBadges: true,
+  showUserId: false,
 };
 
 const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
@@ -315,65 +315,20 @@ function ChatDetailSettings({
   return (
     <div className="space-y-5">
       <div>
-        <label className="flex items-center justify-between text-sm text-text-primary">
-          <span>최대 메시지 수</span>
-          <span className="font-semibold text-accent">{config.maxMessages}개</span>
-        </label>
+        <label className="mb-1.5 block text-sm text-text-primary">폰트 크기 (px)</label>
         <input
-          type="range"
-          min={1}
-          max={30}
-          value={config.maxMessages}
-          onChange={(e) => onChange({ maxMessages: Number(e.target.value) })}
-          className="mt-2 w-full accent-[var(--accent)]"
+          type="number"
+          min={10}
+          max={32}
+          value={config.fontSize === 'sm' ? 14 : config.fontSize === 'md' ? 16 : 18}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            onChange({ fontSize: v <= 14 ? 'sm' : v <= 16 ? 'md' : 'lg' });
+          }}
+          className="w-full rounded-lg border border-border-primary bg-background px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
+          placeholder="14"
         />
-        <div className="mt-1 flex justify-between text-xs text-text-secondary">
-          <span>1</span><span>30</span>
-        </div>
-      </div>
-
-      <div>
-        <label className="flex items-center justify-between text-sm text-text-primary">
-          <span>배경 투명도</span>
-          <span className="font-semibold text-accent">{config.bgOpacity}%</span>
-        </label>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={config.bgOpacity}
-          onChange={(e) => onChange({ bgOpacity: Number(e.target.value) })}
-          className="mt-2 w-full accent-[var(--accent)]"
-        />
-        <div className="mt-1 flex justify-between text-xs text-text-secondary">
-          <span>투명</span><span>불투명</span>
-        </div>
-      </div>
-
-      <div>
-        <div className="mb-2 text-sm text-text-primary">폰트 크기</div>
-        <div className="flex gap-2">
-          {(['sm', 'md', 'lg'] as WidgetFontSize[]).map((size) => (
-            <label
-              key={size}
-              className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
-                config.fontSize === size
-                  ? 'border-accent bg-background text-text-primary'
-                  : 'border-border-primary bg-background text-text-secondary hover:border-accent'
-              }`}
-            >
-              <input
-                type="radio"
-                name="font-size"
-                value={size}
-                checked={config.fontSize === size}
-                onChange={() => onChange({ fontSize: size })}
-                className="sr-only"
-              />
-              {size.toUpperCase()}
-            </label>
-          ))}
-        </div>
+        <p className="mt-1 text-xs text-text-secondary">10 ~ 32px 범위로 입력하세요.</p>
       </div>
 
       <div className="flex items-center justify-between">
@@ -381,6 +336,14 @@ function ChatDetailSettings({
         <Toggle
           checked={config.showProfileImage}
           onChange={(v) => onChange({ showProfileImage: v })}
+        />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-text-primary">아이디 표시</span>
+        <Toggle
+          checked={config.showUserId}
+          onChange={(v) => onChange({ showUserId: v })}
         />
       </div>
 

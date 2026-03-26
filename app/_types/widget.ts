@@ -13,6 +13,7 @@ export interface WidgetChatConfig {
   fontColor: string;
   messageDuration: number;
   showBadges: boolean;
+  showUserId: boolean;
 }
 
 export interface WidgetDonationConfig {
