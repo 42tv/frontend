@@ -1,10 +1,22 @@
 'use client';
 
-import { useState } from "react";
-import { useUserStore } from "@/app/_lib/stores";
+import { useState, useEffect } from "react";
+import {
+  getMyWidgets,
+  createWidgetToken,
+  updateChatConfig,
+  updateDonationConfig,
+} from "@/app/_apis/widget";
+import {
+  WidgetTokenInfo,
+  WidgetChatConfig,
+  WidgetDonationConfig,
+  WidgetChatStyle,
+  WidgetDonationStyle,
+  WidgetFontSize,
+} from "@/app/_types/widget";
 
 type WidgetTab = "chat" | "support";
-type SupportStyle = "banner" | "card" | "goal";
 
 type TabItem = {
   id: WidgetTab;
@@ -12,10 +24,8 @@ type TabItem = {
   description: string;
 };
 
-type ChatStyle = "compact" | "bubble" | "notice";
-
 type ChatOption = {
-  id: ChatStyle;
+  id: WidgetChatStyle;
   name: string;
   badge: string;
   description: string;
@@ -25,13 +35,37 @@ type ChatOption = {
 };
 
 type SupportOption = {
-  id: SupportStyle;
+  id: WidgetDonationStyle;
   name: string;
   badge: string;
   description: string;
   useCase: string;
   size: string;
   position: string;
+};
+
+const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
+  style: 'compact',
+  maxMessages: 5,
+  showProfileImage: true,
+  fontSize: 'sm',
+  bgOpacity: 55,
+  bgColor: '#000000',
+  fontColor: '#ffffff',
+  messageDuration: 5000,
+  showBadges: true,
+};
+
+const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
+  style: 'banner',
+  minDisplayAmount: 0,
+  displayDuration: 5000,
+  goalAmount: null,
+  goalLabel: null,
+  bgOpacity: 55,
+  fontSize: 'sm',
+  animationType: 'slide',
+  soundEnabled: false,
 };
 
 const tabs: TabItem[] = [
@@ -107,13 +141,7 @@ const supportOptions: SupportOption[] = [
   },
 ];
 
-function SectionTitle({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+function SectionTitle({ title, description }: { title: string; description: string }) {
   return (
     <div className="mb-4">
       <h4 className="text-base font-semibold text-text-primary">{title}</h4>
@@ -122,7 +150,7 @@ function SectionTitle({
   );
 }
 
-function ChatPreview({ style }: { style: ChatStyle }) {
+function ChatPreview({ style }: { style: WidgetChatStyle }) {
   if (style === "compact") {
     return (
       <div className="absolute right-4 top-16 w-[260px] space-y-2">
@@ -190,7 +218,7 @@ function ChatPreview({ style }: { style: ChatStyle }) {
   );
 }
 
-function SupportPreview({ style }: { style: SupportStyle }) {
+function SupportPreview({ style }: { style: WidgetDonationStyle }) {
   if (style === "banner") {
     return (
       <div className="absolute left-1/2 top-16 w-[calc(100%-32px)] max-w-[720px] -translate-x-1/2 rounded-2xl border border-[#ff8c5c] bg-[#3b1e14] px-5 py-4 shadow-xl">
@@ -264,30 +292,304 @@ function SupportPreview({ style }: { style: SupportStyle }) {
   );
 }
 
-function buildWidgetUrl(broadcasterId: string, style: ChatStyle, dev = false): string {
-  const base = typeof window !== 'undefined' ? window.location.origin : '';
-  const params = new URLSearchParams({
-    broadcasterId,
-    style,
-    maxMessages: '5',
-    showProfileImage: 'true',
-    fontSize: 'sm',
-  });
-  if (dev) params.set('dev', 'true');
-  return `${base}/widget/chat?${params.toString()}`;
+function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
+        checked ? 'bg-accent' : 'bg-bg-tertiary'
+      }`}
+    >
+      <span
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
+          checked ? 'translate-x-5' : 'translate-x-0'
+        }`}
+      />
+    </button>
+  );
+}
+
+function ChatDetailSettings({
+  config,
+  onChange,
+}: {
+  config: WidgetChatConfig;
+  onChange: (patch: Partial<WidgetChatConfig>) => void;
+}) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <label className="flex items-center justify-between text-sm text-text-primary">
+          <span>최대 메시지 수</span>
+          <span className="font-semibold text-accent">{config.maxMessages}개</span>
+        </label>
+        <input
+          type="range"
+          min={1}
+          max={30}
+          value={config.maxMessages}
+          onChange={(e) => onChange({ maxMessages: Number(e.target.value) })}
+          className="mt-2 w-full accent-[var(--accent)]"
+        />
+        <div className="mt-1 flex justify-between text-xs text-text-secondary">
+          <span>1</span><span>30</span>
+        </div>
+      </div>
+
+      <div>
+        <label className="flex items-center justify-between text-sm text-text-primary">
+          <span>배경 투명도</span>
+          <span className="font-semibold text-accent">{config.bgOpacity}%</span>
+        </label>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={config.bgOpacity}
+          onChange={(e) => onChange({ bgOpacity: Number(e.target.value) })}
+          className="mt-2 w-full accent-[var(--accent)]"
+        />
+        <div className="mt-1 flex justify-between text-xs text-text-secondary">
+          <span>투명</span><span>불투명</span>
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-2 text-sm text-text-primary">폰트 크기</div>
+        <div className="flex gap-2">
+          {(['sm', 'md', 'lg'] as WidgetFontSize[]).map((size) => (
+            <label
+              key={size}
+              className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                config.fontSize === size
+                  ? 'border-accent bg-background text-text-primary'
+                  : 'border-border-primary bg-background text-text-secondary hover:border-accent'
+              }`}
+            >
+              <input
+                type="radio"
+                name="font-size"
+                value={size}
+                checked={config.fontSize === size}
+                onChange={() => onChange({ fontSize: size })}
+                className="sr-only"
+              />
+              {size.toUpperCase()}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-text-primary">프로필 이미지 표시</span>
+        <Toggle
+          checked={config.showProfileImage}
+          onChange={(v) => onChange({ showProfileImage: v })}
+        />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-text-primary">BJ/MOD 배지 표시</span>
+        <Toggle
+          checked={config.showBadges}
+          onChange={(v) => onChange({ showBadges: v })}
+        />
+      </div>
+
+      {config.style === 'bubble' && (
+        <div>
+          <label className="flex items-center justify-between text-sm text-text-primary">
+            <span>말풍선 유지 시간</span>
+            <span className="font-semibold text-accent">{(config.messageDuration / 1000).toFixed(1)}초</span>
+          </label>
+          <input
+            type="range"
+            min={1000}
+            max={10000}
+            step={500}
+            value={config.messageDuration}
+            onChange={(e) => onChange({ messageDuration: Number(e.target.value) })}
+            className="mt-2 w-full accent-[var(--accent)]"
+          />
+          <div className="mt-1 flex justify-between text-xs text-text-secondary">
+            <span>1초</span><span>10초</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DonationDetailSettings({
+  config,
+  onChange,
+}: {
+  config: WidgetDonationConfig;
+  onChange: (patch: Partial<WidgetDonationConfig>) => void;
+}) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <label className="flex items-center justify-between text-sm text-text-primary">
+          <span>알림 유지 시간</span>
+          <span className="font-semibold text-accent">{(config.displayDuration / 1000).toFixed(1)}초</span>
+        </label>
+        <input
+          type="range"
+          min={1000}
+          max={10000}
+          step={500}
+          value={config.displayDuration}
+          onChange={(e) => onChange({ displayDuration: Number(e.target.value) })}
+          className="mt-2 w-full accent-[var(--accent)]"
+        />
+        <div className="mt-1 flex justify-between text-xs text-text-secondary">
+          <span>1초</span><span>10초</span>
+        </div>
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-sm text-text-primary">최소 표시 금액 (원)</label>
+        <input
+          type="number"
+          min={0}
+          value={config.minDisplayAmount}
+          onChange={(e) => onChange({ minDisplayAmount: Number(e.target.value) })}
+          className="w-full rounded-lg border border-border-primary bg-background px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
+          placeholder="0"
+        />
+        <p className="mt-1 text-xs text-text-secondary">이 금액 미만의 후원은 위젯에 표시되지 않습니다.</p>
+      </div>
+
+      {config.style === 'goal' && (
+        <>
+          <div>
+            <label className="mb-1.5 block text-sm text-text-primary">목표 금액 (원)</label>
+            <input
+              type="number"
+              min={0}
+              value={config.goalAmount ?? ''}
+              onChange={(e) => onChange({ goalAmount: e.target.value ? Number(e.target.value) : null })}
+              className="w-full rounded-lg border border-border-primary bg-background px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
+              placeholder="500000"
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm text-text-primary">미션 문구</label>
+            <input
+              type="text"
+              value={config.goalLabel ?? ''}
+              onChange={(e) => onChange({ goalLabel: e.target.value || null })}
+              className="w-full rounded-lg border border-border-primary bg-background px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
+              placeholder="리액션 미션 달성!"
+            />
+          </div>
+        </>
+      )}
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-text-primary">알림음</span>
+        <Toggle
+          checked={config.soundEnabled}
+          onChange={(v) => onChange({ soundEnabled: v })}
+        />
+      </div>
+    </div>
+  );
+}
+
+function UrlRow({
+  label,
+  sublabel,
+  url,
+  onCopy,
+  copied,
+}: {
+  label: string;
+  sublabel: string;
+  url: string | null;
+  onCopy: () => void;
+  copied: boolean;
+}) {
+  return (
+    <div>
+      <div className="mb-1.5 text-xs text-text-secondary">
+        {label} <span className="text-text-tertiary">{sublabel}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex-1 truncate rounded-lg border border-border-primary bg-background px-3 py-2 font-mono text-xs text-text-secondary">
+          {url ?? '로딩 중...'}
+        </div>
+        <button
+          type="button"
+          onClick={onCopy}
+          disabled={!url}
+          className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {copied ? '복사됨 ✓' : '복사'}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function BroadcastWidget() {
   const [activeTab, setActiveTab] = useState<WidgetTab>("chat");
-  const [chatStyle, setChatStyle] = useState<ChatStyle>("compact");
-  const [supportStyle, setSupportStyle] = useState<SupportStyle>("banner");
+  const [chatToken, setChatToken] = useState<WidgetTokenInfo | null>(null);
+  const [donationToken, setDonationToken] = useState<WidgetTokenInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [chatConfig, setChatConfig] = useState<WidgetChatConfig>(DEFAULT_CHAT_CONFIG);
+  const [donationConfig, setDonationConfig] = useState<WidgetDonationConfig>(DEFAULT_DONATION_CONFIG);
   const [copied, setCopied] = useState(false);
   const [copiedDev, setCopiedDev] = useState(false);
-  const { user_id } = useUserStore();
+
+  useEffect(() => {
+    async function loadWidgets() {
+      try {
+        const widgets = await getMyWidgets();
+
+        let chat = widgets.find((w) => w.widgetType === 'CHAT') ?? null;
+        let donation = widgets.find((w) => w.widgetType === 'DONATION') ?? null;
+
+        if (!chat) chat = await createWidgetToken('CHAT');
+        if (!donation) donation = await createWidgetToken('DONATION');
+
+        setChatToken(chat);
+        setDonationToken(donation);
+        if (chat.chatConfig) setChatConfig(chat.chatConfig);
+        if (donation.donationConfig) setDonationConfig(donation.donationConfig);
+      } catch {
+        // 네트워크 오류 시 기본값으로 유지
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadWidgets();
+  }, []);
+
+  async function handleSave() {
+    setIsSaving(true);
+    try {
+      if (activeTab === 'chat' && chatToken) {
+        await updateChatConfig(chatToken.token, chatConfig);
+      } else if (activeTab === 'support' && donationToken) {
+        await updateDonationConfig(donationToken.token, donationConfig);
+      }
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2000);
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   function handleCopyUrl() {
-    if (!user_id) return;
-    const url = buildWidgetUrl(user_id, chatStyle);
+    const url = chatToken?.widgetUrl;
+    if (!url) return;
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -295,20 +597,17 @@ export default function BroadcastWidget() {
   }
 
   function handleCopyDevUrl() {
-    if (!user_id) return;
-    const url = buildWidgetUrl(user_id, chatStyle, true);
+    const url = chatToken?.previewUrl;
+    if (!url) return;
     navigator.clipboard.writeText(url).then(() => {
       setCopiedDev(true);
       setTimeout(() => setCopiedDev(false), 2000);
     });
   }
 
-  const selectedChatOption =
-    chatOptions.find((option) => option.id === chatStyle) ?? chatOptions[0];
-  const selectedSupportOption =
-    supportOptions.find((option) => option.id === supportStyle) ?? supportOptions[0];
-  const activeOption =
-    activeTab === "chat" ? selectedChatOption : selectedSupportOption;
+  const selectedChatOption = chatOptions.find((o) => o.id === chatConfig.style) ?? chatOptions[0];
+  const selectedSupportOption = supportOptions.find((o) => o.id === donationConfig.style) ?? supportOptions[0];
+  const activeOption = activeTab === "chat" ? selectedChatOption : selectedSupportOption;
   const activeTabMeta = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
 
   return (
@@ -332,7 +631,6 @@ export default function BroadcastWidget() {
         >
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
-
             return (
               <button
                 key={tab.id}
@@ -355,20 +653,17 @@ export default function BroadcastWidget() {
 
         <div className="mt-6 grid gap-6 xl:grid-cols-3">
           <div className="space-y-6 xl:col-span-2">
+            {/* 스타일 선택 */}
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
               <SectionTitle
                 title={`${activeTabMeta.label} UI 선택`}
-                description={
-                  activeTab === "chat"
-                    ? "원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
-                    : "원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
-                }
+                description="원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
               />
 
               {activeTab === "chat" ? (
                 <div className="space-y-3">
                   {chatOptions.map((option) => {
-                    const checked = chatStyle === option.id;
+                    const checked = chatConfig.style === option.id;
                     return (
                       <label
                         key={option.id}
@@ -382,7 +677,7 @@ export default function BroadcastWidget() {
                           type="radio"
                           name="chat-widget-style"
                           checked={checked}
-                          onChange={() => setChatStyle(option.id)}
+                          onChange={() => setChatConfig((prev) => ({ ...prev, style: option.id }))}
                           className="mt-1 h-4 w-4"
                           style={{ accentColor: "var(--accent)" }}
                         />
@@ -393,12 +688,8 @@ export default function BroadcastWidget() {
                               {option.badge}
                             </span>
                           </div>
-                          <p className="mt-2 text-sm leading-6 text-text-secondary">
-                            {option.description}
-                          </p>
-                          <div className="mt-3 text-xs text-text-secondary">
-                            권장 상황: {option.useCase}
-                          </div>
+                          <p className="mt-2 text-sm leading-6 text-text-secondary">{option.description}</p>
+                          <div className="mt-3 text-xs text-text-secondary">권장 상황: {option.useCase}</div>
                         </div>
                       </label>
                     );
@@ -407,7 +698,7 @@ export default function BroadcastWidget() {
               ) : (
                 <div className="space-y-3">
                   {supportOptions.map((option) => {
-                    const checked = supportStyle === option.id;
+                    const checked = donationConfig.style === option.id;
                     return (
                       <label
                         key={option.id}
@@ -421,7 +712,7 @@ export default function BroadcastWidget() {
                           type="radio"
                           name="support-widget-style"
                           checked={checked}
-                          onChange={() => setSupportStyle(option.id as SupportStyle)}
+                          onChange={() => setDonationConfig((prev) => ({ ...prev, style: option.id }))}
                           className="mt-1 h-4 w-4"
                           style={{ accentColor: "var(--accent)" }}
                         />
@@ -432,12 +723,8 @@ export default function BroadcastWidget() {
                               {option.badge}
                             </span>
                           </div>
-                          <p className="mt-2 text-sm leading-6 text-text-secondary">
-                            {option.description}
-                          </p>
-                          <div className="mt-3 text-xs text-text-secondary">
-                            권장 상황: {option.useCase}
-                          </div>
+                          <p className="mt-2 text-sm leading-6 text-text-secondary">{option.description}</p>
+                          <div className="mt-3 text-xs text-text-secondary">권장 상황: {option.useCase}</div>
                         </div>
                       </label>
                     );
@@ -446,6 +733,40 @@ export default function BroadcastWidget() {
               )}
             </section>
 
+            {/* 세부 설정 */}
+            <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
+              <SectionTitle
+                title="세부 설정"
+                description="위젯 표시 방식을 세밀하게 조정합니다."
+              />
+              {activeTab === 'chat' ? (
+                <ChatDetailSettings
+                  config={chatConfig}
+                  onChange={(patch) => setChatConfig((prev) => ({ ...prev, ...patch }))}
+                />
+              ) : (
+                <DonationDetailSettings
+                  config={donationConfig}
+                  onChange={(patch) => setDonationConfig((prev) => ({ ...prev, ...patch }))}
+                />
+              )}
+
+              <div className="mt-6 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isSaving || isLoading}
+                  className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isSaving ? '저장 중...' : '저장'}
+                </button>
+                {saveSuccess && (
+                  <span className="text-sm font-medium text-green-500">저장됐습니다 ✓</span>
+                )}
+              </div>
+            </section>
+
+            {/* 선택 결과 + URL */}
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
               <SectionTitle
                 title="선택 결과"
@@ -455,62 +776,34 @@ export default function BroadcastWidget() {
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-xl border border-border-primary bg-background px-4 py-4">
                   <div className="text-xs text-text-secondary">선택된 UI</div>
-                  <div className="mt-2 font-semibold text-text-primary">
-                    {activeOption.name}
-                  </div>
+                  <div className="mt-2 font-semibold text-text-primary">{activeOption.name}</div>
                 </div>
                 <div className="rounded-xl border border-border-primary bg-background px-4 py-4">
                   <div className="text-xs text-text-secondary">권장 크기</div>
-                  <div className="mt-2 font-semibold text-text-primary">
-                    {activeOption.size}
-                  </div>
+                  <div className="mt-2 font-semibold text-text-primary">{activeOption.size}</div>
                 </div>
                 <div className="rounded-xl border border-border-primary bg-background px-4 py-4">
                   <div className="text-xs text-text-secondary">권장 위치</div>
-                  <div className="mt-2 font-semibold text-text-primary">
-                    {activeOption.position}
-                  </div>
+                  <div className="mt-2 font-semibold text-text-primary">{activeOption.position}</div>
                 </div>
               </div>
 
               {activeTab === "chat" && (
                 <div className="mt-4 space-y-3">
-                  <div>
-                    <div className="mb-1.5 text-xs text-text-secondary">미리보기 URL <span className="text-text-tertiary">(목업 채팅 — 백엔드 연결 불필요)</span></div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 rounded-lg border border-border-primary bg-background px-3 py-2 text-xs text-text-secondary truncate font-mono">
-                        {user_id
-                          ? buildWidgetUrl(user_id, chatStyle, true)
-                          : '로그인이 필요합니다'}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleCopyDevUrl}
-                        disabled={!user_id}
-                        className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        {copiedDev ? '복사됨 ✓' : '복사'}
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="mb-1.5 text-xs text-text-secondary">OBS 브라우저 소스 URL <span className="text-text-tertiary">(실제 방송용)</span></div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 rounded-lg border border-border-primary bg-background px-3 py-2 text-xs text-text-secondary truncate font-mono">
-                        {user_id
-                          ? buildWidgetUrl(user_id, chatStyle)
-                          : '로그인이 필요합니다'}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleCopyUrl}
-                        disabled={!user_id}
-                        className="rounded-lg border border-border-primary bg-background px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        {copied ? '복사됨 ✓' : '복사'}
-                      </button>
-                    </div>
-                  </div>
+                  <UrlRow
+                    label="미리보기 URL"
+                    sublabel="(목업 채팅 — 백엔드 연결 불필요)"
+                    url={chatToken?.previewUrl ?? null}
+                    onCopy={handleCopyDevUrl}
+                    copied={copiedDev}
+                  />
+                  <UrlRow
+                    label="OBS 브라우저 소스 URL"
+                    sublabel="(실제 방송용)"
+                    url={chatToken?.widgetUrl ?? null}
+                    onCopy={handleCopyUrl}
+                    copied={copied}
+                  />
                 </div>
               )}
             </section>
@@ -532,21 +825,17 @@ export default function BroadcastWidget() {
                   <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black/70 to-transparent" />
 
                   {activeTab === "chat" ? (
-                    <ChatPreview style={chatStyle} />
+                    <ChatPreview style={chatConfig.style} />
                   ) : (
-                    <SupportPreview style={supportStyle} />
+                    <SupportPreview style={donationConfig.style} />
                   )}
 
                   <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/10 bg-black/45 px-4 py-3 backdrop-blur-sm">
                     <div className="text-xs font-semibold uppercase tracking-[0.16em] text-white/60">
                       Selected Widget
                     </div>
-                    <div className="mt-1 text-sm font-semibold text-white">
-                      {activeOption.name}
-                    </div>
-                    <div className="mt-1 text-xs leading-5 text-white/70">
-                      {activeOption.description}
-                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white">{activeOption.name}</div>
+                    <div className="mt-1 text-xs leading-5 text-white/70">{activeOption.description}</div>
                   </div>
                 </div>
               </div>

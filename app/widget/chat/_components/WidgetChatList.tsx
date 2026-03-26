@@ -2,12 +2,12 @@
 
 import React, { useRef, useEffect } from 'react';
 import { ChatMessage } from '@/app/_types';
-import { WidgetConfig } from '@/app/_types/widget';
+import { WidgetChatConfig } from '@/app/_types/widget';
 import WidgetChatItem from './WidgetChatItem';
 
 interface WidgetChatListProps {
   messages: ChatMessage[];
-  config: WidgetConfig;
+  config: WidgetChatConfig;
 }
 
 const WidgetChatList: React.FC<WidgetChatListProps> = ({ messages, config }) => {

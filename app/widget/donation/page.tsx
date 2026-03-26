@@ -1,28 +1,30 @@
-import { WidgetChatConfig } from '@/app/_types/widget';
+import { WidgetDonationConfig } from '@/app/_types/widget';
 import { getWidgetConfig } from '@/app/_apis/widget';
-import WidgetChatClient from './_components/WidgetChatClient';
+import WidgetDonationClient from './_components/WidgetDonationClient';
 
 interface PageProps {
   searchParams: Promise<{
     token?: string;
+    dev?: string;
   }>;
 }
 
-const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
-  style: 'compact',
-  maxMessages: 5,
-  showProfileImage: true,
-  fontSize: 'sm',
+const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
+  style: 'banner',
+  minDisplayAmount: 0,
+  displayDuration: 5000,
+  goalAmount: null,
+  goalLabel: null,
   bgOpacity: 55,
-  bgColor: '#000000',
-  fontColor: '#ffffff',
-  messageDuration: 5000,
-  showBadges: true,
+  fontSize: 'sm',
+  animationType: 'slide',
+  soundEnabled: false,
 };
 
-export default async function WidgetChatPage({ searchParams }: PageProps) {
+export default async function WidgetDonationPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const token = params.token;
+  const isDev = params.dev === 'true';
 
   if (!token) {
     return (
@@ -32,7 +34,7 @@ export default async function WidgetChatPage({ searchParams }: PageProps) {
           URL에 <code className="rounded bg-white/10 px-1">token</code> 파라미터가 필요합니다.
         </div>
         <div className="mt-2 text-xs text-white/50">
-          예시: /widget/chat?token=01ARZ3NDEKTSV4RRFFQ69G5FAV
+          예시: /widget/donation?token=01ARZ3NDEKTSV4RRFFQ69G5FAV
         </div>
       </div>
     );
@@ -49,7 +51,7 @@ export default async function WidgetChatPage({ searchParams }: PageProps) {
     );
   }
 
-  const chatConfig = widgetData.chatConfig ?? DEFAULT_CHAT_CONFIG;
+  const donationConfig = widgetData.donationConfig ?? DEFAULT_DONATION_CONFIG;
 
-  return <WidgetChatClient token={token} chatConfig={chatConfig} />;
+  return <WidgetDonationClient token={token} donationConfig={donationConfig} isDev={isDev} />;
 }

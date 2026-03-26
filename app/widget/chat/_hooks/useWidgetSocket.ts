@@ -1,68 +1,59 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { ChatMessage, OpCode } from '@/app/_types';
-import { requestPlay } from '@/app/_apis/live';
+import { ChatMessage } from '@/app/_types';
 
 const MAX_MESSAGES_HARD_LIMIT = 50;
 
 export type WidgetSocketStatus = 'idle' | 'connecting' | 'connected' | 'error';
 
-export const useWidgetSocket = (broadcasterId: string, maxMessages: number) => {
+export const useWidgetSocket = (token: string, maxMessages: number) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<WidgetSocketStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const socketRef = useRef<Socket | null>(null);
+  const maxMessagesRef = useRef(maxMessages);
 
-  const addMessage = useCallback((message: ChatMessage) => {
-    setMessages((prev) => {
-      const next = [...prev, message];
-      const limit = Math.min(maxMessages, MAX_MESSAGES_HARD_LIMIT);
-      return next.length > limit ? next.slice(next.length - limit) : next;
-    });
+  useEffect(() => {
+    maxMessagesRef.current = maxMessages;
   }, [maxMessages]);
 
   useEffect(() => {
-    if (!broadcasterId) return;
+    if (!token) return;
 
     setStatus('connecting');
 
-    async function connect() {
-      try {
-        const response = await requestPlay(broadcasterId);
-        const playToken = response.data.user.play_token;
-
-        const socket = io(
-          `ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/chat`,
-          {
-            withCredentials: true,
-            auth: { token: `Bearer ${playToken}` },
-            transports: ['websocket'],
-          }
-        );
-
-        socketRef.current = socket;
-
-        socket.on('connect', () => setStatus('connected'));
-        socket.on('connect_error', () => {
-          setStatus('error');
-          setErrorMessage('소켓 연결에 실패했습니다');
-        });
-        socket.on(OpCode.CHAT, (msg: ChatMessage) => addMessage(msg));
-      } catch {
-        setStatus('error');
-        setErrorMessage('방송 정보를 불러올 수 없습니다. 로그인 여부를 확인하세요.');
+    const socket = io(
+      `ws://${process.env.NEXT_PUBLIC_BACKEND}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/overlay`,
+      {
+        query: { token },
+        transports: ['websocket'],
       }
-    }
+    );
 
-    connect();
+    socketRef.current = socket;
+
+    socket.on('connect', () => setStatus('connected'));
+    socket.on('connect_error', () => {
+      setStatus('error');
+      setErrorMessage('소켓 연결에 실패했습니다');
+    });
+    socket.on('chat', (data: ChatMessage) => {
+      setStatus('connected');
+      setMessages((prev) => {
+        const next = [...prev, data];
+        console.log(next)
+        const limit = Math.min(maxMessagesRef.current, MAX_MESSAGES_HARD_LIMIT);
+        return next.length > limit ? next.slice(next.length - limit) : next;
+      });
+    });
 
     return () => {
-      socketRef.current?.disconnect();
+      socket.disconnect();
       socketRef.current = null;
     };
-  }, [broadcasterId, addMessage]);
+  }, [token]);
 
   return { messages, status, errorMessage };
 };
