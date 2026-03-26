@@ -1,4 +1,4 @@
-export type WidgetChatStyle = 'compact' | 'bubble' | 'notice';
+export type WidgetChatStyle = 'compact' | 'bubble' | 'notice' | 'gradient';
 export type WidgetDonationStyle = 'banner' | 'card' | 'goal';
 export type WidgetFontSize = 'sm' | 'md' | 'lg';
 export type WidgetType = 'CHAT' | 'DONATION';

@@ -9,7 +9,7 @@ interface PageProps {
 }
 
 const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
-  style: 'compact',
+  style: 'gradient',
   maxMessages: 5,
   showProfileImage: true,
   fontSize: 'sm',

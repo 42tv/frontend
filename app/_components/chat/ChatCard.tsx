@@ -178,12 +178,51 @@ function NoticeCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps,
   );
 }
 
+function GradientCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps, 'style'>) {
+  const accentColor = message.color || '#a78bfa';
+
+  return (
+    <div
+      className="rounded-xl px-3.5 py-2.5 animate-widget-in"
+      style={{
+        background: `linear-gradient(135deg, ${accentColor}30 0%, ${accentColor}0a 100%)`,
+        border: `1px solid ${accentColor}44`,
+        boxShadow: `0 4px 16px ${accentColor}14`,
+      }}
+    >
+      <div className="flex items-center gap-1.5 mb-1">
+        {showProfileImage && (
+          <div
+            className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0"
+            style={{ backgroundColor: accentColor }}
+          >
+            {getBadgeLabel(message)}
+          </div>
+        )}
+        <span
+          className={`font-bold ${nicknameFontSizeClass[fontSize]} leading-none`}
+          style={{ color: accentColor }}
+        >
+          {message.nickname}
+        </span>
+        <RoleBadge role={message.role} />
+      </div>
+      <div className={`break-words leading-snug text-white/90 ${fontSizeClass[fontSize]}`}>
+        {message.message}
+      </div>
+    </div>
+  );
+}
+
 const ChatCard: React.FC<ChatCardProps> = ({ message, showProfileImage, fontSize, style }) => {
   if (style === 'bubble') {
     return <BubbleCard message={message} showProfileImage={showProfileImage} fontSize={fontSize} />;
   }
   if (style === 'notice') {
     return <NoticeCard message={message} showProfileImage={showProfileImage} fontSize={fontSize} />;
+  }
+  if (style === 'gradient') {
+    return <GradientCard message={message} showProfileImage={showProfileImage} fontSize={fontSize} />;
   }
   return <CompactCard message={message} showProfileImage={showProfileImage} fontSize={fontSize} />;
 };

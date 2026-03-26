@@ -153,7 +153,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
                     <ChatMessageList
                         messages={messages}
                         onChatClick={handleChatClick}
-                        chatStyle="compact"
+                        chatStyle="gradient"
                     />
                 ) : (
                     <ViewersList 
@@ -165,7 +165,7 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
             {/* 메시지 입력 - 채팅 탭에서만 표시 */}
             {activeTab === 'chat' && (
-                <MessageInput onSendMessage={handleSendMessage} chatStyle="compact" />
+                <MessageInput onSendMessage={handleSendMessage} chatStyle="gradient" />
             )}
         </div>
     );
