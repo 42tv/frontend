@@ -84,7 +84,7 @@ const tabs: TabItem[] = [
 const chatOptions: ChatOption[] = [
   {
     id: "compact",
-    name: "미니 오버레이",
+    name: "기본 카드",
     badge: "기본형",
     description: "작은 채팅 박스를 여러 줄로 쌓아 방송 화면을 많이 가리지 않습니다.",
     useCase: "게임, 캠 방송처럼 메인 화면 집중도가 중요한 방송",
@@ -92,22 +92,13 @@ const chatOptions: ChatOption[] = [
     position: "우측 상단",
   },
   {
-    id: "bubble",
-    name: "말풍선형 채팅",
-    badge: "반응형",
-    description: "채팅이 말풍선처럼 자연스럽게 떠서 시청자 반응을 더 생생하게 전달합니다.",
-    useCase: "소통 방송, 리액션 방송, 토크 방송",
-    size: "360 x 300",
-    position: "좌측 하단",
-  },
-  {
-    id: "notice",
-    name: "상단 공지형",
-    badge: "강조형",
-    description: "선택한 메시지를 상단 고정 바로 노출하고 최근 채팅을 함께 보입니다.",
-    useCase: "이벤트 안내, 팬미팅 공지, 참여형 방송",
-    size: "가로형 900 x 90",
-    position: "상단 전체",
+    id: "gradient",
+    name: "그래디언트",
+    badge: "컬러형",
+    description: "유저 고유 색상으로 물드는 그래디언트 카드로 채팅에 생동감을 더합니다.",
+    useCase: "소통 방송, 컬러풀한 분위기를 원하는 방송",
+    size: "280 x 자유",
+    position: "우측 상단",
   },
 ];
 
@@ -171,51 +162,38 @@ function ChatPreview({ style }: { style: WidgetChatStyle }) {
     );
   }
 
-  if (style === "bubble") {
+  if (style === "gradient") {
     return (
-      <div className="absolute bottom-24 left-4 max-w-[320px] space-y-3">
+      <div className="absolute right-4 top-16 w-[240px] space-y-2">
         {[
-          ["루나", "오늘 공지 위젯 예쁘다", "from-[#ff7a45] to-[#ff915d]"],
-          ["사과맛", "채팅 말풍선으로 보니까 반응이 잘 보이네요", "from-[#2f9c95] to-[#45d2c0]"],
-        ].map(([user, message, gradient]) => (
-          <div key={user} className="flex items-start gap-3">
-            <div className={`mt-1 h-9 w-9 rounded-full bg-gradient-to-br ${gradient}`} />
-            <div className="max-w-[260px] rounded-2xl rounded-tl-sm border border-white/10 bg-black/55 px-4 py-3 backdrop-blur-sm">
-              <div className="text-xs font-semibold text-white/70">{user}</div>
-              <div className="mt-1 text-sm leading-6 text-white">{message}</div>
+          ["루나", "오늘 방송 너무 재밌어요!", "#ff7a45"],
+          ["게이머X", "이 플레이 어떻게 한 거예요?", "#8b5cf6"],
+          ["별빛고양이", "방금 들어왔는데 분위기 좋다~", "#ec4899"],
+        ].map(([user, message, color]) => (
+          <div
+            key={user}
+            className="rounded-xl px-3 py-2"
+            style={{
+              background: `linear-gradient(135deg, ${color}30 0%, ${color}0a 100%)`,
+              border: `1px solid ${color}44`,
+              boxShadow: `0 4px 16px ${color}14`,
+            }}
+          >
+            <div className="flex items-center gap-1.5 mb-1">
+              <div
+                className="w-3.5 h-3.5 rounded-full flex-shrink-0"
+                style={{ backgroundColor: color }}
+              />
+              <div className="text-xs font-bold" style={{ color }}>{user}</div>
             </div>
+            <div className="text-xs text-white/90">{message}</div>
           </div>
         ))}
       </div>
     );
   }
 
-  return (
-    <>
-      <div className="absolute left-4 right-4 top-16 rounded-2xl border border-[#ffcf6a] bg-[#3b2d10] px-4 py-3 shadow-lg">
-        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#ffcf6a]">
-          Highlight Notice
-        </div>
-        <div className="mt-1 text-sm font-medium text-white">
-          팬미팅 일정은 방송 종료 10분 전에 다시 한 번 안내됩니다.
-        </div>
-      </div>
-      <div className="absolute right-4 top-36 w-[240px] space-y-2">
-        {[
-          ["alice", "참여 링크는 어디서 보나요?"],
-          ["noon", "고정 공지형이면 전달력 좋을 듯"],
-        ].map(([user, message]) => (
-          <div
-            key={user}
-            className="rounded-xl border border-white/10 bg-black/45 px-3 py-2 backdrop-blur-sm"
-          >
-            <div className="text-xs font-semibold text-white/60">{user}</div>
-            <div className="mt-1 text-sm text-white">{message}</div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
+  return null;
 }
 
 function SupportPreview({ style }: { style: WidgetDonationStyle }) {
@@ -399,26 +377,6 @@ function ChatDetailSettings({
         />
       </div>
 
-      {config.style === 'bubble' && (
-        <div>
-          <label className="flex items-center justify-between text-sm text-text-primary">
-            <span>말풍선 유지 시간</span>
-            <span className="font-semibold text-accent">{(config.messageDuration / 1000).toFixed(1)}초</span>
-          </label>
-          <input
-            type="range"
-            min={1000}
-            max={10000}
-            step={500}
-            value={config.messageDuration}
-            onChange={(e) => onChange({ messageDuration: Number(e.target.value) })}
-            className="mt-2 w-full accent-[var(--accent)]"
-          />
-          <div className="mt-1 flex justify-between text-xs text-text-secondary">
-            <span>1초</span><span>10초</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
