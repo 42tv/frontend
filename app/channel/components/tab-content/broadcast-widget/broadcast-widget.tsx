@@ -146,16 +146,31 @@ function ChatPreview({ style }: { style: WidgetChatStyle }) {
     return (
       <div className="absolute right-4 top-16 w-[260px] space-y-2">
         {[
-          ["42lover", "오늘 텐션 좋네요"],
-          ["minji_7", "팬미팅 후기 풀어주세요"],
-          ["boraTV", "배경음 너무 잘 어울려요"],
-        ].map(([user, message]) => (
+          ["42lover", "오늘 텐션 좋네요", "#ffb18d", "A"],
+          ["minji_7", "팬미팅 후기 풀어주세요", "#7dd3fc", "S"],
+          ["boraTV", "배경음 너무 잘 어울려요", "#86efac", "B"],
+        ].map(([user, message, color, grade]) => (
           <div
             key={user}
-            className="rounded-xl border border-white/10 bg-black/55 px-3 py-2 backdrop-blur-sm"
+            className="relative flex items-stretch overflow-hidden rounded-lg backdrop-blur-md"
+            style={{
+              background: 'linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(15,15,25,0.75) 100%)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
           >
-            <div className="text-xs font-semibold text-[#ffb18d]">{user}</div>
-            <div className="mt-1 text-sm text-white">{message}</div>
+            <div className="w-[3px] flex-shrink-0 rounded-l-lg" style={{ background: `linear-gradient(180deg, ${color}cc 0%, ${color}55 100%)` }} />
+            <div className="flex-1 px-3 py-2">
+              <div className="flex items-center gap-1.5">
+                <div
+                  className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0"
+                  style={{ backgroundColor: color }}
+                >
+                  {grade}
+                </div>
+                <span className="text-xs font-bold" style={{ color }}>{user}</span>
+              </div>
+              <div className="mt-1 text-sm text-white/90">{message}</div>
+            </div>
           </div>
         ))}
       </div>
