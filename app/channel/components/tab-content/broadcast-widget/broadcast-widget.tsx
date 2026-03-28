@@ -63,7 +63,7 @@ const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
   goalAmount: null,
   goalLabel: null,
   bgOpacity: 55,
-  fontSize: 'sm',
+  fontSize: 14,
   animationType: 'slide',
   soundEnabled: false,
 };
@@ -546,10 +546,10 @@ export default function BroadcastWidget() {
     });
   }
 
-  const selectedChatOption = chatOptions.find((o) => o.id === chatConfig.style) ?? chatOptions[0];
-  const selectedSupportOption = supportOptions.find((o) => o.id === donationConfig.style) ?? supportOptions[0];
-  const activeOption = activeTab === "chat" ? selectedChatOption : selectedSupportOption;
   const activeTabMeta = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
+  const activeOption = activeTab === "chat"
+    ? (chatOptions.find((o) => o.id === chatConfig.style) ?? chatOptions[0])
+    : (supportOptions.find((o) => o.id === donationConfig.style) ?? supportOptions[0]);
 
   return (
     <div className="rounded-lg border border-border-primary bg-background p-6">
@@ -593,7 +593,7 @@ export default function BroadcastWidget() {
         </div>
 
         <div className="mt-6 grid gap-6 xl:grid-cols-3">
-          <div className="space-y-6 xl:col-span-2">
+          <div className="space-y-6 xl:col-span-1">
             {/* 스타일 선택 */}
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
               <SectionTitle
@@ -608,7 +608,7 @@ export default function BroadcastWidget() {
                     return (
                       <label
                         key={option.id}
-                        className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors ${
+                        className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors ${
                           checked
                             ? "border-accent bg-background"
                             : "border-border-primary bg-background hover:border-accent"
@@ -619,18 +619,14 @@ export default function BroadcastWidget() {
                           name="chat-widget-style"
                           checked={checked}
                           onChange={() => setChatConfig((prev) => ({ ...prev, style: option.id }))}
-                          className="mt-1 h-4 w-4"
+                          className="h-4 w-4 flex-shrink-0"
                           style={{ accentColor: "var(--accent)" }}
                         />
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <div className="font-semibold text-text-primary">{option.name}</div>
-                            <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
-                              {option.badge}
-                            </span>
-                          </div>
-                          <p className="mt-2 text-sm leading-6 text-text-secondary">{option.description}</p>
-                          <div className="mt-3 text-xs text-text-secondary">권장 상황: {option.useCase}</div>
+                        <div className="flex flex-1 items-center gap-2">
+                          <div className="font-semibold text-text-primary">{option.name}</div>
+                          <span className="rounded-full bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
+                            {option.badge}
+                          </span>
                         </div>
                       </label>
                     );
@@ -643,7 +639,7 @@ export default function BroadcastWidget() {
                     return (
                       <label
                         key={option.id}
-                        className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors ${
+                        className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors ${
                           checked
                             ? "border-accent bg-background"
                             : "border-border-primary bg-background hover:border-accent"
@@ -654,18 +650,14 @@ export default function BroadcastWidget() {
                           name="support-widget-style"
                           checked={checked}
                           onChange={() => setDonationConfig((prev) => ({ ...prev, style: option.id }))}
-                          className="mt-1 h-4 w-4"
+                          className="h-4 w-4 flex-shrink-0"
                           style={{ accentColor: "var(--accent)" }}
                         />
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <div className="font-semibold text-text-primary">{option.name}</div>
-                            <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-xs text-text-secondary">
-                              {option.badge}
-                            </span>
-                          </div>
-                          <p className="mt-2 text-sm leading-6 text-text-secondary">{option.description}</p>
-                          <div className="mt-3 text-xs text-text-secondary">권장 상황: {option.useCase}</div>
+                        <div className="flex flex-1 items-center gap-2">
+                          <div className="font-semibold text-text-primary">{option.name}</div>
+                          <span className="rounded-full bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
+                            {option.badge}
+                          </span>
                         </div>
                       </label>
                     );
@@ -707,30 +699,13 @@ export default function BroadcastWidget() {
               </div>
             </section>
 
-            {/* 선택 결과 + URL */}
-            <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
-              <SectionTitle
-                title="선택 결과"
-                description="현재 고른 스타일 기준으로 생성될 위젯의 기본 정보를 정리했습니다."
-              />
-
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-xl border border-border-primary bg-background px-4 py-4">
-                  <div className="text-xs text-text-secondary">선택된 UI</div>
-                  <div className="mt-2 font-semibold text-text-primary">{activeOption.name}</div>
-                </div>
-                <div className="rounded-xl border border-border-primary bg-background px-4 py-4">
-                  <div className="text-xs text-text-secondary">권장 크기</div>
-                  <div className="mt-2 font-semibold text-text-primary">{activeOption.size}</div>
-                </div>
-                <div className="rounded-xl border border-border-primary bg-background px-4 py-4">
-                  <div className="text-xs text-text-secondary">권장 위치</div>
-                  <div className="mt-2 font-semibold text-text-primary">{activeOption.position}</div>
-                </div>
-              </div>
-
-              {activeTab === "chat" && (
-                <div className="mt-4 space-y-3">
+            {activeTab === "chat" && (
+              <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
+                <SectionTitle
+                  title="위젯 URL"
+                  description="OBS 브라우저 소스에 아래 URL을 입력하세요."
+                />
+                <div className="space-y-3">
                   <UrlRow
                     label="미리보기 URL"
                     sublabel="(목업 채팅 — 백엔드 연결 불필요)"
@@ -746,11 +721,11 @@ export default function BroadcastWidget() {
                     copied={copied}
                   />
                 </div>
-              )}
-            </section>
+              </section>
+            )}
           </div>
 
-          <aside className="xl:col-span-1">
+          <aside className="xl:col-span-2">
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
               <SectionTitle
                 title="미리보기"
@@ -758,7 +733,7 @@ export default function BroadcastWidget() {
               />
 
               <div className="rounded-2xl border border-border-primary bg-background p-3">
-                <div className="relative h-[420px] overflow-hidden rounded-xl bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
+                <div className="relative h-[600px] overflow-hidden rounded-xl bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_45%)]" />
                   <div className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
                     LIVE PREVIEW
