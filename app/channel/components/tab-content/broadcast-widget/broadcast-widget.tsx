@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   getMyWidgets,
   createWidgetToken,
@@ -44,7 +44,7 @@ type SupportOption = {
 };
 
 const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
-  style: 'compact',
+  style: 'default',
   maxMessages: 5,
   showProfileImage: true,
   fontSize: 14,
@@ -53,7 +53,7 @@ const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
   fontColor: '#ffffff',
   messageDuration: 5000,
   showBadges: true,
-  showUserId: false,
+  showUserId: true,
 };
 
 const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
@@ -83,7 +83,7 @@ const tabs: TabItem[] = [
 
 const chatOptions: ChatOption[] = [
   {
-    id: "compact",
+    id: "default",
     name: "기본 카드",
     badge: "기본형",
     description: "작은 채팅 박스를 여러 줄로 쌓아 방송 화면을 많이 가리지 않습니다.",
@@ -141,80 +141,146 @@ function SectionTitle({ title, description }: { title: string; description: stri
   );
 }
 
-function ChatPreview({ style }: { style: WidgetChatStyle }) {
-  if (style === "compact") {
-    return (
-      <div className="absolute right-4 top-16 w-[260px] space-y-2">
-        {[
-          ["42lover", "오늘 텐션 좋네요", "#ffb18d", "A"],
-          ["minji_7", "팬미팅 후기 풀어주세요", "#7dd3fc", "S"],
-          ["boraTV", "배경음 너무 잘 어울려요", "#86efac", "B"],
-        ].map(([user, message, color, grade]) => (
-          <div
-            key={user}
-            className="relative flex items-stretch overflow-hidden rounded-lg backdrop-blur-md"
-            style={{
-              background: 'linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(15,15,25,0.75) 100%)',
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}
-          >
-            <div className="w-[3px] flex-shrink-0 rounded-l-lg" style={{ background: `linear-gradient(180deg, ${color}cc 0%, ${color}55 100%)` }} />
-            <div className="flex-1 px-3 py-2">
-              <div className="flex items-center gap-1.5">
+type CompactMsg = { id: number; user: string; message: string; color: string; grade: string };
+type GradientMsg = { id: number; user: string; message: string; color: string };
+
+const COMPACT_MOCK: Omit<CompactMsg, 'id'>[] = [
+  { user: "42lover",      message: "오늘 텐션 좋네요",               color: "#ffb18d", grade: "A" },
+  { user: "minji_7",      message: "팬미팅 후기 풀어주세요",          color: "#7dd3fc", grade: "S" },
+  { user: "boraTV",       message: "배경음 너무 잘 어울려요",          color: "#86efac", grade: "B" },
+  { user: "star_chaser",  message: "방금 클립 저장했어요",             color: "#c4b5fd", grade: "A" },
+  { user: "coolDude99",   message: "진짜 미쳤다 이 장면",             color: "#fda4af", grade: "B" },
+  { user: "jelly_2030",   message: "구독하고 왔어요!",                color: "#fdba74", grade: "S" },
+  { user: "nana_watch",   message: "오늘도 화이팅!!",                 color: "#67e8f9", grade: "A" },
+  { user: "dream_boy",    message: "처음 왔는데 분위기 최고",          color: "#a3e635", grade: "B" },
+  { user: "sunflower_k",  message: "방송 시작하자마자 들어왔어요",     color: "#f0abfc", grade: "S" },
+  { user: "max_gamer",    message: "이 BGM 제목이 뭐예요?",           color: "#fb923c", grade: "A" },
+  { user: "hazel_r",      message: "리액션 너무 웃겨 ㅋㅋㅋ",         color: "#34d399", grade: "B" },
+  { user: "pixel_bro",    message: "오늘 방송 진짜 길게 하죠?",        color: "#60a5fa", grade: "A" },
+];
+
+const GRADIENT_MOCK: Omit<GradientMsg, 'id'>[] = [
+  { user: "루나",        message: "오늘 방송 너무 재밌어요!",          color: "#ff7a45" },
+  { user: "게이머X",     message: "이 플레이 어떻게 한 거예요?",        color: "#8b5cf6" },
+  { user: "별빛고양이",  message: "방금 들어왔는데 분위기 좋다~",        color: "#ec4899" },
+  { user: "달빛소나타",  message: "목소리가 진짜 좋으세요",             color: "#06b6d4" },
+  { user: "초코파이77",  message: "오늘 컨셉 너무 귀여워요",            color: "#f59e0b" },
+  { user: "sora_k",     message: "친구한테 방송 알렸어요",             color: "#10b981" },
+  { user: "하늘바라기",  message: "같이 응원합니다!",                  color: "#3b82f6" },
+  { user: "rainbow_j",  message: "매일 보러 오는 사람",               color: "#a855f7" },
+  { user: "도리토스",    message: "다음 방송은 언제예요?",              color: "#ef4444" },
+  { user: "봄날의꿈",   message: "오늘도 행복하게 보고 갑니다",         color: "#14b8a6" },
+  { user: "night_owl",  message: "이 노래 제목 뭐예요?",              color: "#f97316" },
+  { user: "cutefish",   message: "처음 왔는데 이미 팬됐어요",          color: "#84cc16" },
+];
+
+const PREVIEW_INTERVAL = 1600;
+const MAX_VISIBLE = 6;
+
+function ChatPreview({ style, fontSize }: { style: WidgetChatStyle; fontSize: number }) {
+  const isDefault = style === "default";
+  const mockData = isDefault ? COMPACT_MOCK : GRADIENT_MOCK;
+
+  const [msgs, setMsgs] = useState<(CompactMsg | GradientMsg)[]>(() =>
+    mockData.slice(0, 3).map((m, i) => ({ ...m, id: i }))
+  );
+  const counterRef = useRef(mockData.length);
+  const idxRef = useRef(3);
+
+  useEffect(() => {
+    const data = isDefault ? COMPACT_MOCK : GRADIENT_MOCK;
+    setMsgs(data.slice(0, 3).map((m, i) => ({ ...m, id: i })));
+    counterRef.current = data.length;
+    idxRef.current = 3;
+
+    const timer = setInterval(() => {
+      const next = { ...data[idxRef.current % data.length], id: counterRef.current };
+      counterRef.current++;
+      idxRef.current++;
+      setMsgs((prev) => {
+        const updated = [...prev, next];
+        return updated.length > MAX_VISIBLE ? updated.slice(1) : updated;
+      });
+    }, PREVIEW_INTERVAL);
+
+    return () => clearInterval(timer);
+  }, [isDefault]);
+
+  return (
+    <>
+      <style>{`
+        @keyframes msgSlideIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
+      {/* 방송 화면 레이아웃 */}
+      <div className="absolute inset-0 flex flex-col">
+
+        {/* 방송 화면 영역 (빈 공간) */}
+        <div className="flex-1" />
+
+        {/* 채팅 목록 — 하단 정렬 */}
+        <div className="px-3 pb-4 space-y-1.5">
+          {style === "default"
+            ? (msgs as CompactMsg[]).map((msg, i) => (
                 <div
-                  className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0"
-                  style={{ backgroundColor: color }}
+                  key={msg.id}
+                  className="relative flex items-stretch overflow-hidden rounded-lg backdrop-blur-md"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(15,15,25,0.75) 100%)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    animation: i === msgs.length - 1 ? 'msgSlideIn 0.35s ease-out' : undefined,
+                  }}
                 >
-                  {grade}
+                  <div
+                    className="w-[3px] flex-shrink-0 rounded-l-lg"
+                    style={{ background: `linear-gradient(180deg, ${msg.color}cc 0%, ${msg.color}55 100%)` }}
+                  />
+                  <div className="flex-1 px-3 py-2">
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0"
+                        style={{ backgroundColor: msg.color }}
+                      >
+                        {msg.grade}
+                      </div>
+                      <span className="text-xs font-bold" style={{ color: msg.color }}>{msg.user}</span>
+                    </div>
+                    <div className="mt-1 text-white/90" style={{ fontSize: `${fontSize}px` }}>{msg.message}</div>
+                  </div>
                 </div>
-                <span className="text-xs font-bold" style={{ color }}>{user}</span>
-              </div>
-              <div className="mt-1 text-sm text-white/90">{message}</div>
-            </div>
-          </div>
-        ))}
+              ))
+            : (msgs as GradientMsg[]).map((msg, i) => (
+                <div
+                  key={msg.id}
+                  className="rounded-xl px-3 py-2"
+                  style={{
+                    background: `linear-gradient(135deg, ${msg.color}30 0%, ${msg.color}0a 100%)`,
+                    border: `1px solid ${msg.color}44`,
+                    boxShadow: `0 4px 16px ${msg.color}14`,
+                    animation: i === msgs.length - 1 ? 'msgSlideIn 0.35s ease-out' : undefined,
+                  }}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <div className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ backgroundColor: msg.color }} />
+                    <div className="text-xs font-bold" style={{ color: msg.color }}>{msg.user}</div>
+                  </div>
+                  <div className="text-white/90" style={{ fontSize: `${fontSize}px` }}>{msg.message}</div>
+                </div>
+              ))
+          }
+        </div>
       </div>
-    );
-  }
-
-  if (style === "gradient") {
-    return (
-      <div className="absolute right-4 top-16 w-[240px] space-y-2">
-        {[
-          ["루나", "오늘 방송 너무 재밌어요!", "#ff7a45"],
-          ["게이머X", "이 플레이 어떻게 한 거예요?", "#8b5cf6"],
-          ["별빛고양이", "방금 들어왔는데 분위기 좋다~", "#ec4899"],
-        ].map(([user, message, color]) => (
-          <div
-            key={user}
-            className="rounded-xl px-3 py-2"
-            style={{
-              background: `linear-gradient(135deg, ${color}30 0%, ${color}0a 100%)`,
-              border: `1px solid ${color}44`,
-              boxShadow: `0 4px 16px ${color}14`,
-            }}
-          >
-            <div className="flex items-center gap-1.5 mb-1">
-              <div
-                className="w-3.5 h-3.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: color }}
-              />
-              <div className="text-xs font-bold" style={{ color }}>{user}</div>
-            </div>
-            <div className="text-xs text-white/90">{message}</div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return null;
+    </>
+  );
 }
 
 function SupportPreview({ style }: { style: WidgetDonationStyle }) {
   if (style === "banner") {
     return (
-      <div className="absolute left-1/2 top-16 w-[calc(100%-32px)] max-w-[720px] -translate-x-1/2 rounded-2xl border border-[#ff8c5c] bg-[#3b1e14] px-5 py-4 shadow-xl">
+      <div className="absolute left-1/2 top-4 w-[calc(100%-32px)] max-w-[720px] -translate-x-1/2 rounded-2xl border border-[#ff8c5c] bg-[#3b1e14] px-5 py-4 shadow-xl">
         <div className="flex items-center justify-between gap-4">
           <div>
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#ffb18d]">
@@ -547,9 +613,6 @@ export default function BroadcastWidget() {
   }
 
   const activeTabMeta = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
-  const activeOption = activeTab === "chat"
-    ? (chatOptions.find((o) => o.id === chatConfig.style) ?? chatOptions[0])
-    : (supportOptions.find((o) => o.id === donationConfig.style) ?? supportOptions[0]);
 
   return (
     <div className="rounded-lg border border-border-primary bg-background p-6">
@@ -597,7 +660,7 @@ export default function BroadcastWidget() {
             {/* 스타일 선택 */}
             <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
               <SectionTitle
-                title={`${activeTabMeta.label} UI 선택`}
+                title={`${activeTabMeta.label} 위젯 스타일`}
                 description="원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
               />
 
@@ -733,26 +796,14 @@ export default function BroadcastWidget() {
               />
 
               <div className="rounded-2xl border border-border-primary bg-background p-3">
-                <div className="relative h-[600px] overflow-hidden rounded-xl bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
+                <div className="relative h-[480px] overflow-hidden rounded-xl bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_45%)]" />
-                  <div className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
-                    LIVE PREVIEW
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black/70 to-transparent" />
 
                   {activeTab === "chat" ? (
-                    <ChatPreview style={chatConfig.style} />
+                    <ChatPreview style={chatConfig.style} fontSize={chatConfig.fontSize} />
                   ) : (
                     <SupportPreview style={donationConfig.style} />
                   )}
-
-                  <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/10 bg-black/45 px-4 py-3 backdrop-blur-sm">
-                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-white/60">
-                      Selected Widget
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-white">{activeOption.name}</div>
-                    <div className="mt-1 text-xs leading-5 text-white/70">{activeOption.description}</div>
-                  </div>
                 </div>
               </div>
             </section>
