@@ -11,17 +11,9 @@ export interface ChatCardProps {
   style: WidgetChatStyle;
 }
 
-const fontSizeClass: Record<WidgetFontSize, string> = {
-  sm: 'text-sm',
-  md: 'text-base',
-  lg: 'text-lg',
-};
-
-const nicknameFontSizeClass: Record<WidgetFontSize, string> = {
-  sm: 'text-xs',
-  md: 'text-sm',
-  lg: 'text-base',
-};
+function getNicknameFontSize(fontSize: WidgetFontSize): number {
+  return Math.max(10, fontSize - 2);
+}
 
 function getBadgeLabel(message: ChatMessage): string {
   if (message.role === 'broadcaster') return 'BJ';
@@ -76,14 +68,14 @@ function CompactCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps
             </div>
           )}
           <span
-            className={`font-bold ${nicknameFontSizeClass[fontSize]} leading-none`}
-            style={{ color: accentColor }}
+            className="font-bold leading-none"
+            style={{ color: accentColor, fontSize: getNicknameFontSize(fontSize) }}
           >
             {message.nickname}
           </span>
           <RoleBadge role={message.role} />
         </div>
-        <div className={`mt-1.5 break-words leading-snug text-white/90 ${fontSizeClass[fontSize]}`}>
+        <div className="mt-1.5 break-words leading-snug text-white/90" style={{ fontSize }}>
           {message.message}
         </div>
       </div>
@@ -114,14 +106,14 @@ function GradientCard({ message, showProfileImage, fontSize }: Omit<ChatCardProp
           </div>
         )}
         <span
-          className={`font-bold ${nicknameFontSizeClass[fontSize]} leading-none`}
-          style={{ color: accentColor }}
+          className="font-bold leading-none"
+          style={{ color: accentColor, fontSize: getNicknameFontSize(fontSize) }}
         >
           {message.nickname}
         </span>
         <RoleBadge role={message.role} />
       </div>
-      <div className={`break-words leading-snug text-white/90 ${fontSizeClass[fontSize]}`}>
+      <div className="break-words leading-snug text-white/90" style={{ fontSize }}>
         {message.message}
       </div>
     </div>

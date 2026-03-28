@@ -47,7 +47,7 @@ const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
   style: 'compact',
   maxMessages: 5,
   showProfileImage: true,
-  fontSize: 'sm',
+  fontSize: 14,
   bgOpacity: 55,
   bgColor: '#000000',
   fontColor: '#ffffff',
@@ -312,47 +312,52 @@ function ChatDetailSettings({
   config: WidgetChatConfig;
   onChange: (patch: Partial<WidgetChatConfig>) => void;
 }) {
+  const [fontInput, setFontInput] = useState(String(config.fontSize));
+
   return (
     <div className="space-y-5">
-      <div>
-        <label className="mb-1.5 block text-sm text-text-primary">폰트 크기 (px)</label>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-text-primary">폰트 크기 (px)</label>
+          <span className="text-xs text-text-secondary">10 ~ 100</span>
+        </div>
         <input
-          type="number"
-          min={10}
-          max={32}
-          value={config.fontSize === 'sm' ? 14 : config.fontSize === 'md' ? 16 : 18}
+          type="text"
+          value={fontInput}
           onChange={(e) => {
-            const v = Number(e.target.value);
-            onChange({ fontSize: v <= 14 ? 'sm' : v <= 16 ? 'md' : 'lg' });
+            const raw = e.target.value;
+            if (!/^\d*$/.test(raw)) return;
+            setFontInput(raw);
+            const v = Number(raw);
+            if (v >= 10 && v <= 100) {
+              onChange({ fontSize: v });
+            }
           }}
-          className="w-full rounded-lg border border-border-primary bg-background px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
+          onBlur={() => {
+            const v = Number(fontInput);
+            if (!fontInput || v < 10 || v > 100) setFontInput(String(config.fontSize));
+          }}
+          className="w-20 rounded-lg border border-border-primary bg-background px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
           placeholder="14"
         />
-        <p className="mt-1 text-xs text-text-secondary">10 ~ 32px 범위로 입력하세요.</p>
       </div>
 
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-text-primary">프로필 이미지 표시</span>
-        <Toggle
-          checked={config.showProfileImage}
-          onChange={(v) => onChange({ showProfileImage: v })}
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-text-primary">아이디 표시</span>
-        <Toggle
-          checked={config.showUserId}
-          onChange={(v) => onChange({ showUserId: v })}
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-text-primary">BJ/MOD 배지 표시</span>
-        <Toggle
-          checked={config.showBadges}
-          onChange={(v) => onChange({ showBadges: v })}
-        />
+      <div className="flex flex-wrap gap-x-5 gap-y-3">
+        {([
+          { key: 'showProfileImage', label: '프로필 이미지 표시', value: config.showProfileImage },
+          { key: 'showUserId',       label: '아이디 표시',         value: config.showUserId },
+          { key: 'showBadges',       label: 'BJ/MOD 배지 표시',   value: config.showBadges },
+        ] as { key: keyof WidgetChatConfig; label: string; value: boolean }[]).map(({ key, label, value }) => (
+          <label key={key} className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              checked={value}
+              onChange={(e) => onChange({ [key]: e.target.checked })}
+              className="h-4 w-4 rounded border-border-primary accent-[var(--accent)] cursor-pointer"
+            />
+            <span className="text-sm text-text-primary">{label}</span>
+          </label>
+        ))}
       </div>
 
     </div>

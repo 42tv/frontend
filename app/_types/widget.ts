@@ -1,6 +1,6 @@
 export type WidgetChatStyle = 'compact' | 'gradient';
 export type WidgetDonationStyle = 'banner' | 'card' | 'goal';
-export type WidgetFontSize = 'sm' | 'md' | 'lg';
+export type WidgetFontSize = number;
 export type WidgetType = 'CHAT' | 'DONATION';
 
 export interface WidgetChatConfig {
