@@ -132,52 +132,49 @@ const supportOptions: SupportOption[] = [
   },
 ];
 
-function SectionTitle({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="mb-4">
-      <h4 className="text-base font-semibold text-text-primary">{title}</h4>
-      <p className="mt-1 text-sm text-text-secondary">{description}</p>
-    </div>
-  );
-}
 
-type CompactMsg = { id: number; user: string; message: string; color: string; grade: string };
-type GradientMsg = { id: number; user: string; message: string; color: string };
+type CompactMsg = { id: number; nickname: string; user: string; message: string; color: string; grade: string };
+type GradientMsg = { id: number; nickname: string; user: string; message: string; color: string };
 
 const COMPACT_MOCK: Omit<CompactMsg, 'id'>[] = [
-  { user: "42lover",      message: "오늘 텐션 좋네요",               color: "#ffb18d", grade: "A" },
-  { user: "minji_7",      message: "팬미팅 후기 풀어주세요",          color: "#7dd3fc", grade: "S" },
-  { user: "boraTV",       message: "배경음 너무 잘 어울려요",          color: "#86efac", grade: "B" },
-  { user: "star_chaser",  message: "방금 클립 저장했어요",             color: "#c4b5fd", grade: "A" },
-  { user: "coolDude99",   message: "진짜 미쳤다 이 장면",             color: "#fda4af", grade: "B" },
-  { user: "jelly_2030",   message: "구독하고 왔어요!",                color: "#fdba74", grade: "S" },
-  { user: "nana_watch",   message: "오늘도 화이팅!!",                 color: "#67e8f9", grade: "A" },
-  { user: "dream_boy",    message: "처음 왔는데 분위기 최고",          color: "#a3e635", grade: "B" },
-  { user: "sunflower_k",  message: "방송 시작하자마자 들어왔어요",     color: "#f0abfc", grade: "S" },
-  { user: "max_gamer",    message: "이 BGM 제목이 뭐예요?",           color: "#fb923c", grade: "A" },
-  { user: "hazel_r",      message: "리액션 너무 웃겨 ㅋㅋㅋ",         color: "#34d399", grade: "B" },
-  { user: "pixel_bro",    message: "오늘 방송 진짜 길게 하죠?",        color: "#60a5fa", grade: "A" },
+  { nickname: "별빛사냥꾼", user: "42lover",      message: "오늘 텐션 좋네요",           color: "#ffb18d", grade: "A" },
+  { nickname: "민지",       user: "minji_7",      message: "팬미팅 후기 풀어주세요",      color: "#7dd3fc", grade: "S" },
+  { nickname: "보라티비",   user: "boraTV",       message: "배경음 너무 잘 어울려요",      color: "#86efac", grade: "B" },
+  { nickname: "별을쫓는자", user: "star_chaser",  message: "방금 클립 저장했어요",         color: "#c4b5fd", grade: "A" },
+  { nickname: "쿨가이",     user: "coolDude99",   message: "진짜 미쳤다 이 장면",         color: "#fda4af", grade: "B" },
+  { nickname: "젤리",       user: "jelly_2030",   message: "구독하고 왔어요!",            color: "#fdba74", grade: "S" },
+  { nickname: "나나",       user: "nana_watch",   message: "오늘도 화이팅!!",             color: "#67e8f9", grade: "A" },
+  { nickname: "드림보이",   user: "dream_boy",    message: "처음 왔는데 분위기 최고",      color: "#a3e635", grade: "B" },
+  { nickname: "해바라기",   user: "sunflower_k",  message: "방송 시작하자마자 들어왔어요", color: "#f0abfc", grade: "S" },
+  { nickname: "맥스",       user: "max_gamer",    message: "이 BGM 제목이 뭐예요?",       color: "#fb923c", grade: "A" },
+  { nickname: "헤이즐",     user: "hazel_r",      message: "리액션 너무 웃겨 ㅋㅋㅋ",     color: "#34d399", grade: "B" },
+  { nickname: "픽셀",       user: "pixel_bro",    message: "오늘 방송 진짜 길게 하죠?",    color: "#60a5fa", grade: "A" },
 ];
 
 const GRADIENT_MOCK: Omit<GradientMsg, 'id'>[] = [
-  { user: "루나",        message: "오늘 방송 너무 재밌어요!",          color: "#ff7a45" },
-  { user: "게이머X",     message: "이 플레이 어떻게 한 거예요?",        color: "#8b5cf6" },
-  { user: "별빛고양이",  message: "방금 들어왔는데 분위기 좋다~",        color: "#ec4899" },
-  { user: "달빛소나타",  message: "목소리가 진짜 좋으세요",             color: "#06b6d4" },
-  { user: "초코파이77",  message: "오늘 컨셉 너무 귀여워요",            color: "#f59e0b" },
-  { user: "sora_k",     message: "친구한테 방송 알렸어요",             color: "#10b981" },
-  { user: "하늘바라기",  message: "같이 응원합니다!",                  color: "#3b82f6" },
-  { user: "rainbow_j",  message: "매일 보러 오는 사람",               color: "#a855f7" },
-  { user: "도리토스",    message: "다음 방송은 언제예요?",              color: "#ef4444" },
-  { user: "봄날의꿈",   message: "오늘도 행복하게 보고 갑니다",         color: "#14b8a6" },
-  { user: "night_owl",  message: "이 노래 제목 뭐예요?",              color: "#f97316" },
-  { user: "cutefish",   message: "처음 왔는데 이미 팬됐어요",          color: "#84cc16" },
+  { nickname: "루나",       user: "luna_42",      message: "오늘 방송 너무 재밌어요!",    color: "#ff7a45" },
+  { nickname: "게이머X",    user: "gamer_x99",    message: "이 플레이 어떻게 한 거예요?", color: "#8b5cf6" },
+  { nickname: "별빛고양이", user: "starcat_k",    message: "분위기 최고예요~",            color: "#ec4899" },
+  { nickname: "달빛소나타", user: "moonsonata",   message: "목소리가 진짜 좋으세요",      color: "#06b6d4" },
+  { nickname: "초코파이",   user: "choco_pie77",  message: "오늘 컨셉 너무 귀여워요",     color: "#f59e0b" },
+  { nickname: "소라",       user: "sora_k",       message: "친구한테 방송 알렸어요",      color: "#10b981" },
+  { nickname: "하늘바라기", user: "sky_watcher",  message: "같이 응원합니다!",            color: "#3b82f6" },
+  { nickname: "레인보우",   user: "rainbow_j",    message: "매일 보러 오는 사람",         color: "#a855f7" },
+  { nickname: "도리토스",   user: "doritos_fan",  message: "다음 방송은 언제예요?",       color: "#ef4444" },
+  { nickname: "봄날",       user: "spring_dream", message: "오늘도 행복하게 보고 갑니다", color: "#14b8a6" },
+  { nickname: "올빼미",     user: "night_owl",    message: "이 노래 제목 뭐예요?",        color: "#f97316" },
+  { nickname: "귀여운물고기", user: "cutefish",   message: "처음 왔는데 이미 팬됐어요",   color: "#84cc16" },
 ];
 
 const PREVIEW_INTERVAL = 1600;
 const MAX_VISIBLE = 6;
 
-function ChatPreview({ style, fontSize }: { style: WidgetChatStyle; fontSize: number }) {
+function ChatPreview({ style, fontSize, showUserId, showProfileImage }: {
+  style: WidgetChatStyle;
+  fontSize: number;
+  showUserId: boolean;
+  showProfileImage: boolean;
+}) {
   const isDefault = style === "default";
   const mockData = isDefault ? COMPACT_MOCK : GRADIENT_MOCK;
 
@@ -215,13 +212,8 @@ function ChatPreview({ style, fontSize }: { style: WidgetChatStyle; fontSize: nu
         }
       `}</style>
 
-      {/* 방송 화면 레이아웃 */}
-      <div className="absolute inset-0 flex flex-col">
-
-        {/* 방송 화면 영역 (빈 공간) */}
-        <div className="flex-1" />
-
-        {/* 채팅 목록 — 하단 정렬 */}
+      {/* 채팅 목록 */}
+      <div className="absolute inset-0 flex flex-col justify-end">
         <div className="px-3 pb-4 space-y-1.5">
           {style === "default"
             ? (msgs as CompactMsg[]).map((msg, i) => (
@@ -240,13 +232,18 @@ function ChatPreview({ style, fontSize }: { style: WidgetChatStyle; fontSize: nu
                   />
                   <div className="flex-1 px-3 py-2">
                     <div className="flex items-center gap-1.5">
-                      <div
-                        className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0"
-                        style={{ backgroundColor: msg.color }}
-                      >
-                        {msg.grade}
-                      </div>
-                      <span className="text-xs font-bold" style={{ color: msg.color }}>{msg.user}</span>
+                      {showProfileImage && (
+                        <div
+                          className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0"
+                          style={{ backgroundColor: msg.color }}
+                        >
+                          {msg.grade}
+                        </div>
+                      )}
+                      <span className="text-xs font-bold" style={{ color: msg.color }}>
+                        {msg.nickname}
+                        {showUserId && <span className="font-normal opacity-50">({msg.user})</span>}
+                      </span>
                     </div>
                     <div className="mt-1 text-white/90" style={{ fontSize: `${fontSize}px` }}>{msg.message}</div>
                   </div>
@@ -264,8 +261,13 @@ function ChatPreview({ style, fontSize }: { style: WidgetChatStyle; fontSize: nu
                   }}
                 >
                   <div className="flex items-center gap-1.5 mb-1">
-                    <div className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ backgroundColor: msg.color }} />
-                    <div className="text-xs font-bold" style={{ color: msg.color }}>{msg.user}</div>
+                    {showProfileImage && (
+                      <div className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ backgroundColor: msg.color }} />
+                    )}
+                    <div className="text-xs font-bold" style={{ color: msg.color }}>
+                      {msg.nickname}
+                      {showUserId && <span className="font-normal opacity-50">({msg.user})</span>}
+                    </div>
                   </div>
                   <div className="text-white/90" style={{ fontSize: `${fontSize}px` }}>{msg.message}</div>
                 </div>
@@ -412,7 +414,6 @@ function ChatDetailSettings({
         {([
           { key: 'showProfileImage', label: '프로필 이미지 표시', value: config.showProfileImage },
           { key: 'showUserId',       label: '아이디 표시',         value: config.showUserId },
-          { key: 'showBadges',       label: 'BJ/MOD 배지 표시',   value: config.showBadges },
         ] as { key: keyof WidgetChatConfig; label: string; value: boolean }[]).map(({ key, label, value }) => (
           <label key={key} className="flex cursor-pointer items-center gap-2">
             <input
@@ -612,26 +613,20 @@ export default function BroadcastWidget() {
     });
   }
 
-  const activeTabMeta = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
-
   return (
-    <div className="rounded-lg border border-border-primary bg-background p-6">
-      <div className="border-b border-border-primary pb-6">
-        <div className="mb-3 inline-flex items-center rounded-full border border-border-primary bg-bg-secondary px-3 py-1 text-xs font-medium text-text-secondary">
-          위젯 스타일 선택
+    <div className="space-y-6">
+      {/* 헤더 */}
+      <div className="flex items-end justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-text-primary">방송 위젯</h3>
+          <p className="mt-1 text-sm text-text-secondary">
+            채팅·후원 위젯의 스타일과 세부 옵션을 설정하고 OBS 소스 URL을 복사합니다.
+          </p>
         </div>
-        <h3 className="text-2xl font-bold text-text-primary">방송 위젯</h3>
-        <p className="mt-2 max-w-3xl text-sm text-text-secondary">
-          채팅과 후원 위젯을 탭으로 나눠두고, 각 탭에서 원하는 UI 형태를 라디오
-          버튼으로 고르면 미리보기에서 바로 확인할 수 있게 구성했습니다.
-        </p>
-      </div>
-
-      <div className="mt-6">
+        {/* 탭 */}
         <div
           role="tablist"
-          aria-label="방송 위젯 종류"
-          className="flex w-full gap-2 overflow-x-auto rounded-xl border border-border-primary bg-bg-secondary p-1"
+          className="flex items-center gap-1 rounded-xl border border-border-primary bg-bg-secondary p-1"
         >
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -642,173 +637,154 @@ export default function BroadcastWidget() {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveTab(tab.id)}
-                className={`min-w-[140px] rounded-lg px-4 py-3 text-left transition-colors ${
+                className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
                   isActive
                     ? "bg-background text-text-primary shadow-sm"
-                    : "text-text-secondary hover:bg-background hover:text-text-primary"
+                    : "text-text-secondary hover:text-text-primary"
                 }`}
               >
-                <div className="font-semibold">{tab.label}</div>
-                <div className="mt-1 text-xs">{tab.description}</div>
+                {tab.label}
               </button>
             );
           })}
         </div>
+      </div>
 
-        <div className="mt-6 grid gap-6 xl:grid-cols-3">
-          <div className="space-y-6 xl:col-span-1">
-            {/* 스타일 선택 */}
-            <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
-              <SectionTitle
-                title={`${activeTabMeta.label} 위젯 스타일`}
-                description="원하는 스타일을 하나 선택하면 우측 미리보기에 즉시 반영됩니다."
+      {/* 본문 */}
+      <div className="grid gap-6 xl:grid-cols-5">
+
+        {/* 좌측 설정 패널 */}
+        <div className="xl:col-span-2 space-y-3">
+
+          {/* 스타일 선택 */}
+          <div className="rounded-xl border border-border-primary bg-bg-secondary p-4">
+            <p className="mb-3 text-xs font-semibold text-text-primary">
+              스타일
+            </p>
+            <div className="space-y-2">
+              {(activeTab === "chat" ? chatOptions : supportOptions).map((option) => {
+                const checked =
+                  activeTab === "chat"
+                    ? chatConfig.style === (option as ChatOption).id
+                    : donationConfig.style === (option as SupportOption).id;
+                return (
+                  <label
+                    key={option.id}
+                    className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition-all ${
+                      checked
+                        ? "border-accent bg-background shadow-sm"
+                        : "border-border-primary bg-background hover:border-accent/50"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={activeTab === "chat" ? "chat-widget-style" : "support-widget-style"}
+                      checked={checked}
+                      onChange={() =>
+                        activeTab === "chat"
+                          ? setChatConfig((prev) => ({ ...prev, style: (option as ChatOption).id }))
+                          : setDonationConfig((prev) => ({ ...prev, style: (option as SupportOption).id }))
+                      }
+                      className="h-3.5 w-3.5 flex-shrink-0"
+                      style={{ accentColor: "var(--accent)" }}
+                    />
+                    <span className="text-sm font-medium text-text-primary">{option.name}</span>
+                    <span className="ml-auto rounded-full bg-bg-tertiary px-2 py-0.5 text-[10px] text-text-secondary">
+                      {option.badge}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 세부 설정 */}
+          <div className="rounded-xl border border-border-primary bg-bg-secondary p-4">
+            <p className="mb-4 text-xs font-semibold text-text-primary">
+              세부 설정
+            </p>
+            {activeTab === 'chat' ? (
+              <ChatDetailSettings
+                config={chatConfig}
+                onChange={(patch) => setChatConfig((prev) => ({ ...prev, ...patch }))}
               />
-
-              {activeTab === "chat" ? (
-                <div className="space-y-3">
-                  {chatOptions.map((option) => {
-                    const checked = chatConfig.style === option.id;
-                    return (
-                      <label
-                        key={option.id}
-                        className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors ${
-                          checked
-                            ? "border-accent bg-background"
-                            : "border-border-primary bg-background hover:border-accent"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="chat-widget-style"
-                          checked={checked}
-                          onChange={() => setChatConfig((prev) => ({ ...prev, style: option.id }))}
-                          className="h-4 w-4 flex-shrink-0"
-                          style={{ accentColor: "var(--accent)" }}
-                        />
-                        <div className="flex flex-1 items-center gap-2">
-                          <div className="font-semibold text-text-primary">{option.name}</div>
-                          <span className="rounded-full bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
-                            {option.badge}
-                          </span>
-                        </div>
-                      </label>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {supportOptions.map((option) => {
-                    const checked = donationConfig.style === option.id;
-                    return (
-                      <label
-                        key={option.id}
-                        className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors ${
-                          checked
-                            ? "border-accent bg-background"
-                            : "border-border-primary bg-background hover:border-accent"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="support-widget-style"
-                          checked={checked}
-                          onChange={() => setDonationConfig((prev) => ({ ...prev, style: option.id }))}
-                          className="h-4 w-4 flex-shrink-0"
-                          style={{ accentColor: "var(--accent)" }}
-                        />
-                        <div className="flex flex-1 items-center gap-2">
-                          <div className="font-semibold text-text-primary">{option.name}</div>
-                          <span className="rounded-full bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
-                            {option.badge}
-                          </span>
-                        </div>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            {/* 세부 설정 */}
-            <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
-              <SectionTitle
-                title="세부 설정"
-                description="위젯 표시 방식을 세밀하게 조정합니다."
+            ) : (
+              <DonationDetailSettings
+                config={donationConfig}
+                onChange={(patch) => setDonationConfig((prev) => ({ ...prev, ...patch }))}
               />
-              {activeTab === 'chat' ? (
-                <ChatDetailSettings
-                  config={chatConfig}
-                  onChange={(patch) => setChatConfig((prev) => ({ ...prev, ...patch }))}
-                />
-              ) : (
-                <DonationDetailSettings
-                  config={donationConfig}
-                  onChange={(patch) => setDonationConfig((prev) => ({ ...prev, ...patch }))}
-                />
-              )}
-
-              <div className="mt-6 flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={isSaving || isLoading}
-                  className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSaving ? '저장 중...' : '저장'}
-                </button>
-                {saveSuccess && (
-                  <span className="text-sm font-medium text-green-500">저장됐습니다 ✓</span>
-                )}
-              </div>
-            </section>
-
-            {activeTab === "chat" && (
-              <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
-                <SectionTitle
-                  title="위젯 URL"
-                  description="OBS 브라우저 소스에 아래 URL을 입력하세요."
-                />
-                <div className="space-y-3">
-                  <UrlRow
-                    label="미리보기 URL"
-                    sublabel="(목업 채팅 — 백엔드 연결 불필요)"
-                    url={chatToken?.previewUrl ?? null}
-                    onCopy={handleCopyDevUrl}
-                    copied={copiedDev}
-                  />
-                  <UrlRow
-                    label="OBS 브라우저 소스 URL"
-                    sublabel="(실제 방송용)"
-                    url={chatToken?.widgetUrl ?? null}
-                    onCopy={handleCopyUrl}
-                    copied={copied}
-                  />
-                </div>
-              </section>
             )}
           </div>
 
-          <aside className="xl:col-span-2">
-            <section className="rounded-lg border border-border-primary bg-bg-secondary p-5">
-              <SectionTitle
-                title="미리보기"
-                description="선택한 채팅 또는 후원 UI가 방송 화면에 배치되는 형태를 보여줍니다."
-              />
+          {/* 저장 */}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isSaving || isLoading}
+              className="rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isSaving ? '저장 중...' : '저장'}
+            </button>
+            {saveSuccess && (
+              <span className="text-sm font-medium text-green-500">저장됐습니다 ✓</span>
+            )}
+          </div>
 
-              <div className="rounded-2xl border border-border-primary bg-background p-3">
-                <div className="relative h-[480px] overflow-hidden rounded-xl bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_45%)]" />
+        </div>
 
+        {/* 우측 미리보기 */}
+        <aside className="xl:col-span-3">
+          <div className="sticky top-4 space-y-3">
+            <div className="rounded-xl border border-border-primary bg-bg-secondary p-4">
+              <div className="mb-3">
+                <p className="text-xs font-semibold text-text-primary">
+                  미리보기
+                </p>
+              </div>
+              <div className="rounded-xl border border-border-primary overflow-hidden">
+                <div className="relative h-[420px] bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.10),_transparent_50%)]" />
                   {activeTab === "chat" ? (
-                    <ChatPreview style={chatConfig.style} fontSize={chatConfig.fontSize} />
+                    <ChatPreview
+                      key={chatConfig.style}
+                      style={chatConfig.style}
+                      fontSize={chatConfig.fontSize}
+                      showUserId={chatConfig.showUserId}
+                      showProfileImage={chatConfig.showProfileImage}
+                    />
                   ) : (
-                    <SupportPreview style={donationConfig.style} />
+                    <SupportPreview key={donationConfig.style} style={donationConfig.style} />
                   )}
                 </div>
               </div>
-            </section>
-          </aside>
-        </div>
+            </div>
+
+            {/* OBS URL */}
+            {activeTab === "chat" && (
+              <div className="rounded-xl border border-border-primary bg-bg-secondary px-4 py-3 space-y-2">
+                <p className="text-[10px] font-semibold text-text-primary">
+                  OBS URL
+                </p>
+                <UrlRow
+                  label="미리보기 URL"
+                  sublabel="(목업 채팅)"
+                  url={chatToken?.previewUrl ?? null}
+                  onCopy={handleCopyDevUrl}
+                  copied={copiedDev}
+                />
+                <UrlRow
+                  label="브라우저 소스 URL"
+                  sublabel="(실제 방송용)"
+                  url={chatToken?.widgetUrl ?? null}
+                  onCopy={handleCopyUrl}
+                  copied={copied}
+                />
+              </div>
+            )}
+          </div>
+        </aside>
+
       </div>
     </div>
   );
