@@ -26,10 +26,10 @@ export async function createWidgetToken(widgetType: 'CHAT' | 'DONATION'): Promis
   return res.data;
 }
 
-export async function updateChatConfig(token: string, config: WidgetChatConfig): Promise<void> {
-  await axiosInstance.put(`/api/widget/${token}/chat-config`, config);
+export async function updateChatConfig(config: WidgetChatConfig): Promise<void> {
+  await axiosInstance.put('/api/widget/chat-config', config);
 }
 
-export async function updateDonationConfig(token: string, config: WidgetDonationConfig): Promise<void> {
-  await axiosInstance.put(`/api/widget/${token}/donation-config`, config);
+export async function updateDonationConfig(config: WidgetDonationConfig): Promise<void> {
+  await axiosInstance.put('/api/widget/donation-config', config);
 }

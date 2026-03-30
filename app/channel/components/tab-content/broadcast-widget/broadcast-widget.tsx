@@ -579,9 +579,9 @@ export default function BroadcastWidget() {
     setIsSaving(true);
     try {
       if (activeTab === 'chat' && chatToken) {
-        await updateChatConfig(chatToken.token, chatConfig);
+        await updateChatConfig(chatConfig);
       } else if (activeTab === 'support' && donationToken) {
-        await updateDonationConfig(donationToken.token, donationConfig);
+        await updateDonationConfig(donationConfig);
       }
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2000);
