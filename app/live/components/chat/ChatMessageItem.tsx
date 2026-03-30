@@ -20,7 +20,7 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, onChatClick,
                 <ChatCard
                     message={message}
                     showProfileImage={true}
-                    fontSize="sm"
+                    fontSize={14}
                     style={chatStyle}
                 />
             </div>
