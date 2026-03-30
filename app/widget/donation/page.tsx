@@ -16,7 +16,7 @@ const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
   goalAmount: null,
   goalLabel: null,
   bgOpacity: 55,
-  fontSize: 'sm',
+  fontSize: 14,
   animationType: 'slide',
   soundEnabled: false,
 };

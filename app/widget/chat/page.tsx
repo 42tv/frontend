@@ -13,11 +13,6 @@ const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
   maxMessages: 5,
   showProfileImage: true,
   fontSize: 14,
-  bgOpacity: 55,
-  bgColor: '#000000',
-  fontColor: '#ffffff',
-  messageDuration: 5000,
-  showBadges: true,
   showUserId: false,
 };
 
