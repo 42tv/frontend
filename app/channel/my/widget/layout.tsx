@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 
 const subNav = [
   { label: "채팅", href: "/channel/my/widget/chatbox" },
-  { label: "후원", href: "/channel/my/widget/donation" },
+  { label: "후원목표", href: "/channel/my/widget/goal" },
+  { label: "후원 순위", href: "/channel/my/widget/ranking" },
 ];
 
 export default function WidgetLayout({ children }: { children: React.ReactNode }) {

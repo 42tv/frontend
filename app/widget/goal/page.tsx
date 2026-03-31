@@ -1,6 +1,6 @@
-import { WidgetDonationConfig } from '@/app/_types/widget';
+import { WidgetGoalConfig } from '@/app/_types/widget';
 import { getWidgetConfig } from '@/app/_apis/widget';
-import WidgetDonationClient from './_components/WidgetDonationClient';
+import WidgetGoalClient from './_components/WidgetGoalClient';
 
 interface PageProps {
   searchParams: Promise<{
@@ -9,19 +9,16 @@ interface PageProps {
   }>;
 }
 
-const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
-  style: 'banner',
-  minDisplayAmount: 0,
-  displayDuration: 5000,
+const DEFAULT_GOAL_CONFIG: WidgetGoalConfig = {
+  style: 'goal_bar',
   goalAmount: null,
   goalLabel: null,
   bgOpacity: 55,
   fontSize: 14,
   animationType: 'slide',
-  soundEnabled: false,
 };
 
-export default async function WidgetDonationPage({ searchParams }: PageProps) {
+export default async function WidgetGoalPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const token = params.token;
   const isDev = params.dev === 'true';
@@ -34,7 +31,7 @@ export default async function WidgetDonationPage({ searchParams }: PageProps) {
           URL에 <code className="rounded bg-white/10 px-1">token</code> 파라미터가 필요합니다.
         </div>
         <div className="mt-2 text-xs text-white/50">
-          예시: /widget/donation?token=01ARZ3NDEKTSV4RRFFQ69G5FAV
+          예시: /widget/goal?token=01ARZ3NDEKTSV4RRFFQ69G5FAV
         </div>
       </div>
     );
@@ -51,7 +48,7 @@ export default async function WidgetDonationPage({ searchParams }: PageProps) {
     );
   }
 
-  const donationConfig = widgetData.donationConfig ?? DEFAULT_DONATION_CONFIG;
+  const goalConfig = (widgetData.config as WidgetGoalConfig) ?? DEFAULT_GOAL_CONFIG;
 
-  return <WidgetDonationClient token={token} donationConfig={donationConfig} isDev={isDev} />;
+  return <WidgetGoalClient token={token} goalConfig={goalConfig} isDev={isDev} />;
 }

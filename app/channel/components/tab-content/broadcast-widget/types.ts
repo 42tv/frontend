@@ -1,4 +1,4 @@
-import { WidgetChatStyle, WidgetDonationStyle } from "@/app/_types/widget";
+import { WidgetChatStyle, WidgetGoalStyle } from "@/app/_types/widget";
 
 export type ChatOption = {
   id: WidgetChatStyle;
@@ -11,7 +11,7 @@ export type ChatOption = {
 };
 
 export type SupportOption = {
-  id: WidgetDonationStyle;
+  id: WidgetGoalStyle;
   name: string;
   badge: string;
   description: string;

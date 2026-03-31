@@ -1,4 +1,4 @@
-import { WidgetChatConfig, WidgetDonationConfig } from "@/app/_types/widget";
+import { WidgetChatConfig, WidgetGoalConfig } from "@/app/_types/widget";
 import { ChatOption, SupportOption, CompactMsg, GradientMsg } from "./types";
 
 export const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
@@ -9,16 +9,13 @@ export const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
   showUserId: true,
 };
 
-export const DEFAULT_DONATION_CONFIG: WidgetDonationConfig = {
-  style: 'banner',
-  minDisplayAmount: 0,
-  displayDuration: 5000,
+export const DEFAULT_GOAL_CONFIG: WidgetGoalConfig = {
+  style: 'goal_bar',
   goalAmount: null,
   goalLabel: null,
   bgOpacity: 55,
   fontSize: 14,
   animationType: 'slide',
-  soundEnabled: false,
 };
 
 
@@ -45,31 +42,31 @@ export const chatOptions: ChatOption[] = [
 
 export const supportOptions: SupportOption[] = [
   {
-    id: "banner",
-    name: "배너 알림",
-    badge: "순간형",
-    description: "후원 발생 시 상단 배너가 짧고 강하게 등장해 시선을 즉시 끕니다.",
-    useCase: "짧은 반응을 반복적으로 받는 일반 방송",
-    size: "840 x 110",
-    position: "상단 중앙",
-  },
-  {
-    id: "card",
-    name: "카드 팝업",
-    badge: "집중형",
-    description: "후원자 이름, 금액, 메시지를 카드 한 장에 담아 또렷하게 보여줍니다.",
-    useCase: "고액 후원 리액션, 감사 멘트 중심 방송",
-    size: "420 x 240",
-    position: "중앙 우측",
-  },
-  {
-    id: "goal",
-    name: "목표 진행형",
-    badge: "누적형",
-    description: "누적 후원량과 달성률을 함께 노출해 참여를 유도하는 구조입니다.",
+    id: "goal_bar",
+    name: "진행바형",
+    badge: "기본형",
+    description: "가로 진행 바로 목표 달성률을 직관적으로 보여줍니다. 누적 금액과 남은 금액을 함께 표시합니다.",
     useCase: "미션 방송, 공약 달성형 방송, 장기 이벤트",
     size: "340 x 220",
     position: "우측 중단",
+  },
+  {
+    id: "goal_ring",
+    name: "링 게이지형",
+    badge: "원형형",
+    description: "원형 링 게이지로 달성률을 시각적으로 표현합니다. 중앙에 퍼센트를 크게 표시해 눈에 띕니다.",
+    useCase: "인터랙티브 방송, 시청자 참여 유도, 고급스러운 연출",
+    size: "320 x 320",
+    position: "우측 상단",
+  },
+  {
+    id: "goal_step",
+    name: "단계 달성형",
+    badge: "단계형",
+    description: "여러 단계 목표를 마일스톤으로 나열해 단계별 달성 현황을 보여줍니다.",
+    useCase: "다단계 미션 방송, 등급별 공약 이벤트, 멀티 목표 방송",
+    size: "380 x 180",
+    position: "하단 중앙",
   },
 ];
 

@@ -1,7 +1,8 @@
 export type WidgetChatStyle = 'default' | 'gradient';
-export type WidgetDonationStyle = 'banner' | 'card' | 'goal';
+export type WidgetGoalStyle = 'goal_bar' | 'goal_ring' | 'goal_step';
+export type WidgetRankingStyle = 'list' | 'podium';
 export type WidgetFontSize = number;
-export type WidgetType = 'CHAT' | 'DONATION';
+export type WidgetType = 'CHAT' | 'GOAL' | 'RANKING';
 
 export interface WidgetChatConfig {
   style: WidgetChatStyle;
@@ -11,16 +12,18 @@ export interface WidgetChatConfig {
   showUserId: boolean;
 }
 
-export interface WidgetDonationConfig {
-  style: WidgetDonationStyle;
-  minDisplayAmount: number;
-  displayDuration: number;
+export interface WidgetGoalConfig {
+  style: WidgetGoalStyle;
   goalAmount: number | null;
   goalLabel: string | null;
   bgOpacity: number;
   fontSize: WidgetFontSize;
   animationType: string;
-  soundEnabled: boolean;
+}
+
+export interface WidgetRankingConfig {
+  style: WidgetRankingStyle;
+  displayCount: number;
 }
 
 export interface WidgetTokenInfo {
@@ -28,13 +31,13 @@ export interface WidgetTokenInfo {
   widgetType: WidgetType;
   widgetUrl: string;
   previewUrl: string;
-  config: WidgetChatConfig | WidgetDonationConfig;
+  config: WidgetChatConfig | WidgetGoalConfig;
 }
 
 // OBS용 공개 조회 응답
 export interface WidgetConfigResponse {
   widgetType: WidgetType;
   broadcasterId: string;
-  config: WidgetChatConfig | WidgetDonationConfig;
+  config: WidgetChatConfig | WidgetGoalConfig;
 }
 

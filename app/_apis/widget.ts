@@ -2,7 +2,7 @@ import axiosInstance from './auto_refresh_axios';
 import {
   WidgetTokenInfo,
   WidgetChatConfig,
-  WidgetDonationConfig,
+  WidgetGoalConfig,
   WidgetConfigResponse,
 } from '@/app/_types/widget';
 
@@ -21,7 +21,7 @@ export async function getMyWidgets(): Promise<WidgetTokenInfo[]> {
   return res.data;
 }
 
-export async function createWidgetToken(widgetType: 'CHAT' | 'DONATION'): Promise<WidgetTokenInfo> {
+export async function createWidgetToken(widgetType: 'CHAT' | 'GOAL'): Promise<WidgetTokenInfo> {
   const res = await axiosInstance.post('/api/widget', { widgetType });
   return res.data;
 }
@@ -36,6 +36,13 @@ export async function updateChatConfig(config: WidgetChatConfig): Promise<void> 
   });
 }
 
-export async function updateDonationConfig(config: WidgetDonationConfig): Promise<void> {
-  await axiosInstance.put('/api/widget/donation-config', config);
+export async function updateGoalConfig(config: WidgetGoalConfig): Promise<void> {
+  await axiosInstance.put('/api/widget/goal-config', {
+    style: config.style,
+    goal_amount: config.goalAmount,
+    goal_label: config.goalLabel,
+    bg_opacity: config.bgOpacity,
+    font_size: config.fontSize,
+    animation_type: config.animationType,
+  });
 }
