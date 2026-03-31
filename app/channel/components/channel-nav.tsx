@@ -27,7 +27,7 @@ const ChannelNav = () => {
           key={tab.name}
           href={tab.path}
           className={`font-medium pb-2 transition-colors whitespace-nowrap ${
-            pathname === tab.path
+            pathname.startsWith(tab.path)
               ? "border-b-2 border-accent text-accent"
               : "text-text-secondary hover:text-accent hover:border-b-2 hover:border-accent"
           }`}

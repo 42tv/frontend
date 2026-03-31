@@ -1,5 +1,5 @@
-import BroadcastWidget from "@/app/channel/components/tab-content/broadcast-widget/broadcast-widget";
+import { redirect } from "next/navigation";
 
-export default function BroadcastWidgetPage() {
-  return <BroadcastWidget />;
+export default function WidgetPage() {
+  redirect("/channel/my/widget/chatbox");
 }
