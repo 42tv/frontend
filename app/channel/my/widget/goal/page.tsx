@@ -1,5 +1,5 @@
-import DonationWidget from "@/app/channel/components/tab-content/broadcast-widget/donation-widget";
+import GoalWidget from "@/app/channel/components/tab-content/broadcast-widget/goal-widget";
 
 export default function GoalPage() {
-  return <DonationWidget />;
+  return <GoalWidget />;
 }

@@ -1,6 +1,6 @@
 import { WidgetGoalConfig } from "@/app/_types/widget";
 
-export function DonationDetailSettings({
+export function GoalDetailSettings({
   config,
   onChange,
 }: {

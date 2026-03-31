@@ -5,12 +5,13 @@ import { getMyWidgets, createWidgetToken, updateGoalConfig } from "@/app/_apis/w
 import { WidgetTokenInfo, WidgetGoalConfig } from "@/app/_types/widget";
 import { DEFAULT_GOAL_CONFIG } from "./constants";
 
-export function useDonationWidget() {
+export function useGoalWidget() {
   const [token, setToken] = useState<WidgetTokenInfo | null>(null);
   const [config, setConfig] = useState<WidgetGoalConfig>(DEFAULT_GOAL_CONFIG);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -41,5 +42,14 @@ export function useDonationWidget() {
     }
   }
 
-  return { token, config, setConfig, isLoading, isSaving, saveSuccess, handleSave };
+  function handleCopyUrl() {
+    const url = token?.widgetUrl;
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return { token, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl };
 }

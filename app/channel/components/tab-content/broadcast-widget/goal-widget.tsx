@@ -1,12 +1,13 @@
 'use client';
 
-import { useDonationWidget } from "./use-donation-widget";
+import { useGoalWidget } from "./use-goal-widget";
 import { supportOptions } from "./constants";
 import { SupportPreview } from "./support-preview";
-import { DonationDetailSettings } from "./donation-detail-settings";
+import { GoalDetailSettings } from "./goal-detail-settings";
+import { UrlRow } from "./url-row";
 
-export default function DonationWidget() {
-  const { config, setConfig, isLoading, isSaving, saveSuccess, handleSave } = useDonationWidget();
+export default function GoalWidget() {
+  const { token, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl } = useGoalWidget();
 
   return (
     <div className="grid gap-6 xl:grid-cols-5">
@@ -47,7 +48,7 @@ export default function DonationWidget() {
         {/* 세부 설정 */}
         <div className="rounded-xl border border-border-primary bg-bg-secondary p-4">
           <p className="mb-4 text-xs font-semibold text-text-primary">세부 설정</p>
-          <DonationDetailSettings
+          <GoalDetailSettings
             config={config}
             onChange={(patch) => setConfig((prev) => ({ ...prev, ...patch }))}
           />
@@ -70,7 +71,7 @@ export default function DonationWidget() {
 
       {/* 우측 미리보기 */}
       <aside className="xl:col-span-3">
-        <div className="sticky top-4">
+        <div className="sticky top-4 space-y-3">
           <div className="rounded-xl border border-border-primary bg-bg-secondary p-4">
             <p className="mb-3 text-xs font-semibold text-text-primary">미리보기</p>
             <div className="rounded-xl border border-border-primary overflow-hidden">
@@ -79,6 +80,18 @@ export default function DonationWidget() {
                 <SupportPreview key={config.style} style={config.style} goalAmount={config.goalAmount} goalLabel={config.goalLabel} />
               </div>
             </div>
+          </div>
+
+          {/* OBS URL */}
+          <div className="rounded-xl border border-border-primary bg-bg-secondary px-4 py-3 space-y-2">
+            <p className="text-[10px] font-semibold text-text-primary">OBS URL</p>
+            <UrlRow
+              label="브라우저 소스 URL"
+              sublabel="(실제 방송용)"
+              url={token?.widgetUrl ?? null}
+              onCopy={handleCopyUrl}
+              copied={copied}
+            />
           </div>
         </div>
       </aside>
