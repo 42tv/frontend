@@ -28,6 +28,7 @@ const WidgetChatList: React.FC<WidgetChatListProps> = ({ messages, config }) => 
           key={`${message.user_idx}-${index}`}
           message={message}
           showProfileImage={config.showProfileImage}
+          showUserId={config.showUserId}
           fontSize={config.fontSize}
           style={config.style}
         />

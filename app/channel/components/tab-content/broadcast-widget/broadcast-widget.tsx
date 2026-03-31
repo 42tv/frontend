@@ -564,8 +564,8 @@ export default function BroadcastWidget() {
 
         setChatToken(chat);
         setDonationToken(donation);
-        if (chat.chatConfig) setChatConfig(chat.chatConfig);
-        if (donation.donationConfig) setDonationConfig(donation.donationConfig);
+        if (chat.config) setChatConfig(chat.config as WidgetChatConfig);
+        if (donation.config) setDonationConfig(donation.config as WidgetDonationConfig);
       } catch {
         // 네트워크 오류 시 기본값으로 유지
       } finally {

@@ -27,7 +27,13 @@ export async function createWidgetToken(widgetType: 'CHAT' | 'DONATION'): Promis
 }
 
 export async function updateChatConfig(config: WidgetChatConfig): Promise<void> {
-  await axiosInstance.put('/api/widget/chat-config', config);
+  await axiosInstance.put('/api/widget/chat-config', {
+    style: config.style,
+    max_messages: config.maxMessages,
+    show_profile_image: config.showProfileImage,
+    font_size: config.fontSize,
+    show_user_id: config.showUserId,
+  });
 }
 
 export async function updateDonationConfig(config: WidgetDonationConfig): Promise<void> {

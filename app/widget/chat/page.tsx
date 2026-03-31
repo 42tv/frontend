@@ -45,7 +45,7 @@ export default async function WidgetChatPage({ searchParams }: PageProps) {
     );
   }
 
-  const chatConfig = widgetData.chatConfig ?? DEFAULT_CHAT_CONFIG;
+  const chatConfig = (widgetData.config as WidgetChatConfig) ?? DEFAULT_CHAT_CONFIG;
 
   return <WidgetChatClient token={token} chatConfig={chatConfig} />;
 }

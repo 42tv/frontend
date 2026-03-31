@@ -28,15 +28,13 @@ export interface WidgetTokenInfo {
   widgetType: WidgetType;
   widgetUrl: string;
   previewUrl: string;
-  chatConfig?: WidgetChatConfig;
-  donationConfig?: WidgetDonationConfig;
+  config: WidgetChatConfig | WidgetDonationConfig;
 }
 
 // OBS용 공개 조회 응답
 export interface WidgetConfigResponse {
   widgetType: WidgetType;
   broadcasterId: string;
-  chatConfig?: WidgetChatConfig;
-  donationConfig?: WidgetDonationConfig;
+  config: WidgetChatConfig | WidgetDonationConfig;
 }
 

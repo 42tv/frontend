@@ -7,6 +7,7 @@ import { WidgetChatStyle, WidgetFontSize } from '@/app/_types/widget';
 export interface ChatCardProps {
   message: ChatMessage;
   showProfileImage: boolean;
+  showUserId: boolean;
   fontSize: WidgetFontSize;
   style: WidgetChatStyle;
 }
@@ -39,7 +40,7 @@ function RoleBadge({ role }: { role: ChatMessage['role'] }) {
   return null;
 }
 
-function CompactCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps, 'style'>) {
+function CompactCard({ message, showProfileImage, showUserId, fontSize }: Omit<ChatCardProps, 'style'>) {
   const accentColor = message.color || '#a78bfa';
 
   return (
@@ -73,6 +74,11 @@ function CompactCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps
           >
             {message.nickname}
           </span>
+          {showUserId && (
+            <span className="text-white/40 leading-none" style={{ fontSize: getNicknameFontSize(fontSize) - 1 }}>
+              ({message.user_id})
+            </span>
+          )}
           <RoleBadge role={message.role} />
         </div>
         <div className="mt-1.5 break-words leading-snug text-white/90" style={{ fontSize }}>
@@ -84,7 +90,7 @@ function CompactCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps
 }
 
 
-function GradientCard({ message, showProfileImage, fontSize }: Omit<ChatCardProps, 'style'>) {
+function GradientCard({ message, showProfileImage, showUserId, fontSize }: Omit<ChatCardProps, 'style'>) {
   const accentColor = message.color || '#a78bfa';
 
   return (
@@ -111,6 +117,11 @@ function GradientCard({ message, showProfileImage, fontSize }: Omit<ChatCardProp
         >
           {message.nickname}
         </span>
+        {showUserId && (
+          <span className="text-white/40 leading-none" style={{ fontSize: getNicknameFontSize(fontSize) - 1 }}>
+            ({message.user_id})
+          </span>
+        )}
         <RoleBadge role={message.role} />
       </div>
       <div className="break-words leading-snug text-white/90" style={{ fontSize }}>
@@ -120,11 +131,11 @@ function GradientCard({ message, showProfileImage, fontSize }: Omit<ChatCardProp
   );
 }
 
-const ChatCard: React.FC<ChatCardProps> = ({ message, showProfileImage, fontSize, style }) => {
+const ChatCard: React.FC<ChatCardProps> = ({ message, showProfileImage, showUserId, fontSize, style }) => {
   if (style === 'gradient') {
-    return <GradientCard message={message} showProfileImage={showProfileImage} fontSize={fontSize} />;
+    return <GradientCard message={message} showProfileImage={showProfileImage} showUserId={showUserId} fontSize={fontSize} />;
   }
-  return <CompactCard message={message} showProfileImage={showProfileImage} fontSize={fontSize} />;
+  return <CompactCard message={message} showProfileImage={showProfileImage} showUserId={showUserId} fontSize={fontSize} />;
 };
 
 export default ChatCard;
