@@ -76,7 +76,7 @@ export default function DonationWidget() {
             <div className="rounded-xl border border-border-primary overflow-hidden">
               <div className="relative h-[420px] bg-gradient-to-br from-[#181c24] via-[#11151d] to-[#0b0d12]">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.10),_transparent_50%)]" />
-                <SupportPreview key={config.style} style={config.style} />
+                <SupportPreview key={config.style} style={config.style} goalAmount={config.goalAmount} goalLabel={config.goalLabel} />
               </div>
             </div>
           </div>
