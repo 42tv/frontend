@@ -549,7 +549,6 @@ export default function BroadcastWidget() {
   const [chatConfig, setChatConfig] = useState<WidgetChatConfig>(DEFAULT_CHAT_CONFIG);
   const [donationConfig, setDonationConfig] = useState<WidgetDonationConfig>(DEFAULT_DONATION_CONFIG);
   const [copied, setCopied] = useState(false);
-  const [copiedDev, setCopiedDev] = useState(false);
 
   useEffect(() => {
     async function loadWidgets() {
@@ -584,7 +583,7 @@ export default function BroadcastWidget() {
         await updateDonationConfig(donationConfig);
       }
       setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 2000);
+      setTimeout(() => setSaveSuccess(false), 1000);
     } finally {
       setIsSaving(false);
     }
@@ -596,15 +595,6 @@ export default function BroadcastWidget() {
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
-  }
-
-  function handleCopyDevUrl() {
-    const url = chatToken?.previewUrl;
-    if (!url) return;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopiedDev(true);
-      setTimeout(() => setCopiedDev(false), 2000);
     });
   }
 
@@ -719,7 +709,7 @@ export default function BroadcastWidget() {
               disabled={isSaving || isLoading}
               className="rounded-lg bg-accent px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isSaving ? '저장 중...' : '저장'}
+              저장
             </button>
             {saveSuccess && (
               <span className="text-sm font-medium text-green-500">저장됐습니다 ✓</span>
@@ -761,13 +751,6 @@ export default function BroadcastWidget() {
                 <p className="text-[10px] font-semibold text-text-primary">
                   OBS URL
                 </p>
-                <UrlRow
-                  label="미리보기 URL"
-                  sublabel="(목업 채팅)"
-                  url={chatToken?.previewUrl ?? null}
-                  onCopy={handleCopyDevUrl}
-                  copied={copiedDev}
-                />
                 <UrlRow
                   label="브라우저 소스 URL"
                   sublabel="(실제 방송용)"
