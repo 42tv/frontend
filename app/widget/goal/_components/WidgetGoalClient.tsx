@@ -5,6 +5,10 @@ import { io, Socket } from 'socket.io-client';
 import { DonationMessage } from '@/app/_types';
 import { WidgetGoalConfig } from '@/app/_types/widget';
 
+// 기준: 1280px 뷰포트에서 1em = 16px
+// 뷰포트가 커질수록 em 기준이 커져 모든 요소가 비례 확대
+const BASE_FONT = '2.8vw';
+
 interface OverlayEvent {
   op: string;
   broadcaster_id: string;
@@ -28,29 +32,37 @@ function GoalBar({ total, goalConfig }: { total: number; goalConfig: WidgetGoalC
   const pct = Math.min((total / goalAmount) * 100, 100);
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px]">
+    <div style={{ fontSize: BASE_FONT, width: '20em' }}>
       <div
-        className="rounded-3xl border border-white/10 p-5 backdrop-blur-sm"
-        style={{ backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})` }}
+        className="border border-white/10 backdrop-blur-sm"
+        style={{
+          borderRadius: '1.5em',
+          padding: '1.25em',
+          backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})`,
+        }}
       >
-        <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#79d9ff]">
+        <div className="font-semibold uppercase text-[#79d9ff]" style={{ fontSize: '0.75em', letterSpacing: '0.16em' }}>
           Goal Mission
         </div>
         {goalConfig.goalLabel && (
-          <div className="mt-1 text-sm text-white/70">{goalConfig.goalLabel}</div>
+          <div className="text-white/70" style={{ marginTop: '0.25em', fontSize: '0.875em' }}>
+            {goalConfig.goalLabel}
+          </div>
         )}
-        <div className="mt-2 text-3xl font-bold text-[#7dd3fc]">{pct.toFixed(0)}%</div>
-        <div className="mt-3 h-3 rounded-full bg-white/10">
+        <div className="font-bold text-[#7dd3fc]" style={{ marginTop: '0.5em', fontSize: '1.875em' }}>
+          {pct.toFixed(0)}%
+        </div>
+        <div className="bg-white/10" style={{ marginTop: '0.75em', height: '0.75em', borderRadius: '9999px' }}>
           <div
-            className="h-3 rounded-full bg-gradient-to-r from-[#38bdf8] to-[#7dd3fc] transition-all duration-700"
-            style={{ width: `${pct}%` }}
+            className="bg-gradient-to-r from-[#38bdf8] to-[#7dd3fc] transition-all duration-700"
+            style={{ height: '0.75em', width: `${pct}%`, borderRadius: '9999px' }}
           />
         </div>
-        <div className="mt-3 flex items-center justify-between text-sm text-white/70">
+        <div className="flex items-center justify-between text-white/70" style={{ marginTop: '0.75em', fontSize: '0.875em' }}>
           <span>{total.toLocaleString()}원</span>
           <span className="text-white/50">/ {goalAmount.toLocaleString()}원</span>
         </div>
-        <div className="mt-1 text-right text-xs text-white/40">
+        <div className="text-right text-white/40" style={{ marginTop: '0.25em', fontSize: '0.625em' }}>
           남은 금액 {Math.max(goalAmount - total, 0).toLocaleString()}원
         </div>
       </div>
@@ -64,36 +76,51 @@ function GoalRing({ total, goalConfig }: { total: number; goalConfig: WidgetGoal
 
   return (
     <div
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] rounded-3xl border border-white/10 p-6 backdrop-blur-sm"
-      style={{ backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})` }}
+      className="border border-white/10 backdrop-blur-sm"
+      style={{
+        fontSize: BASE_FONT,
+        width: '18.75em',
+        borderRadius: '1.5em',
+        padding: '1.5em',
+        backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})`,
+      }}
     >
-      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#a78bfa]">
+      <div className="font-semibold uppercase text-[#a78bfa]" style={{ fontSize: '0.75em', letterSpacing: '0.16em' }}>
         Goal Mission
       </div>
       {goalConfig.goalLabel && (
-        <div className="mt-1 text-sm font-medium text-white/80">{goalConfig.goalLabel}</div>
+        <div className="font-medium text-white/80" style={{ marginTop: '0.25em', fontSize: '0.875em' }}>
+          {goalConfig.goalLabel}
+        </div>
       )}
-      <div className="mt-5 flex items-center gap-5">
+      <div className="flex items-center" style={{ marginTop: '1.25em', gap: '1.25em' }}>
         <div className="relative flex-shrink-0">
           <div
-            className="h-28 w-28 rounded-full"
             style={{
+              height: '7em',
+              width: '7em',
+              borderRadius: '9999px',
               background: `conic-gradient(#a78bfa 0% ${pct}%, rgba(255,255,255,0.08) ${pct}% 100%)`,
             }}
           />
-          <div className="absolute inset-[10px] flex flex-col items-center justify-center rounded-full bg-black/70">
-            <span className="text-2xl font-bold text-[#c4b5fd]">{pct.toFixed(0)}%</span>
-            <span className="text-[10px] text-white/50">달성</span>
+          <div
+            className="absolute flex flex-col items-center justify-center bg-black/70"
+            style={{ inset: '0.625em', borderRadius: '9999px' }}
+          >
+            <span className="font-bold text-[#c4b5fd]" style={{ fontSize: '1.5em' }}>
+              {pct.toFixed(0)}%
+            </span>
+            <span className="text-white/50" style={{ fontSize: '0.625em' }}>달성</span>
           </div>
         </div>
-        <div className="flex-1 space-y-2">
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
           <div>
-            <div className="text-xs text-white/50">누적 후원</div>
-            <div className="text-lg font-bold text-white">{total.toLocaleString()}원</div>
+            <div className="text-white/50" style={{ fontSize: '0.75em' }}>누적 후원</div>
+            <div className="font-bold text-white" style={{ fontSize: '1.125em' }}>{total.toLocaleString()}원</div>
           </div>
           <div>
-            <div className="text-xs text-white/50">목표 금액</div>
-            <div className="text-base font-semibold text-[#c4b5fd]">{goalAmount.toLocaleString()}원</div>
+            <div className="text-white/50" style={{ fontSize: '0.75em' }}>목표 금액</div>
+            <div className="font-semibold text-[#c4b5fd]" style={{ fontSize: '1em' }}>{goalAmount.toLocaleString()}원</div>
           </div>
         </div>
       </div>
@@ -113,43 +140,54 @@ function GoalStep({ total, goalConfig }: { total: number; goalConfig: WidgetGoal
 
   return (
     <div
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-[400px] rounded-3xl border border-white/10 px-6 py-5 backdrop-blur-sm"
-      style={{ backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})` }}
+      className="border border-white/10 backdrop-blur-sm"
+      style={{
+        fontSize: BASE_FONT,
+        width: '31.25em',
+        borderRadius: '1.5em',
+        paddingLeft: '1.5em',
+        paddingRight: '1.5em',
+        paddingTop: '1.25em',
+        paddingBottom: '1.25em',
+        backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})`,
+      }}
     >
       <div className="flex items-center justify-between">
-        <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#86efac]">
+        <div className="font-semibold uppercase text-[#86efac]" style={{ fontSize: '0.75em', letterSpacing: '0.16em' }}>
           Step Mission
         </div>
-        <div className="text-xs font-semibold text-[#86efac]">
+        <div className="font-semibold text-[#86efac]" style={{ fontSize: '0.75em' }}>
           {reachedCount} / {steps.length} 달성
         </div>
       </div>
       {goalConfig.goalLabel && (
-        <div className="mt-1 text-sm font-medium text-white/80">{goalConfig.goalLabel}</div>
+        <div className="font-medium text-white/80" style={{ marginTop: '0.25em', fontSize: '0.875em' }}>
+          {goalConfig.goalLabel}
+        </div>
       )}
-      <div className="mt-4 flex items-center gap-1">
+      <div className="flex items-center" style={{ marginTop: '1em', gap: '0.25em' }}>
         {steps.map((step, i) => (
-          <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+          <div key={i} className="relative flex flex-1 flex-col items-center" style={{ gap: '0.375em' }}>
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+              className={`flex items-center justify-center font-bold transition-all ${
                 step.reached
-                  ? "bg-[#22c55e] text-white shadow-[0_0_10px_rgba(34,197,94,0.5)]"
-                  : "border border-white/20 bg-white/5 text-white/40"
+                  ? 'bg-[#22c55e] text-white shadow-[0_0_10px_rgba(34,197,94,0.5)]'
+                  : 'border border-white/20 bg-white/5 text-white/40'
               }`}
+              style={{ height: '2em', width: '2em', borderRadius: '9999px', fontSize: '0.75em' }}
             >
-              {step.reached ? "✓" : i + 1}
+              {step.reached ? '✓' : i + 1}
             </div>
             <span
-              className={`text-[10px] font-semibold ${
-                step.reached ? "text-[#86efac]" : "text-white/30"
-              }`}
+              className={`font-semibold ${step.reached ? 'text-[#86efac]' : 'text-white/30'}`}
+              style={{ fontSize: '0.625em' }}
             >
               {(step.amount / 10000).toFixed(0)}만
             </span>
           </div>
         ))}
       </div>
-      <div className="mt-4 flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between" style={{ marginTop: '1em', fontSize: '0.875em' }}>
         <span className="text-white/60">
           현재 <span className="font-semibold text-white">{total.toLocaleString()}원</span>
         </span>
@@ -202,7 +240,14 @@ export default function WidgetGoalClient({ token, goalConfig, isDev }: WidgetGoa
     return () => clearInterval(interval);
   }, [isDev]);
 
-  if (goalConfig.style === 'goal_bar') return <GoalBar total={total} goalConfig={goalConfig} />;
-  if (goalConfig.style === 'goal_ring') return <GoalRing total={total} goalConfig={goalConfig} />;
-  return <GoalStep total={total} goalConfig={goalConfig} />;
+  const widget =
+    goalConfig.style === 'goal_bar' ? <GoalBar total={total} goalConfig={goalConfig} /> :
+    goalConfig.style === 'goal_ring' ? <GoalRing total={total} goalConfig={goalConfig} /> :
+    <GoalStep total={total} goalConfig={goalConfig} />;
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      {widget}
+    </div>
+  );
 }
