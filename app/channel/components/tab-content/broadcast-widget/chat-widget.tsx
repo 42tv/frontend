@@ -7,7 +7,7 @@ import { ChatDetailSettings } from "./chat-detail-settings";
 import { UrlRow } from "./url-row";
 
 export default function ChatWidget() {
-  const { token, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl } = useChatWidget();
+  const { widgetUrl, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl } = useChatWidget();
 
   return (
     <div className="grid gap-6 xl:grid-cols-5">
@@ -94,7 +94,7 @@ export default function ChatWidget() {
             <UrlRow
               label="브라우저 소스 URL"
               sublabel="(실제 방송용)"
-              url={token?.widgetUrl ?? null}
+              url={widgetUrl}
               onCopy={handleCopyUrl}
               copied={copied}
             />

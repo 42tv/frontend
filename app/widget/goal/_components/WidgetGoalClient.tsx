@@ -28,7 +28,7 @@ function GoalBar({ total, goalConfig }: { total: number; goalConfig: WidgetGoalC
   const pct = Math.min((total / goalAmount) * 100, 100);
 
   return (
-    <div className="absolute right-4 top-20 w-[320px] space-y-3">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px]">
       <div
         className="rounded-3xl border border-white/10 p-5 backdrop-blur-sm"
         style={{ backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})` }}
@@ -64,7 +64,7 @@ function GoalRing({ total, goalConfig }: { total: number; goalConfig: WidgetGoal
 
   return (
     <div
-      className="absolute right-4 top-16 w-[300px] rounded-3xl border border-white/10 p-6 backdrop-blur-sm"
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] rounded-3xl border border-white/10 p-6 backdrop-blur-sm"
       style={{ backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})` }}
     >
       <div className="text-xs font-semibold uppercase tracking-[0.16em] text-[#a78bfa]">
@@ -113,7 +113,7 @@ function GoalStep({ total, goalConfig }: { total: number; goalConfig: WidgetGoal
 
   return (
     <div
-      className="absolute bottom-6 left-1/2 w-[calc(100%-32px)] max-w-[400px] -translate-x-1/2 rounded-3xl border border-white/10 px-6 py-5 backdrop-blur-sm"
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-[400px] rounded-3xl border border-white/10 px-6 py-5 backdrop-blur-sm"
       style={{ backgroundColor: `rgba(0,0,0,${goalConfig.bgOpacity / 100})` }}
     >
       <div className="flex items-center justify-between">

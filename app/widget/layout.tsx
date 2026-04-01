@@ -11,6 +11,7 @@ export default function WidgetLayout({
         margin: 0,
         padding: 0,
         overflow: 'hidden',
+        position: 'relative',
         minHeight: '100vh',
         width: '100%',
       }}

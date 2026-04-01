@@ -1,5 +1,21 @@
-import { WidgetChatConfig, WidgetGoalConfig } from "@/app/_types/widget";
+import { WidgetChatConfig, WidgetGoalConfig, WidgetType } from "@/app/_types/widget";
 import { ChatOption, SupportOption, CompactMsg, GradientMsg } from "./types";
+
+const WIDGET_BASE = 'http://localhost:3001';
+
+const WIDGET_PATH: Record<WidgetType, string> = {
+  CHAT: '/widget/chat',
+  GOAL: '/widget/goal',
+  RANKING: '/widget/ranking',
+};
+
+export function buildWidgetUrl(widgetType: WidgetType, token: string) {
+  return `${WIDGET_BASE}${WIDGET_PATH[widgetType]}?token=${token}`;
+}
+
+export function buildPreviewUrl(widgetType: WidgetType, token: string) {
+  return `${WIDGET_BASE}${WIDGET_PATH[widgetType]}?token=${token}&dev=true`;
+}
 
 export const DEFAULT_CHAT_CONFIG: WidgetChatConfig = {
   style: 'default',

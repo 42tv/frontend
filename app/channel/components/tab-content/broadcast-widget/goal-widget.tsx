@@ -7,7 +7,7 @@ import { GoalDetailSettings } from "./goal-detail-settings";
 import { UrlRow } from "./url-row";
 
 export default function GoalWidget() {
-  const { token, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl } = useGoalWidget();
+  const { widgetUrl, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl } = useGoalWidget();
 
   return (
     <div className="grid gap-6 xl:grid-cols-5">
@@ -88,7 +88,7 @@ export default function GoalWidget() {
             <UrlRow
               label="브라우저 소스 URL"
               sublabel="(실제 방송용)"
-              url={token?.widgetUrl ?? null}
+              url={widgetUrl}
               onCopy={handleCopyUrl}
               copied={copied}
             />

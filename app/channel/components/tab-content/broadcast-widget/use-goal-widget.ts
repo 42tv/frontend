@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { getMyWidgets, createWidgetToken, updateGoalConfig } from "@/app/_apis/widget";
 import { WidgetTokenInfo, WidgetGoalConfig } from "@/app/_types/widget";
-import { DEFAULT_GOAL_CONFIG } from "./constants";
+import { DEFAULT_GOAL_CONFIG, buildWidgetUrl } from "./constants";
 
 export function useGoalWidget() {
   const [token, setToken] = useState<WidgetTokenInfo | null>(null);
@@ -42,14 +42,15 @@ export function useGoalWidget() {
     }
   }
 
+  const widgetUrl = token ? buildWidgetUrl(token.widgetType, token.token) : null;
+
   function handleCopyUrl() {
-    const url = token?.widgetUrl;
-    if (!url) return;
-    navigator.clipboard.writeText(url).then(() => {
+    if (!widgetUrl) return;
+    navigator.clipboard.writeText(widgetUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   }
 
-  return { token, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl };
+  return { token, widgetUrl, config, setConfig, isLoading, isSaving, saveSuccess, copied, handleSave, handleCopyUrl };
 }

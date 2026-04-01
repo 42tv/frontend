@@ -29,8 +29,6 @@ export interface WidgetRankingConfig {
 export interface WidgetTokenInfo {
   token: string;
   widgetType: WidgetType;
-  widgetUrl: string;
-  previewUrl: string;
   config: WidgetChatConfig | WidgetGoalConfig;
 }
 
