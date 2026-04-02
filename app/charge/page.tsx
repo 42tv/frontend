@@ -78,6 +78,12 @@ export default function ChargePage() {
         order_name: pgData.order_name,
         order_id: pgData.order_id,
         tax_free: 0,
+        user: {
+          id: pgData.user.id,
+          username: pgData.user.username,
+          email: pgData.user.email,
+          phone: pgData.user.phone || '010-0000-0000',
+        },
         items: [
           {
             id: productData.id.toString(),
