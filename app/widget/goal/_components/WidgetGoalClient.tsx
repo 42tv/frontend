@@ -2,24 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { DonationMessage } from '@/app/_types';
 import { WidgetGoalConfig } from '@/app/_types/widget';
 
 // 기준: 1280px 뷰포트에서 1em = 16px
 // 뷰포트가 커질수록 em 기준이 커져 모든 요소가 비례 확대
 const BASE_FONT = '2.8vw';
 
-interface OverlayEvent {
-  op: string;
-  broadcaster_id: string;
-  payload: DonationMessage;
-}
-
-const MOCK_DONATIONS: DonationMessage[] = [
-  { type: 'donation', amount: 30000, donor_nickname: '별빛고양이', message: '오늘도 파이팅!' },
-  { type: 'donation', amount: 50000, donor_nickname: '감자별', message: '목표 달성 응원합니다' },
-  { type: 'donation', amount: 20000, donor_nickname: '도리토스', message: '화이팅!' },
-];
 
 interface WidgetGoalClientProps {
   token: string;
@@ -216,10 +204,8 @@ export default function WidgetGoalClient({ token, goalConfig, isDev }: WidgetGoa
 
     socketRef.current = socket;
 
-    socket.on('overlay_event', (event: OverlayEvent) => {
-      if (event.op === 'donation') {
-        setTotal((prev) => prev + event.payload.amount);
-      }
+    socket.on('donation', (data: { coin_value: number }) => {
+      setTotal((prev) => prev + data.coin_value);
     });
 
     return () => {
@@ -227,18 +213,6 @@ export default function WidgetGoalClient({ token, goalConfig, isDev }: WidgetGoa
       socketRef.current = null;
     };
   }, [token, isDev]);
-
-  useEffect(() => {
-    if (!isDev) return;
-
-    let index = 0;
-    const interval = setInterval(() => {
-      setTotal((prev) => prev + MOCK_DONATIONS[index % MOCK_DONATIONS.length].amount);
-      index++;
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, [isDev]);
 
   const widget =
     goalConfig.style === 'goal_bar' ? <GoalBar total={total} goalConfig={goalConfig} /> :

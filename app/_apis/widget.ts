@@ -21,11 +21,6 @@ export async function getMyWidgets(): Promise<WidgetTokenInfo[]> {
   return res.data;
 }
 
-export async function createWidgetToken(widgetType: 'CHAT' | 'GOAL'): Promise<WidgetTokenInfo> {
-  const res = await axiosInstance.post('/api/widget', { widgetType });
-  return res.data;
-}
-
 export async function updateChatConfig(config: WidgetChatConfig): Promise<void> {
   await axiosInstance.put('/api/widget/chat-config', {
     style: config.style,

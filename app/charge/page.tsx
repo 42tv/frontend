@@ -4,20 +4,28 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Bootpay } from '@bootpay/client-js';
 import { getActiveProducts, preparePayment } from '../_apis/product';
-import { Product, RealPGPurchaseData } from '../_types/product';
+import { Product, MockPurchaseData, RealPGPurchaseData } from '../_types/product';
 import { useBootpayStyles } from '../_hooks/useBootpayStyles';
+import { useUserStore } from '../_lib/stores';
 
 const IS_DEV = process.env.NEXT_ENV === 'dev';
 
+interface ChargeResult {
+  productName: string;
+  totalCoins: number;
+  balance: number | null;
+}
+
 export default function ChargePage() {
   useBootpayStyles();
+  const fetchUser = useUserStore((state) => state.fetchUser);
 
   const [customCoins, setCustomCoins] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [purchasing, setPurchasing] = useState<boolean>(false);
+  const [chargeResult, setChargeResult] = useState<ChargeResult | null>(null);
 
-  // 1코인 = 100원 + 부가세 10% = 110원
   const COIN_PRICE_WITH_VAT = 110;
 
   useEffect(() => {
@@ -45,15 +53,9 @@ export default function ChargePage() {
       setCustomCoins(0);
       return;
     }
-
-    if (!/^\d+$/.test(value)) {
-      return;
-    }
-
+    if (!/^\d+$/.test(value)) return;
     const coins = parseInt(value, 10);
-    if (coins >= 0) {
-      setCustomCoins(coins);
-    }
+    if (coins >= 0) setCustomCoins(coins);
   };
 
   const handlePurchase = async (productId: number) => {
@@ -63,7 +65,14 @@ export default function ChargePage() {
       setPurchasing(true);
 
       if (IS_DEV) {
-        await preparePayment(productId, 'mock');
+        const prepareResponse = await preparePayment(productId, 'mock');
+        const mockData = prepareResponse.data.data as MockPurchaseData;
+        await fetchUser();
+        setChargeResult({
+          productName: mockData.product.name,
+          totalCoins: mockData.topup.total_coins,
+          balance: mockData.wallet.coin_balance,
+        });
         return;
       }
 
@@ -107,16 +116,20 @@ export default function ChargePage() {
           display_success_result: true,
         },
       })
-        .then((response: unknown) => {
+        .then(async (response: unknown) => {
           console.log('Bootpay 결제 응답:', response);
-          alert('결제가 완료되었습니다!\n잠시 후 코인이 충전됩니다.');
+          await fetchUser();
+          setChargeResult({
+            productName: productData.name,
+            totalCoins: productData.total_coins,
+            balance: null,
+          });
           setPurchasing(false);
-          window.location.reload();
         })
         .catch((error: unknown) => {
           console.error('Bootpay 에러 원본:', error);
           setPurchasing(false);
-          const bootpayError = error as { event?: string; error_code?: string; message?: string };
+          const bootpayError = error as { event?: string; message?: string };
           if (bootpayError?.event === 'cancel') {
             alert('결제가 취소되었습니다.');
           } else if (bootpayError?.event === 'error') {
@@ -192,15 +205,11 @@ export default function ChargePage() {
         {/* Package Grid */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="text-muted-foreground dark:text-muted-foreground-dark">
-              로딩 중...
-            </div>
+            <div className="text-muted-foreground dark:text-muted-foreground-dark">로딩 중...</div>
           </div>
         ) : products.length === 0 ? (
           <div className="flex justify-center items-center py-20">
-            <div className="text-muted-foreground dark:text-muted-foreground-dark">
-              등록된 상품이 없습니다.
-            </div>
+            <div className="text-muted-foreground dark:text-muted-foreground-dark">등록된 상품이 없습니다.</div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -211,7 +220,6 @@ export default function ChargePage() {
                   key={product.id}
                   className="w-64 bg-card dark:bg-card-dark rounded-2xl border border-border dark:border-border-dark px-4 py-3 flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:border-yellow-500/50"
                 >
-                  {/* Icon or Image */}
                   <div className="w-24 h-24 bg-background dark:bg-background-dark rounded-full flex items-center justify-center mb-2 border-2 border-border dark:border-border-dark overflow-hidden">
                     {product.image_url ? (
                       <Image
@@ -232,15 +240,12 @@ export default function ChargePage() {
                     )}
                   </div>
 
-                  {/* Divider */}
                   <div className="w-full border-t border-border dark:border-border-dark mb-2"></div>
 
-                  {/* Name */}
                   <div className="text-lg font-bold text-foreground dark:text-foreground-dark mb-0.5 text-center">
                     {product.name}
                   </div>
 
-                  {/* Coin Details */}
                   <div className="text-sm text-muted-foreground dark:text-muted-foreground-dark mb-0.5">
                     기본 {product.base_coins.toLocaleString()}개
                     {product.bonus_coins > 0 && (
@@ -250,17 +255,14 @@ export default function ChargePage() {
                     )}
                   </div>
 
-                  {/* Total Coins */}
                   <div className="text-base font-semibold text-foreground dark:text-foreground-dark mb-0.5">
                     총 {totalCoins.toLocaleString()}개
                   </div>
 
-                  {/* Price */}
                   <div className="text-yellow-500 font-bold text-base mb-2">
                     {product.price.toLocaleString()} 원
                   </div>
 
-                  {/* Purchase Button */}
                   <button
                     onClick={() => handlePurchase(product.id)}
                     disabled={purchasing}
@@ -278,6 +280,57 @@ export default function ChargePage() {
           </div>
         )}
       </div>
+
+      {/* Charge Success Modal */}
+      {chargeResult && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          onClick={() => setChargeResult(null)}
+        >
+          <div
+            className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--bg-secondary)] p-8 w-full max-w-sm mx-4 flex flex-col items-center gap-4 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 체크 아이콘 */}
+            <div className="w-16 h-16 rounded-full bg-yellow-400/20 flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            <h2 className="text-xl font-bold text-foreground dark:text-foreground-dark">충전 완료</h2>
+
+            <div className="w-full bg-[var(--bg-secondary)] rounded-xl p-4 flex flex-col gap-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground dark:text-muted-foreground-dark">상품</span>
+                <span className="font-medium text-foreground dark:text-foreground-dark">{chargeResult.productName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground dark:text-muted-foreground-dark">충전 코인</span>
+                <span className="font-bold text-yellow-500">+{chargeResult.totalCoins.toLocaleString()}개</span>
+              </div>
+              {chargeResult.balance !== null && (
+                <div className="flex justify-between border-t border-border dark:border-border-dark pt-2 mt-1">
+                  <span className="text-muted-foreground dark:text-muted-foreground-dark">현재 잔액</span>
+                  <span className="font-bold text-foreground dark:text-foreground-dark">{chargeResult.balance.toLocaleString()}개</span>
+                </div>
+              )}
+              {chargeResult.balance === null && (
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground-dark border-t border-border dark:border-border-dark pt-2 mt-1">
+                  잠시 후 코인이 반영됩니다.
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={() => setChargeResult(null)}
+              className="w-full py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-black font-bold transition-colors"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

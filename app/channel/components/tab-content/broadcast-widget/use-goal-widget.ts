@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { getMyWidgets, createWidgetToken, updateGoalConfig } from "@/app/_apis/widget";
+import { getMyWidgets, updateGoalConfig } from "@/app/_apis/widget";
 import { WidgetTokenInfo, WidgetGoalConfig } from "@/app/_types/widget";
 import { DEFAULT_GOAL_CONFIG, buildWidgetUrl } from "./constants";
 
@@ -17,10 +17,9 @@ export function useGoalWidget() {
     async function load() {
       try {
         const widgets = await getMyWidgets();
-        let goal = widgets.find((w) => w.widgetType === 'GOAL') ?? null;
-        if (!goal) goal = await createWidgetToken('GOAL');
+        const goal = widgets.find((w) => w.widgetType === 'GOAL') ?? null;
         setToken(goal);
-        if (goal.config) setConfig(goal.config as WidgetGoalConfig);
+        if (goal?.config) setConfig(goal.config as WidgetGoalConfig);
       } catch {
         // 네트워크 오류 시 기본값 유지
       } finally {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { getMyWidgets, createWidgetToken, updateChatConfig } from "@/app/_apis/widget";
+import { getMyWidgets, updateChatConfig } from "@/app/_apis/widget";
 import { WidgetTokenInfo, WidgetChatConfig } from "@/app/_types/widget";
 import { DEFAULT_CHAT_CONFIG, buildWidgetUrl } from "./constants";
 
@@ -17,10 +17,9 @@ export function useChatWidget() {
     async function load() {
       try {
         const widgets = await getMyWidgets();
-        let chat = widgets.find((w) => w.widgetType === 'CHAT') ?? null;
-        if (!chat) chat = await createWidgetToken('CHAT');
+        const chat = widgets.find((w) => w.widgetType === 'CHAT') ?? null;
         setToken(chat);
-        if (chat.config) setConfig(chat.config as WidgetChatConfig);
+        if (chat?.config) setConfig(chat.config as WidgetChatConfig);
       } catch {
         // 네트워크 오류 시 기본값 유지
       } finally {
