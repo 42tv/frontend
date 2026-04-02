@@ -7,6 +7,8 @@ import { getActiveProducts, preparePayment } from '../_apis/product';
 import { Product, RealPGPurchaseData } from '../_types/product';
 import { useBootpayStyles } from '../_hooks/useBootpayStyles';
 
+const IS_DEV = process.env.NEXT_ENV === 'dev';
+
 export default function ChargePage() {
   useBootpayStyles();
 
@@ -59,6 +61,11 @@ export default function ChargePage() {
 
     try {
       setPurchasing(true);
+
+      if (IS_DEV) {
+        await preparePayment(productId, 'mock');
+        return;
+      }
 
       const prepareResponse = await preparePayment(productId, 'bootpay');
       const prepareData = prepareResponse.data.data as RealPGPurchaseData;
@@ -120,12 +127,13 @@ export default function ChargePage() {
         });
 
     } catch (error: unknown) {
-      setPurchasing(false);
       console.error('구매 실패:', error);
       const errorMessage =
         (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
         '충전 중 오류가 발생했습니다.';
       alert(errorMessage);
+    } finally {
+      if (IS_DEV) setPurchasing(false);
     }
   };
 
@@ -142,6 +150,13 @@ export default function ChargePage() {
             코인 충전
           </button>
         </div>
+
+        {/* Dev mode indicator */}
+        {IS_DEV && (
+          <div className="mb-4 px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-blue-400 text-sm">
+            개발 모드: 구매하기 버튼이 Mock 결제(즉시 충전)로 동작합니다.
+          </div>
+        )}
 
         {/* Custom Input Section */}
         <div className="bg-card dark:bg-card-dark rounded-xl border border-border dark:border-border-dark p-6 mb-8 shadow-sm">

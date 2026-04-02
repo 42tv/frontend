@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_ENV: process.env.NEXT_ENV,
+  },
   reactStrictMode: true,
   experimental: {},
   /* config options here */
