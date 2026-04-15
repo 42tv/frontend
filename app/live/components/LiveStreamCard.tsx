@@ -59,21 +59,21 @@ export default function LiveStreamCard({ live }: LiveStreamCardProps) {
     }, []);
 
     return (
-        <div 
-            className="flex flex-col rounded-lg overflow-hidden shadow-lg h-full cursor-pointer min-w-[275px]" // max-w-[275px] 제거
+        <div
+            className="flex flex-col h-full cursor-pointer min-w-[275px]"
             onClick={() => handlePlay()}
-        > {/* Link 추가 및 className 이동, cursor-pointer 추가 */}
-            <div className="relative w-full aspect-[16/9]">
+        >
+            <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden">
                 <Image
                     src={live.thumbnail || DEFAULT_PLACEHOLDER_IMAGE_URL}
                     alt={live.broadcaster.broadcastSetting.title || "Live Stream Thumbnail"}
                     fill // Use fill prop
-                    className="object-cover" 
+                    className="object-cover"
                     priority={true} // Prioritize first few images (adjust as needed)
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
             </div>
-            <div className="pt-3 flex flex-col flex-grow"> 
+            <div className="pt-3 flex flex-col flex-grow">
                 <h3 className="truncate text-text-primary dark:text-text-primary-dark">{live.broadcaster.broadcastSetting.title}</h3> 
                 <div className="flex items-center text-sm text-text-muted dark:text-text-muted-dark"> 
                     <span className="truncate flex-grow min-w-0 mr-2">{live.broadcaster.nickname}</span>
