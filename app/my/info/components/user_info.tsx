@@ -5,6 +5,8 @@ import { useUserStore } from "@/app/_lib/stores";
 import UserProfileImg from "./user_profile_img";
 import { getPosts } from "@/app/_apis/posts";
 import type { Post } from "./tabs/post_tabs_component/types/message";
+import { StarCoinIcon } from "@/app/_components/icons/StarCoinIcon";
+import { PostIcon } from "@/app/_components/icons/PostIcon";
 
 // UserInfo 컴포넌트는 사용자의 프로필 이미지와 닉네임, 코인, 메시지 수를 보여주는 컴포넌트입니다.
 export default function UserInfo() {
@@ -35,9 +37,15 @@ export default function UserInfo() {
             </div>
             <div className='flex-col w-full h-[48px] justify-center items-center text-center text-text-primary dark:text-text-primary-dark'>
                 <div className="font-semibold text-lg">{nickname}</div>
-                <div className="text-text-secondary dark:text-text-secondary-dark mt-2">
-                    <span className="mr-4">Coin {coinBalance.toLocaleString()}</span>
-                    <span>Message {unreadCount}</span>
+                <div className="flex justify-center items-center gap-4 text-text-secondary dark:text-text-secondary-dark mt-2">
+                    <span className="flex items-center gap-1">
+                        <StarCoinIcon size={18} />
+                        {coinBalance.toLocaleString()}
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <PostIcon size={18} />
+                        {unreadCount}
+                    </span>
                 </div>
             </div>
         </div>
