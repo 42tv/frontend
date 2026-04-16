@@ -1,5 +1,5 @@
-import { StatsContent } from "@/app/channel/components/tab-contents";
+import { DonationStatsContent } from "@/app/channel/components/tab-content/donation-stats/DonationStatsContent";
 
 export default function StatsPage() {
-  return <StatsContent />;
+  return <DonationStatsContent />;
 }

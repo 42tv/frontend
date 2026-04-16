@@ -99,29 +99,7 @@ export const BjArticle: React.FC<BjArticleProps> = ({
   );
 };
 
-export const StatsContent = () => {
-  return (
-    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
-      <h3 className="font-bold text-xl mb-4 text-text-primary">통계</h3>
-      <div className="space-y-4">
-        <div className="p-4 rounded bg-bg-tertiary">
-          <p className="font-medium text-text-primary">일간 시청자 수</p>
-          <div className="h-40 mt-2 flex items-end">
-            {[30, 45, 25, 60, 40, 75, 35].map((height, i) => (
-              <div key={i} className="flex-1 mx-1">
-                <div style={{ height: `${height}%` }} className="rounded-t bg-accent"></div>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between mt-2 text-text-secondary">
-            <span>월</span>
-            <span>일</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+export { DonationStatsContent as StatsContent } from "./tab-content/donation-stats/DonationStatsContent";
 
 export { FanRankContent } from "./tab-content/fan-rank/fan-rank-content";
 export { default as BroadcastSettings } from "./tab-content/broadcast-setting/broadcast-setting";
@@ -164,31 +142,7 @@ export const CommunityContent = () => {
   );
 };
 
-export const ExchangeContent = () => {
-  return (
-    <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
-      <h3 className="font-bold text-xl mb-4 text-text-primary">환전</h3>
-      <div className="space-y-4">
-        <div className="p-4 rounded bg-bg-tertiary">
-          <p className="font-medium text-text-primary">현재 보유 포인트</p>
-          <p className="text-2xl font-bold mt-1 text-text-primary">12,345 P</p>
-        </div>
-        <div className="p-4 rounded bg-bg-tertiary">
-          <p className="font-medium mb-2 text-text-primary">환전 신청</p>
-          <input
-            className="w-full p-2 rounded mb-2 bg-background text-text-primary border border-border-primary focus:outline-none focus:ring-2 focus:ring-accent"
-            placeholder="환전할 포인트"
-          />
-          <button
-            className="w-full py-2 rounded transition-colors bg-accent hover:bg-accent-light text-white"
-          >
-            환전 신청
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+export { ExchangeContent } from './tab-content/exchange/ExchangeContent';
 
 export const EmptyStateContent = () => {
   return (
