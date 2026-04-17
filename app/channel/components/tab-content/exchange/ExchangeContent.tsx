@@ -56,8 +56,9 @@ export const ExchangeContent = () => {
       ]);
       setSummary(summaryRes.data);
       setStats(statsRes.data);
-      setSettlements(settlementsRes.data.settlements);
-    } catch {
+      setSettlements(settlementsRes.data?.settlements ?? []);
+    } catch (err) {
+      console.error('[ExchangeContent] fetchData 실패:', err);
       setError('데이터를 불러오는 데 실패했습니다.');
     } finally {
       setLoading(false);

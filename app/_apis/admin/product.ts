@@ -101,9 +101,4 @@ export const productAPI = {
     const response = await api.patch<ApiResponse<Product>>(`/api/products/${id}/deactivate`);
     return response.data.data; // ResponseWrapper의 data 필드에서 상품 추출
   },
-
-  // 상품 순서 변경
-  async updateProductOrder(updates: { id: number; sort_order: number }[]): Promise<void> {
-    await api.patch("/api/products/order", { updates });
-  },
 };
