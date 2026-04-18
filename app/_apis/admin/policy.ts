@@ -62,7 +62,7 @@ export async function getPolicyByPage(page: PolicyPageType): Promise<PolicyRespo
  */
 export async function createPolicy(createPolicyDto: CreatePolicyDto): Promise<PolicyCreateSuccessResponseDto> {
   try {
-    const response = await api.post("/api/policy", createPolicyDto, {
+    const response = await api.post("/api/admin/policy", createPolicyDto, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export async function createPolicy(createPolicyDto: CreatePolicyDto): Promise<Po
  */
 export async function deletePolicy(id: number): Promise<PolicyResponseDto> {
   try {
-    const response = await api.delete(`/api/policy/${id}`, {
+    const response = await api.delete(`/api/admin/policy/${id}`, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

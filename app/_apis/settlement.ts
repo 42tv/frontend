@@ -9,25 +9,25 @@ import type {
 
 /**
  * 정산 요청
- * POST /api/settlement/my
+ * POST /api/settlement
  */
 export const createSettlement = async (
   data: CreateSettlementRequest,
 ): Promise<CreateSettlementResponse> => {
-  const response = await api.post<CreateSettlementResponse>('/api/settlement/my', data);
+  const response = await api.post<CreateSettlementResponse>('/api/settlement', data);
   return response.data;
 };
 
 /**
  * 내 정산 내역 조회
- * GET /api/settlement/my
+ * GET /api/settlement
  */
 export const getMySettlements = async (params?: {
   status?: SettlementStatus;
   limit?: number;
   offset?: number;
 }): Promise<SettlementsResponse> => {
-  const response = await api.get<SettlementsResponse>('/api/settlement/my', {
+  const response = await api.get<SettlementsResponse>('/api/settlement', {
     params,
   });
   return response.data;
@@ -35,9 +35,9 @@ export const getMySettlements = async (params?: {
 
 /**
  * 내 정산 통계 조회
- * GET /api/settlement/my/stats
+ * GET /api/settlement/stats
  */
 export const getMySettlementStats = async (): Promise<SettlementStatsResponse> => {
-  const response = await api.get<SettlementStatsResponse>('/api/settlement/my/stats');
+  const response = await api.get<SettlementStatsResponse>('/api/settlement/stats');
   return response.data;
 };

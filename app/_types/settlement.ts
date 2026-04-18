@@ -49,7 +49,7 @@ export interface SettlementStatsResponse {
 }
 
 export interface CreateSettlementRequest {
-  payout_coin_ids: string[];
+  amount: number;
   payout_method?: string;
   payout_account?: string;
 }
