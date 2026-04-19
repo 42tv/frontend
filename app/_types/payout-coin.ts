@@ -1,4 +1,4 @@
-export type PayoutStatus = 'PENDING' | 'MATURED' | 'BLOCKED' | 'SETTLED';
+export type PayoutStatus = 'PENDING' | 'MATURED' | 'BLOCKED' | 'IN_SETTLEMENT' | 'SETTLED';
 
 export interface PayoutCoin {
   id: string;
@@ -18,6 +18,7 @@ export interface PayoutSummary {
   matured_amount: number;
   pending_amount: number;
   blocked_amount: number;
+  in_settlement_amount: number;
   settled_amount: number;
   total_received: number;
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { getPayoutSummary, getMaturedPayoutCoins } from '@/app/_apis/payout-coin';
+import { getPayoutSummary } from '@/app/_apis/payout-coin';
 import { createSettlement, getMySettlements, getMySettlementStats } from '@/app/_apis/settlement';
 import type { PayoutSummary } from '@/app/_types/payout-coin';
 import type { Settlement, SettlementStats } from '@/app/_types/settlement';
@@ -77,16 +77,7 @@ export const ExchangeContent = () => {
       setError(null);
       setSuccessMessage(null);
 
-      // MATURED 상태의 PayoutCoin ID 목록 조회
-      const maturedRes = await getMaturedPayoutCoins({ limit: 500 });
-      const ids = maturedRes.data.payoutCoins.map((c) => c.id);
-
-      if (ids.length === 0) {
-        setError('정산 가능한 코인이 없습니다.');
-        return;
-      }
-
-      await createSettlement({ payout_coin_ids: ids });
+      await createSettlement({ amount: summary.matured_amount });
       setSuccessMessage('정산 요청이 완료되었습니다. 관리자 검토 후 지급됩니다.');
       await fetchData();
     } catch {
@@ -121,7 +112,7 @@ export const ExchangeContent = () => {
       {/* 코인 현황 카드 */}
       <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
         <h3 className="font-bold text-lg mb-4 text-text-primary">코인 현황</h3>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <SummaryCard
             label="정산 가능"
             value={summary?.matured_amount ?? 0}
@@ -135,16 +126,22 @@ export const ExchangeContent = () => {
             tooltip="후원 후 3일간 대기 중인 금액입니다."
           />
           <SummaryCard
+            label="신청 중"
+            value={summary?.in_settlement_amount ?? 0}
+            accent="blue"
+            tooltip="정산 신청 완료, 관리자 처리 대기 중인 금액입니다."
+          />
+          <SummaryCard
             label="차단됨"
             value={summary?.blocked_amount ?? 0}
             accent="red"
             tooltip="컴플라이언스 검토로 보류된 금액입니다."
           />
           <SummaryCard
-            label="정산 완료"
+            label="지급 완료"
             value={summary?.settled_amount ?? 0}
             accent="gray"
-            tooltip="이미 정산 요청된 금액입니다."
+            tooltip="실제 지급 완료된 금액입니다."
           />
         </div>
       </div>
@@ -250,13 +247,14 @@ export const ExchangeContent = () => {
 interface SummaryCardProps {
   label: string;
   value: number;
-  accent: 'green' | 'yellow' | 'red' | 'gray';
+  accent: 'green' | 'yellow' | 'blue' | 'red' | 'gray';
   tooltip: string;
 }
 
 const ACCENT_CLASS: Record<SummaryCardProps['accent'], string> = {
   green: 'text-green-600 dark:text-green-400',
   yellow: 'text-yellow-600 dark:text-yellow-400',
+  blue: 'text-blue-600 dark:text-blue-400',
   red: 'text-red-600 dark:text-red-400',
   gray: 'text-text-secondary',
 };
@@ -264,6 +262,7 @@ const ACCENT_CLASS: Record<SummaryCardProps['accent'], string> = {
 const BORDER_CLASS: Record<SummaryCardProps['accent'], string> = {
   green: 'border-l-4 border-l-green-500',
   yellow: 'border-l-4 border-l-yellow-500',
+  blue: 'border-l-4 border-l-blue-500',
   red: 'border-l-4 border-l-red-500',
   gray: 'border-l-4 border-l-border-primary',
 };
