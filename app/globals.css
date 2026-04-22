@@ -14,11 +14,11 @@
   --bg-200: #f5f4f1;
   --bg-300: #cccbc8;
 
-  --dark-primary-100: oklch(60% 0.23 18);
-  --dark-primary-200: oklch(55% 0.23 18);
-  --dark-primary-300: oklch(65% 0.2 18);
-  --dark-accent-100: oklch(60% 0.23 18);
-  --dark-accent-200: oklch(65% 0.2 25);
+  --dark-primary-100: #93c5fd;
+  --dark-primary-200: #2563eb;
+  --dark-primary-300: #3b82f6;
+  --dark-accent-100: #3b82f6;
+  --dark-accent-200: #2563eb;
   --dark-text-100: #e2e2ea;
   --dark-text-200: #a0a0b0;
   --dark-bg-100: #0d0d10;

@@ -18,7 +18,7 @@ function SectionHeader({ title, count }: { title: string; count?: number }) {
     <div className="flex items-center gap-2 mb-3">
       <h2 className="text-[15px] font-bold text-[#e2e2ea]">{title}</h2>
       {count !== undefined && (
-        <span className="bg-[#ff3535] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">LIVE {count}</span>
+        <span className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">LIVE {count}</span>
       )}
     </div>
   );
@@ -36,10 +36,10 @@ function FollowingStrip({ lives }: { lives: Live[] }) {
           <div key={l.broadcaster.user_id} className="flex flex-col items-center gap-1.5 cursor-pointer flex-shrink-0">
             <div className="relative">
               <div
-                className="w-[52px] h-[52px] rounded-full border-[2.5px] border-[#ff3535]"
+                className="w-[52px] h-[52px] rounded-full border-[2.5px] border-accent"
                 style={{ background: getAvatarColor(l.broadcaster.nickname) }}
               />
-              <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-[#ff3535] border-2 border-[#0d0d10]" />
+              <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-accent border-2 border-[#0d0d10]" />
             </div>
             <span className="text-[11px] text-[#72728a] max-w-[52px] truncate">{l.broadcaster.nickname}</span>
           </div>
@@ -76,7 +76,7 @@ export default function Home() {
         <>
           {nickname && <FollowingStrip lives={lives} />}
           <section>
-            <SectionHeader title="🔴 라이브 목록" count={lives.length} />
+            <SectionHeader title="라이브 목록" count={lives.length} />
             <div className="grid grid-cols-4 gap-3">
               {lives.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
             </div>

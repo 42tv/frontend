@@ -30,7 +30,7 @@ const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) =>
       onClick={handleClick}
       className={`flex items-center gap-2.5 px-4 py-[9px] text-[14px] cursor-pointer transition-colors border-l-[3px]
         ${active
-          ? 'border-[oklch(60%_0.23_18)] bg-[#20202a] text-[#e2e2ea] font-semibold'
+          ? 'border-accent bg-[#20202a] text-[#e2e2ea] font-semibold'
           : 'border-l-transparent text-[#72728a] hover:bg-[#20202a] hover:text-[#e2e2ea]'
         }`}
     >

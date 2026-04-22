@@ -25,7 +25,7 @@ function getBadgeLabel(message: ChatMessage): string {
 function RoleBadge({ role }: { role: ChatMessage['role'] }) {
   if (role === 'broadcaster') {
     return (
-      <span className="rounded-sm px-1.5 py-0.5 text-[9px] font-bold tracking-wide bg-red-500/80 text-white leading-none uppercase">
+      <span className="rounded-sm px-1.5 py-0.5 text-[9px] font-bold tracking-wide bg-accent text-white leading-none uppercase">
         BJ
       </span>
     );

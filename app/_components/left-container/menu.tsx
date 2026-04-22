@@ -69,13 +69,13 @@ export default function Menu() {
             >
               <div className="relative flex-shrink-0">
                 <div
-                  className="w-6 h-6 rounded-full border-2 border-[#ff3535]"
+                  className="w-6 h-6 rounded-full border-2 border-accent"
                   style={{ background: getAvatarColor(l.broadcaster.nickname) }}
                 />
-                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#ff3535] border-[1.5px] border-[#17171c]" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-accent border-[1.5px] border-[#17171c]" />
               </div>
               <span className="flex-1 truncate">{l.broadcaster.nickname}</span>
-              <span className="text-[10px] text-[#ff3535] font-bold flex-shrink-0">LIVE</span>
+              <span className="text-[10px] text-accent font-bold flex-shrink-0">LIVE</span>
             </Link>
           ))}
           <div className="h-4" />

@@ -69,7 +69,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
             sizes="(max-width:1280px) 25vw, 20vw"
           />
         )}
-        <span className="absolute top-1.5 left-1.5 bg-[#ff3535] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wide">LIVE</span>
+        <span className="absolute top-1.5 left-1.5 bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wide">LIVE</span>
         <span className="absolute bottom-1.5 right-1.5 bg-black/70 text-[#ddd] text-[11px] px-1.5 py-0.5 rounded-sm backdrop-blur-sm">👁 {formatCount(live.viewerCount)}</span>
       </div>
 

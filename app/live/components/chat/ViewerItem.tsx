@@ -40,7 +40,7 @@ const ViewerItem: React.FC<ViewerItemProps> = ({ viewer, onClick }) => {
                             {viewer.nickname}
                         </span>
                         {viewer.role === 'broadcaster' && (
-                            <span className="text-xs bg-red-500 text-white px-1 rounded">방송자</span>
+                            <span className="text-xs bg-accent text-white px-1 rounded">방송자</span>
                         )}
                         {viewer.role === 'manager' && (
                             <span className="text-xs bg-blue-500 text-white px-1 rounded">매니저</span>
