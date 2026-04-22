@@ -1,24 +1,29 @@
-// components/NavItem.tsx
-import React from "react";
-import Link from "next/link"; // Link 임포트 추가
+'use client';
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface NavItemProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
-  href: string; // href prop 추가
+  href: string;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, href }) => { // href prop 받기
+const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, href }) => {
+  const pathname = usePathname();
+  const active = pathname === href || (href !== '/' && pathname?.startsWith(href));
+
   return (
-    <Link href={href} passHref> {/* Link 컴포넌트로 감싸기 */}
+    <Link href={href} passHref>
       <div
-        className={`flex w-full h-[60px] cursor-pointer bg-background dark:bg-background-dark`}
+        className={`flex items-center gap-2.5 px-4 py-[9px] text-[14px] cursor-pointer transition-colors border-l-[3px]
+          ${active
+            ? 'border-[oklch(60%_0.23_18)] bg-[#20202a] text-[#e2e2ea] font-semibold'
+            : 'border-l-transparent text-[#72728a] hover:bg-[#20202a] hover:text-[#e2e2ea]'
+          }`}
       >
-        {/* justify-center를 justify-start로 변경하고 px-4 추가 */}
-        <div className="flex w-full m-3 items-center justify-start space-x-4 flex-row rounded-[10px] hover:bg-bg-tertiary">
-        <Icon className="ml-7 w-5 h-5" />
+        <Icon className="w-[16px] h-[16px] opacity-80 flex-shrink-0" />
         <span>{label}</span>
-      </div>
       </div>
     </Link>
   );

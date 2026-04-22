@@ -2,13 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* OBS 위젯 페이지: 투명 배경 */
-body:has(#widget-root) {
-  background: transparent !important;
-}
-
 :root {
-  /* Light mode color palette */
   --primary-100: #d4eaf7;
   --primary-200: #b6ccd8;
   --primary-300: #3b3c3d;
@@ -20,293 +14,73 @@ body:has(#widget-root) {
   --bg-200: #f5f4f1;
   --bg-300: #cccbc8;
 
-  /* Dark mode color palette */
-  --dark-primary-100: #6A00FF;
-  --dark-primary-200: #8A2BE2;
-  --dark-primary-300: #9370DB;
-  --dark-accent-100: #00829b;
-  --dark-accent-200: #00B8D4;
-  --dark-text-100: #FFFFFF;
-  --dark-text-200: #e0e0e0;
-  --dark-bg-100: #1A1A1A;
-  --dark-bg-200: #292929;
-  --dark-bg-300: #404040;
+  --dark-primary-100: oklch(60% 0.23 18);
+  --dark-primary-200: oklch(55% 0.23 18);
+  --dark-primary-300: oklch(65% 0.2 18);
+  --dark-accent-100: oklch(60% 0.23 18);
+  --dark-accent-200: oklch(65% 0.2 25);
+  --dark-text-100: #e2e2ea;
+  --dark-text-200: #a0a0b0;
+  --dark-bg-100: #0d0d10;
+  --dark-bg-200: #17171c;
+  --dark-bg-300: #2c2c38;
 
-  /* Light theme active colors */
   --background: var(--bg-100);
   --foreground: var(--text-100);
-
-  /* Primary colors */
   --primary: var(--primary-300);
   --primary-hover: var(--primary-200);
   --primary-light: var(--primary-100);
-
-  /* Accent colors */
   --accent: var(--accent-100);
   --accent-light: var(--accent-200);
-
-  /* Text colors */
   --text-primary: var(--text-100);
   --text-secondary: var(--text-200);
   --text-tertiary: rgb(107, 114, 128);
   --text-muted: rgb(156, 163, 175);
-
-  /* Background colors */
   --bg-primary: var(--bg-100);
   --bg-secondary: var(--bg-200);
   --bg-tertiary: var(--bg-300);
-
-  /* Border colors */
   --border-primary: var(--bg-300);
   --border-secondary: var(--primary-200);
   --border-hover: var(--primary-300);
 }
 
-[data-theme="dark"] {
-  /* Dark theme colors */
+[data-theme="dark"], .dark {
   --background: var(--dark-bg-100);
   --foreground: var(--dark-text-100);
-
-  /* Primary colors */
   --primary: var(--dark-primary-300);
   --primary-hover: var(--dark-primary-200);
   --primary-light: var(--dark-primary-100);
-
-  /* Accent colors */
   --accent: var(--dark-accent-100);
   --accent-light: var(--dark-accent-200);
-
-  /* Background variants */
   --bg-primary: var(--dark-bg-200);
   --bg-secondary: var(--dark-bg-300);
   --bg-tertiary: var(--dark-bg-200);
-
-  /* Text colors */
   --text-primary: var(--dark-text-100);
   --text-secondary: var(--dark-text-200);
   --text-tertiary: rgb(156, 163, 175);
   --text-muted: rgb(107, 114, 128);
-
-  /* Border colors */
   --border-primary: var(--dark-bg-300);
   --border-secondary: var(--dark-primary-200);
   --border-hover: var(--dark-primary-300);
 }
 
-.dark {
-  /* Dark theme colors */
-  --background: var(--dark-bg-100);
-  --foreground: var(--dark-text-100);
-
-  /* Primary colors */
-  --primary: var(--dark-primary-300);
-  --primary-hover: var(--dark-primary-200);
-  --primary-light: var(--dark-primary-100);
-
-  /* Accent colors */
-  --accent: var(--dark-accent-100);
-  --accent-light: var(--dark-accent-200);
-
-  /* Background variants */
-  --bg-primary: var(--dark-bg-200);
-  --bg-secondary: var(--dark-bg-300);
-  --bg-tertiary: var(--dark-bg-200);
-
-  /* Text colors */
-  --text-primary: var(--dark-text-100);
-  --text-secondary: var(--dark-text-200);
-  --text-tertiary: rgb(156, 163, 175);
-  --text-muted: rgb(107, 114, 128);
-
-  /* Border colors */
-  --border-primary: var(--dark-bg-300);
-  --border-secondary: var(--dark-primary-200);
-  --border-hover: var(--dark-primary-300);
-}
-
-/* 전체 레이아웃 설정 - 제거 또는 주석 처리 */
-/* .grid-rows-layout {
-  display: grid;
-  height: 100vh;
-  grid-template-rows: 60px 1fr 40px;
-}
-
-.grid-cols-layout {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-} */
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: auto; /* 브라우저 스크롤 활성화 */
-}
-
-input {
-  background-color: transparent;
-}
-
-/* react-colorful 커스터마이징 */
-.react-colorful {
-  width: 200px;
-  height: 150px;
-}
-
-.react-colorful__saturation {
-  border-radius: 8px 8px 0 0;
-  border-bottom: none;
-}
-
-.react-colorful__hue {
-  height: 20px;
-  border-radius: 0 0 8px 8px;
-}
-
-.react-colorful__pointer {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.react-colorful__saturation-pointer {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.react-colorful__hue-pointer {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* 다크 테마에서 react-colorful 스타일 */
-[data-theme="dark"] .react-colorful__pointer,
-.dark .react-colorful__pointer {
-  border-color: #374151;
-}
-
-[data-theme="dark"] .react-colorful__saturation-pointer,
-.dark .react-colorful__saturation-pointer {
-  border-color: #374151;
-}
-
-[data-theme="dark"] .react-colorful__hue-pointer,
-.dark .react-colorful__hue-pointer {
-  border-color: #374151;
-}
-
-/* 정책 문서 스타일 - 단순하고 가독성 중심 */
-.policy-document {
-  font-family: inherit;
-  line-height: 1.6;
-  color: var(--foreground);
-  background-color: transparent;
-  max-width: none;
-  margin: 0;
-}
-
-.policy-document h1 {
-  color: var(--foreground);
-  margin-bottom: 24px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.policy-document h2 {
-  color: var(--foreground);
-  margin-top: 24px;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.policy-document .notice {
-  background-color: var(--bg-secondary);
-  border: 1px solid #f59e0b;
-  padding: 12px;
-  margin-bottom: 20px;
-  color: var(--foreground);
-  font-size: 0.9rem;
-}
-
-.policy-document .warning {
-  background-color: var(--bg-secondary);
-  border: 1px solid #ef4444;
-  padding: 12px;
-  margin-top: 20px;
-  color: var(--foreground);
-  font-size: 0.9rem;
-}
-
-.policy-document .footer-info {
-  border-top: 1px solid var(--border-primary);
-  padding: 16px 0;
-  margin-top: 24px;
-  text-align: center;
-  font-weight: 600;
-  color: var(--foreground);
-  background-color: transparent;
-}
-
-.policy-document ol {
-  padding-left: 25px;
-  margin-bottom: 12px;
-  list-style-type: decimal;
-}
-
-.policy-document ul {
-  padding-left: 25px;
-  margin-bottom: 12px;
-  list-style-type: disc;
-}
-
-.policy-document li {
-  margin-bottom: 4px;
-  color: var(--foreground);
-  line-height: 1.5;
-}
-
-.policy-document .highlight {
-  font-weight: 700;
-  color: var(--foreground);
-}
-
-.policy-document a {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.policy-document a:hover {
-  color: var(--accent-light);
-}
-
-.policy-document .section-number {
-  font-weight: 700;
-  color: var(--foreground);
-}
-
-.policy-document p {
-  margin-bottom: 12px;
-  color: var(--foreground);
-  line-height: 1.5;
-}
-
-.policy-document strong {
-  font-weight: 700;
-  color: var(--foreground);
-}
-
-.policy-document .section-divider {
-  border: none;
-  border-top: 1px solid var(--border-primary);
-  margin: 20px 0;
-}
+html, body { margin: 0; padding: 0; height: 100%; overflow: auto; }
+input { background-color: transparent; }
+.react-colorful { width: 200px; height: 150px; }
+.react-colorful__saturation { border-radius: 8px 8px 0 0; border-bottom: none; }
+.react-colorful__hue { height: 20px; border-radius: 0 0 8px 8px; }
+.react-colorful__pointer, .react-colorful__saturation-pointer, .react-colorful__hue-pointer { width: 16px; height: 16px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+[data-theme="dark"] .react-colorful__pointer, .dark .react-colorful__pointer, [data-theme="dark"] .react-colorful__saturation-pointer, .dark .react-colorful__saturation-pointer, [data-theme="dark"] .react-colorful__hue-pointer, .dark .react-colorful__hue-pointer { border-color: #374151; }
+.policy-document { font-family: inherit; line-height: 1.6; color: var(--foreground); background-color: transparent; }
+.policy-document h1 { color: var(--foreground); margin-bottom: 24px; font-size: 1.5rem; font-weight: 700; text-align: center; }
+.policy-document h2 { color: var(--foreground); margin-top: 24px; margin-bottom: 12px; font-size: 1.1rem; font-weight: 600; }
+.policy-document .notice { background-color: var(--bg-secondary); border: 1px solid #f59e0b; padding: 12px; margin-bottom: 20px; font-size: 0.9rem; }
+.policy-document .warning { background-color: var(--bg-secondary); border: 1px solid #ef4444; padding: 12px; margin-top: 20px; font-size: 0.9rem; }
+.policy-document .footer-info { border-top: 1px solid var(--border-primary); padding: 16px 0; margin-top: 24px; text-align: center; font-weight: 600; }
+.policy-document ol { padding-left: 25px; margin-bottom: 12px; list-style-type: decimal; }
+.policy-document ul { padding-left: 25px; margin-bottom: 12px; list-style-type: disc; }
+.policy-document li { margin-bottom: 4px; line-height: 1.5; }
+.policy-document a { color: var(--accent); text-decoration: underline; }
+.policy-document p { margin-bottom: 12px; line-height: 1.5; }
+.policy-document strong { font-weight: 700; }
+.policy-document .section-divider { border: none; border-top: 1px solid var(--border-primary); margin: 20px 0; }
