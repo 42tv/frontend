@@ -20,7 +20,6 @@ function SectionHeader({ title, count }: { title: string; count?: number }) {
       {count !== undefined && (
         <span className="bg-[#ff3535] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">LIVE {count}</span>
       )}
-      <span className="ml-auto text-[12px] text-[#72728a] cursor-pointer hover:text-[#e2e2ea] transition-colors">더보기 →</span>
     </div>
   );
 }
@@ -64,11 +63,6 @@ export default function Home() {
     fetchLives();
   }, []);
 
-  const popular = lives.slice().sort((a, b) => b.viewerCount - a.viewerCount).slice(0, 8);
-  const recommended = lives.filter((l) => !l.broadcaster.broadcastSetting.is_adult).slice(0, 4);
-  const game = lives.filter((l) => !l.broadcaster.broadcastSetting.is_adult).slice(0, 4);
-  const adult = lives.filter((l) => l.broadcaster.broadcastSetting.is_adult);
-
   return (
     <div className="min-h-screen bg-[#0d0d10] px-5 py-5 flex flex-col gap-6">
       {loading ? (
@@ -81,38 +75,12 @@ export default function Home() {
       ) : (
         <>
           {nickname && <FollowingStrip lives={lives} />}
-          {popular.length > 0 && (
-            <section>
-              <SectionHeader title="🔴 인기 라이브" count={lives.length} />
-              <div className="grid grid-cols-4 gap-3">
-                {popular.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
-              </div>
-            </section>
-          )}
-          {recommended.length > 0 && (
-            <section>
-              <SectionHeader title="⭐ Fairly 추천" />
-              <div className="grid grid-cols-4 gap-3">
-                {recommended.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
-              </div>
-            </section>
-          )}
-          {game.length > 0 && (
-            <section>
-              <SectionHeader title="🎮 게임" />
-              <div className="grid grid-cols-4 gap-3">
-                {game.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
-              </div>
-            </section>
-          )}
-          {adult.length > 0 && (
-            <section>
-              <SectionHeader title="🔞 성인 방송" />
-              <div className="grid grid-cols-4 gap-3">
-                {adult.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
-              </div>
-            </section>
-          )}
+          <section>
+            <SectionHeader title="🔴 라이브 목록" count={lives.length} />
+            <div className="grid grid-cols-4 gap-3">
+              {lives.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
+            </div>
+          </section>
         </>
       )}
     </div>
