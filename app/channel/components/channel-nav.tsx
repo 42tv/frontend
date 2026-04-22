@@ -25,10 +25,11 @@ const ChannelNav = () => {
         <Link
           key={tab.name}
           href={tab.path}
-          className={`font-medium pb-2 transition-colors whitespace-nowrap ${
+          aria-current={pathname.startsWith(tab.path) ? "page" : undefined}
+          className={`border-b-2 pb-2 font-medium transition-colors whitespace-nowrap ${
             pathname.startsWith(tab.path)
-              ? "border-b-2 border-accent text-accent"
-              : "text-text-secondary hover:text-accent hover:border-b-2 hover:border-accent"
+              ? "border-current text-text-primary"
+              : "border-transparent text-text-secondary hover:border-current hover:text-text-primary"
           }`}
         >
           {tab.name}

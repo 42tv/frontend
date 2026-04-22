@@ -86,8 +86,8 @@ export default function Policy() {
                             onClick={() => handleTabClick(tab.id)}
                             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                                 activeTab === tab.id
-                                    ? 'border-accent text-accent'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                                    ? 'border-current text-text-primary'
+                                    : 'border-transparent text-text-secondary hover:text-text-primary'
                             }`}
                         >
                             {tab.label}

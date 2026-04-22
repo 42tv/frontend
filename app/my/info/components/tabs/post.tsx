@@ -9,17 +9,29 @@ export default function PostTab() {
         <div className="flex flex-col w-full h-full">
             <div className="flex flex-row px-6 pt-5 pb-4 items-center space-x-8 border-b border-border-primary">
                 <button
-                    className={`${activeTab === 'received' ? 'text-accent' : 'text-text-secondary'} transition-colors font-medium`}
+                    className={`transition-colors ${
+                        activeTab === 'received'
+                            ? 'font-semibold text-text-primary'
+                            : 'font-medium text-text-secondary hover:text-text-primary'
+                    }`}
                     onClick={() => setActiveTab('received')}>
                     받은 메세지
                 </button>
                 <button
-                    className={`${activeTab === 'send' ? 'text-accent' : 'text-text-secondary'} transition-colors font-medium`}
+                    className={`transition-colors ${
+                        activeTab === 'send'
+                            ? 'font-semibold text-text-primary'
+                            : 'font-medium text-text-secondary hover:text-text-primary'
+                    }`}
                     onClick={() => setActiveTab('send')}>
                     보낸 메세지
                 </button>
                 <button
-                    className={`${activeTab === 'block' ? 'text-accent' : 'text-text-secondary'} transition-colors font-medium`}
+                    className={`transition-colors ${
+                        activeTab === 'block'
+                            ? 'font-semibold text-text-primary'
+                            : 'font-medium text-text-secondary hover:text-text-primary'
+                    }`}
                     onClick={() => setActiveTab('block')}>
                     차단 목록
                 </button>

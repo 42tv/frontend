@@ -12,10 +12,10 @@ const TabNav: React.FC<TabNavProps> = ({ tabs, active, onChange }) => (
       <button
         key={tab}
         onClick={() => onChange(tab)}
-        className={`py-2 transition-colors ${
+        className={`border-b-2 py-2 font-medium transition-colors ${
           active === tab
-            ? 'border-b-2 border-accent text-accent'
-            : 'text-text-muted hover:text-text-secondary hover:border-b-2 hover:border-border-hover'
+            ? 'border-current text-text-primary'
+            : 'border-transparent text-text-secondary hover:border-current hover:text-text-primary'
         }`}
       >
         {tab}
