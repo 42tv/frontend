@@ -12,7 +12,6 @@ const tabRoutes = [
   { name: "BJ알림", path: "/channel/my/notifications" },
   { name: "팬등급", path: "/channel/my/fans" },
   { name: "블랙리스트", path: "/channel/my/blacklist" },
-  { name: "클립", path: "/channel/my/clips" },
   { name: "커뮤니티", path: "/channel/my/community" },
   { name: "환전", path: "/channel/my/exchange" },
 ];

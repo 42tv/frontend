@@ -60,7 +60,7 @@ export default function PayoutCoinTab() {
   };
 
   const handleMature = async () => {
-    if (!confirm('성숙도 업데이트를 실행하시겠습니까?\nPENDING → MATURED/BLOCKED 전환이 수행됩니다.')) return;
+    if (!confirm('정산 가능으로 전환하시겠습니까?\n정산 가능일이 도래한 PENDING 코인이 MATURED로 전환됩니다.')) return;
     setMatureLoading(true);
     setError('');
     setMatureResult(null);
@@ -72,7 +72,7 @@ export default function PayoutCoinTab() {
         handleSearch();
       }
     } catch {
-      setError('성숙도 업데이트 중 오류가 발생했습니다.');
+      setError('정산 가능 전환 중 오류가 발생했습니다.');
     } finally {
       setMatureLoading(false);
     }
@@ -98,9 +98,9 @@ export default function PayoutCoinTab() {
       <div className="bg-card border border-border rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-semibold text-foreground">성숙도 업데이트</h3>
+            <h3 className="font-semibold text-foreground">정산 가능 전환</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              PENDING 상태 코인을 MATURED 또는 BLOCKED로 전환합니다.
+              PENDING 상태 코인 중 정산 가능일이 도래한 항목을 MATURED로 전환합니다.
             </p>
           </div>
           <button
@@ -108,7 +108,7 @@ export default function PayoutCoinTab() {
             disabled={matureLoading}
             className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors font-medium whitespace-nowrap"
           >
-            {matureLoading ? '실행 중...' : '성숙도 업데이트 실행'}
+            {matureLoading ? '실행 중...' : '정산 가능으로 전환'}
           </button>
         </div>
 

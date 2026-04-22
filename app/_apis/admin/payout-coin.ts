@@ -12,7 +12,7 @@ export interface MatureResult {
  * POST /payout-coin/admin/mature
  */
 export const maturePayoutCoins = async (): Promise<MatureResult> => {
-  const response = await api.post<{ success: boolean; data: MatureResult }>('/api/payout-coin/admin/mature');
+  const response = await api.post<{ success: boolean; data: MatureResult }>('/api/admin/payout-coin/mature');
   return response.data.data;
 };
 
