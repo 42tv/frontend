@@ -1,5 +1,6 @@
+'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useUserStore } from '@/app/_lib/stores';
 import LoginComponent from '../modals/login_component';
 import { openModal } from '../utils/overlay/overlayHelpers';
@@ -12,7 +13,9 @@ interface AuthNavItemProps {
 
 const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { user_id } = useUserStore();
+  const active = pathname === href || (href !== '/' && pathname?.startsWith(href));
 
   const handleClick = () => {
     if (user_id) {
@@ -25,12 +28,14 @@ const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) =>
   return (
     <div
       onClick={handleClick}
-      className={`flex w-full h-[60px] cursor-pointer bg-background dark:bg-background-dark`}
+      className={`flex items-center gap-2.5 px-4 py-[9px] text-[14px] cursor-pointer transition-colors border-l-[3px]
+        ${active
+          ? 'border-accent bg-[#20202a] text-[#e2e2ea] font-semibold'
+          : 'border-l-transparent text-[#72728a] hover:bg-[#20202a] hover:text-[#e2e2ea]'
+        }`}
     >
-      <div className="flex w-full m-3 items-center justify-start space-x-4 flex-row rounded-[10px] hover:bg-bg-tertiary">
-        <Icon className="ml-7 w-5 h-5" />
-        <span>{label}</span>
-      </div>
+      <Icon className="w-[16px] h-[16px] opacity-80 flex-shrink-0" />
+      <span>{label}</span>
     </div>
   );
 };

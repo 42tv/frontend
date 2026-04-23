@@ -3,12 +3,9 @@ import { ApiSuccessResponse } from "@/app/_types/api";
 import {
   Article,
   CreateArticleDto,
-  UpdateArticleDto,
   EditArticleDto,
   ArticleListResponse,
   ArticleResponse,
-  ArticleListByAuthorParams,
-  GetArticleByIdParams,
   GetArticlesParams,
 } from "../_types/article";
 
@@ -48,29 +45,6 @@ export async function createArticle(
 }
 
 /**
- * 게시글 상세 조회
- * @param params 게시글 조회 파라미터
- * @returns 
- */
-export async function getArticleById(params: GetArticleByIdParams): Promise<Article> {
-  const queryParams = new URLSearchParams();
-  if (params.incrementView) {
-    queryParams.append('view', 'true');
-  }
-
-  const response = await api.get<ApiSuccessResponse<Article>>(
-    `/api/article/${params.id}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`,
-    {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data.data;
-}
-
-/**
  * 게시글 목록 조회 (새로운 API)
  * @param params 조회 파라미터
  * @returns
@@ -105,33 +79,6 @@ export async function getArticles(params: GetArticlesParams): Promise<ArticleLis
     data: response.data.data.articles,
     pagination: response.data.data.pageMeta
   };
-}
-
-/**
- * 작성자별 게시글 목록 조회 (레거시)
- * @param params 조회 파라미터
- * @returns 
- * @deprecated getArticles 함수를 사용하세요
- */
-export async function getArticlesByAuthor(params: ArticleListByAuthorParams): Promise<ArticleListResponse> {
-  const queryParams = new URLSearchParams();
-  if (params.page) {
-    queryParams.append('page', params.page.toString());
-  }
-  if (params.limit) {
-    queryParams.append('limit', params.limit.toString());
-  }
-
-  const response = await api.get<ApiSuccessResponse<ArticleListResponse>>(
-    `/api/article/author/${params.authorId}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`,
-    {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data.data;
 }
 
 /**
@@ -176,30 +123,6 @@ export async function editArticle(
   });
 
   // 백엔드 응답 구조: { success: true, data: Article, message: string }
-  return {
-    success: response.data.success,
-    data: response.data.data,
-    message: response.data.message
-  };
-}
-
-/**
- * 게시글 수정 (레거시)
- * @param id 게시글 ID
- * @param updateArticleDto 수정할 데이터
- * @returns 
- * @deprecated editArticle 함수를 사용하세요
- */
-export async function updateArticle(
-  id: number,
-  updateArticleDto: UpdateArticleDto
-): Promise<ArticleResponse> {
-  const response = await api.put<ApiSuccessResponse<Article>>(`/api/article/${id}`, updateArticleDto, {
-    withCredentials: true,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
   return {
     success: response.data.success,
     data: response.data.data,

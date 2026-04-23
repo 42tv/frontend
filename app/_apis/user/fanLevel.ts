@@ -37,36 +37,3 @@ export async function updateFanLevel(levels: FanLevelItem[]) {
   // 백엔드 응답 구조: { success: true, data: [...], message: string }
   return response.data?.data || response.data;
 }
-
-/**
- * 개별 팬 레벨 수정 (단일 레벨 업데이트)
- * @param id 레벨 ID
- * @param name 레벨 이름
- * @param min_donation 최소 후원 금액
- * @param color 배경 색상
- * @returns
- */
-export async function updateSingleFanLevel(id: number, name: string, min_donation: number, color: string) {
-  const requestBody = {
-    name: name,
-    min_donation: min_donation,
-    color: color,
-  };
-
-  const response = await api.put(`/api/fan-level/${id}`, requestBody, {
-    withCredentials: true,
-  });
-  return response.data;
-}
-
-/**
- * 팬 레벨 삭제
- * @param id 레벨 ID
- * @returns
- */
-export async function deleteFanLevel(id: number) {
-  const response = await api.delete(`/api/fan-level/${id}`, {
-    withCredentials: true,
-  });
-  return response.data;
-}

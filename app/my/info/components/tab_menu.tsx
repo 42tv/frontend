@@ -29,8 +29,18 @@ export default function TabMenu() {
                     tabLists.map((tab, index) => {
                         const isActive = pathname === tab.link
                         return (
-                            <li key={index} className="flex w-[100px] items-center justify-center text-text-secondary">
-                                <Link href={tab.link} className={`pb-1 ${isActive ? "font-bold text-accent border-b-2 border-accent" : "hover:text-accent"} transition-colors`}> {tab.name} </Link>
+                            <li key={index} className="flex w-[100px] items-center justify-center">
+                                <Link
+                                    href={tab.link}
+                                    aria-current={isActive ? "page" : undefined}
+                                    className={`border-b-2 pb-1 transition-colors ${
+                                        isActive
+                                            ? "font-bold border-current text-text-primary"
+                                            : "border-transparent text-text-secondary hover:border-current hover:text-text-primary"
+                                    }`}
+                                >
+                                    {tab.name}
+                                </Link>
                             </li>
                         )
                     })

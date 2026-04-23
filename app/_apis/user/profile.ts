@@ -76,7 +76,7 @@ export async function uploadProfileImage(
   const response = await api.post("/api/user/profile", formData, {
     withCredentials: true,
   });
-  return response.data;
+  return response.data.data;
 }
 
 /**

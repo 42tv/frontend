@@ -134,12 +134,6 @@ const SponModal: React.FC<SponModalProps> = ({ closeModal, streamerUserId }) => 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                     <button
-                        className="flex-1 py-3 rounded-lg bg-gray-600 text-white font-medium hover:bg-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={isLoading}
-                    >
-                        하트선물목수
-                    </button>
-                    <button
                         className="flex-1 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={handleDonate}
                         disabled={isLoading || !streamerUserId}

@@ -7,11 +7,11 @@ import { usePathname } from "next/navigation";
 const tabRoutes = [
   { name: "BJ공지사항", path: "/channel/my/article" },
   { name: "방송설정", path: "/channel/my/broadcast" },
+  { name: "방송 위젯", path: "/channel/my/widget" },
   { name: "통계", path: "/channel/my/stats" },
   { name: "BJ알림", path: "/channel/my/notifications" },
   { name: "팬등급", path: "/channel/my/fans" },
   { name: "블랙리스트", path: "/channel/my/blacklist" },
-  { name: "클립", path: "/channel/my/clips" },
   { name: "커뮤니티", path: "/channel/my/community" },
   { name: "환전", path: "/channel/my/exchange" },
 ];
@@ -25,10 +25,11 @@ const ChannelNav = () => {
         <Link
           key={tab.name}
           href={tab.path}
-          className={`font-medium pb-2 transition-colors whitespace-nowrap ${
-            pathname === tab.path
-              ? "border-b-2 border-accent text-accent"
-              : "text-text-secondary hover:text-accent hover:border-b-2 hover:border-accent"
+          aria-current={pathname.startsWith(tab.path) ? "page" : undefined}
+          className={`border-b-2 pb-2 font-medium transition-colors whitespace-nowrap ${
+            pathname.startsWith(tab.path)
+              ? "border-current text-text-primary"
+              : "border-transparent text-text-secondary hover:border-current hover:text-text-primary"
           }`}
         >
           {tab.name}

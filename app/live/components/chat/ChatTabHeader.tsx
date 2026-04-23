@@ -9,14 +9,14 @@ interface ChatTabHeaderProps {
     canViewManagement: boolean;
 }
 
-const ChatTabHeader: React.FC<ChatTabHeaderProps> = ({ 
-    activeTab, 
-    setActiveTab, 
-    viewersCount, 
-    canViewManagement 
+const ChatTabHeader: React.FC<ChatTabHeaderProps> = ({
+    activeTab,
+    setActiveTab,
+    viewersCount,
+    canViewManagement,
 }) => {
     return (
-        <div className="border-b border-border-secondary dark:border-border-secondary-dark">
+        <div className="border-b border-border-secondary dark:border-border-secondary-dark bg-background/70 backdrop-blur-sm">
             <div className="flex">
                 <button
                     onClick={() => setActiveTab('chat')}

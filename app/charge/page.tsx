@@ -2,23 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getActiveProducts, purchaseProduct } from '../_apis/product';
-import { Product } from '../_types/product';
-import { PaymentGatewayService } from '../_services/payment-gateway.service';
+import { Bootpay } from '@bootpay/client-js';
+import { getActiveProducts, preparePayment } from '../_apis/product';
+import { Product, MockPurchaseData, RealPGPurchaseData } from '../_types/product';
+import { useBootpayStyles } from '../_hooks/useBootpayStyles';
+import { useUserStore } from '../_lib/stores';
 
-const TABS = [
-  { id: 'charge', label: '코인 충전' },
-];
+const IS_DEV = process.env.NEXT_ENV === 'dev';
+
+interface ChargeResult {
+  productName: string;
+  totalCoins: number;
+  balance: number | null;
+}
 
 export default function ChargePage() {
-  const [activeTab, setActiveTab] = useState<string>('charge');
+  useBootpayStyles();
+  const fetchUser = useUserStore((state) => state.fetchUser);
+
   const [customCoins, setCustomCoins] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [purchasing, setPurchasing] = useState<boolean>(false);
-  const [selectedPg, setSelectedPg] = useState<'mock' | 'toss' | 'inicis' | 'kakaopay'>('mock');
+  const [chargeResult, setChargeResult] = useState<ChargeResult | null>(null);
 
-  // 1코인 = 100원 + 부가세 10% = 110원
   const COIN_PRICE_WITH_VAT = 110;
 
   useEffect(() => {
@@ -42,90 +49,96 @@ export default function ChargePage() {
   };
 
   const handleCoinsChange = (value: string) => {
-    // 빈 문자열이면 0으로 설정
     if (value === '') {
       setCustomCoins(0);
       return;
     }
-
-    // 숫자만 허용
-    if (!/^\d+$/.test(value)) {
-      return;
-    }
-
+    if (!/^\d+$/.test(value)) return;
     const coins = parseInt(value, 10);
-    // 양수만 허용
-    if (coins >= 0) {
-      setCustomCoins(coins);
-    }
+    if (coins >= 0) setCustomCoins(coins);
   };
 
-  const handlePurchase = async (productId: number, coins: number, price: number) => {
+  const handlePurchase = async (productId: number) => {
     if (purchasing) return;
-
-    const confirmed = window.confirm(
-      `${coins}개 코인을 ${price.toLocaleString()}원에 구매하시겠습니까?`
-    );
-
-    if (!confirmed) return;
 
     try {
       setPurchasing(true);
 
-      // 1. 백엔드에 결제 준비 요청 (PG사 선택 포함)
-      const response = await purchaseProduct(productId, selectedPg);
-
-      // 백엔드 응답 구조: { success, data: { success, message, data: PurchaseData }, message }
-      if (!response.success || !response.data?.data) {
-        alert('충전에 실패했습니다. 다시 시도해주세요.');
+      if (IS_DEV) {
+        const prepareResponse = await preparePayment(productId, 'mock');
+        const mockData = prepareResponse.data.data as MockPurchaseData;
+        await fetchUser();
+        setChargeResult({
+          productName: mockData.product.name,
+          totalCoins: mockData.topup.total_coins,
+          balance: mockData.wallet.coin_balance,
+        });
         return;
       }
 
-      const purchaseData = response.data.data;
+      const prepareResponse = await preparePayment(productId, 'bootpay');
+      const prepareData = prepareResponse.data.data as RealPGPurchaseData;
 
-      // 2-1. Mock 결제인 경우: 이미 완료됨 (topup 필드 존재)
-      if ('topup' in purchaseData) {
-        alert(
-          `충전 완료!\n${purchaseData.product.total_coins}개의 코인이 충전되었습니다.\n현재 잔액: ${purchaseData.wallet.coin_balance}개`
-        );
-        setCustomCoins(0);
+      if (!prepareData.pg_data || !prepareData.product) {
+        alert('결제 준비 데이터를 받지 못했습니다.');
+        setPurchasing(false);
         return;
       }
 
-      // 2-2. Real PG인 경우: 결제 창 호출 (pg_transaction_id 필드 존재)
-      if ('pg_transaction_id' in purchaseData) {
-        try {
-          const paymentResult = await PaymentGatewayService.requestPayment({
-            pg_provider: purchaseData.pg_provider || 'mock',
-            pg_transaction_id: purchaseData.pg_transaction_id,
-            amount: price,
-            product_name: `${coins}개 코인`,
-            redirect_url: purchaseData.redirect_url,
-            app_scheme: purchaseData.app_scheme,
-            pg_data: purchaseData.pg_data as Record<string, unknown>,
+      const pgData = prepareData.pg_data;
+      const productData = prepareData.product;
+
+      Bootpay.requestPayment({
+        application_id: pgData.application_id,
+        price: pgData.price,
+        order_name: pgData.order_name,
+        order_id: pgData.order_id,
+        tax_free: 0,
+        user: {
+          id: pgData.user.id,
+          username: pgData.user.username,
+          email: pgData.user.email,
+          phone: pgData.user.phone || '010-0000-0000',
+        },
+        items: [
+          {
+            id: productData.id.toString(),
+            name: productData.name,
+            qty: 1,
+            price: productData.price,
+          },
+        ],
+        extra: {
+          open_type: 'iframe',
+          escrow: false,
+          show_close_button: true,
+          card_quota: '0,2,3',
+          display_success_result: true,
+        },
+      })
+        .then(async (response: unknown) => {
+          console.log('Bootpay 결제 응답:', response);
+          await fetchUser();
+          setChargeResult({
+            productName: productData.name,
+            totalCoins: productData.total_coins,
+            balance: null,
           });
-
-          if (paymentResult.success) {
-            alert('결제가 완료되었습니다!\n잠시 후 코인이 충전됩니다.');
-            setCustomCoins(0);
-            // TODO: 잔액 새로고침 또는 페이지 리로드
-            window.location.reload();
+          setPurchasing(false);
+        })
+        .catch((error: unknown) => {
+          console.error('Bootpay 에러 원본:', error);
+          setPurchasing(false);
+          const bootpayError = error as { event?: string; message?: string };
+          if (bootpayError?.event === 'cancel') {
+            alert('결제가 취소되었습니다.');
+          } else if (bootpayError?.event === 'error') {
+            alert(`결제 오류가 발생했습니다.\n${bootpayError.message ?? ''}`);
           } else {
-            alert(`결제 실패: ${paymentResult.error || '알 수 없는 오류'}`);
+            alert('결제가 취소되었습니다.');
           }
-        } catch (pgError) {
-          console.error('PG 결제 실패:', pgError);
-          alert(
-            pgError instanceof Error
-              ? pgError.message
-              : '결제 모듈 연동 중 오류가 발생했습니다.'
-          );
-        }
-        return;
-      }
+        });
 
-      // 예상치 못한 응답
-      alert('충전에 실패했습니다. 다시 시도해주세요.');
     } catch (error: unknown) {
       console.error('구매 실패:', error);
       const errorMessage =
@@ -133,75 +146,30 @@ export default function ChargePage() {
         '충전 중 오류가 발생했습니다.';
       alert(errorMessage);
     } finally {
-      setPurchasing(false);
+      if (IS_DEV) setPurchasing(false);
     }
   };
 
   const handleCustomPurchase = () => {
-    // 커스텀 구매는 현재 지원하지 않음 (패키지 상품만 가능)
     alert('패키지 상품 구매만 지원됩니다. 아래 상품 중 하나를 선택해주세요.');
   };
 
   return (
     <div className="min-h-screen bg-background dark:bg-background-dark pt-[20px] pb-12">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Tabs */}
+        {/* Tab */}
         <div className="flex gap-8 mb-8 border-b border-border dark:border-border-dark">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`pb-3 px-2 font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'text-yellow-500 border-b-2 border-yellow-500'
-                  : 'text-muted-foreground dark:text-muted-foreground-dark hover:text-foreground dark:hover:text-foreground-dark'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          <button className="pb-3 px-2 font-medium text-yellow-500 border-b-2 border-yellow-500">
+            코인 충전
+          </button>
         </div>
 
-        {/* PG사 선택 */}
-        <div className="bg-card dark:bg-card-dark rounded-xl border border-border dark:border-border-dark p-6 mb-8 shadow-sm">
-          <h3 className="text-foreground dark:text-foreground-dark font-medium mb-4">결제 수단 선택</h3>
-          <div className="flex gap-4">
-            <button
-              onClick={() => setSelectedPg('mock')}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                selectedPg === 'mock'
-                  ? 'bg-yellow-400 text-black'
-                  : 'bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark border border-border dark:border-border-dark hover:border-yellow-500'
-              }`}
-            >
-              테스트 결제 (Mock)
-            </button>
-            <button
-              onClick={() => setSelectedPg('toss')}
-              disabled
-              className="px-6 py-2 rounded-lg font-medium bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed"
-              title="토스페이먼츠 준비 중"
-            >
-              토스페이먼츠 (준비중)
-            </button>
-            <button
-              onClick={() => setSelectedPg('inicis')}
-              disabled
-              className="px-6 py-2 rounded-lg font-medium bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed"
-              title="이니시스 준비 중"
-            >
-              이니시스 (준비중)
-            </button>
-            <button
-              onClick={() => setSelectedPg('kakaopay')}
-              disabled
-              className="px-6 py-2 rounded-lg font-medium bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed"
-              title="카카오페이 준비 중"
-            >
-              카카오페이 (준비중)
-            </button>
+        {/* Dev mode indicator */}
+        {IS_DEV && (
+          <div className="mb-4 px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-blue-400 text-sm">
+            개발 모드: 구매하기 버튼이 Mock 결제(즉시 충전)로 동작합니다.
           </div>
-        </div>
+        )}
 
         {/* Custom Input Section */}
         <div className="bg-card dark:bg-card-dark rounded-xl border border-border dark:border-border-dark p-6 mb-8 shadow-sm">
@@ -237,15 +205,11 @@ export default function ChargePage() {
         {/* Package Grid */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="text-muted-foreground dark:text-muted-foreground-dark">
-              로딩 중...
-            </div>
+            <div className="text-muted-foreground dark:text-muted-foreground-dark">로딩 중...</div>
           </div>
         ) : products.length === 0 ? (
           <div className="flex justify-center items-center py-20">
-            <div className="text-muted-foreground dark:text-muted-foreground-dark">
-              등록된 상품이 없습니다.
-            </div>
+            <div className="text-muted-foreground dark:text-muted-foreground-dark">등록된 상품이 없습니다.</div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -256,7 +220,6 @@ export default function ChargePage() {
                   key={product.id}
                   className="w-64 bg-card dark:bg-card-dark rounded-2xl border border-border dark:border-border-dark px-4 py-3 flex flex-col items-center shadow-sm hover:shadow-md transition-all hover:border-yellow-500/50"
                 >
-                  {/* Icon or Image */}
                   <div className="w-24 h-24 bg-background dark:bg-background-dark rounded-full flex items-center justify-center mb-2 border-2 border-border dark:border-border-dark overflow-hidden">
                     {product.image_url ? (
                       <Image
@@ -277,15 +240,12 @@ export default function ChargePage() {
                     )}
                   </div>
 
-                  {/* Divider */}
                   <div className="w-full border-t border-border dark:border-border-dark mb-2"></div>
 
-                  {/* Name or Amount */}
                   <div className="text-lg font-bold text-foreground dark:text-foreground-dark mb-0.5 text-center">
                     {product.name}
                   </div>
 
-                  {/* Coin Details */}
                   <div className="text-sm text-muted-foreground dark:text-muted-foreground-dark mb-0.5">
                     기본 {product.base_coins.toLocaleString()}개
                     {product.bonus_coins > 0 && (
@@ -295,19 +255,16 @@ export default function ChargePage() {
                     )}
                   </div>
 
-                  {/* Total Coins */}
                   <div className="text-base font-semibold text-foreground dark:text-foreground-dark mb-0.5">
                     총 {totalCoins.toLocaleString()}개
                   </div>
 
-                  {/* Price */}
                   <div className="text-yellow-500 font-bold text-base mb-2">
                     {product.price.toLocaleString()} 원
                   </div>
 
-                  {/* Purchase Button */}
                   <button
-                    onClick={() => handlePurchase(product.id, totalCoins, product.price)}
+                    onClick={() => handlePurchase(product.id)}
                     disabled={purchasing}
                     className={`w-full font-bold py-1.5 rounded-lg transition-colors shadow-sm hover:shadow-md ${
                       purchasing
@@ -323,6 +280,57 @@ export default function ChargePage() {
           </div>
         )}
       </div>
+
+      {/* Charge Success Modal */}
+      {chargeResult && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          onClick={() => setChargeResult(null)}
+        >
+          <div
+            className="bg-[var(--bg-primary)] rounded-2xl border border-[var(--bg-secondary)] p-8 w-full max-w-sm mx-4 flex flex-col items-center gap-4 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 체크 아이콘 */}
+            <div className="w-16 h-16 rounded-full bg-yellow-400/20 flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            <h2 className="text-xl font-bold text-foreground dark:text-foreground-dark">충전 완료</h2>
+
+            <div className="w-full bg-[var(--bg-secondary)] rounded-xl p-4 flex flex-col gap-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground dark:text-muted-foreground-dark">상품</span>
+                <span className="font-medium text-foreground dark:text-foreground-dark">{chargeResult.productName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground dark:text-muted-foreground-dark">충전 코인</span>
+                <span className="font-bold text-yellow-500">+{chargeResult.totalCoins.toLocaleString()}개</span>
+              </div>
+              {chargeResult.balance !== null && (
+                <div className="flex justify-between border-t border-border dark:border-border-dark pt-2 mt-1">
+                  <span className="text-muted-foreground dark:text-muted-foreground-dark">현재 잔액</span>
+                  <span className="font-bold text-foreground dark:text-foreground-dark">{chargeResult.balance.toLocaleString()}개</span>
+                </div>
+              )}
+              {chargeResult.balance === null && (
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground-dark border-t border-border dark:border-border-dark pt-2 mt-1">
+                  잠시 후 코인이 반영됩니다.
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={() => setChargeResult(null)}
+              className="w-full py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-black font-bold transition-colors"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

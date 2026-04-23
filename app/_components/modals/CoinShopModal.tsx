@@ -29,7 +29,6 @@ const CoinShopModal: React.FC<CoinShopModalProps> = ({
   onPurchase,
   onGift,
 }) => {
-  const [activeTab] = useState<'coins'>('coins');
   const [selectedPackage, setSelectedPackage] = useState<string>('100');
   const [customAmount, setCustomAmount] = useState<number>(100);
 
@@ -186,10 +185,10 @@ const CoinShopModal: React.FC<CoinShopModalProps> = ({
           <div className="border-t border-[#3a3a3a] pt-4 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-lg font-bold text-red-500">결제예정금액</span>
+                <span className="text-lg font-bold text-accent">결제예정금액</span>
                 <span className="text-xs text-gray-400 ml-2">(vat 포함)</span>
               </div>
-              <span className="text-xl font-bold text-red-500">
+              <span className="text-xl font-bold text-accent">
                 {getSelectedPrice().toLocaleString()}원
               </span>
             </div>
@@ -205,7 +204,7 @@ const CoinShopModal: React.FC<CoinShopModalProps> = ({
             </button>
             <button
               onClick={handlePurchase}
-              className="flex-1 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors"
+              className="flex-1 py-3 rounded-lg bg-accent hover:bg-accent-light text-white font-medium transition-colors"
             >
               구매하기
             </button>
