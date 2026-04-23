@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import LiveStreamCard from '@/app/live/components/LiveStreamCard';
+import LiveStreamGridSkeleton, { liveGridClassName } from '@/app/live/components/LiveStreamGridSkeleton';
 import { getLiveList } from '@/app/_apis/live';
 import { Live } from '@/app/_types';
 import { useUserStore } from '@/app/_lib/stores';
@@ -20,6 +21,15 @@ function SectionHeader({ title, count }: { title: string; count?: number }) {
       {count !== undefined && (
         <span className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">LIVE {count}</span>
       )}
+    </div>
+  );
+}
+
+function SectionHeaderSkeleton() {
+  return (
+    <div className="mb-3 flex items-center gap-2" aria-hidden="true">
+      <div className="h-5 w-20 animate-pulse rounded bg-[#20202a]" />
+      <div className="h-5 w-12 animate-pulse rounded-sm bg-[#20202a]" />
     </div>
   );
 }
@@ -49,6 +59,25 @@ function FollowingStrip({ lives }: { lives: Live[] }) {
   );
 }
 
+function FollowingStripSkeleton() {
+  return (
+    <div className="mb-6" aria-hidden="true">
+      <div className="mb-2.5 h-3 w-24 animate-pulse rounded bg-[#20202a]" />
+      <div className="flex gap-3.5 overflow-x-auto pb-1">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="flex flex-shrink-0 flex-col items-center gap-1.5">
+            <div className="relative">
+              <div className="h-[52px] w-[52px] animate-pulse rounded-full bg-[#20202a]" />
+              <div className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 animate-pulse rounded-full bg-accent/30 border-2 border-[#0d0d10]" />
+            </div>
+            <div className="h-2.5 w-10 animate-pulse rounded bg-[#20202a]" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [lives, setLives] = useState<Live[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +95,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0d0d10] px-5 py-5 flex flex-col gap-6">
       {loading ? (
-        <div className="flex items-center justify-center h-64 text-[#72728a] text-[14px]">불러오는 중...</div>
+        <>
+          {nickname && <FollowingStripSkeleton />}
+          <section>
+            <SectionHeaderSkeleton />
+            <LiveStreamGridSkeleton />
+          </section>
+        </>
       ) : lives.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3">
           <div className="text-3xl">📡</div>
@@ -77,7 +112,7 @@ export default function Home() {
           {nickname && <FollowingStrip lives={lives} />}
           <section>
             <SectionHeader title="라이브 목록" count={lives.length} />
-            <div className="grid grid-cols-4 gap-3">
+            <div className={liveGridClassName}>
               {lives.map((live, i) => <LiveStreamCard key={i} live={live} index={i} />)}
             </div>
           </section>
