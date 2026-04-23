@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { FaCheck } from 'react-icons/fa';
 import Image from 'next/image';
@@ -34,42 +36,48 @@ const CardItem: React.FC<CardItemProps> = ({
 
   return (
     <div
-      className={`flex flex-col relative rounded-lg overflow-hidden group cursor-pointer w-[250px]`}
+      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-[#2c2c38] bg-[#20202a] transition-all duration-150 hover:-translate-y-0.5 hover:border-[#3e3e50] hover:shadow-lg"
       onClick={handleClick}
     >
-    {/* 편집 모드일 때만 보이는 오버레이 */}
-    {isEditing && (
-      <div className={`absolute inset-0 bg-black flex items-center justify-center transition-opacity duration-200 z-10 ${isSelected ? 'bg-opacity-50 opacity-100' : 'bg-opacity-0 group-hover:bg-opacity-50 opacity-0 group-hover:opacity-100'}`}>
-        <div className={`bg-bg-primary rounded-full w-8 h-8 flex items-center justify-center ${isSelected ? '' : 'opacity-0 group-hover:opacity-100'}`}>
-          {/* 선택 상태에 따라 아이콘 색상 변경 */}
-          <FaCheck className={`${isSelected ? 'text-success' : 'text-text-muted'} text-lg`} />
+      {isEditing && (
+        <div className={`absolute inset-0 z-20 flex items-center justify-center bg-black/55 transition-opacity duration-200 ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+          <div className={`flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
+            isSelected ? 'border-accent bg-accent text-white' : 'border-white/30 bg-white/10 text-white/60'
+          }`}>
+            <FaCheck className="text-base" />
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {/* 기존 LIVE 배지 */}
-    {/* 편집 모드 중이거나 라이브 상태일 때 표시 */}
-    {isLive && !isEditing && (
-      <span className="absolute top-2 left-2 bg-error text-primary-foreground text-xs px-2 py-1 rounded z-10">
-        LIVE
-      </span>
-    )}
-    {/* Image 컴포넌트 사용 */}
-    {/* h-36 대신 aspect-[16/9] 사용 */}
-    <div className="relative w-full aspect-[16/9]"> {/* Image fill 사용을 위한 부모 요소 */}
-      <Image
-        src={imageUrl || '/icons/anonymouse1.svg'} // 기본 이미지 URL 설정
-        alt={title}
-        fill // fill prop 추가
-        style={{ objectFit: 'cover' }} // object-cover 스타일 적용
-        className="object-cover" // rounded-t-lg 제거 (부모에서 overflow-hidden 처리)
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" // sizes 최적화
-      />
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#17171c]">
+        <Image
+          src={imageUrl || '/icons/anonymouse1.svg'}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-200 group-hover:scale-[1.03]"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10" />
+        {!isEditing && (
+          <span className={`absolute left-2 top-2 rounded-sm px-2 py-1 text-[10px] font-bold tracking-wide ${
+            isLive ? 'bg-accent text-white' : 'bg-black/60 text-white/70'
+          }`}>
+            {isLive ? 'LIVE' : 'OFF'}
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-center gap-3 px-3 py-3">
+        <div className={`h-2.5 w-2.5 rounded-full ${isLive ? 'bg-accent shadow-[0_0_10px_rgba(59,130,246,0.7)]' : 'bg-[#4b5563]'}`} />
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-[14px] font-semibold text-[#e2e2ea]">{title}</h3>
+          <p className="truncate text-[11px] text-[#72728a]">@{broadcasterId}</p>
+        </div>
+        <span className="rounded-full border border-[#3e3e50] px-2 py-1 text-[10px] font-medium text-[#a0a0b0]">
+          보기
+        </span>
+      </div>
     </div>
-    <div className="pt-2">
-      <h3 className="truncate">{title}</h3>
-    </div>
-  </div>
   );
 };
 

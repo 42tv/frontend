@@ -4,10 +4,11 @@ import CardGrid from './CardGrid';
 import { FiEdit } from 'react-icons/fi';
 import { deleteMultiBookmakrs, requestBookmarkList } from '../../_apis/user';
 import { CardData } from '@/app/_types';
-import ToggleSwitch from './ToggleSwitch'; // ToggleSwitch 임포트 추가
+import ToggleSwitch from './ToggleSwitch';
 import { getApiErrorMessage } from '@/app/_lib/api';
 import { openModal } from '@/app/_components/utils/overlay/overlayHelpers';
 import ErrorMessage from '@/app/_components/modals/error_component';
+import ContentSkeleton from './ContentSkeleton';
 
 export default function BookmarkContent() {
   const [isEditing, setIsEditing] = useState(false);
@@ -15,18 +16,16 @@ export default function BookmarkContent() {
   const [cards, setCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showLiveOnly, setShowLiveOnly] = useState(false); // showLiveOnly 상태 추가
+  const [showLiveOnly, setShowLiveOnly] = useState(false);
 
-  // API 호출 함수
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await requestBookmarkList();
       setCards(response.data.lists);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      setError(`북마크 데이터를 불러오는 데 실패했습니다: ${e.message}`);
+    } catch (e) {
+      setError(`북마크 데이터를 불러오는 데 실패했습니다: ${getApiErrorMessage(e)}`);
       setCards([]);
     } finally {
       setIsLoading(false);
@@ -37,12 +36,11 @@ export default function BookmarkContent() {
     fetchData();
   }, []);
 
-  // 필터링 로직
   const filteredBookmarkedCards = showLiveOnly
     ? cards.filter(item => item.is_live)
     : cards;
+  const liveCount = cards.filter(item => item.is_live).length;
 
-  // 아이템 선택/해제 핸들러
   const handleItemSelect = (id: number) => {
     setSelectedItems(prevSelected =>
       prevSelected.includes(id)
@@ -51,21 +49,21 @@ export default function BookmarkContent() {
     );
   };
 
-  // 편집 모드 토글 핸들러
   const handleEditToggle = async () => {
     if (isEditing) {
-      console.log('Selected bookmark items:', selectedItems);
+      if (selectedItems.length === 0) {
+        setIsEditing(false);
+        return;
+      }
+
       try {
         await deleteMultiBookmakrs(selectedItems);
-        const removedItems = cards.filter(item => !selectedItems.includes(item.id));
-        setCards(removedItems);
+        setCards(cards.filter(item => !selectedItems.includes(item.id)));
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       catch (e) {
         const message = getApiErrorMessage(e);
         openModal(<ErrorMessage message={message} />, { closeButtonSize: "w-[16px] h-[16px]" });
       }
-      // TODO: 선택된 아이템 삭제 API 호출 등
       setIsEditing(false);
       setSelectedItems([]);
     } else {
@@ -74,32 +72,40 @@ export default function BookmarkContent() {
     }
   };
 
+  if (isLoading) {
+    return <ContentSkeleton showEditAction />;
+  }
+
   return (
-    <div>
-      {/* 통계 & 편집 버튼 & 토글 스위치 */}
-      <div className="flex items-center justify-between mt-4">
-        <div className='flex flex-row space-x-2 items-center'>
-          {!isLoading && <span>전체 {cards.length}</span>} {/* 숨김 개수는 예시 */}
+    <div className="rounded-2xl border border-[#2c2c38] bg-[#17171c] p-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-[#20202a] px-3 py-1.5 text-[12px] font-semibold text-[#e2e2ea]">
+            전체 {cards.length}
+          </span>
+          <span className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-[12px] font-semibold text-accent">
+            LIVE {liveCount}
+          </span>
           <button
-            className='flex flex-row items-center space-x-1 dark:text-textBase-dark dark:hover:text-text-primary-dark'
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
+              isEditing ? 'bg-accent text-white hover:bg-accent-light' : 'bg-[#20202a] text-[#a0a0b0] hover:text-[#e2e2ea]'
+            }`}
             onClick={handleEditToggle}
-            disabled={isLoading}
           >
             <FiEdit />
-            <span>{isEditing ? '삭제' : '편집'}</span>
+            <span>{isEditing ? (selectedItems.length > 0 ? `${selectedItems.length}개 삭제` : '편집 종료') : '편집'}</span>
           </button>
         </div>
-        {/* ToggleSwitch 추가 */}
-        <div className="flex items-center">
-          <ToggleSwitch checked={showLiveOnly} onChange={setShowLiveOnly} />
-        </div>
+        <ToggleSwitch checked={showLiveOnly} onChange={setShowLiveOnly} />
       </div>
 
-      {/* 로딩 및 에러 처리 */}
-      {isLoading ? (
-        <div className="text-center mt-8">북마크 로딩 중...</div>
-      ) : error ? (
-        <div className="text-center mt-8 text-error dark:text-error-dark">{error}</div>
+      {error ? (
+        <StatusMessage title="북마크를 불러오지 못했습니다" description={error} />
+      ) : filteredBookmarkedCards.length === 0 ? (
+        <StatusMessage
+          title={showLiveOnly ? '방송 중인 북마크가 없습니다' : '북마크한 BJ가 없습니다'}
+          description={showLiveOnly ? '전체 보기로 전환하면 오프라인 BJ까지 확인할 수 있습니다.' : '마음에 드는 방송자를 북마크하면 이곳에 표시됩니다.'}
+        />
       ) : (
         <CardGrid
           items={filteredBookmarkedCards}
@@ -108,6 +114,16 @@ export default function BookmarkContent() {
           onItemSelect={handleItemSelect}
         />
       )}
+    </div>
+  );
+}
+
+function StatusMessage({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="flex min-h-[260px] flex-col items-center justify-center rounded-xl border border-dashed border-[#3e3e50] bg-[#141419] px-6 text-center">
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-accent/10 text-accent">★</div>
+      <h3 className="text-[15px] font-bold text-[#e2e2ea]">{title}</h3>
+      <p className="mt-2 max-w-sm text-[13px] leading-6 text-[#72728a]">{description}</p>
     </div>
   );
 }
