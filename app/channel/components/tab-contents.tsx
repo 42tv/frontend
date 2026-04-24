@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArticleList } from "./tab-content/article";
+import ArticleListSkeleton from "./tab-content/article/ArticleListSkeleton";
 import { getArticles, deleteArticle } from "../../_apis/article";
 import { Article, ArticleListResponse } from "../../_types/article";
 
@@ -76,13 +77,7 @@ export const BjArticle: React.FC<BjArticleProps> = ({
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-text-secondary">
-          게시글을 불러오는 중...
-        </div>
-      </div>
-    );
+    return <ArticleListSkeleton showCreateButton={showCreateButton} />;
   }
 
   return (
