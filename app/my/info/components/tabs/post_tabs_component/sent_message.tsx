@@ -9,6 +9,7 @@ import PostsTable from "./sent_message/PostsTable";
 import Pagination from "./sent_message/Pagination";
 import SendMessageButton from "./components/SendMessageButton";
 import { useState, useEffect } from "react";
+import PostTabSkeleton from "./components/PostTabSkeleton";
 
 export default function ReceiveMessage() {
     const {
@@ -16,6 +17,8 @@ export default function ReceiveMessage() {
         filteredPosts,
         selectedPosts,
         searchNickname,
+        isLoading,
+        error,
         handleSearchChange,
         handleSelectPost,
         handleDeletePosts,
@@ -87,6 +90,33 @@ export default function ReceiveMessage() {
         await handleDeletePosts();
         setIsChecked(false); // 삭제 후 체크박스 상태 리셋
     };
+
+    if (isLoading) {
+        return (
+            <div className="mb-20">
+                <SearchControls
+                    searchNickname={searchNickname}
+                    onSearchChange={handleSearchWithReset}
+                    onDeletePosts={handleDeleteWithReset}
+                    disabled
+                />
+                <PostTabSkeleton
+                    showTopControls={false}
+                    showBottomAction={false}
+                    columnWidths={['w-6', 'w-56', 'w-28', 'w-24', 'w-14']}
+                />
+                <SendMessageButton onSendMessage={() => openModal(<SendMessageForm />)} />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex min-h-[320px] items-center justify-center px-6">
+                <p className="text-error-dark">{error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="mb-20">

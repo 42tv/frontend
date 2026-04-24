@@ -7,15 +7,37 @@ export const useBlockedUsers = () => {
     const [filteredUsers, setFilteredUsers] = useState<BlockedUser[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const [searchNickname, setSearchNickname] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let active = true;
+
         async function fetchPosts() {
-            const response = await getBlockedPostUser();
-            setBlockedUser(response);
-            setFilteredUsers(response);
-            console.log(response);
+            try {
+                setIsLoading(true);
+                setError(null);
+                const response = await getBlockedPostUser();
+                if (!active) return;
+                setBlockedUser(response);
+                setFilteredUsers(response);
+            } catch (fetchError) {
+                console.error('Failed to fetch blocked users:', fetchError);
+                if (!active) return;
+                setBlockedUser([]);
+                setFilteredUsers([]);
+                setError('차단 목록을 불러오는데 실패했습니다.');
+            } finally {
+                if (active) {
+                    setIsLoading(false);
+                }
+            }
         }
         fetchPosts();
+
+        return () => {
+            active = false;
+        };
     }, []);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,6 +95,8 @@ export const useBlockedUsers = () => {
         filteredUsers,
         selectedUsers,
         searchNickname,
+        isLoading,
+        error,
         handleSearchChange,
         handleSelectUser,
         removeBlockedUsers,

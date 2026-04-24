@@ -5,6 +5,7 @@ import UserCounter from "./block_post_user/UserCounter";
 import BlockedUsersTable from "./block_post_user/BlockedUsersTable";
 import Pagination from "./block_post_user/Pagination";
 import UnblockButton from "./block_post_user/UnblockButton";
+import PostTabSkeleton from "./components/PostTabSkeleton";
 
 export default function BlockPostUser() {
     const {
@@ -12,6 +13,8 @@ export default function BlockPostUser() {
         filteredUsers,
         selectedUsers,
         searchNickname,
+        isLoading,
+        error,
         handleSearchChange,
         handleSelectUser,
         removeBlockedUsers,
@@ -49,6 +52,32 @@ export default function BlockPostUser() {
             setIsAllSelected(false);
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="mb-20">
+                <SearchBar
+                    searchValue={searchNickname}
+                    onSearchChange={handleSearchChange}
+                    disabled
+                />
+                <PostTabSkeleton
+                    showTopControls={false}
+                    showBottomAction={false}
+                    columnWidths={['w-6', 'w-40', 'w-24', 'w-10']}
+                />
+                <UnblockButton selectedUsers={selectedUsers} onUnblock={handleUnblockUsers} />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex min-h-[320px] items-center justify-center px-6">
+                <p className="text-error-dark">{error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="mb-20">
