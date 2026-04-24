@@ -43,10 +43,41 @@ export const BlacklistTable: React.FC<BlacklistTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className="rounded-lg p-8 border border-border-primary">
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-          <span className="ml-3 text-text-secondary">로딩 중...</span>
+      <div className="rounded-lg overflow-hidden border border-border-primary" aria-hidden="true">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-bg-secondary">
+              <tr>
+                {['w-16', 'w-28', 'w-28', 'w-20'].map((w, i) => (
+                  <th key={i} className="p-4">
+                    <div className={`h-4 ${w} animate-pulse rounded bg-bg-tertiary`} />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, row) => (
+                <tr
+                  key={row}
+                  className={`border-t border-bg-tertiary ${row % 2 === 0 ? 'bg-bg-tertiary' : 'bg-transparent'}`}
+                >
+                  <td className="p-4">
+                    <div className="w-12 h-12 rounded-full animate-pulse bg-bg-secondary" />
+                  </td>
+                  <td className="p-4 space-y-1">
+                    <div className="h-4 w-24 animate-pulse rounded bg-bg-secondary" />
+                    <div className="h-3 w-16 animate-pulse rounded bg-bg-secondary" />
+                  </td>
+                  <td className="p-4">
+                    <div className="h-4 w-32 animate-pulse rounded bg-bg-secondary" />
+                  </td>
+                  <td className="p-4 text-center">
+                    <div className="h-6 w-6 mx-auto animate-pulse rounded bg-bg-secondary" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     );

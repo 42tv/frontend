@@ -15,6 +15,7 @@ export const useBroadcastSettings = () => {
     const [fanLevel, setFanLevel] = useState(1);
     const [showToast, setShowToast] = useState(false);
     const [copiedText, setCopiedText] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function fetchBroadcastSetting() {
@@ -31,6 +32,8 @@ export const useBroadcastSettings = () => {
                 console.log(response);
             } catch (error) {
                 console.error("Error fetching broadcast settings:", error);
+            } finally {
+                setIsLoading(false);
             }
         }
         fetchBroadcastSetting();
@@ -114,6 +117,7 @@ export const useBroadcastSettings = () => {
         serverUrl,
         title,
         showStreamKey,
+        isLoading,
         isAdult,
         isPrivate,
         password,
