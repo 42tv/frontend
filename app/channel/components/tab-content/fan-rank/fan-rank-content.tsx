@@ -8,6 +8,7 @@ import { useFanRankState } from "./components/useFanRankState";
 import { useColorPicker } from "./components/useColorPicker";
 import FanLevelList from "./components/FanLevelList";
 import HelpText from "./components/HelpText";
+import FanRankSkeleton from "./FanRankSkeleton";
 
 export const FanRankContent = () => {
     const {
@@ -59,7 +60,7 @@ export const FanRankContent = () => {
     };
 
     if (loading) {
-        return <div className="text-text-secondary">로딩 중...</div>;
+        return <FanRankSkeleton />;
     }
 
     if (error) {

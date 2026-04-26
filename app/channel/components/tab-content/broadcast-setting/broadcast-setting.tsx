@@ -9,6 +9,7 @@ import FanBroadcastField from "./components/FanBroadcastField";
 import PasswordField from "./components/PasswordField";
 import SaveButton from "./components/SaveButton";
 import HelpText from "./components/HelpText";
+import BroadcastSettingsSkeleton from "./components/BroadcastSettingsSkeleton";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 
@@ -18,6 +19,7 @@ export default function BroadcastSettings() {
     serverUrl,
     title,
     showStreamKey,
+    isLoading,
     isAdult,
     isPrivate,
     password,
@@ -50,6 +52,10 @@ export default function BroadcastSettings() {
       openModal(<ErrorMessage message={result.error} />, { closeButtonSize: "w-[16px] h-[16px]" });
     }
   };
+
+  if (isLoading) {
+    return <BroadcastSettingsSkeleton />;
+  }
 
   return (
     <div className="p-6 rounded-lg relative bg-background border border-border-primary">

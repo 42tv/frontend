@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getMyCoinTopups } from '@/app/_apis/coin-topup';
 import { CoinTopup } from '@/app/_types/coin-topup';
+import HistoryTableSkeleton from './HistoryTableSkeleton';
 
 export default function GiftTab() {
     const [allTopups, setAllTopups] = useState<CoinTopup[]>([]);
@@ -87,14 +88,7 @@ export default function GiftTab() {
     };
 
     if (loading) {
-        return (
-            <div className="flex flex-col w-full h-full items-center justify-center">
-                <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-                    <span className="ml-3 text-text-secondary">로딩 중...</span>
-                </div>
-            </div>
-        );
+        return <HistoryTableSkeleton title="코인 구매 내역" columnAlignments={['left', 'left', 'center', 'right', 'center']} />;
     }
 
     if (error) {

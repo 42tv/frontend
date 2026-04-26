@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import ExchangeContentSkeleton from './ExchangeContentSkeleton';
 import { getPayoutSummary } from '@/app/_apis/payout-coin';
 import { createSettlement, getMySettlements, getMySettlementStats } from '@/app/_apis/settlement';
 import type { PayoutSummary } from '@/app/_types/payout-coin';
@@ -88,11 +89,7 @@ export const ExchangeContent = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16 text-text-secondary">
-        불러오는 중...
-      </div>
-    );
+    return <ExchangeContentSkeleton />;
   }
 
   return (

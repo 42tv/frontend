@@ -16,11 +16,14 @@ import SendMessageButton from "./components/SendMessageButton";
 
 // Types
 import { Post, PostSetting } from "./types/message";
+import PostTabSkeleton from "./components/PostTabSkeleton";
 
 export default function ReceiveMessage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     const [postSetting, setPostSetting] = useState<PostSetting>();
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isChecked, setIsChecked] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
@@ -39,16 +42,48 @@ export default function ReceiveMessage() {
     
 
     useEffect(() => {
+        let active = true;
+
         async function fetchInitialData() {
-            // Fetch posts from API
-            const posts = await getPosts();
-            setPosts(posts);
-            setFilteredPosts(posts);
-            const postSetting: PostSetting = await getPostSetting();
-            console.log(postSetting);
-            setPostSetting(postSetting);
+            try {
+                setIsLoading(true);
+                setError(null);
+
+                const [postsResponse, postSettingResponse] = await Promise.allSettled([
+                    getPosts(),
+                    getPostSetting()
+                ]);
+
+                if (!active) return;
+
+                if (postsResponse.status === 'fulfilled') {
+                    setPosts(postsResponse.value);
+                    setFilteredPosts(postsResponse.value);
+                } else {
+                    console.error('Failed to fetch received posts:', postsResponse.reason);
+                    setPosts([]);
+                    setFilteredPosts([]);
+                    setError('받은 메세지를 불러오는데 실패했습니다.');
+                }
+
+                if (postSettingResponse.status === 'fulfilled') {
+                    setPostSetting(postSettingResponse.value);
+                } else {
+                    console.error('Failed to fetch post settings:', postSettingResponse.reason);
+                }
+            } catch (fetchError) {
+                console.error('Unexpected error while fetching received posts:', fetchError);
+            } finally {
+                if (active) {
+                    setIsLoading(false);
+                }
+            }
         }
         fetchInitialData();
+
+        return () => {
+            active = false;
+        };
     }, [])
     
     // Format the date as xxxx년 xx월 xx일 xx시 xx분
@@ -210,6 +245,39 @@ export default function ReceiveMessage() {
             setIsChecked(false);
             setSelectedPosts([]);
         }
+    }
+
+    if (isLoading) {
+        return (
+            <div className="mb-20">
+                <div className="flex flex-row my-5 px-6 justify-between">
+                    <MessageActionButtons
+                        onOpenSettings={handleOpenSettings}
+                        onDeletePosts={handleDeletePosts}
+                        disabled
+                    />
+                    <MessageSearchBar
+                        searchNickname={searchNickname}
+                        onSearchChange={handleSearchChange}
+                        disabled
+                    />
+                </div>
+                <PostTabSkeleton
+                    showTopControls={false}
+                    showBottomAction={false}
+                    columnWidths={['w-6', 'w-56', 'w-28', 'w-24', 'w-14', 'w-10']}
+                />
+                <SendMessageButton onSendMessage={openModalSendpost} />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex min-h-[320px] items-center justify-center px-6">
+                <p className="text-error-dark">{error}</p>
+            </div>
+        );
     }
 
     return (

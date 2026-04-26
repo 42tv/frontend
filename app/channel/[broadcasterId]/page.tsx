@@ -5,6 +5,7 @@ import { use } from 'react';
 import ChannelLayout from '@/app/channel/components/channel-layout';
 import { BjArticle } from '@/app/channel/components/tab-contents';
 import FanLevel from '@/app/channel/components/FanLevel';
+import ChannelPageSkeleton from '@/app/channel/components/ChannelPageSkeleton';
 import { getChannel, GetChannelResponse } from '../../_apis/channel';
 
 interface ChannelPageProps {
@@ -39,14 +40,7 @@ export default function ChannelPage({ params }: { params: Promise<ChannelPagePro
   if (loading) {
     return (
       <ChannelLayout>
-        <div className="flex items-center justify-center min-h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-primary-dark mx-auto mb-4"></div>
-            <p className="text-text-secondary dark:text-text-secondary-dark">
-              채널 정보를 불러오는 중...
-            </p>
-          </div>
-        </div>
+        <ChannelPageSkeleton />
       </ChannelLayout>
     );
   }

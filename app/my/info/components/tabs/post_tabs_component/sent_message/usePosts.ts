@@ -24,15 +24,37 @@ export const usePosts = () => {
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
     const [searchNickname, setSearchNickname] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let active = true;
+
         async function fetchPosts() {
-            const response = await getSendPosts();
-            console.log(response);
-            setPosts(response);
-            setFilteredPosts(response);
+            try {
+                setIsLoading(true);
+                setError(null);
+                const response = await getSendPosts();
+                if (!active) return;
+                setPosts(response);
+                setFilteredPosts(response);
+            } catch (fetchError) {
+                console.error('Failed to fetch sent posts:', fetchError);
+                if (!active) return;
+                setPosts([]);
+                setFilteredPosts([]);
+                setError('보낸 메세지를 불러오는데 실패했습니다.');
+            } finally {
+                if (active) {
+                    setIsLoading(false);
+                }
+            }
         }
         fetchPosts();
+
+        return () => {
+            active = false;
+        };
     }, []);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +105,8 @@ export const usePosts = () => {
         filteredPosts,
         selectedPosts,
         searchNickname,
+        isLoading,
+        error,
         handleSearchChange,
         handleSelectPost,
         handleDeletePosts,

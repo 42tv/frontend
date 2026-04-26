@@ -10,7 +10,7 @@ interface CardGridProps {
 }
 
 const CardGrid: React.FC<CardGridProps> = ({ items, isEditing, selectedItems, onItemSelect }) => (
-  <div className="grid grid-cols-[repeat(auto-fill,250px)] gap-4 mt-4">
+  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     {items.map((item, index) => (
       <CardItem
         key={index}

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { getSentDonations, SentDonationsResponse } from '@/app/_apis/donation';
+import HistoryTableSkeleton from './HistoryTableSkeleton';
 
 export default function DonationTab() {
     const [donations, setDonations] = useState<SentDonationsResponse['donations']>([]);
@@ -52,14 +53,7 @@ export default function DonationTab() {
     };
 
     if (loading) {
-        return (
-            <div className="flex flex-col w-full h-full items-center justify-center">
-                <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-                    <span className="ml-3 text-text-secondary">로딩 중...</span>
-                </div>
-            </div>
-        );
+        return <HistoryTableSkeleton title="후원 내역" columnAlignments={['left', 'left', 'center']} />;
     }
 
     if (error) {
