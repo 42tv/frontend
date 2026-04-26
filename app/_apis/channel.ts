@@ -78,6 +78,7 @@ export interface ChannelInfo {
   watch: number;
   month_time: number;
   total_time: number;
+  fanCount: number;
 }
 
 /**
@@ -85,7 +86,7 @@ export interface ChannelInfo {
  */
 export interface GetChannelResponse {
   user: ChannelUser;
-  channel: ChannelInfo | null;
+  channel: ChannelInfo;
   articles: ArticleResponse;
   fanLevel: FanLevelSimple[];
 }
