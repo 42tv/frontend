@@ -1,39 +1,31 @@
 import axios from "axios";
 import api from "../auto_refresh_axios";
+import { BroadcastCategory } from "@/app/_types/user";
 
-/**
- * 방송 설정 업데이트
- * @param title
- * @param isAdult
- * @param isPrivate
- * @param isFanClub
- * @param fanLevel
- * @param password
- * @returns
- */
 export async function updateBroadcastSetting(
   title: string,
   isAdult: boolean,
   isPrivate: boolean,
   isFanClub: boolean,
   fanLevel: number,
-  password: string
+  password: string,
+  category: BroadcastCategory
 ) {
   const response = await axios.put(
     "/api/user/broadcast-setting",
     {
-      title: title,
-      isAdult: isAdult,
-      isPrivate: isPrivate,
-      isFanClub: isFanClub,
-      fanLevel: fanLevel,
-      password: password,
+      title,
+      isAdult,
+      isPrivate,
+      isFanClub,
+      fanLevel,
+      password,
+      category,
     },
     {
       withCredentials: true,
     }
   );
-  // 백엔드 응답 구조: { success: true, data: null, message: string }
   return response.data;
 }
 

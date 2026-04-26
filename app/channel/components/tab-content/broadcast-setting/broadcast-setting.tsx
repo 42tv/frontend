@@ -10,6 +10,7 @@ import PasswordField from "./components/PasswordField";
 import SaveButton from "./components/SaveButton";
 import HelpText from "./components/HelpText";
 import BroadcastSettingsSkeleton from "./components/BroadcastSettingsSkeleton";
+import CategoryField from "./components/CategoryField";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
 
@@ -33,6 +34,8 @@ export default function BroadcastSettings() {
     setPassword,
     setIsFanClub,
     setFanLevel,
+    category,
+    setCategory,
     toggleStreamKeyVisibility,
     copyToClipboard,
     reissueStreamKey,
@@ -82,6 +85,11 @@ export default function BroadcastSettings() {
         <TitleField
           title={title}
           onTitleChange={setTitle}
+        />
+
+        <CategoryField
+          category={category}
+          onCategoryChange={setCategory}
         />
 
         <AdultBroadcastField

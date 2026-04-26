@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import { reCreateStreamKey } from "@/app/_apis/ivs";
 import { getApiErrorMessage } from "@/app/_lib/api";
+import { BroadcastCategory } from "@/app/_types/user";
 
 export const useBroadcastSettings = () => {
     const [streamKey, setStreamKey] = useState("");
@@ -13,6 +14,7 @@ export const useBroadcastSettings = () => {
     const [password, setPassword] = useState("");
     const [isFanClub, setIsFanClub] = useState(false);
     const [fanLevel, setFanLevel] = useState(1);
+    const [category, setCategory] = useState<BroadcastCategory>('TALK_DAILY');
     const [showToast, setShowToast] = useState(false);
     const [copiedText, setCopiedText] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +31,7 @@ export const useBroadcastSettings = () => {
                 setPassword(response.broadcastSetting.password ?? '');
                 setIsFanClub(response.broadcastSetting.is_fan);
                 setFanLevel(response.broadcastSetting.fan_level);
-                console.log(response);
+                setCategory(response.broadcastSetting.category ?? 'TALK_DAILY');
             } catch (error) {
                 console.error("Error fetching broadcast settings:", error);
             } finally {
@@ -97,7 +99,7 @@ export const useBroadcastSettings = () => {
             return validation;
         }
         try {
-            await updateBroadcastSetting(title, isAdult, isPrivate, isFanClub, fanLevel, password);
+            await updateBroadcastSetting(title, isAdult, isPrivate, isFanClub, fanLevel, password, category);
             setCopiedText("방송 설정이 저장되었습니다");
             setShowToast(true);
 
@@ -123,6 +125,7 @@ export const useBroadcastSettings = () => {
         password,
         isFanClub,
         fanLevel,
+        category,
         showToast,
         copiedText,
         setTitle,
@@ -131,6 +134,7 @@ export const useBroadcastSettings = () => {
         setPassword,
         setIsFanClub,
         setFanLevel,
+        setCategory,
         toggleStreamKeyVisibility,
         copyToClipboard,
         reissueStreamKey,

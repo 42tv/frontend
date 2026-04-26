@@ -49,6 +49,8 @@ export interface Broadcaster {
   profile_img: string;
 }
 
+export type BroadcastCategory = 'GAME' | 'MUKBANG' | 'TALK_DAILY' | 'MUSIC' | 'ADULT';
+
 export interface PasswordState {
   password: string;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
