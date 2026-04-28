@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { FiUser } from 'react-icons/fi';
 import { requestLobyPlay } from '@/app/_apis/live';
 import { usePlayStore } from '@/app/_lib';
 import { openModal } from '@/app/_components/utils/overlay/overlayHelpers';
@@ -70,7 +71,7 @@ export default function LiveStreamCard({ live, index }: LiveStreamCardProps) {
           />
         )}
         <span className="absolute top-1.5 left-1.5 bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wide">LIVE</span>
-        <span className="absolute bottom-1.5 right-1.5 bg-black/70 text-[#ddd] text-[11px] px-1.5 py-0.5 rounded-sm backdrop-blur-sm">👁 {formatCount(live.viewerCount)}</span>
+        <span className="absolute bottom-1.5 right-1.5 bg-black/70 text-[#ddd] text-[11px] px-1.5 py-0.5 rounded-sm backdrop-blur-sm flex items-center gap-0.5"><FiUser className="w-2.5 h-2.5" /> {formatCount(live.viewerCount)}</span>
       </div>
 
       {/* 카드 정보 */}
