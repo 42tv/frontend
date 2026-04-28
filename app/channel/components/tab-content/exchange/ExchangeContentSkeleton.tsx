@@ -1,68 +1,86 @@
 export default function ExchangeContentSkeleton() {
   return (
-    <div className="space-y-6" aria-hidden="true">
-      {/* 코인 현황 카드 */}
-      <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
-        <div className="h-5 w-24 mb-4 animate-pulse rounded bg-bg-tertiary" />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-lg bg-bg-tertiary border-l-4 border-l-border-primary space-y-2">
-              <div className="h-3 w-14 animate-pulse rounded bg-bg-secondary" />
-              <div className="h-5 w-20 animate-pulse rounded bg-bg-secondary" />
-            </div>
-          ))}
-        </div>
+    <div className="space-y-5" aria-hidden="true">
+      {/* 페이지 헤더 */}
+      <div className="pb-4 border-b border-border-primary space-y-2">
+        <div className="h-6 w-28 animate-pulse rounded bg-bg-tertiary" />
+        <div className="h-3.5 w-64 animate-pulse rounded bg-bg-tertiary" />
       </div>
 
-      {/* 정산 요청 카드 */}
-      <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
-        <div className="h-5 w-24 mb-4 animate-pulse rounded bg-bg-tertiary" />
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="space-y-2">
-            <div className="h-3 w-32 animate-pulse rounded bg-bg-tertiary" />
-            <div className="h-9 w-40 animate-pulse rounded bg-bg-tertiary" />
-            <div className="h-3 w-48 animate-pulse rounded bg-bg-tertiary" />
+      {/* 정산 신청 */}
+      <div className="rounded-xl bg-bg-secondary border border-border-primary p-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="h-4 w-20 animate-pulse rounded bg-bg-tertiary" />
+          <div className="space-y-1 text-right">
+            <div className="h-3 w-12 ml-auto animate-pulse rounded bg-bg-tertiary" />
+            <div className="h-5 w-24 ml-auto animate-pulse rounded bg-bg-tertiary" />
           </div>
-          <div className="h-11 w-36 animate-pulse rounded-lg bg-bg-tertiary" />
         </div>
+        <div className="space-y-1.5">
+          <div className="h-3 w-24 animate-pulse rounded bg-bg-tertiary" />
+          <div className="h-11 w-full animate-pulse rounded-lg bg-bg-tertiary" />
+          <div className="h-3 w-40 animate-pulse rounded bg-bg-tertiary" />
+        </div>
+        <div className="rounded-lg border border-border-primary divide-y divide-border-primary">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between px-4 py-3">
+              <div className="h-3.5 w-20 animate-pulse rounded bg-bg-tertiary" />
+              <div className="h-3.5 w-24 animate-pulse rounded bg-bg-tertiary" />
+            </div>
+          ))}
+        </div>
+        <div className="h-11 w-full animate-pulse rounded-lg bg-bg-tertiary" />
       </div>
 
-      {/* 정산 통계 카드 */}
-      <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
-        <div className="h-5 w-24 mb-4 animate-pulse rounded bg-bg-tertiary" />
-        <div className="grid grid-cols-3 gap-4 text-center">
+      {/* 코인 상태 요약 */}
+      <div className="rounded-xl bg-bg-secondary border border-border-primary grid grid-cols-2 sm:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="px-4 py-3.5 space-y-2">
+            <div className="h-3 w-16 animate-pulse rounded bg-bg-tertiary" />
+            <div className="h-5 w-24 animate-pulse rounded bg-bg-tertiary" />
+          </div>
+        ))}
+      </div>
+
+      {/* 통계 */}
+      <div className="rounded-xl bg-bg-secondary border border-border-primary p-5 space-y-4">
+        <div className="h-4 w-20 animate-pulse rounded bg-bg-tertiary" />
+        <div className="grid grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="space-y-2">
-              <div className="h-3 w-16 mx-auto animate-pulse rounded bg-bg-tertiary" />
-              <div className="h-4 w-24 mx-auto animate-pulse rounded bg-bg-tertiary" />
-              <div className="h-3 w-10 mx-auto animate-pulse rounded bg-bg-tertiary" />
+            <div key={i} className="p-3 rounded-lg bg-bg-tertiary space-y-2 text-center">
+              <div className="h-3 w-14 mx-auto animate-pulse rounded bg-bg-secondary" />
+              <div className="h-4 w-20 mx-auto animate-pulse rounded bg-bg-secondary" />
+              <div className="h-3 w-8 mx-auto animate-pulse rounded bg-bg-secondary" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* 정산 내역 테이블 */}
-      <div className="p-6 rounded-lg bg-bg-secondary border border-border-primary">
-        <div className="h-5 w-24 mb-4 animate-pulse rounded bg-bg-tertiary" />
+      {/* 정산 내역 */}
+      <div className="rounded-xl bg-bg-secondary border border-border-primary">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border-primary">
+          <div className="h-4 w-20 animate-pulse rounded bg-bg-tertiary" />
+          <div className="h-3 w-12 animate-pulse rounded bg-bg-tertiary" />
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border-primary">
-                {['w-20', 'w-24', 'w-20', 'w-24', 'w-16'].map((w, i) => (
-                  <th key={i} className="pb-3">
+              <tr>
+                {['w-20', 'w-24', 'w-16', 'w-24', 'w-16'].map((w, i) => (
+                  <th key={i} className="px-5 py-3">
                     <div className={`h-3 ${w} mx-auto animate-pulse rounded bg-bg-tertiary`} />
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border-primary">
-              {Array.from({ length: 5 }).map((_, row) => (
-                <tr key={row}>
-                  <td className="py-3"><div className="h-4 w-20 animate-pulse rounded bg-bg-tertiary" /></td>
-                  <td className="py-3 text-right"><div className="h-4 w-20 ml-auto animate-pulse rounded bg-bg-tertiary" /></td>
-                  <td className="py-3 text-right"><div className="h-4 w-16 ml-auto animate-pulse rounded bg-bg-tertiary" /></td>
-                  <td className="py-3 text-right"><div className="h-4 w-20 ml-auto animate-pulse rounded bg-bg-tertiary" /></td>
-                  <td className="py-3 text-center"><div className="h-5 w-16 mx-auto animate-pulse rounded bg-bg-tertiary" /></td>
+            <tbody>
+              {Array.from({ length: 4 }).map((_, row) => (
+                <tr key={row} className="border-t border-border-primary">
+                  <td className="px-5 py-3.5"><div className="h-4 w-20 animate-pulse rounded bg-bg-tertiary" /></td>
+                  <td className="px-5 py-3.5 text-right"><div className="h-4 w-20 ml-auto animate-pulse rounded bg-bg-tertiary" /></td>
+                  <td className="px-5 py-3.5 text-right"><div className="h-4 w-16 ml-auto animate-pulse rounded bg-bg-tertiary" /></td>
+                  <td className="px-5 py-3.5 text-right"><div className="h-4 w-20 ml-auto animate-pulse rounded bg-bg-tertiary" /></td>
+                  <td className="px-5 py-3.5 text-center"><div className="h-5 w-16 mx-auto animate-pulse rounded-full bg-bg-tertiary" /></td>
                 </tr>
               ))}
             </tbody>
