@@ -8,11 +8,13 @@ export interface MatureResult {
 }
 
 /**
- * PENDING → MATURED/BLOCKED 성숙도 업데이트 (수동 실행)
- * POST /payout-coin/admin/mature
+ * WAITING → AVAILABLE/BLOCKED 가용성 갱신 트리거 (수동 실행)
+ * POST /api/admin/payout-coin/refresh-availability
  */
-export const maturePayoutCoins = async (): Promise<MatureResult> => {
-  const response = await api.post<{ success: boolean; data: MatureResult }>('/api/admin/payout-coin/mature');
+export const refreshPayoutAvailability = async (): Promise<MatureResult> => {
+  const response = await api.post<{ success: boolean; data: MatureResult }>(
+    '/api/admin/payout-coin/refresh-availability',
+  );
   return response.data.data;
 };
 

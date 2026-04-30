@@ -3,24 +3,27 @@ import { useState } from 'react';
 import type { PayoutStatus, PayoutCoin } from '@/app/_types/payout-coin';
 import type { MatureResult } from '@/app/_apis/admin/payout-coin';
 import {
-  maturePayoutCoins,
+  refreshPayoutAvailability,
   getStreamerPayoutCoins,
   unblockPayoutCoin,
 } from '@/app/_apis/admin/payout-coin';
+import { PAYOUT_STATUS_LABEL } from '@/app/_types/payout-coin';
 
 const STATUS_OPTIONS: { value: PayoutStatus | ''; label: string }[] = [
   { value: '', label: '전체' },
-  { value: 'PENDING', label: 'PENDING' },
-  { value: 'MATURED', label: 'MATURED' },
+  { value: 'WAITING', label: 'WAITING' },
+  { value: 'AVAILABLE', label: 'AVAILABLE' },
   { value: 'BLOCKED', label: 'BLOCKED' },
-  { value: 'SETTLED', label: 'SETTLED' },
+  { value: 'IN_SETTLEMENT', label: 'IN_SETTLEMENT' },
+  { value: 'COMPLETED', label: 'COMPLETED' },
 ];
 
 const STATUS_COLOR: Record<PayoutStatus, string> = {
-  PENDING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  MATURED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  WAITING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  AVAILABLE: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
   BLOCKED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-  SETTLED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  IN_SETTLEMENT: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+  COMPLETED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
 };
 
 export default function PayoutCoinTab() {
@@ -60,12 +63,12 @@ export default function PayoutCoinTab() {
   };
 
   const handleMature = async () => {
-    if (!confirm('정산 가능으로 전환하시겠습니까?\n정산 가능일이 도래한 PENDING 코인이 MATURED로 전환됩니다.')) return;
+    if (!confirm('가용성 갱신을 실행하시겠습니까?\n정산 가능일이 도래한 WAITING 코인이 AVAILABLE로 전환됩니다.')) return;
     setMatureLoading(true);
     setError('');
     setMatureResult(null);
     try {
-      const result = await maturePayoutCoins();
+      const result = await refreshPayoutAvailability();
       setMatureResult(result);
       // 결과 표시 후 현재 목록도 갱신
       if (searched && streamerIdx) {
@@ -79,12 +82,12 @@ export default function PayoutCoinTab() {
   };
 
   const handleUnblock = async (coin: PayoutCoin) => {
-    if (!confirm(`ID: ${coin.id}\n해당 BLOCKED 코인을 MATURED로 해제하시겠습니까?`)) return;
+    if (!confirm(`ID: ${coin.id}\n해당 BLOCKED 코인을 WAITING 또는 AVAILABLE로 해제하시겠습니까?`)) return;
     setUnblockingId(coin.id);
     setError('');
     try {
       await unblockPayoutCoin(coin.id);
-      setCoins((prev) => prev.map((c) => (c.id === coin.id ? { ...c, status: 'MATURED' } : c)));
+      setCoins((prev) => prev.filter((c) => c.id !== coin.id));
     } catch {
       setError('언블록 처리 중 오류가 발생했습니다.');
     } finally {
@@ -98,9 +101,9 @@ export default function PayoutCoinTab() {
       <div className="bg-card border border-border rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-semibold text-foreground">정산 가능 전환</h3>
+            <h3 className="font-semibold text-foreground">가용성 갱신</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              PENDING 상태 코인 중 정산 가능일이 도래한 항목을 MATURED로 전환합니다.
+              WAITING 상태 코인 중 정산 가능일이 도래한 항목을 AVAILABLE로 전환합니다.
             </p>
           </div>
           <button
@@ -197,7 +200,7 @@ export default function PayoutCoinTab() {
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_COLOR[coin.status]}`}
                         >
-                          {coin.status}
+                          {PAYOUT_STATUS_LABEL[coin.status]}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">{coin.coin_amount.toLocaleString()}</td>
