@@ -1,4 +1,12 @@
-export type PayoutStatus = 'PENDING' | 'MATURED' | 'BLOCKED' | 'IN_SETTLEMENT' | 'SETTLED';
+export const PAYOUT_STATUS_LABEL = {
+  WAITING: '정산 대기',
+  AVAILABLE: '정산 신청 가능',
+  BLOCKED: '정산 보류',
+  IN_SETTLEMENT: '정산중',
+  COMPLETED: '정산완료',
+} as const;
+
+export type PayoutStatus = keyof typeof PAYOUT_STATUS_LABEL;
 
 export interface PayoutCoin {
   id: string;
@@ -15,11 +23,11 @@ export interface PayoutCoin {
 }
 
 export interface PayoutSummary {
-  matured_amount: number;
-  pending_amount: number;
+  available_amount: number;
+  waiting_amount: number;
   blocked_amount: number;
   in_settlement_amount: number;
-  settled_amount: number;
+  completed_amount: number;
   total_received: number;
 }
 

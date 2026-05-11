@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import ExchangeContentSkeleton from './ExchangeContentSkeleton';
-import { getPayoutSummary, getMaturedPayoutCoins } from '@/app/_apis/payout-coin';
+import { getPayoutSummary, getAvailablePayoutCoins } from '@/app/_apis/payout-coin';
 import { createSettlement, getMySettlements, getMySettlementStats } from '@/app/_apis/settlement';
 import type { PayoutCoin, PayoutSummary } from '@/app/_types/payout-coin';
 import type { Settlement, SettlementStats } from '@/app/_types/settlement';
@@ -41,7 +41,7 @@ function formatDate(dateStr: string) {
 
 export const ExchangeContent = () => {
   const [summary, setSummary] = useState<PayoutSummary | null>(null);
-  const [maturedCoins, setMaturedCoins] = useState<PayoutCoin[]>([]);
+  const [availableCoins, setAvailableCoins] = useState<PayoutCoin[]>([]);
   const [stats, setStats] = useState<SettlementStats | null>(null);
   const [settlements, setSettlements] = useState<Settlement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,12 +56,12 @@ export const ExchangeContent = () => {
       setError(null);
       const [summaryRes, coinsRes, statsRes, settlementsRes] = await Promise.all([
         getPayoutSummary(),
-        getMaturedPayoutCoins({ limit: 200 }),
+        getAvailablePayoutCoins({ limit: 200 }),
         getMySettlementStats(),
         getMySettlements({ limit: 10 }),
       ]);
       setSummary(summaryRes.data);
-      setMaturedCoins(coinsRes.data?.payoutCoins ?? []);
+      setAvailableCoins(coinsRes.data?.payoutCoins ?? []);
       setStats(statsRes.data);
       setSettlements(settlementsRes.data?.settlements ?? []);
     } catch (err) {
@@ -75,8 +75,8 @@ export const ExchangeContent = () => {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const totalMaturedCoins = useMemo(
-    () => maturedCoins.reduce((sum, c) => sum + c.coin_amount, 0),
-    [maturedCoins],
+    () => availableCoins.reduce((sum, c) => sum + c.coin_amount, 0),
+    [availableCoins],
   );
 
   const COIN_RATE = 100; // 1 Coin = 100원
@@ -217,10 +217,10 @@ export const ExchangeContent = () => {
 
       {/* 코인 상태 요약 */}
       <div className="rounded-xl bg-bg-secondary border border-border-primary grid grid-cols-2 sm:grid-cols-4 divide-x-0 sm:divide-x divide-y sm:divide-y-0 divide-border-primary">
-        <StatusCell icon={<MdAccessTime className="w-3.5 h-3.5" />} label="대기 중" value={summary?.pending_amount ?? 0} color="yellow" hint="후원 후 3일 대기" />
-        <StatusCell icon={<MdLoop className="w-3.5 h-3.5" />} label="신청 중" value={summary?.in_settlement_amount ?? 0} color="blue" hint="관리자 처리 중" />
-        <StatusCell icon={<MdBlock className="w-3.5 h-3.5" />} label="차단됨" value={summary?.blocked_amount ?? 0} color="red" hint="컴플라이언스 검토" />
-        <StatusCell icon={<MdCheckCircle className="w-3.5 h-3.5" />} label="지급 완료" value={summary?.settled_amount ?? 0} color="green" hint="누적 지급액" />
+        <StatusCell icon={<MdAccessTime className="w-3.5 h-3.5" />} label="정산 대기" value={summary?.waiting_amount ?? 0} color="yellow" hint="후원 후 대기 중" />
+        <StatusCell icon={<MdLoop className="w-3.5 h-3.5" />} label="정산 중" value={summary?.in_settlement_amount ?? 0} color="blue" hint="관리자 처리 중" />
+        <StatusCell icon={<MdBlock className="w-3.5 h-3.5" />} label="정산 보류" value={summary?.blocked_amount ?? 0} color="red" hint="컴플라이언스 검토" />
+        <StatusCell icon={<MdCheckCircle className="w-3.5 h-3.5" />} label="정산 완료" value={summary?.completed_amount ?? 0} color="green" hint="누적 지급액" />
       </div>
 
       {/* 정산 통계 */}
