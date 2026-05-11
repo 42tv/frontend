@@ -13,7 +13,7 @@ const tabRoutes = [
   { name: "팬등급", path: "/channel/my/fans" },
   { name: "블랙리스트", path: "/channel/my/blacklist" },
   { name: "커뮤니티", path: "/channel/my/community" },
-  { name: "환전", path: "/channel/my/exchange" },
+  { name: "정산", path: "/channel/my/exchange" },
 ];
 
 const ChannelNav = () => {
