@@ -1,22 +1,25 @@
 export type SettlementStatus = 'PENDING' | 'APPROVED' | 'PAID' | 'REJECTED';
 
+export interface PayoutCoinBrief {
+  id: string;
+  coin_value: number;
+  status: string;
+}
+
 export interface Settlement {
   id: string;
   streamer_idx: number;
-  period_start: string;
-  period_end: string;
   total_value: number;
   fee_amount: number;
   payout_amount: number;
   status: SettlementStatus;
-  payout_method: string | null;
-  payout_account: string | null;
-  admin_memo: string | null;
   reject_reason: string | null;
+  requested_at: string;
   approved_at: string | null;
   paid_at: string | null;
   rejected_at: string | null;
   created_at: string;
+  payoutCoins?: PayoutCoinBrief[];
 }
 
 export interface SettlementStats {
@@ -33,13 +36,13 @@ export interface SettlementsResponse {
   data: {
     settlements: Settlement[];
   };
+  message: string;
   pagination: {
     page: number;
     limit: number;
     total: number;
     totalPages: number;
   };
-  message: string;
 }
 
 export interface SettlementStatsResponse {
@@ -48,10 +51,14 @@ export interface SettlementStatsResponse {
   message: string;
 }
 
+export interface SettlementDetailResponse {
+  success: true;
+  data: Settlement;
+  message: string;
+}
+
 export interface CreateSettlementRequest {
   amount: number;
-  payout_method?: string;
-  payout_account?: string;
 }
 
 export interface CreateSettlementResponse {

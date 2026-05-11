@@ -121,10 +121,6 @@ export default function SettlementDetailModal({
           {/* 기본 정보 */}
           <div className="bg-background rounded-lg p-4">
             <InfoRow label="스트리머 IDX" value={settlement.streamer_idx} />
-            <InfoRow
-              label="정산 기간"
-              value={`${formatDate(settlement.period_start)} ~ ${formatDate(settlement.period_end)}`}
-            />
             <InfoRow label="총 금액" value={formatKRW(settlement.total_value)} />
             <InfoRow label="수수료" value={formatKRW(settlement.fee_amount)} />
             <InfoRow
@@ -135,21 +131,16 @@ export default function SettlementDetailModal({
                 </span>
               }
             />
-            <InfoRow label="지급 수단" value={settlement.payout_method || '-'} />
-            <InfoRow label="지급 계좌" value={settlement.payout_account || '-'} />
           </div>
 
           {/* 처리 이력 */}
           <div className="bg-background rounded-lg p-4">
-            <InfoRow label="신청일" value={formatDate(settlement.created_at)} />
+            <InfoRow label="신청일" value={formatDate(settlement.requested_at)} />
             <InfoRow label="승인일" value={formatDate(settlement.approved_at)} />
             <InfoRow label="지급일" value={formatDate(settlement.paid_at)} />
             <InfoRow label="거절일" value={formatDate(settlement.rejected_at)} />
             {settlement.reject_reason && (
               <InfoRow label="거절 사유" value={settlement.reject_reason} />
-            )}
-            {settlement.admin_memo && (
-              <InfoRow label="관리자 메모" value={settlement.admin_memo} />
             )}
           </div>
 

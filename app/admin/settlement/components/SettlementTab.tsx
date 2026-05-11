@@ -209,7 +209,6 @@ export default function SettlementTab() {
                   <th className="text-left px-4 py-3 font-medium">스트리머</th>
                   <th className="text-left px-4 py-3 font-medium">상태</th>
                   <th className="text-right px-4 py-3 font-medium">지급액</th>
-                  <th className="text-left px-4 py-3 font-medium">지급 수단</th>
                   <th className="text-left px-4 py-3 font-medium">신청일</th>
                   <th className="px-4 py-3"></th>
                 </tr>
@@ -231,8 +230,7 @@ export default function SettlementTab() {
                     <td className="px-4 py-3 text-right font-medium">
                       {formatKRW(s.payout_amount)}
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{s.payout_method || '-'}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{formatDate(s.created_at)}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{formatDate(s.requested_at)}</td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() => setSelectedSettlement(s)}

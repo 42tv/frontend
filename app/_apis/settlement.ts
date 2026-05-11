@@ -2,6 +2,7 @@ import api from './auto_refresh_axios';
 import type {
   SettlementsResponse,
   SettlementStatsResponse,
+  SettlementDetailResponse,
   CreateSettlementRequest,
   CreateSettlementResponse,
   SettlementStatus,
@@ -39,5 +40,14 @@ export const getMySettlements = async (params?: {
  */
 export const getMySettlementStats = async (): Promise<SettlementStatsResponse> => {
   const response = await api.get<SettlementStatsResponse>('/api/settlement/stats');
+  return response.data;
+};
+
+/**
+ * 정산 상세 조회
+ * GET /api/settlement/:id
+ */
+export const getSettlementById = async (id: string): Promise<SettlementDetailResponse> => {
+  const response = await api.get<SettlementDetailResponse>(`/api/settlement/${id}`);
   return response.data;
 };
