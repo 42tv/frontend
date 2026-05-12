@@ -1,6 +1,6 @@
 export default function ExchangeContentSkeleton() {
   return (
-    <div className="space-y-5" aria-hidden="true">
+    <div className="max-w-3xl mx-auto space-y-5" aria-hidden="true">
       {/* 페이지 헤더 */}
       <div className="pb-4 border-b border-border-primary flex items-start justify-between">
         <div className="space-y-2">

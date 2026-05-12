@@ -135,7 +135,7 @@ export const ExchangeContent = () => {
   const noAccount = error?.includes('계좌');
 
   return (
-    <div className="space-y-5">
+    <div className="max-w-3xl mx-auto space-y-5">
       {/* 페이지 헤더 */}
       <div className="pb-4 border-b border-border-primary flex items-start justify-between">
         <div>
