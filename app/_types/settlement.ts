@@ -66,3 +66,41 @@ export interface CreateSettlementResponse {
   data: Settlement;
   message: string;
 }
+
+// ── 정산 계좌 ──────────────────────────────────────────────────────────────
+
+export type SettlementAccountVerificationStatus = 'UNVERIFIED' | 'PENDING' | 'VERIFIED' | 'FAILED';
+
+export interface SettlementAccount {
+  id: string;
+  bank_code: string;
+  bank_name: string;
+  account_number_masked: string;
+  holder_name_masked: string | null;
+  verification_status: SettlementAccountVerificationStatus;
+  verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SettlementAccountResponse {
+  success: true;
+  data: SettlementAccount;
+  message: string;
+}
+
+export interface UpsertSettlementAccountRequest {
+  bank_code: string;
+  bank_name: string;
+  account_number: string;
+  holder_name?: string;
+}
+
+export interface VerifySettlementAccountResponse {
+  success: true;
+  data: {
+    verification_status: string;
+    failure_reason: string | null;
+  };
+  message: string;
+}

@@ -4,11 +4,22 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ExchangeContentSkeleton from './ExchangeContentSkeleton';
 import { getPayoutSummary } from '@/app/_apis/payout-coin';
 import { createSettlement, getMySettlements, getMySettlementStats } from '@/app/_apis/settlement';
+import {
+  getMySettlementAccount,
+  upsertSettlementAccount,
+  verifySettlementAccount,
+} from '@/app/_apis/settlement-account';
 import type { PayoutSummary } from '@/app/_types/payout-coin';
-import type { Settlement, SettlementStats, SettlementStatus } from '@/app/_types/settlement';
+import type {
+  Settlement,
+  SettlementStats,
+  SettlementStatus,
+  SettlementAccount,
+} from '@/app/_types/settlement';
 import {
   MdAccountBalanceWallet, MdAccessTime, MdLoop, MdBlock,
   MdCheckCircle, MdTrendingUp, MdRefresh, MdInfoOutline,
+  MdEdit, MdVerified, MdWarning, MdAdd,
 } from 'react-icons/md';
 import { AxiosError } from 'axios';
 
@@ -25,6 +36,30 @@ const SETTLEMENT_STATUS_CLASS: Record<SettlementStatus, string> = {
   PAID: 'bg-green-500/15 text-green-400 ring-1 ring-green-500/30',
   REJECTED: 'bg-red-500/15 text-red-400 ring-1 ring-red-500/30',
 };
+
+const KOREAN_BANKS = [
+  { code: '004', name: 'KB국민은행' },
+  { code: '020', name: '우리은행' },
+  { code: '088', name: '신한은행' },
+  { code: '081', name: 'KEB하나은행' },
+  { code: '011', name: 'NH농협은행' },
+  { code: '003', name: 'IBK기업은행' },
+  { code: '002', name: 'KDB산업은행' },
+  { code: '007', name: '수협은행' },
+  { code: '023', name: 'SC제일은행' },
+  { code: '032', name: '부산은행' },
+  { code: '034', name: '광주은행' },
+  { code: '035', name: '전북은행' },
+  { code: '037', name: '제주은행' },
+  { code: '039', name: '경남은행' },
+  { code: '045', name: '새마을금고' },
+  { code: '048', name: '신협' },
+  { code: '064', name: '산림조합' },
+  { code: '071', name: '우체국' },
+  { code: '089', name: '케이뱅크' },
+  { code: '090', name: '카카오뱅크' },
+  { code: '092', name: '토스뱅크' },
+];
 
 function formatCurrency(value: number) {
   return value.toLocaleString('ko-KR') + '원';
@@ -49,7 +84,6 @@ function extractApiError(err: unknown): string {
   return '요청 처리 중 오류가 발생했습니다.';
 }
 
-
 const HISTORY_FILTER_TABS: { label: string; value: SettlementStatus | undefined }[] = [
   { label: '전체', value: undefined },
   { label: '처리 중', value: 'PENDING' },
@@ -58,10 +92,302 @@ const HISTORY_FILTER_TABS: { label: string; value: SettlementStatus | undefined 
   { label: '거절됨', value: 'REJECTED' },
 ];
 
+// ── 정산 계좌 폼 ──────────────────────────────────────────────────────────
+
+interface AccountFormState {
+  bank_code: string;
+  bank_name: string;
+  account_number: string;
+  holder_name: string;
+}
+
+const EMPTY_FORM: AccountFormState = {
+  bank_code: '',
+  bank_name: '',
+  account_number: '',
+  holder_name: '',
+};
+
+interface SettlementAccountSectionProps {
+  account: SettlementAccount | null;
+  onSaved: (account: SettlementAccount) => void;
+}
+
+const SettlementAccountSection: React.FC<SettlementAccountSectionProps> = ({ account, onSaved }) => {
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState<AccountFormState>(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [verifyResult, setVerifyResult] = useState<string | null>(null);
+
+  const hasAccount = !!account;
+  const isVerified = account?.verification_status === 'VERIFIED';
+  const isPending = account?.verification_status === 'PENDING';
+
+  const startEdit = () => {
+    setForm({
+      bank_code: account?.bank_code ?? '',
+      bank_name: account?.bank_name ?? '',
+      account_number: '',
+      holder_name: '',
+    });
+    setError(null);
+    setVerifyResult(null);
+    setEditing(true);
+  };
+
+  const handleBankSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = KOREAN_BANKS.find((b) => b.code === e.target.value);
+    setForm((prev) => ({
+      ...prev,
+      bank_code: selected?.code ?? '',
+      bank_name: selected?.name ?? '',
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!form.bank_code || !form.account_number) {
+      setError('은행과 계좌번호를 입력해주세요.');
+      return;
+    }
+    try {
+      setSaving(true);
+      setError(null);
+      const res = await upsertSettlementAccount({
+        bank_code: form.bank_code,
+        bank_name: form.bank_name,
+        account_number: form.account_number,
+        holder_name: form.holder_name || undefined,
+      });
+      onSaved(res.data);
+      setEditing(false);
+      setForm(EMPTY_FORM);
+    } catch (err) {
+      setError(extractApiError(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleVerify = async () => {
+    try {
+      setVerifying(true);
+      setError(null);
+      setVerifyResult(null);
+      const res = await verifySettlementAccount();
+      if (res.data.verification_status === 'VERIFIED') {
+        setVerifyResult('계좌 인증이 완료되었습니다.');
+        // Refresh account data via parent
+        const updated = await getMySettlementAccount();
+        onSaved(updated.data);
+      } else {
+        setVerifyResult(`인증 실패${res.data.failure_reason ? ': ' + res.data.failure_reason : ''}`);
+      }
+    } catch (err) {
+      setError(extractApiError(err));
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const verificationBadge = () => {
+    if (!account) return null;
+    const map = {
+      VERIFIED: { label: '인증 완료', cls: 'bg-green-500/15 text-green-400 ring-1 ring-green-500/30' },
+      PENDING: { label: '인증 중', cls: 'bg-yellow-500/15 text-yellow-400 ring-1 ring-yellow-500/30' },
+      UNVERIFIED: { label: '미인증', cls: 'bg-text-secondary/10 text-text-secondary ring-1 ring-border-primary' },
+      FAILED: { label: '인증 실패', cls: 'bg-red-500/15 text-red-400 ring-1 ring-red-500/30' },
+    } as const;
+    const { label, cls } = map[account.verification_status];
+    return (
+      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cls}`}>
+        {account.verification_status === 'VERIFIED' && <MdVerified className="w-3 h-3" />}
+        {label}
+      </span>
+    );
+  };
+
+  return (
+    <div className="rounded-xl bg-bg-secondary border border-border-primary overflow-hidden">
+      <div className="px-6 py-4 border-b border-border-primary flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MdAccountBalanceWallet className="w-4 h-4 text-accent" />
+          <h3 className="font-semibold text-text-primary text-sm">정산 계좌</h3>
+        </div>
+        {hasAccount && !editing && (
+          <button
+            onClick={startEdit}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors"
+          >
+            <MdEdit className="w-3.5 h-3.5" />
+            수정
+          </button>
+        )}
+      </div>
+
+      <div className="px-6 py-5">
+        {/* 오류/결과 메시지 */}
+        {error && (
+          <div className="mb-4 flex items-start gap-2 px-3 py-2.5 rounded-lg bg-red-500/10 text-red-400 ring-1 ring-red-500/20 text-xs">
+            <MdWarning className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            {error}
+          </div>
+        )}
+        {verifyResult && (
+          <div className={`mb-4 flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs ring-1 ${
+            verifyResult.includes('완료')
+              ? 'bg-green-500/10 text-green-400 ring-green-500/20'
+              : 'bg-red-500/10 text-red-400 ring-red-500/20'
+          }`}>
+            <span>{verifyResult}</span>
+          </div>
+        )}
+
+        {/* 등록된 계좌 표시 */}
+        {hasAccount && !editing && (
+          <div className="space-y-3">
+            <div className="rounded-lg bg-bg-tertiary border border-border-primary divide-y divide-border-primary">
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-xs text-text-secondary">은행</span>
+                <span className="text-sm font-medium text-text-primary">{account.bank_name}</span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-xs text-text-secondary">계좌번호</span>
+                <span className="text-sm font-medium text-text-primary tabular-nums">{account.account_number_masked}</span>
+              </div>
+              {account.holder_name_masked && (
+                <div className="flex items-center justify-between px-4 py-3">
+                  <span className="text-xs text-text-secondary">예금주</span>
+                  <span className="text-sm font-medium text-text-primary">{account.holder_name_masked}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-xs text-text-secondary">인증 상태</span>
+                {verificationBadge()}
+              </div>
+              {account.verified_at && (
+                <div className="flex items-center justify-between px-4 py-3">
+                  <span className="text-xs text-text-secondary">인증일</span>
+                  <span className="text-xs text-text-secondary">{formatDate(account.verified_at)}</span>
+                </div>
+              )}
+            </div>
+
+            {!isVerified && !isPending && (
+              <button
+                onClick={handleVerify}
+                disabled={verifying}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium
+                  bg-accent/10 text-accent hover:bg-accent/20 transition-colors border border-accent/20
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <MdVerified className="w-4 h-4" />
+                {verifying ? '인증 중...' : '계좌 인증하기'}
+              </button>
+            )}
+            {isPending && (
+              <p className="text-xs text-text-secondary text-center py-1">계좌 인증이 진행 중입니다.</p>
+            )}
+          </div>
+        )}
+
+        {/* 계좌 미등록 상태 */}
+        {!hasAccount && !editing && (
+          <div className="flex flex-col items-center gap-3 py-4">
+            <div className="w-10 h-10 rounded-full bg-bg-tertiary flex items-center justify-center">
+              <MdAccountBalanceWallet className="w-5 h-5 text-text-secondary opacity-50" />
+            </div>
+            <p className="text-sm text-text-secondary">등록된 정산 계좌가 없습니다.</p>
+            <p className="text-xs text-text-secondary opacity-70">정산 신청을 위해 계좌를 먼저 등록해주세요.</p>
+            <button
+              onClick={startEdit}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium
+                bg-accent text-white hover:bg-accent-light transition-colors"
+            >
+              <MdAdd className="w-4 h-4" />
+              계좌 등록하기
+            </button>
+          </div>
+        )}
+
+        {/* 계좌 등록/수정 폼 */}
+        {editing && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs text-text-secondary mb-1.5">은행 선택</label>
+              <select
+                value={form.bank_code}
+                onChange={handleBankSelect}
+                className="w-full px-3 py-2.5 rounded-lg bg-bg-tertiary border border-border-primary text-text-primary text-sm
+                  focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              >
+                <option value="">은행을 선택하세요</option>
+                {KOREAN_BANKS.map((b) => (
+                  <option key={b.code} value={b.code}>{b.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs text-text-secondary mb-1.5">계좌번호 <span className="text-red-400">*</span></label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={form.account_number}
+                onChange={(e) => setForm((prev) => ({ ...prev, account_number: e.target.value.replace(/[^0-9-]/g, '') }))}
+                placeholder="계좌번호를 입력하세요 (숫자만)"
+                className="w-full px-3 py-2.5 rounded-lg bg-bg-tertiary border border-border-primary text-text-primary text-sm tabular-nums
+                  focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-text-secondary/40"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-text-secondary mb-1.5">예금주명 <span className="text-text-secondary/50">(선택)</span></label>
+              <input
+                type="text"
+                value={form.holder_name}
+                onChange={(e) => setForm((prev) => ({ ...prev, holder_name: e.target.value }))}
+                placeholder="예금주 성명"
+                className="w-full px-3 py-2.5 rounded-lg bg-bg-tertiary border border-border-primary text-text-primary text-sm
+                  focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-text-secondary/40"
+              />
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => { setEditing(false); setError(null); }}
+                disabled={saving}
+                className="flex-1 py-2.5 rounded-lg text-sm font-medium text-text-secondary
+                  bg-bg-tertiary hover:bg-bg-primary border border-border-primary transition-colors
+                  disabled:opacity-40"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving || !form.bank_code || !form.account_number}
+                className="flex-1 py-2.5 rounded-lg text-sm font-semibold
+                  bg-accent hover:bg-accent-light text-white transition-colors
+                  disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {saving ? '저장 중...' : '저장'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── 메인 컴포넌트 ────────────────────────────────────────────────────────────
+
 export const ExchangeContent = () => {
   const [summary, setSummary] = useState<PayoutSummary | null>(null);
   const [stats, setStats] = useState<SettlementStats | null>(null);
   const [settlements, setSettlements] = useState<Settlement[]>([]);
+  const [account, setAccount] = useState<SettlementAccount | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,14 +400,17 @@ export const ExchangeContent = () => {
     try {
       setLoading(true);
       setError(null);
-      const [summaryRes, statsRes, settlementsRes] = await Promise.all([
+      const [summaryRes, statsRes, settlementsRes, accountRes] = await Promise.allSettled([
         getPayoutSummary(),
         getMySettlementStats(),
         getMySettlements({ limit: 20, status }),
+        getMySettlementAccount(),
       ]);
-      setSummary(summaryRes.data);
-      setStats(statsRes.data);
-      setSettlements(settlementsRes.data?.settlements ?? []);
+      if (summaryRes.status === 'fulfilled') setSummary(summaryRes.value.data);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
+      if (settlementsRes.status === 'fulfilled') setSettlements(settlementsRes.value.data?.settlements ?? []);
+      if (accountRes.status === 'fulfilled') setAccount(accountRes.value.data);
+      else setAccount(null);
     } catch (err) {
       setError(extractApiError(err));
     } finally {
@@ -91,12 +420,13 @@ export const ExchangeContent = () => {
 
   useEffect(() => { fetchData(filterStatus); }, [fetchData, filterStatus]);
 
+  const isAccountVerified = account?.verification_status === 'VERIFIED';
   const availableCount = Math.floor((summary?.available_amount ?? 0) / 100);
   const enteredCount = Math.min(Math.max(0, Number(amountInput) || 0), availableCount);
   const enteredAmount = enteredCount * 100;
   const feeValue = Math.floor(enteredAmount * 0.1);
   const netValue = enteredAmount - feeValue;
-  const canSettle = enteredCount > 0 && availableCount > 0;
+  const canSettle = enteredCount > 0 && availableCount > 0 && isAccountVerified;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value.replace(/[^0-9]/g, '');
@@ -132,8 +462,6 @@ export const ExchangeContent = () => {
 
   if (loading) return <ExchangeContentSkeleton />;
 
-  const noAccount = error?.includes('계좌');
-
   return (
     <div className="max-w-3xl mx-auto space-y-5">
       {/* 페이지 헤더 */}
@@ -155,14 +483,7 @@ export const ExchangeContent = () => {
       {error && (
         <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 text-red-400 ring-1 ring-red-500/20 text-sm">
           <span className="shrink-0 mt-0.5">⚠</span>
-          <div className="flex-1">
-            <p>{error}</p>
-            {noAccount && (
-              <p className="mt-1 text-xs opacity-80">
-                정산 계좌를 먼저 등록하고 인증을 완료해주세요.
-              </p>
-            )}
-          </div>
+          <p>{error}</p>
         </div>
       )}
       {successMessage && (
@@ -170,6 +491,12 @@ export const ExchangeContent = () => {
           <span className="shrink-0">✓</span>{successMessage}
         </div>
       )}
+
+      {/* 정산 계좌 섹션 */}
+      <SettlementAccountSection
+        account={account}
+        onSaved={(updated) => setAccount(updated)}
+      />
 
       {/* 정산 신청 카드 */}
       <div className="rounded-xl bg-bg-secondary border border-border-primary overflow-hidden">
@@ -188,6 +515,18 @@ export const ExchangeContent = () => {
         <div className="px-6 py-5">
           <h3 className="font-semibold text-text-primary text-sm mb-5">정산 신청</h3>
 
+          {/* 계좌 미인증 안내 */}
+          {!isAccountVerified && (
+            <div className="mb-5 flex items-start gap-2 px-4 py-3 rounded-lg bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/20 text-xs">
+              <MdWarning className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <span>
+                {!account
+                  ? '정산 계좌를 먼저 등록하고 인증을 완료해야 신청할 수 있습니다.'
+                  : '계좌 인증을 완료해야 정산 신청이 가능합니다.'}
+              </span>
+            </div>
+          )}
+
           {/* 금액 입력 */}
           <div className="mb-5">
             <label className="block text-xs text-text-secondary mb-1.5">신청 코인 수</label>
@@ -198,7 +537,7 @@ export const ExchangeContent = () => {
                 value={amountInput}
                 onChange={handleInputChange}
                 placeholder="0"
-                disabled={availableCount === 0}
+                disabled={availableCount === 0 || !isAccountVerified}
                 className="w-full px-4 py-3 pr-24 rounded-lg bg-bg-tertiary border border-border-primary text-text-primary text-sm tabular-nums
                   focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent placeholder:text-text-secondary/40
                   disabled:opacity-50 disabled:cursor-not-allowed"
@@ -207,7 +546,7 @@ export const ExchangeContent = () => {
                 <span className="text-xs text-text-secondary">개</span>
                 <button
                   onClick={handleSetMax}
-                  disabled={availableCount === 0}
+                  disabled={availableCount === 0 || !isAccountVerified}
                   className="text-xs px-2 py-1 rounded bg-accent/20 text-accent hover:bg-accent/30 transition-colors font-medium disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   전액
