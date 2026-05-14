@@ -6,9 +6,16 @@ export interface PayoutCoinBrief {
   status: string;
 }
 
+export interface SettlementStreamer {
+  idx: number;
+  nickname: string;
+  user_id: string;
+}
+
 export interface Settlement {
   id: string;
   streamer_idx: number;
+  streamer?: SettlementStreamer;
   total_value: number;
   fee_amount: number;
   payout_amount: number;

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import type { Settlement } from '@/app/_types/settlement';
 import {
   approveSettlement,
-  paySettlement,
   rejectSettlement,
 } from '@/app/_apis/admin/settlement';
 
@@ -59,19 +58,6 @@ export default function SettlementDetailModal({
       onUpdated();
     } catch {
       setError('승인 처리 중 오류가 발생했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePay = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      await paySettlement(settlement.id);
-      onUpdated();
-    } catch {
-      setError('지급 완료 처리 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -204,15 +190,6 @@ export default function SettlementDetailModal({
                     거절
                   </button>
                 </>
-              )}
-              {settlement.status === 'APPROVED' && (
-                <button
-                  onClick={handlePay}
-                  disabled={loading}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors text-sm font-medium"
-                >
-                  {loading ? '처리 중...' : '지급 완료'}
-                </button>
               )}
               <button
                 onClick={onClose}

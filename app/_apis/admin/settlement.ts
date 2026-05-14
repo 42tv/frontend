@@ -18,64 +18,66 @@ export interface AdminSettlementQuery {
 
 /**
  * 승인 대기 정산 목록
- * GET /settlement/admin/pending
+ * GET /admin/settlement/pending
  */
 export const getPendingSettlements = async (): Promise<SettlementsResponse> => {
-  const response = await api.get<SettlementsResponse>('/api/settlement/admin/pending');
-  return response.data;
+  const response = await api.get<{ success: boolean; data: Settlement[]; message: string }>(
+    '/api/admin/settlement/pending',
+  );
+  const settlements = response.data.data ?? [];
+  return {
+    success: true,
+    data: { settlements },
+    message: response.data.message,
+    pagination: {
+      page: 1,
+      limit: settlements.length,
+      total: settlements.length,
+      totalPages: 1,
+    },
+  };
 };
 
 /**
  * 전체 정산 목록 (필터 가능)
- * GET /settlement/admin
+ * GET /admin/settlement
  */
 export const getAllSettlements = async (
   params?: AdminSettlementQuery,
 ): Promise<SettlementsResponse> => {
-  const response = await api.get<SettlementsResponse>('/api/settlement/admin', { params });
+  const response = await api.get<SettlementsResponse>('/api/admin/settlement', { params });
   return response.data;
 };
 
 /**
  * 정산 상세 조회
- * GET /settlement/admin/:id
+ * GET /admin/settlement/:id
  */
 export const getSettlementDetail = async (id: string): Promise<Settlement> => {
   const response = await api.get<{ success: boolean; data: Settlement }>(
-    `/api/settlement/admin/${id}`,
+    `/api/admin/settlement/${id}`,
   );
   return response.data.data;
 };
 
 /**
- * 정산 승인 (PENDING → APPROVED)
- * POST /settlement/admin/:id/approve
+ * 정산 승인 (PENDING → APPROVED → PAID)
+ * POST /admin/settlement/:id/approve
  */
 export const approveSettlement = async (id: string): Promise<Settlement> => {
   const response = await api.post<{ success: boolean; data: Settlement }>(
-    `/api/settlement/admin/${id}/approve`,
-  );
-  return response.data.data;
-};
-
-/**
- * 지급 완료 처리 (APPROVED → PAID)
- * POST /settlement/admin/:id/pay
- */
-export const paySettlement = async (id: string): Promise<Settlement> => {
-  const response = await api.post<{ success: boolean; data: Settlement }>(
-    `/api/settlement/admin/${id}/pay`,
+    `/api/admin/settlement/${id}/approve`,
   );
   return response.data.data;
 };
 
 /**
  * 정산 거절 (PENDING → REJECTED, PayoutCoin 롤백)
- * POST /settlement/admin/:id/reject
+ * POST /admin/settlement/:id/reject
  */
 export const rejectSettlement = async (id: string, reason: string): Promise<Settlement> => {
   const response = await api.post<{ success: boolean; data: Settlement }>(
-    `/api/settlement/admin/${id}/reject`,
+    `/api/admin/settlement/${id}/reject`,
     { reason },
   );
   return response.data.data;
@@ -83,14 +85,14 @@ export const rejectSettlement = async (id: string, reason: string): Promise<Sett
 
 /**
  * 특정 스트리머 정산 내역
- * GET /settlement/admin/streamers/:streamerIdx
+ * GET /admin/settlement/streamers/:streamerIdx
  */
 export const getStreamerSettlements = async (
   streamerIdx: number,
   params?: { limit?: number; offset?: number },
 ): Promise<SettlementsResponse> => {
   const response = await api.get<SettlementsResponse>(
-    `/api/settlement/admin/streamers/${streamerIdx}`,
+    `/api/admin/settlement/streamers/${streamerIdx}`,
     { params },
   );
   return response.data;
@@ -98,13 +100,13 @@ export const getStreamerSettlements = async (
 
 /**
  * 특정 스트리머 정산 통계
- * GET /settlement/admin/streamers/:streamerIdx/stats
+ * GET /admin/settlement/streamers/:streamerIdx/stats
  */
 export const getStreamerSettlementStats = async (
   streamerIdx: number,
 ): Promise<SettlementStats> => {
   const response = await api.get<SettlementStatsResponse>(
-    `/api/settlement/admin/streamers/${streamerIdx}/stats`,
+    `/api/admin/settlement/streamers/${streamerIdx}/stats`,
   );
   return response.data.data;
 };
