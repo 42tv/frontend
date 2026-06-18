@@ -72,11 +72,14 @@ export const useUserSearch = () => {
     setShowPopover(false);
   };
 
-  const handleInputFocus = () => {
-    if (userInfo || notFound || searching) {
-      setShowPopover(true);
-    }
+  const handleSearchChange = (value: string) => {
+    setSearchNickname(value);
+    setUserInfo(null);
+    setNotFound(false);
+    setShowPopover(false);
   };
+
+  const handleInputFocus = () => {};
 
   return {
     searchNickname,
@@ -89,6 +92,7 @@ export const useUserSearch = () => {
     popoverRef,
     inputRef,
     handleSearch,
+    handleSearchChange,
     clearSearch,
     handleInputFocus
   };

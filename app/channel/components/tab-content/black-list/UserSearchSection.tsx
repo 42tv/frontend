@@ -16,7 +16,6 @@ export const UserSearchSection: React.FC<UserSearchSectionProps> = ({
 }) => {
   const {
     searchNickname,
-    setSearchNickname,
     userInfo,
     searching,
     notFound,
@@ -24,6 +23,7 @@ export const UserSearchSection: React.FC<UserSearchSectionProps> = ({
     popoverRef,
     inputRef,
     handleSearch,
+    handleSearchChange,
     clearSearch,
     handleInputFocus
   } = useUserSearch();
@@ -46,7 +46,7 @@ export const UserSearchSection: React.FC<UserSearchSectionProps> = ({
           userInfo={userInfo}
           notFound={notFound}
           inputRef={inputRef}
-          onSearchChange={setSearchNickname}
+          onSearchChange={handleSearchChange}
           onSearch={handleSearch}
           onClearSearch={clearSearch}
           onInputFocus={handleInputFocus}

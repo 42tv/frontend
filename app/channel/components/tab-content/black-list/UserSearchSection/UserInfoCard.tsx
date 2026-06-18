@@ -30,8 +30,10 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
           )}
         </div>
         <div className="flex-1">
-          <p className="text-sm">{userInfo.nickname}</p>
-          <p className="text-xs text-gray-400">ID: {userInfo.user_id}</p>
+          <p className="text-sm text-text-primary">
+            {userInfo.nickname}
+            <span className="ml-1 text-text-secondary">({userInfo.user_id})</span>
+          </p>
         </div>
         <button
           onClick={onBlockUser}

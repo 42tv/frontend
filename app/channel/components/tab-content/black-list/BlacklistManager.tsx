@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { BlacklistTable } from "./BlacklistTable";
 import { BlacklistSearchForm } from "./BlacklistSearchForm";
 import { UserSearchSection } from "./UserSearchSection";
@@ -19,7 +19,6 @@ export interface BlacklistUser {
 
 export const BlacklistManager = () => {
   const [blacklist, setBlacklist] = useState<BlacklistUser[]>([]);
-  const [filteredBlacklist, setFilteredBlacklist] = useState<BlacklistUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +29,6 @@ export const BlacklistManager = () => {
       const response = await getBlacklist();
       const users = response.lists || [];
       setBlacklist(users);
-      setFilteredBlacklist(users);
     } catch (error: unknown) {
       console.log(error);
       openModal(<ErrorMessage message={getApiErrorMessage(error) || "블랙리스트를 불러오는데 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
@@ -43,24 +41,17 @@ export const BlacklistManager = () => {
     fetchBlacklist();
   }, []);
 
-  // 검색 필터링 - 실시간 검색으로 변경
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-    if (term.trim() === '') {
-      setFilteredBlacklist(blacklist);
-    } else {
-      const filtered = blacklist.filter(user => 
-        user.nickname.toLowerCase().includes(term.toLowerCase()) ||
-        user.user_id.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredBlacklist(filtered);
-    }
-  };
+  const filteredBlacklist = useMemo(() => {
+    const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
-  // 기존 useEffect는 제거하고 실시간 검색 함수로 대체
-  useEffect(() => {
-    setFilteredBlacklist(blacklist);
-  }, [blacklist]);
+    if (!normalizedSearchTerm) {
+      return blacklist;
+    }
+
+    return blacklist.filter((user) =>
+      (user.nickname || "").toLowerCase().includes(normalizedSearchTerm),
+    );
+  }, [blacklist, searchTerm]);
 
   // 블랙리스트에 사용자 추가 (닉네임 또는 사용자 ID로)
   const handleAddUser = async (nickname: string) => {
@@ -96,41 +87,64 @@ export const BlacklistManager = () => {
     }
   };
 
+  const handleUnblockUsers = async (userIds: string[]) => {
+    if (userIds.length === 0) return;
+
+    setIsLoading(true);
+    try {
+      await removeMultipleFromBlacklist(userIds);
+      await fetchBlacklist();
+      openModal(<ErrorMessage message={`${userIds.length}명의 차단을 해제했습니다.`} />, { closeButtonSize: "w-[16px] h-[16px]" });
+    } catch (error: unknown) {
+      openModal(<ErrorMessage message={getApiErrorMessage(error) || "블랙리스트 제거에 실패했습니다."} />, { closeButtonSize: "w-[16px] h-[16px]" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="p-6">
+    <div className="mx-auto w-full max-w-6xl p-4 sm:p-6">
       <div className="space-y-6">
-        {/* 제목 */}
-        <div className="pb-4 border-b border-border-primary">
-          <h2 className="text-xl font-semibold text-text-primary">블랙리스트 관리</h2>
-          <p className="text-sm mt-1 text-text-secondary">차단된 사용자를 관리할 수 있습니다.</p>
+        <div className="border-b border-border-primary pb-5">
+          <h2 className="text-2xl font-semibold text-text-primary">블랙리스트 관리</h2>
+          <p className="mt-2 text-sm text-text-secondary">차단된 사용자를 테이블에서 검색하고 해제할 수 있습니다.</p>
         </div>
 
-        {/* 전체 차단 회원 통계 */}
-        <p className="text-text-secondary">
-          {searchTerm ? '검색 결과' : '차단 수'}: {filteredBlacklist.length}
-          {searchTerm && (
-            <span className="ml-2">(전체 {blacklist.length}명 중)</span>
-          )}
-        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <UserSearchSection
+            onBlockUser={handleAddUser}
+            isLoading={isLoading}
+          />
 
-        {/* 사용자 검색 및 차단 */}
-        <UserSearchSection
-          onBlockUser={handleAddUser}
-          isLoading={isLoading}
-        />
+          <div className="rounded-lg border border-border-primary bg-background p-5">
+            <p className="text-sm text-text-secondary">전체 차단 회원</p>
+            <p className="mt-3 text-3xl font-semibold text-text-primary">{blacklist.length}명</p>
+          </div>
+        </div>
 
-        {/* 차단 목록 검색 */}
-        <BlacklistSearchForm
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-        />
+        <section className="rounded-lg border border-border-primary bg-background">
+          <div className="flex flex-col gap-4 border-b border-border-primary p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-base font-semibold text-text-primary">차단 목록</h3>
+              <p className="mt-1 text-sm text-text-secondary">
+                입력하면 목록이 바로 필터링됩니다.
+              </p>
+            </div>
+            <BlacklistSearchForm
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+            />
+          </div>
 
-        {/* 테이블 */}
-        <BlacklistTable
-          users={filteredBlacklist}
-          onUnblockUser={handleUnblockUser}
-          isLoading={isLoading}
-        />
+          <BlacklistTable
+            users={filteredBlacklist}
+            totalCount={blacklist.length}
+            searchTerm={searchTerm}
+            onUnblockUser={handleUnblockUser}
+            onUnblockUsers={handleUnblockUsers}
+            isLoading={isLoading}
+          />
+        </section>
       </div>
     </div>
   );

@@ -88,5 +88,5 @@ export async function searchUserProfile(nickname: string): Promise<UserProfile> 
   const response = await api.get(`/api/user/profile/${nickname}`, {
     withCredentials: true,
   });
-  return response.data;
+  return response.data.data.user;
 }
