@@ -7,6 +7,8 @@ import { getActiveProducts, preparePayment } from '../_apis/product';
 import { Product, MockPurchaseData, RealPGPurchaseData } from '../_types/product';
 import { useBootpayStyles } from '../_hooks/useBootpayStyles';
 import { useUserStore } from '../_lib/stores';
+import { openModal } from '../_components/utils/overlay/overlayHelpers';
+import PhoneVerificationModal from '../_components/modals/PhoneVerificationModal';
 
 const IS_DEV = process.env.NEXT_ENV === 'dev';
 
@@ -19,6 +21,12 @@ interface ChargeResult {
 export default function ChargePage() {
   useBootpayStyles();
   const fetchUser = useUserStore((state) => state.fetchUser);
+  const identityVerified = useUserStore((state) => state.identity_verified);
+
+  // 본인인증이 필요한 경우 본인인증 모달로 유도
+  const promptIdentityVerification = (): void => {
+    openModal(<PhoneVerificationModal />);
+  };
 
   const [customCoins, setCustomCoins] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
@@ -60,6 +68,12 @@ export default function ChargePage() {
 
   const handlePurchase = async (productId: number) => {
     if (purchasing) return;
+
+    // 본인인증이 완료되지 않은 경우 결제를 진행하지 않고 본인인증으로 유도
+    if (!identityVerified) {
+      promptIdentityVerification();
+      return;
+    }
 
     try {
       setPurchasing(true);
@@ -141,10 +155,17 @@ export default function ChargePage() {
 
     } catch (error: unknown) {
       console.error('구매 실패:', error);
+      const status = (error as { response?: { status?: number } }).response?.status;
       const errorMessage =
         (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
         '충전 중 오류가 발생했습니다.';
-      alert(errorMessage);
+
+      // 서버에서 본인인증 미완료로 거절된 경우 본인인증으로 유도
+      if (status === 403 || errorMessage.includes('본인인증')) {
+        promptIdentityVerification();
+      } else {
+        alert(errorMessage);
+      }
     } finally {
       if (IS_DEV) setPurchasing(false);
     }
