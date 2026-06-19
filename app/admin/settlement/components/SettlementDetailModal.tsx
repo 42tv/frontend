@@ -107,10 +107,17 @@ export default function SettlementDetailModal({
           {/* 기본 정보 */}
           <div className="bg-background rounded-lg p-4">
             <InfoRow label="스트리머 IDX" value={settlement.streamer_idx} />
-            <InfoRow label="총 금액" value={formatKRW(settlement.total_value)} />
-            <InfoRow label="수수료" value={formatKRW(settlement.fee_amount)} />
+            <InfoRow label="정산 총액" value={formatKRW(settlement.total_value)} />
+            <InfoRow label="플랫폼 수수료" value={`−${formatKRW(settlement.fee_amount)}`} />
+            <InfoRow label="과세표준" value={formatKRW(settlement.tax_base)} />
+            <InfoRow label="소득세 (3%)" value={`−${formatKRW(settlement.income_tax_amount)}`} />
+            <InfoRow label="지방소득세 (0.3%)" value={`−${formatKRW(settlement.local_tax_amount)}`} />
             <InfoRow
-              label="지급액"
+              label="원천징수 합계 (3.3%)"
+              value={`−${formatKRW(settlement.withholding_tax_amount)}`}
+            />
+            <InfoRow
+              label="실지급액"
               value={
                 <span className="text-primary font-bold text-base">
                   {formatKRW(settlement.payout_amount)}

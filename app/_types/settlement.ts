@@ -18,7 +18,11 @@ export interface Settlement {
   streamer?: SettlementStreamer;
   total_value: number;
   fee_amount: number;
-  payout_amount: number;
+  tax_base: number;              // 과세표준 (total - fee)
+  income_tax_amount: number;     // 소득세 (3%)
+  local_tax_amount: number;      // 지방소득세 (소득세의 10%)
+  withholding_tax_amount: number;// 원천징수 합계 (3.3%)
+  payout_amount: number;         // 실지급액 = total - fee - withholding
   status: SettlementStatus;
   reject_reason: string | null;
   requested_at: string;

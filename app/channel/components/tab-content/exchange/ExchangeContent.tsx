@@ -699,17 +699,32 @@ export const ExchangeContent = () => {
                     </div>
                   </div>
                 </li>
-                {expandedId === s.id && s.status === 'REJECTED' && s.reject_reason && (
-                  <li className="border-t border-border-primary bg-red-500/5 px-5 py-3">
-                    <div className="flex items-start gap-2 text-xs text-red-400">
-                      <span className="shrink-0 font-medium">거절 사유</span>
-                      <span className="text-text-secondary">{s.reject_reason}</span>
-                    </div>
-                  </li>
-                )}
-                {expandedId === s.id && s.status !== 'REJECTED' && (
-                  <li className="border-t border-border-primary bg-bg-tertiary/50 px-5 py-3">
-                    <div className="flex flex-wrap gap-4 text-xs text-text-secondary">
+                {expandedId === s.id && (
+                  <li className="border-t border-border-primary bg-bg-tertiary/50 px-5 py-4 space-y-3">
+                    {/* 금액 분해 (서버 값 그대로 표기) */}
+                    <dl className="rounded-lg bg-bg-secondary border border-border-primary divide-y divide-border-primary text-sm">
+                      <SettlementAmountRow label="정산 총액" value={s.total_value} />
+                      <SettlementAmountRow label="플랫폼 수수료" value={-s.fee_amount} negative />
+                      {s.withholding_tax_amount > 0 && (
+                        <SettlementAmountRow
+                          label="원천징수 (소득세+지방세 3.3%)"
+                          value={-s.withholding_tax_amount}
+                          negative
+                        />
+                      )}
+                      <SettlementAmountRow label="실지급액" value={s.payout_amount} emphasis />
+                    </dl>
+
+                    {/* 거절 사유 */}
+                    {s.status === 'REJECTED' && s.reject_reason && (
+                      <div className="flex items-start gap-2 text-xs px-1">
+                        <span className="shrink-0 font-medium text-red-400">거절 사유</span>
+                        <span className="text-text-secondary">{s.reject_reason}</span>
+                      </div>
+                    )}
+
+                    {/* 부가 정보 */}
+                    <div className="flex flex-wrap gap-4 text-xs text-text-secondary px-1">
                       <span>ID: <span className="text-text-primary font-mono text-[10px]">{s.id}</span></span>
                       {s.approved_at && <span>승인일: {formatDate(s.approved_at)}</span>}
                       {s.paid_at && <span>지급일: {formatDate(s.paid_at)}</span>}
@@ -751,6 +766,26 @@ const StatusCell: React.FC<StatusCellProps> = ({ icon, label, coinCount, color, 
     <p className="text-base font-bold text-text-primary tabular-nums">
       {formatCoin(coinCount)}
     </p>
+  </div>
+);
+
+interface SettlementAmountRowProps {
+  label: string;
+  value: number;
+  negative?: boolean;
+  emphasis?: boolean;
+}
+
+const SettlementAmountRow: React.FC<SettlementAmountRowProps> = ({ label, value, negative, emphasis }) => (
+  <div className={`flex items-center justify-between px-4 py-2.5 ${emphasis ? 'bg-bg-tertiary' : ''}`}>
+    <dt className={`text-xs ${emphasis ? 'font-semibold text-text-primary' : 'text-text-secondary'}`}>{label}</dt>
+    <dd className={`tabular-nums ${
+      emphasis ? 'text-sm font-bold text-accent'
+        : negative ? 'text-sm text-red-400'
+        : 'text-sm font-medium text-text-primary'
+    }`}>
+      {negative ? '−' + formatCurrency(Math.abs(value)) : formatCurrency(value)}
+    </dd>
   </div>
 );
 
