@@ -32,7 +32,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     // TODO: broadcasterIdx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const broadcasterId = use(params).broadcasterId;
     const streamData = { // 임시 데이터
-        streamUrl: "https://3d26876b73d7.us-west-2.playback.live-video.net/api/video/v1/us-west-2.913157848533.channel.rkCBS9iD1eyd.m3u8", // 실제 스트림 URL 필요
+        streamUrl: "https://data.playground.edgeone.ai/resource/video/m3u8/demo-1.m3u8?key=1720425221-0-0-127f85767dc16f7fbb9e2d4a329567cb", // 실제 스트림 URL 필요
         title: `User ${broadcasterId}'s Live Stream`,
         description: "Welcome to the stream!",
     };
