@@ -424,8 +424,13 @@ export const ExchangeContent = () => {
   const availableCount = Math.floor((summary?.available_amount ?? 0) / 100);
   const enteredCount = Math.min(Math.max(0, Number(amountInput) || 0), availableCount);
   const enteredAmount = enteredCount * 100;
+  // 백엔드 calculateAmounts 로직과 동일하게 산정 (원천징수 대상 가정)
   const feeValue = Math.floor(enteredAmount * 0.1);
-  const netValue = enteredAmount - feeValue;
+  const taxBase = enteredAmount - feeValue;
+  const incomeTax = Math.floor(taxBase * 0.03);
+  const localTax = Math.floor(incomeTax * 0.1);
+  const withholdingTax = incomeTax + localTax;
+  const netValue = enteredAmount - feeValue - withholdingTax;
   const canSettle = enteredCount > 0 && availableCount > 0 && isAccountVerified;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -508,7 +513,7 @@ export const ExchangeContent = () => {
           </p>
           <p className="text-xs text-text-secondary mt-2 flex items-center gap-1">
             <MdInfoOutline className="w-3.5 h-3.5 shrink-0" />
-            1개 = 100원 / 수수료 10% 적용 전
+            1개 = 100원 / 수수료 10% · 원천징수 3.3% 적용 전
           </p>
         </div>
 
@@ -571,6 +576,10 @@ export const ExchangeContent = () => {
             <div className="flex items-center justify-between px-4 py-3">
               <span className="text-sm text-text-secondary">수수료 (10%)</span>
               <span className="text-sm text-red-400 tabular-nums">−{formatCurrency(feeValue)}</span>
+            </div>
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm text-text-secondary">원천징수 (소득세+지방세 3.3%)</span>
+              <span className="text-sm text-red-400 tabular-nums">−{formatCurrency(withholdingTax)}</span>
             </div>
             <div className="flex items-center justify-between px-4 py-3.5 bg-bg-secondary rounded-b-lg">
               <span className="text-sm font-semibold text-text-primary">예상 지급액</span>
