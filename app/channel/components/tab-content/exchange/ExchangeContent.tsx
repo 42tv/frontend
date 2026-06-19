@@ -447,7 +447,8 @@ export const ExchangeContent = () => {
       setRequesting(true);
       setError(null);
       setSuccessMessage(null);
-      const res = await createSettlement({ amount: enteredAmount });
+      // 백엔드는 amount 를 신청 코인 수(코인 개수)로 해석한다
+      const res = await createSettlement({ amount: enteredCount });
       setSuccessMessage(
         `정산이 신청되었습니다. 신청 코인 ${formatCoin(Math.floor(res.data.total_value / 100))} (${formatCurrency(res.data.total_value)}), 예상 지급액 ${formatCurrency(res.data.payout_amount)}`,
       );

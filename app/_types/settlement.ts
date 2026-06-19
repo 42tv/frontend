@@ -69,6 +69,7 @@ export interface SettlementDetailResponse {
 }
 
 export interface CreateSettlementRequest {
+  /** 신청 코인 수 (원화가 아닌 코인 개수) */
   amount: number;
 }
 
