@@ -3,11 +3,12 @@ import { useState } from 'react';
 import type { PayoutStatus, PayoutCoin } from '@/app/_types/payout-coin';
 import type { MatureResult } from '@/app/_apis/admin/payout-coin';
 import {
-  refreshPayoutAvailability,
+  forcePayoutAvailability,
   getStreamerPayoutCoins,
   unblockPayoutCoin,
 } from '@/app/_apis/admin/payout-coin';
 import { PAYOUT_STATUS_LABEL } from '@/app/_types/payout-coin';
+import ConfirmDialog from './ConfirmDialog';
 
 const STATUS_OPTIONS: { value: PayoutStatus | ''; label: string }[] = [
   { value: '', label: '전체' },
@@ -37,6 +38,8 @@ export default function PayoutCoinTab() {
   const [unblockingId, setUnblockingId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
+  const [matureConfirm, setMatureConfirm] = useState(false);
+  const [unblockConfirm, setUnblockConfirm] = useState<PayoutCoin | null>(null);
 
   const handleSearch = async () => {
     const idx = parseInt(streamerIdx, 10);
@@ -63,12 +66,12 @@ export default function PayoutCoinTab() {
   };
 
   const handleMature = async () => {
-    if (!confirm('가용성 갱신을 실행하시겠습니까?\n정산 가능일이 도래한 WAITING 코인이 AVAILABLE로 전환됩니다.')) return;
+    setMatureConfirm(false);
     setMatureLoading(true);
     setError('');
     setMatureResult(null);
     try {
-      const result = await refreshPayoutAvailability();
+      const result = await forcePayoutAvailability();
       setMatureResult(result);
       // 결과 표시 후 현재 목록도 갱신
       if (searched && streamerIdx) {
@@ -82,7 +85,7 @@ export default function PayoutCoinTab() {
   };
 
   const handleUnblock = async (coin: PayoutCoin) => {
-    if (!confirm(`ID: ${coin.id}\n해당 BLOCKED 코인을 WAITING 또는 AVAILABLE로 해제하시겠습니까?`)) return;
+    setUnblockConfirm(null);
     setUnblockingId(coin.id);
     setError('');
     try {
@@ -101,17 +104,17 @@ export default function PayoutCoinTab() {
       <div className="bg-card border border-border rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-semibold text-foreground">가용성 갱신</h3>
+            <h3 className="font-semibold text-foreground">가용성 강제 전환</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              WAITING 상태 코인 중 정산 가능일이 도래한 항목을 AVAILABLE로 전환합니다.
+              정산 가능일과 무관하게 모든 WAITING 코인을 AVAILABLE/BLOCKED로 강제 전환합니다.
             </p>
           </div>
           <button
-            onClick={handleMature}
+            onClick={() => setMatureConfirm(true)}
             disabled={matureLoading}
             className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors font-medium whitespace-nowrap"
           >
-            {matureLoading ? '실행 중...' : '정산 가능으로 전환'}
+            {matureLoading ? '실행 중...' : '강제 전환'}
           </button>
         </div>
 
@@ -214,7 +217,7 @@ export default function PayoutCoinTab() {
                       <td className="px-4 py-3">
                         {coin.status === 'BLOCKED' && (
                           <button
-                            onClick={() => handleUnblock(coin)}
+                            onClick={() => setUnblockConfirm(coin)}
                             disabled={unblockingId === coin.id}
                             className="px-3 py-1 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 disabled:opacity-50 transition-colors font-medium"
                           >
@@ -229,6 +232,29 @@ export default function PayoutCoinTab() {
             </div>
           )}
         </div>
+      )}
+
+      {matureConfirm && (
+        <ConfirmDialog
+          title="가용성 강제 전환"
+          message={'가용성 강제 전환을 실행하시겠습니까?\n정산 가능일과 무관하게 모든 WAITING 코인이 AVAILABLE/BLOCKED로 전환됩니다.'}
+          confirmText="강제 전환"
+          loading={matureLoading}
+          onConfirm={handleMature}
+          onCancel={() => setMatureConfirm(false)}
+        />
+      )}
+
+      {unblockConfirm && (
+        <ConfirmDialog
+          title="차단 해제"
+          message={`ID: ${unblockConfirm.id}\n해당 BLOCKED 코인을 WAITING 또는 AVAILABLE로 해제하시겠습니까?`}
+          confirmText="차단 해제"
+          tone="danger"
+          loading={unblockingId === unblockConfirm.id}
+          onConfirm={() => handleUnblock(unblockConfirm)}
+          onCancel={() => setUnblockConfirm(null)}
+        />
       )}
     </div>
   );

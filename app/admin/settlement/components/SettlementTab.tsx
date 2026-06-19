@@ -10,6 +10,7 @@ import {
   type AdminSettlementQuery,
 } from '@/app/_apis/admin/settlement';
 import SettlementDetailModal from './SettlementDetailModal';
+import ConfirmDialog from './ConfirmDialog';
 
 type SubTab = 'pending' | 'all';
 
@@ -60,9 +61,10 @@ function PendingRow({ settlement: s, onDetail, onDone }: PendingRowProps) {
   const [reason, setReason] = useState('');
   const [processing, setProcessing] = useState(false);
   const [rowError, setRowError] = useState('');
+  const [approveConfirm, setApproveConfirm] = useState(false);
 
   const handleApprove = async () => {
-    if (!confirm(`스트리머 ${s.streamer_idx}의 정산 ${formatKRW(s.payout_amount)}을 승인하시겠습니까?`)) return;
+    setApproveConfirm(false);
     setProcessing(true);
     setRowError('');
     try {
@@ -107,7 +109,7 @@ function PendingRow({ settlement: s, onDetail, onDone }: PendingRowProps) {
         <td className="px-4 py-3.5">
           <div className="flex items-center gap-2">
             <button
-              onClick={handleApprove}
+              onClick={() => setApproveConfirm(true)}
               disabled={processing}
               className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 disabled:opacity-40 transition-colors"
             >
@@ -164,6 +166,17 @@ function PendingRow({ settlement: s, onDetail, onDone }: PendingRowProps) {
           </td>
         </tr>
       )}
+
+      {approveConfirm && (
+        <ConfirmDialog
+          title="정산 승인"
+          message={`스트리머 ${s.streamer_idx}의 정산 ${formatKRW(s.payout_amount)}을 승인하시겠습니까?`}
+          confirmText="승인"
+          loading={processing}
+          onConfirm={handleApprove}
+          onCancel={() => setApproveConfirm(false)}
+        />
+      )}
     </>
   );
 }
@@ -186,6 +199,7 @@ export default function SettlementTab() {
 
   // 전체 탭 내 지급 완료 처리 중 ID 추적
   const [payingId, setPayingId] = useState<string | null>(null);
+  const [payConfirm, setPayConfirm] = useState<Settlement | null>(null);
 
   const loadPending = useCallback(async () => {
     setLoading(true);
@@ -232,7 +246,7 @@ export default function SettlementTab() {
   };
 
   const handlePay = async (s: Settlement) => {
-    if (!confirm(`스트리머 ${s.streamer_idx}의 ${formatKRW(s.payout_amount)}을 지급 완료 처리하시겠습니까?`)) return;
+    setPayConfirm(null);
     setPayingId(s.id);
     try {
       await paySettlement(s.id);
@@ -396,7 +410,7 @@ export default function SettlementTab() {
                       <div className="flex items-center gap-2 justify-end">
                         {s.status === 'APPROVED' && (
                           <button
-                            onClick={() => handlePay(s)}
+                            onClick={() => setPayConfirm(s)}
                             disabled={payingId === s.id}
                             className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700 disabled:opacity-40 transition-colors"
                           >
@@ -424,6 +438,17 @@ export default function SettlementTab() {
           settlement={selectedSettlement}
           onClose={() => setSelectedSettlement(null)}
           onUpdated={handleUpdated}
+        />
+      )}
+
+      {payConfirm && (
+        <ConfirmDialog
+          title="지급 완료 처리"
+          message={`스트리머 ${payConfirm.streamer_idx}의 ${formatKRW(payConfirm.payout_amount)}을 지급 완료 처리하시겠습니까?`}
+          confirmText="지급 완료"
+          loading={payingId === payConfirm.id}
+          onConfirm={() => handlePay(payConfirm)}
+          onCancel={() => setPayConfirm(null)}
         />
       )}
     </div>

@@ -19,6 +19,17 @@ export const refreshPayoutAvailability = async (): Promise<MatureResult> => {
 };
 
 /**
+ * 성숙 여부와 무관하게 모든 WAITING → AVAILABLE/BLOCKED 강제 변경 (수동 실행)
+ * POST /api/admin/payout-coin/force-availability
+ */
+export const forcePayoutAvailability = async (): Promise<MatureResult> => {
+  const response = await api.post<{ success: boolean; data: MatureResult }>(
+    '/api/admin/payout-coin/force-availability',
+  );
+  return response.data.data;
+};
+
+/**
  * 특정 스트리머의 PayoutCoin 목록 조회
  * GET /payout-coin/admin/streamers/:streamerIdx
  */
