@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PasswordChange from "./user_tabs_component/password_change";
 import UserDefault from "./user_tabs_component/user_default";
+import DeleteAccount from "./user_tabs_component/delete_account";
 import { Button } from "@mui/material";
 import { updateNickname, updatePassword } from "@/app/_apis/user";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
@@ -83,6 +84,7 @@ export default function UserTab() {
                     >수정</Button>
                 }
             </div>
+            <DeleteAccount />
         </div>
     )
 }

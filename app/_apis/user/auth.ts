@@ -1,5 +1,6 @@
 import axios from "axios";
 import api from "../auto_refresh_axios";
+import { DeleteAccountRequest } from "@/app/_types/user";
 
 /**
  * 회원가입 함수
@@ -60,6 +61,20 @@ export async function logout() {
     }
   );
   return response.data;
+}
+
+/**
+ * 회원 탈퇴
+ * 일반 계정은 { password }, OAuth 계정은 { confirm: true }로 요청.
+ * 성공 시 서버가 jwt/refresh 쿠키를 만료시킨다.
+ * 방송 중·잔여 코인·미정산 등 차단 조건은 400 메시지로 내려온다.
+ * @param data 탈퇴 요청 본문
+ */
+export async function deleteAccount(data: DeleteAccountRequest): Promise<void> {
+  await api.delete("/api/user/me", {
+    data,
+    withCredentials: true,
+  });
 }
 
 /**

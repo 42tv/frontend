@@ -51,6 +51,11 @@ export interface Broadcaster {
 
 export type BroadcastCategory = 'GAME' | 'MUKBANG' | 'TALK_DAILY' | 'MUSIC' | 'ADULT';
 
+export interface DeleteAccountRequest {
+  password?: string; // 일반 계정: 비밀번호 확인
+  confirm?: boolean; // OAuth 계정: 탈퇴 확인
+}
+
 export interface PasswordState {
   password: string;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
