@@ -16,19 +16,17 @@ export interface PayoutCoin {
   topup_id: string;
   settlement_id: string | null;
   coin_amount: number;
-  coin_value: number;
   status: PayoutStatus;
   settlement_ready_at: string;
   created_at: string;
 }
 
 export interface PayoutSummary {
-  available_amount: number;
-  waiting_amount: number;
-  blocked_amount: number;
-  in_settlement_amount: number;
-  completed_amount: number;
-  total_received: number;
+  available_count: number;
+  waiting_count: number;
+  blocked_count: number;
+  in_settlement_count: number;
+  completed_count: number;
 }
 
 export interface PayoutSummaryResponse {

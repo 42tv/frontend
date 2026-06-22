@@ -2,7 +2,6 @@ export type SettlementStatus = 'PENDING' | 'APPROVED' | 'PAID' | 'REJECTED';
 
 export interface PayoutCoinBrief {
   id: string;
-  coin_value: number;
   status: string;
 }
 

@@ -394,7 +394,6 @@ export const ExchangeContent = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [amountInput, setAmountInput] = useState('');
   const [filterStatus, setFilterStatus] = useState<SettlementStatus | undefined>(undefined);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchData = useCallback(async (status?: SettlementStatus) => {
     try {
@@ -421,7 +420,7 @@ export const ExchangeContent = () => {
   useEffect(() => { fetchData(filterStatus); }, [fetchData, filterStatus]);
 
   const isAccountVerified = account?.verification_status === 'VERIFIED';
-  const availableCount = Math.floor((summary?.available_amount ?? 0) / 100);
+  const availableCount = summary?.available_count ?? 0;
   const enteredCount = Math.min(Math.max(0, Number(amountInput) || 0), availableCount);
   const enteredAmount = enteredCount * 100;
   // 백엔드 calculateAmounts 로직과 동일하게 산정 (원천징수 대상 가정)
@@ -463,7 +462,6 @@ export const ExchangeContent = () => {
 
   const handleFilterChange = (status: SettlementStatus | undefined) => {
     setFilterStatus(status);
-    setExpandedId(null);
   };
 
   if (loading) return <ExchangeContentSkeleton />;
@@ -610,28 +608,28 @@ export const ExchangeContent = () => {
         <StatusCell
           icon={<MdAccessTime className="w-3.5 h-3.5" />}
           label="정산 대기"
-          coinCount={Math.floor((summary?.waiting_amount ?? 0) / 100)}
+          coinCount={summary?.waiting_count ?? 0}
           color="yellow"
           hint="후원 후 3일 대기 중"
         />
         <StatusCell
           icon={<MdLoop className="w-3.5 h-3.5" />}
           label="정산 중"
-          coinCount={Math.floor((summary?.in_settlement_amount ?? 0) / 100)}
+          coinCount={summary?.in_settlement_count ?? 0}
           color="blue"
           hint="관리자 처리 중"
         />
         <StatusCell
           icon={<MdBlock className="w-3.5 h-3.5" />}
           label="정산 보류"
-          coinCount={Math.floor((summary?.blocked_amount ?? 0) / 100)}
+          coinCount={summary?.blocked_count ?? 0}
           color="red"
           hint="컴플라이언스 검토"
         />
         <StatusCell
           icon={<MdCheckCircle className="w-3.5 h-3.5" />}
           label="누적 지급"
-          coinCount={Math.floor((summary?.completed_amount ?? 0) / 100)}
+          coinCount={summary?.completed_count ?? 0}
           color="green"
           hint="누적 지급 완료 코인"
         />
@@ -682,66 +680,29 @@ export const ExchangeContent = () => {
         ) : (
           <ul className="divide-y divide-border-primary">
             {settlements.map((s) => (
-              <React.Fragment key={s.id}>
-                <li
-                  className={`px-5 py-4 cursor-pointer hover:bg-bg-tertiary transition-colors ${expandedId === s.id ? 'bg-bg-tertiary' : ''}`}
-                  onClick={() => setExpandedId(expandedId === s.id ? null : s.id)}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className={`inline-flex shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${SETTLEMENT_STATUS_CLASS[s.status]}`}>
-                          {SETTLEMENT_STATUS_LABEL[s.status]}
-                        </span>
-                        <span className="text-xs text-text-secondary tabular-nums">{formatDate(s.requested_at)}</span>
-                      </div>
-                      <p className="text-xs text-text-secondary tabular-nums">
-                        신청 {formatCurrency(s.total_value)} · 수수료 −{formatCurrency(s.fee_amount)}
-                      </p>
+              <li key={s.id} className="px-5 py-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`inline-flex shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${SETTLEMENT_STATUS_CLASS[s.status]}`}>
+                        {SETTLEMENT_STATUS_LABEL[s.status]}
+                      </span>
+                      <span className="text-xs text-text-secondary tabular-nums">{formatDate(s.requested_at)}</span>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className="font-semibold text-text-primary tabular-nums text-sm">{formatCurrency(s.payout_amount)}</p>
-                      <p className="text-xs text-text-secondary mt-0.5">
-                        {s.status === 'PAID' && s.paid_at ? `지급 ${formatDate(s.paid_at)}` :
-                         s.status === 'APPROVED' && s.approved_at ? `승인 ${formatDate(s.approved_at)}` :
-                         s.status === 'REJECTED' && s.rejected_at ? `거절 ${formatDate(s.rejected_at)}` : ''}
-                      </p>
-                    </div>
+                    <p className="text-xs text-text-secondary tabular-nums">
+                      신청 {formatCurrency(s.total_value)} · 수수료 −{formatCurrency(s.fee_amount)}
+                    </p>
                   </div>
-                </li>
-                {expandedId === s.id && (
-                  <li className="border-t border-border-primary bg-bg-tertiary/50 px-5 py-4 space-y-3">
-                    {/* 금액 분해 (서버 값 그대로 표기) */}
-                    <dl className="rounded-lg bg-bg-secondary border border-border-primary divide-y divide-border-primary text-sm">
-                      <SettlementAmountRow label="정산 총액" value={s.total_value} />
-                      <SettlementAmountRow label="플랫폼 수수료" value={-s.fee_amount} negative />
-                      {s.withholding_tax_amount > 0 && (
-                        <SettlementAmountRow
-                          label="원천징수 (소득세+지방세 3.3%)"
-                          value={-s.withholding_tax_amount}
-                          negative
-                        />
-                      )}
-                      <SettlementAmountRow label="실지급액" value={s.payout_amount} emphasis />
-                    </dl>
-
-                    {/* 거절 사유 */}
-                    {s.status === 'REJECTED' && s.reject_reason && (
-                      <div className="flex items-start gap-2 text-xs px-1">
-                        <span className="shrink-0 font-medium text-red-400">거절 사유</span>
-                        <span className="text-text-secondary">{s.reject_reason}</span>
-                      </div>
-                    )}
-
-                    {/* 부가 정보 */}
-                    <div className="flex flex-wrap gap-4 text-xs text-text-secondary px-1">
-                      <span>ID: <span className="text-text-primary font-mono text-[10px]">{s.id}</span></span>
-                      {s.approved_at && <span>승인일: {formatDate(s.approved_at)}</span>}
-                      {s.paid_at && <span>지급일: {formatDate(s.paid_at)}</span>}
-                    </div>
-                  </li>
-                )}
-              </React.Fragment>
+                  <div className="text-right shrink-0">
+                    <p className="font-semibold text-text-primary tabular-nums text-sm">{formatCurrency(s.payout_amount)}</p>
+                    <p className="text-xs text-text-secondary mt-0.5">
+                      {s.status === 'PAID' && s.paid_at ? `지급 ${formatDate(s.paid_at)}` :
+                       s.status === 'APPROVED' && s.approved_at ? `승인 ${formatDate(s.approved_at)}` :
+                       s.status === 'REJECTED' && s.rejected_at ? `거절 ${formatDate(s.rejected_at)}` : ''}
+                    </p>
+                  </div>
+                </div>
+              </li>
             ))}
           </ul>
         )}
@@ -776,26 +737,6 @@ const StatusCell: React.FC<StatusCellProps> = ({ icon, label, coinCount, color, 
     <p className="text-base font-bold text-text-primary tabular-nums">
       {formatCoin(coinCount)}
     </p>
-  </div>
-);
-
-interface SettlementAmountRowProps {
-  label: string;
-  value: number;
-  negative?: boolean;
-  emphasis?: boolean;
-}
-
-const SettlementAmountRow: React.FC<SettlementAmountRowProps> = ({ label, value, negative, emphasis }) => (
-  <div className={`flex items-center justify-between px-4 py-2.5 ${emphasis ? 'bg-bg-tertiary' : ''}`}>
-    <dt className={`text-xs ${emphasis ? 'font-semibold text-text-primary' : 'text-text-secondary'}`}>{label}</dt>
-    <dd className={`tabular-nums ${
-      emphasis ? 'text-sm font-bold text-accent'
-        : negative ? 'text-sm text-red-400'
-        : 'text-sm font-medium text-text-primary'
-    }`}>
-      {negative ? '−' + formatCurrency(Math.abs(value)) : formatCurrency(value)}
-    </dd>
   </div>
 );
 

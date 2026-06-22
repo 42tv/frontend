@@ -187,7 +187,6 @@ export default function PayoutCoinTab() {
                     <th className="text-left px-4 py-3 font-medium">ID</th>
                     <th className="text-left px-4 py-3 font-medium">상태</th>
                     <th className="text-right px-4 py-3 font-medium">코인량</th>
-                    <th className="text-right px-4 py-3 font-medium">금액(원)</th>
                     <th className="text-left px-4 py-3 font-medium">정산 가능일</th>
                     <th className="text-left px-4 py-3 font-medium">생성일</th>
                     <th className="px-4 py-3"></th>
@@ -207,7 +206,6 @@ export default function PayoutCoinTab() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">{coin.coin_amount.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right">{coin.coin_value.toLocaleString()}</td>
                       <td className="px-4 py-3 text-muted-foreground">
                         {new Date(coin.settlement_ready_at).toLocaleDateString('ko-KR')}
                       </td>

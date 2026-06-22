@@ -93,7 +93,7 @@ function PendingRow({ settlement: s, onDetail, onDone }: PendingRowProps) {
 
   return (
     <>
-      <tr className="hover:bg-muted/30 transition-colors">
+      <tr onClick={onDetail} className="hover:bg-bg-tertiary transition-colors cursor-pointer">
         <td className="px-4 py-3.5 text-sm text-foreground">
           {s.streamer
             ? <>{s.streamer.nickname}<span className="text-muted-foreground ml-1">({s.streamer.user_id})</span></>
@@ -107,7 +107,7 @@ function PendingRow({ settlement: s, onDetail, onDone }: PendingRowProps) {
         </td>
         <td className="px-4 py-3.5 text-sm text-muted-foreground">{formatDate(s.requested_at)}</td>
         <td className="px-4 py-3.5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setApproveConfirm(true)}
               disabled={processing}
@@ -121,12 +121,6 @@ function PendingRow({ settlement: s, onDetail, onDone }: PendingRowProps) {
               className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 disabled:opacity-40 transition-colors"
             >
               거절
-            </button>
-            <button
-              onClick={onDetail}
-              className="px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:bg-accent transition-colors"
-            >
-              상세
             </button>
           </div>
         </td>
@@ -391,7 +385,11 @@ export default function SettlementTab() {
               </thead>
               <tbody className="divide-y divide-border">
                 {settlements.map((s) => (
-                  <tr key={s.id} className="hover:bg-muted/30 transition-colors">
+                  <tr
+                    key={s.id}
+                    onClick={() => setSelectedSettlement(s)}
+                    className="hover:bg-bg-tertiary transition-colors cursor-pointer"
+                  >
                     <td className="px-4 py-3.5 text-sm text-foreground">
                       {s.streamer
                         ? <>{s.streamer.nickname}<span className="text-muted-foreground ml-1">({s.streamer.user_id})</span></>
@@ -407,7 +405,7 @@ export default function SettlementTab() {
                     </td>
                     <td className="px-4 py-3.5 text-muted-foreground">{formatDate(s.requested_at)}</td>
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-2 justify-end">
+                      <div className="flex items-center gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
                         {s.status === 'APPROVED' && (
                           <button
                             onClick={() => setPayConfirm(s)}
@@ -417,12 +415,6 @@ export default function SettlementTab() {
                             {payingId === s.id ? '처리 중...' : '지급 완료'}
                           </button>
                         )}
-                        <button
-                          onClick={() => setSelectedSettlement(s)}
-                          className="px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:bg-accent transition-colors"
-                        >
-                          상세
-                        </button>
                       </div>
                     </td>
                   </tr>

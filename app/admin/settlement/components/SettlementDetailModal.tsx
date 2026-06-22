@@ -28,9 +28,9 @@ const STATUS_COLOR: Record<string, string> = {
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex justify-between py-2 border-b border-border last:border-0">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm text-foreground font-medium text-right">{value}</span>
+    <div className="flex justify-between py-2 border-b border-border-primary last:border-0">
+      <span className="text-sm text-text-secondary">{label}</span>
+      <span className="text-sm text-text-primary font-medium text-right">{value}</span>
     </div>
   );
 }
@@ -81,13 +81,13 @@ export default function SettlementDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-xl font-bold text-foreground">정산 상세</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="bg-bg-secondary border border-border-primary rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-border-primary">
+          <h2 className="text-xl font-bold text-text-primary">정산 상세</h2>
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors text-xl leading-none"
+            className="text-text-secondary hover:text-text-primary transition-colors text-xl leading-none"
           >
             ✕
           </button>
@@ -101,11 +101,11 @@ export default function SettlementDetailModal({
             >
               {STATUS_LABEL[settlement.status]}
             </span>
-            <span className="text-xs text-muted-foreground font-mono">{settlement.id}</span>
+            <span className="text-xs text-text-secondary font-mono">{settlement.id}</span>
           </div>
 
           {/* 기본 정보 */}
-          <div className="bg-background rounded-lg p-4">
+          <div className="bg-bg-tertiary rounded-lg p-4">
             <InfoRow label="스트리머 IDX" value={settlement.streamer_idx} />
             <InfoRow label="정산 총액" value={formatKRW(settlement.total_value)} />
             <InfoRow label="플랫폼 수수료" value={`−${formatKRW(settlement.fee_amount)}`} />
@@ -127,7 +127,7 @@ export default function SettlementDetailModal({
           </div>
 
           {/* 처리 이력 */}
-          <div className="bg-background rounded-lg p-4">
+          <div className="bg-bg-tertiary rounded-lg p-4">
             <InfoRow label="신청일" value={formatDate(settlement.requested_at)} />
             <InfoRow label="승인일" value={formatDate(settlement.approved_at)} />
             <InfoRow label="지급일" value={formatDate(settlement.paid_at)} />
@@ -147,13 +147,13 @@ export default function SettlementDetailModal({
           {/* 거절 사유 입력 */}
           {showRejectInput && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">거절 사유</label>
+              <label className="text-sm font-medium text-text-primary">거절 사유</label>
               <textarea
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="거절 사유를 입력하세요..."
                 rows={3}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                className="w-full px-3 py-2 border border-border-primary rounded-lg bg-bg-tertiary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
               <div className="flex gap-2">
                 <button
@@ -169,7 +169,7 @@ export default function SettlementDetailModal({
                     setRejectReason('');
                     setError('');
                   }}
-                  className="px-4 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:bg-accent transition-colors"
+                  className="px-4 py-2 border border-border-primary rounded-lg text-sm text-text-secondary hover:bg-bg-tertiary transition-colors"
                 >
                   취소
                 </button>
@@ -200,7 +200,7 @@ export default function SettlementDetailModal({
               )}
               <button
                 onClick={onClose}
-                className="px-4 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:bg-accent transition-colors"
+                className="px-4 py-2 border border-border-primary rounded-lg text-sm text-text-secondary hover:bg-bg-tertiary transition-colors"
               >
                 닫기
               </button>
