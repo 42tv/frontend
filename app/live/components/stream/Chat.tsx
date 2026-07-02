@@ -147,20 +147,21 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
                 canViewManagement={currentMyRole.role === 'manager' || currentMyRole.role === 'broadcaster'}
             />
 
-            {/* 탭 컨텐츠 영역 */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden">
-                {activeTab === 'chat' ? (
+            {/* 탭 컨텐츠 영역 - 두 탭을 모두 마운트한 채 비활성 탭은 visibility로만 숨겨 각 탭의 스크롤 위치를 유지 */}
+            <div className="relative flex-1 min-h-0">
+                <div className={`absolute inset-0 overflow-y-auto overflow-x-hidden ${activeTab === 'chat' ? 'visible' : 'invisible'}`}>
                     <ChatMessageList
                         messages={messages}
                         onChatClick={handleChatClick}
                         chatStyle="gradient"
                     />
-                ) : (
-                    <ViewersList 
+                </div>
+                <div className={`absolute inset-0 overflow-y-auto overflow-x-hidden ${activeTab === 'viewers' ? 'visible' : 'invisible'}`}>
+                    <ViewersList
                         viewers={viewers}
                         onViewerClick={handleViewerClick}
                     />
-                )}
+                </div>
             </div>
 
             {/* 메시지 입력 - 채팅 탭에서만 표시 */}

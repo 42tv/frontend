@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
-import { reCreateStreamKey } from "@/app/_apis/ivs";
+import { reissueNcpStreamKey } from "@/app/_apis/ncp";
 import { getApiErrorMessage } from "@/app/_lib/api";
 import { BroadcastCategory } from "@/app/_types/user";
 
@@ -23,8 +23,8 @@ export const useBroadcastSettings = () => {
         async function fetchBroadcastSetting() {
             try {
                 const response = await getBroadcastSetting();
-                setStreamKey(response.ivs.stream_key);
-                setServerUrl(response.ivs.ingest_endpoint);
+                setStreamKey(response.ncp.stream_key);
+                setServerUrl(response.ncp.ingest_endpoint);
                 setTitle(response.broadcastSetting.title);
                 setIsAdult(response.broadcastSetting.is_adult);
                 setIsPrivate(response.broadcastSetting.is_pw);
@@ -63,12 +63,14 @@ export const useBroadcastSettings = () => {
 
     const reissueStreamKey = async () => {
         try {
-            const response = await reCreateStreamKey();
+            // 진짜 재발급: 기존 채널 반납 후 새 채널 생성 → 새 streamKey/서버
+            const response = await reissueNcpStreamKey();
             setStreamKey(response.streamKey);
-            setCopiedText("스트림키가 변경되었습니다");
+            if (response.publishUrl) setServerUrl(response.publishUrl);
+            setCopiedText("스트림키가 재발급되었습니다");
             setShowStreamKey(true);
-            setShowToast(true);  
-            
+            setShowToast(true);
+
             setTimeout(() => {
                 setShowToast(false);
                 setShowStreamKey(false);

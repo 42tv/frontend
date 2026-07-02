@@ -21,7 +21,7 @@ const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-40 flex w-full h-[65px] items-center px-5 border-b border-[#2c2c38] bg-[#17171c] flex-shrink-0">
+    <div className="sticky top-0 z-40 flex w-full h-[65px] items-center px-5 border-b border-[#2c2c38] bg-[#17171c] flex-shrink-0">
       <div
         className="text-[20px] font-extrabold cursor-pointer select-none flex-shrink-0 text-accent"
         onClick={() => router.push('/')}

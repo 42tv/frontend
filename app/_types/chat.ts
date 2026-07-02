@@ -15,6 +15,7 @@ export enum OpCode {
   ROLE_CHANGE = 'role_change',
   VIEWER_COUNT = 'viewer_count',
   VIEWER_LIST = 'viewer_list',
+  STREAM_END = 'stream_end',
 }
 
 export enum RoleChangeType {

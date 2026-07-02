@@ -12,6 +12,8 @@ interface ModalOptions {
     isPopup?: boolean;
     /** X버튼 크기 커스터마이징 */
     closeButtonSize?: string;
+    /** 모달이 닫힐 때 호출되는 콜백 (X버튼, 확인 버튼 등 닫힘 수단과 무관하게 실행) */
+    onClose?: () => void;
 }
 
 // 모달 내용 교체를 위한 컨텍스트
@@ -115,17 +117,23 @@ export const useModalContentReplace = () => {
 
 // 모달 헬퍼 함수들
 export const openModal = (content: ModalContent, options: ModalOptions = {}) => {
-    return overlay.open(({ isOpen, close }) => (
-        <div>
-            {isOpen && (
-                <Modal 
-                    initialContent={content}
-                    onClose={close}
-                    options={options}
-                />
-            )}
-        </div>
-    ));
+    return overlay.open(({ isOpen, close }) => {
+        const handleClose = (): void => {
+            close();
+            options.onClose?.();
+        };
+        return (
+            <div>
+                {isOpen && (
+                    <Modal
+                        initialContent={content}
+                        onClose={handleClose}
+                        options={options}
+                    />
+                )}
+            </div>
+        );
+    });
 };
 
 // 팝업 모달 (배경 클릭으로 닫힘)
