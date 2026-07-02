@@ -8,15 +8,23 @@ import type { PlayerState } from '../types/ivs';
 interface UseHlsPlayerProps {
   streamUrl: string;
   videoRef: React.RefObject<HTMLVideoElement>;
+  /** 스트림 복구 불가(방송 종료 등) 판단 시 호출되는 폴백 콜백 */
+  onStreamEnded?: () => void;
 }
+
+// 방송 종료 시 매니페스트가 죽으면 fatal NETWORK_ERROR가 반복되므로 재시도 횟수를 제한한다
+const MAX_NETWORK_RETRY = 3;
 
 /**
  * NCP Live Station(표준 HLS) 재생용 훅.
  * hls.js를 사용하며, HLS 네이티브 지원 브라우저(Safari 등)에서는 video 태그에 직접 로드한다.
  * 재생/음소거/볼륨 제어는 video 엘리먼트를 직접 조작한다.
  */
-export const useHlsPlayer = ({ streamUrl, videoRef }: UseHlsPlayerProps) => {
+export const useHlsPlayer = ({ streamUrl, videoRef, onStreamEnded }: UseHlsPlayerProps) => {
   const hlsRef = useRef<Hls | null>(null);
+  // effect 재실행 없이 항상 최신 콜백을 참조하기 위한 ref
+  const onStreamEndedRef = useRef(onStreamEnded);
+  onStreamEndedRef.current = onStreamEnded;
 
   // 로컬스토리지에서 저장된 설정 불러오기
   const getStoredSettings = () => {
@@ -88,20 +96,38 @@ export const useHlsPlayer = ({ streamUrl, videoRef }: UseHlsPlayerProps) => {
         }
       });
 
+      let networkRetryCount = 0;
+
+      // 플레이리스트 로드에 성공하면 연속 실패가 아니므로 재시도 카운터 초기화
+      hls.on(Hls.Events.LEVEL_LOADED, () => {
+        networkRetryCount = 0;
+      });
+
       hls.on(Hls.Events.ERROR, (_event, data) => {
+        if (!data.fatal) {
+          // 비치명 에러는 hls.js가 자체 복구하므로 warn으로만 남긴다 (dev overlay 노이즈 방지)
+          console.warn('HLS Player Event - ERROR (non-fatal):', data);
+          return;
+        }
+
         console.error('HLS Player Event - ERROR:', data);
-        if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            if (networkRetryCount < MAX_NETWORK_RETRY) {
+              networkRetryCount++;
               hls?.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              hls?.recoverMediaError();
-              break;
-            default:
+            } else {
+              // 재시도 한도 초과 → 방송 종료로 간주 (stream_end 소켓 이벤트 유실 대비 폴백)
               hls?.destroy();
-              break;
-          }
+              onStreamEndedRef.current?.();
+            }
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hls?.recoverMediaError();
+            break;
+          default:
+            hls?.destroy();
+            break;
         }
       });
     } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {

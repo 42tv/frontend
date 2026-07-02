@@ -27,7 +27,21 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
     const socketRef = useRef<Socket | null>(null); // 최신 소켓 인스턴스 추적을 위한 ref 추가
+    const streamEndedRef = useRef(false); // 소켓 이벤트/플레이어 폴백 중복 안내 방지
     const router = useRouter();
+
+    // 방송 종료 안내 후 모달을 닫으면(확인/X 버튼) 라이브 목록으로 이동 (소켓 이벤트와 플레이어 폴백 양쪽에서 호출)
+    const notifyStreamEnded = () => {
+        if (streamEndedRef.current) return;
+        streamEndedRef.current = true;
+        openModal(
+            <ErrorMessage message="방송이 종료되었습니다" />,
+            {
+                closeButtonSize: "w-[16px] h-[16px]",
+                onClose: () => router.push('/live'),
+            }
+        );
+    };
 
     // TODO: broadcasterIdx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const broadcasterId = use(params).broadcasterId;
@@ -226,16 +240,22 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             });
         };
 
+        const handleStreamEnd = () => {
+            notifyStreamEnded();
+        };
+
         socket.on('duplicate_connection', handleDuplicateConnection);
         socket.on(OpCode.RECOMMEND, handleRecommend);
         socket.on(OpCode.VIEWER_COUNT, handleViewerCount);
         socket.on(OpCode.BOOKMARK, handleBookmark);
+        socket.on(OpCode.STREAM_END, handleStreamEnd);
 
         return () => {
             socket.off('duplicate_connection', handleDuplicateConnection);
             socket.off(OpCode.RECOMMEND, handleRecommend);
             socket.off(OpCode.VIEWER_COUNT, handleViewerCount);
             socket.off(OpCode.BOOKMARK, handleBookmark);
+            socket.off(OpCode.STREAM_END, handleStreamEnd);
         };
     }, [socket, router]); // socket이 변경될 때만 실행
 
@@ -245,7 +265,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                 {/* 스트림 플레이어 영역 */}
                 <div className="flex-1 min-h-0 max-h-[calc(100vh-250px)]">
                     {streamData.streamUrl && (
-                        <StreamPlayer streamData={streamData} userData={userData} />
+                        <StreamPlayer streamData={streamData} userData={userData} onStreamEnded={notifyStreamEnded} />
                     )}
                 </div>
                 {/* 스트림 정보 영역 */}

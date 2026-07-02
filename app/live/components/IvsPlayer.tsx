@@ -6,9 +6,10 @@ import { PlayerControls } from './components/PlayerControls';
 
 type Props = {
   streamUrl: string;
+  onStreamEnded?: () => void;
 };
 
-const IvsPlayer = ({ streamUrl }: Props) => {
+const IvsPlayer = ({ streamUrl, onStreamEnded }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showControls, setShowControls] = useState(false);
@@ -16,6 +17,7 @@ const IvsPlayer = ({ streamUrl }: Props) => {
   const { playerState, handlePlayPause, handleMuteToggle, handleVolumeChange } = useHlsPlayer({
     streamUrl,
     videoRef,
+    onStreamEnded,
   });
 
   const handleMouseEnter = () => {

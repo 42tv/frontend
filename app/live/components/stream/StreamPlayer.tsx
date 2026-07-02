@@ -15,14 +15,15 @@ interface UserData {
 interface StreamPlayerProps {
     streamData: StreamData;
     userData: UserData;
+    onStreamEnded?: () => void;
 }
 
-const StreamPlayer: React.FC<StreamPlayerProps> = ({ streamData }) => {
+const StreamPlayer: React.FC<StreamPlayerProps> = ({ streamData, onStreamEnded }) => {
     return (
         <div className="w-full h-full bg-black flex items-center justify-center text-white">
             {/* IvsPlayer 컴포넌트를 사용하여 비디오 스트림 재생 */}
             <div className="w-full h-full max-w-full max-h-full">
-                <IvsPlayer streamUrl={streamData.streamUrl} />
+                <IvsPlayer streamUrl={streamData.streamUrl} onStreamEnded={onStreamEnded} />
             </div>
         </div>
     );
