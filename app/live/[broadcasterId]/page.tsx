@@ -31,14 +31,26 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     // TODO: broadcasterIdx를 사용하여 라이브 스트림 정보 및 사용자 정보 가져오기
     const broadcasterId = use(params).broadcasterId;
-    const streamData = { // 임시 데이터
-        streamUrl: "https://data.playground.edgeone.ai/resource/video/m3u8/demo-1.m3u8?key=1720425221-0-0-127f85767dc16f7fbb9e2d4a329567cb", // 실제 스트림 URL 필요
-        title: `User ${broadcasterId}'s Live Stream`,
-        description: "Welcome to the stream!",
+    // 데모 영상 (임시 데이터) - 실제 방송 연동을 위해 주석 처리
+    // const streamData = {
+    //     streamUrl: "https://data.playground.edgeone.ai/resource/video/m3u8/demo-1.m3u8?key=1720425221-0-0-127f85767dc16f7fbb9e2d4a329567cb",
+    //     title: `User ${broadcasterId}'s Live Stream`,
+    //     description: "Welcome to the stream!",
+    // };
+    // const userData = {
+    //     nickname: `User ${broadcasterId}`,
+    //     profileImageUrl: "/placeholder.png",
+    // };
+
+    // 실제 방송 데이터
+    const streamData = {
+        streamUrl: playDataState?.stream.playback_url ?? "",
+        title: playDataState?.stream.title ?? "",
+        description: "",
     };
-    const userData = { // 임시 데이터
-        nickname: `User ${broadcasterId}`,
-        profileImageUrl: "/placeholder.png", // 실제 프로필 이미지 URL 필요
+    const userData = {
+        nickname: playDataState?.broadcaster.nickname ?? "",
+        profileImageUrl: playDataState?.broadcaster.profile_img ?? "/placeholder.png",
     };
 
     async function toggleBookmark() {
@@ -232,7 +244,9 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             <div className="flex flex-col flex-1 min-h-0 min-w-0">
                 {/* 스트림 플레이어 영역 */}
                 <div className="flex-1 min-h-0 max-h-[calc(100vh-250px)]">
-                    <StreamPlayer streamData={streamData} userData={userData} />
+                    {streamData.streamUrl && (
+                        <StreamPlayer streamData={streamData} userData={userData} />
+                    )}
                 </div>
                 {/* 스트림 정보 영역 */}
                 <div className="flex-shrink-0 min-h-[120px]">

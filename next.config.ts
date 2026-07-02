@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "6can53oxxbefiogcyw6q14991.edge.naverncp.com",
+        hostname: "4xw60c3fwh4iftzpjpti15038.edge.naverncp.com",
         port: "",
         pathname: "/**", // 필요에 따라 경로를 더 구체적으로 지정할 수 있습니다.
       },
