@@ -6,8 +6,12 @@ import { BsBroadcastPin } from 'react-icons/bs';
 import { RiHeartLine } from 'react-icons/ri';
 import Link from 'next/link';
 import { useUserStore } from '@/app/_lib/stores';
-import { getLiveList } from '@/app/_apis/live';
-import { Live } from '@/app/_types';
+import { requestBookmarkList } from '@/app/_apis/user';
+import { getSentDonations } from '@/app/_apis/donation';
+import { CardData } from '@/app/_types';
+
+/** 좌측 메뉴에 노출할 팔로우 BJ 최대 개수 (스크롤 방지) */
+const MAX_FOLLOW_BJS = 5;
 
 const CATEGORIES = [
   { icon: '🎮', label: '게임',      href: '/live?cat=게임' },
@@ -26,20 +30,53 @@ function getAvatarColor(str: string): string {
   return `hsl(${Math.abs(hash) % 360}, 40%, 35%)`;
 }
 
+/** 보낸 후원 내역을 BJ(user_id)별 총액으로 집계 */
+async function fetchDonationTotals(): Promise<Map<string, number>> {
+  const totals = new Map<string, number>();
+  try {
+    const res = await getSentDonations({ limit: 500 });
+    res.donations.forEach((d) => {
+      const key = d.streamer.user_id;
+      totals.set(key, (totals.get(key) ?? 0) + d.coin_amount);
+    });
+  } catch {
+    // 후원 내역 조회 실패 시 후원액 0으로 간주하고 라이브 우선 정렬만 적용
+  }
+  return totals;
+}
+
+/** 라이브 중인 BJ 우선, 그다음 내가 후원한 총액 순으로 정렬 후 상위 N개 반환 */
+function sortFollowBJs(bookmarks: CardData[], donationTotals: Map<string, number>): CardData[] {
+  return [...bookmarks]
+    .sort((a, b) => {
+      if (a.is_live !== b.is_live) return a.is_live ? -1 : 1;
+      return (donationTotals.get(b.user_id) ?? 0) - (donationTotals.get(a.user_id) ?? 0);
+    })
+    .slice(0, MAX_FOLLOW_BJS);
+}
+
 export default function Menu() {
   const nickname = useUserStore((s) => s.nickname);
-  const [fanLives, setFanLives] = useState<Live[]>([]);
+  const [followBJs, setFollowBJs] = useState<CardData[]>([]);
 
   useEffect(() => {
-    if (!nickname) return;
-    getLiveList()
-      .then((res) => {
-        const fans = (res.data as Live[]).filter(
-          (l) => l.broadcaster.broadcastSetting.is_fan
-        );
-        setFanLives(fans);
-      })
-      .catch(() => {});
+    if (!nickname) {
+      setFollowBJs([]);
+      return;
+    }
+    async function fetchFollowBJs(): Promise<void> {
+      try {
+        const [bookmarkRes, donationTotals] = await Promise.all([
+          requestBookmarkList(),
+          fetchDonationTotals(),
+        ]);
+        const bookmarks: CardData[] = bookmarkRes.data.lists ?? [];
+        setFollowBJs(sortFollowBJs(bookmarks, donationTotals));
+      } catch {
+        setFollowBJs([]);
+      }
+    }
+    fetchFollowBJs();
   }, [nickname]);
 
   return (
@@ -56,26 +93,30 @@ export default function Menu() {
         </Link>
       ))}
 
-      {/* 팔로우 BJ - 로그인 + 라이브 중인 경우만 표시 */}
-      {nickname && fanLives.length > 0 && (
+      {/* 팔로우 BJ - 라이브 우선 + 후원액 순 상위 5명만 고정 노출 */}
+      {nickname && followBJs.length > 0 && (
         <>
           <div className="my-2 border-t border-[#2c2c38]" />
           <p className="px-4 py-1.5 text-[11px] font-semibold text-[#72728a] uppercase tracking-wider">팔로우 BJ</p>
-          {fanLives.map((l) => (
+          {followBJs.map((bj) => (
             <Link
-              key={l.broadcaster.user_id}
-              href={`/live/${l.broadcaster.user_id}`}
+              key={bj.user_id}
+              href={`/live/${bj.user_id}`}
               className="flex items-center gap-2.5 px-4 py-1.5 text-[13px] text-[#72728a] hover:bg-[#20202a] hover:text-[#e2e2ea] transition-colors"
             >
               <div className="relative flex-shrink-0">
                 <div
-                  className="w-6 h-6 rounded-full border-2 border-accent"
-                  style={{ background: getAvatarColor(l.broadcaster.nickname) }}
+                  className={`w-6 h-6 rounded-full ${bj.is_live ? 'border-2 border-accent' : 'border border-[#3e3e50] opacity-60'}`}
+                  style={{ background: getAvatarColor(bj.nickname) }}
                 />
-                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-accent border-[1.5px] border-[#17171c]" />
+                {bj.is_live && (
+                  <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-accent border-[1.5px] border-[#17171c]" />
+                )}
               </div>
-              <span className="flex-1 truncate">{l.broadcaster.nickname}</span>
-              <span className="text-[10px] text-accent font-bold flex-shrink-0">LIVE</span>
+              <span className={`flex-1 truncate ${bj.is_live ? '' : 'opacity-60'}`}>{bj.nickname}</span>
+              {bj.is_live && (
+                <span className="text-[10px] text-accent font-bold flex-shrink-0">LIVE</span>
+              )}
             </Link>
           ))}
           <div className="h-4" />
