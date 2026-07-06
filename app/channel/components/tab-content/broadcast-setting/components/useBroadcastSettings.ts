@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import { reissueNcpStreamKey } from "@/app/_apis/ncp";
 import { getApiErrorMessage } from "@/app/_lib/api";
@@ -18,6 +19,8 @@ export const useBroadcastSettings = () => {
     const [showToast, setShowToast] = useState(false);
     const [copiedText, setCopiedText] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [isSanctioned, setIsSanctioned] = useState(false);
+    const [sanctionMessage, setSanctionMessage] = useState<string | null>(null);
 
     useEffect(() => {
         async function fetchBroadcastSetting() {
@@ -33,7 +36,14 @@ export const useBroadcastSettings = () => {
                 setFanLevel(response.broadcastSetting.fan_level);
                 setCategory(response.broadcastSetting.category ?? 'TALK_DAILY');
             } catch (error) {
-                console.error("Error fetching broadcast settings:", error);
+                // 403: 방송 제재중인 상태
+                if (axios.isAxiosError(error) && error.response?.status === 403) {
+                    setIsSanctioned(true);
+                    const message = error.response.data?.message;
+                    setSanctionMessage(typeof message === "string" ? message : null);
+                } else {
+                    console.error("Error fetching broadcast settings:", error);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -122,6 +132,8 @@ export const useBroadcastSettings = () => {
         title,
         showStreamKey,
         isLoading,
+        isSanctioned,
+        sanctionMessage,
         isAdult,
         isPrivate,
         password,
