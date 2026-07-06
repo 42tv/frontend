@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import PageHeader from '../components-shared/ui/PageHeader';
 import TabNav from '../components-shared/ui/TabNav';
 import LiveMonitorTab from './components/LiveMonitorTab';
 import ChannelsTab from './components/ChannelsTab';
@@ -19,10 +18,6 @@ export default function AdminBroadcastPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="방송 관리"
-        description="라이브 모니터링 · NCP 채널 관리 · 채팅/금칙어 관리 (NCP Live Station 기준)"
-      />
       <TabNav tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === 'live' && <LiveMonitorTab />}
       {activeTab === 'channels' && <ChannelsTab />}

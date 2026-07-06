@@ -1,7 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import PageHeader from './components-shared/ui/PageHeader';
 import StatCard from './components-shared/ui/StatCard';
 import StatusBadge from './components-shared/ui/StatusBadge';
 import DummyNotice from './components-shared/ui/DummyNotice';
@@ -60,7 +59,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="대시보드" description="실시간 방송 · 매출 · 정산 · 신고 현황 요약" />
 
       <DummyNotice api="매출/후원/가입 집계 관리자 API (라이브 현황·정산 대기는 실제 데이터)" />
 

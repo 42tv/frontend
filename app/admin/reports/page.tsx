@@ -1,6 +1,5 @@
 'use client';
 import { useMemo, useState } from 'react';
-import PageHeader from '../components-shared/ui/PageHeader';
 import DataTable, { Column } from '../components-shared/ui/DataTable';
 import StatusBadge, { BadgeTone } from '../components-shared/ui/StatusBadge';
 import DummyNotice from '../components-shared/ui/DummyNotice';
@@ -87,7 +86,6 @@ export default function AdminReportsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="신고 센터" description="방송 · 채팅 · 프로필 · 쪽지 신고 접수 및 처리" />
 
       <DummyNotice api="신고 시스템 API (신고 접수/목록/처리 — 신규 개발)" />
 

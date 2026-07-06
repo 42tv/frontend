@@ -1,5 +1,4 @@
 'use client';
-import PageHeader from '../components-shared/ui/PageHeader';
 import StatCard from '../components-shared/ui/StatCard';
 import DummyNotice from '../components-shared/ui/DummyNotice';
 
@@ -64,20 +63,6 @@ function HBarList({ data, formatValue }: { data: BarDatum[]; formatValue: (v: nu
 export default function AdminStatisticsPage() {
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="통계/리포트"
-        description="매출 · 방송 · 유저 지표 리포트"
-        actions={
-          <button
-            disabled
-            title="리포트 집계 API 연동 후 활성화됩니다"
-            className="px-4 py-2 text-sm font-medium rounded-md border border-border text-muted-foreground opacity-60 cursor-not-allowed"
-          >
-            CSV 내보내기
-          </button>
-        }
-      />
-
       <DummyNotice api="통계/리포트 집계 API (매출·방송·유저 리포트 — 신규 개발)" />
 
       {/* 유저 핵심 지표 */}

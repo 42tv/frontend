@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import PageHeader from '../components-shared/ui/PageHeader';
 import TabNav from '../components-shared/ui/TabNav';
 import ArticlesTab from './components/ArticlesTab';
 import TermsTab from './components/TermsTab';
@@ -17,7 +16,6 @@ export default function AdminContentPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="콘텐츠 관리" description="공지/게시글 작성 및 약관 버전을 관리하세요 (정책은 정책 관리 메뉴)" />
       <TabNav tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === 'articles' && <ArticlesTab />}
       {activeTab === 'terms' && <TermsTab />}

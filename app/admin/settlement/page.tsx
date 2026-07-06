@@ -10,12 +10,6 @@ export default function SettlementManagementPage() {
 
   return (
     <div className="space-y-6">
-      {/* 헤더 */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">정산 관리</h1>
-        <p className="text-muted-foreground">PayoutCoin 현황 및 정산 요청을 관리하세요</p>
-      </div>
-
       {/* 메인 탭 */}
       <div className="border-b border-border">
         <div className="flex gap-0">

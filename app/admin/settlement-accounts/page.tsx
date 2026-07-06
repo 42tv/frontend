@@ -1,6 +1,5 @@
 'use client';
 import { useMemo, useState } from 'react';
-import PageHeader from '../components-shared/ui/PageHeader';
 import DataTable, { Column } from '../components-shared/ui/DataTable';
 import StatusBadge, { BadgeTone } from '../components-shared/ui/StatusBadge';
 import DummyNotice from '../components-shared/ui/DummyNotice';
@@ -89,7 +88,6 @@ export default function AdminSettlementAccountsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="정산 계좌 관리" description="스트리머 정산 계좌 검증 상태를 관리하세요 (계좌번호·예금주는 암호화 저장, 마스킹 표시)" />
 
       <DummyNotice api="관리자 정산 계좌 조회/검증 승인·거절·철회 API" />
 

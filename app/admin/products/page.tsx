@@ -41,12 +41,7 @@ export default function ProductManagement() {
 
   return (
     <div className="space-y-6">
-      {/* 헤더 */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">상품 관리</h1>
-          <p className="text-muted-foreground">코인 상품을 관리하고 가격을 설정하세요</p>
-        </div>
+      <div className="flex justify-end">
         <button
           onClick={() => openModal('create')}
           className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
