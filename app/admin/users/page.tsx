@@ -2,15 +2,13 @@
 import { useState } from 'react';
 import TabNav from '../components-shared/ui/TabNav';
 import UserListTab from './components/UserListTab';
-import SanctionsTab from './components/SanctionsTab';
-import VerificationTab from './components/VerificationTab';
+import UserStatsTab from './components/UserStatsTab';
 
-type UsersTab = 'list' | 'sanctions' | 'verification';
+type UsersTab = 'list' | 'stats';
 
 const tabs = [
   { key: 'list', label: '회원 검색' },
-  { key: 'sanctions', label: '제재 관리' },
-  { key: 'verification', label: '본인인증 현황' },
+  { key: 'stats', label: '회원 통계' },
 ] as const;
 
 export default function AdminUsersPage() {
@@ -20,8 +18,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <TabNav tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
       {activeTab === 'list' && <UserListTab />}
-      {activeTab === 'sanctions' && <SanctionsTab />}
-      {activeTab === 'verification' && <VerificationTab />}
+      {activeTab === 'stats' && <UserStatsTab />}
     </div>
   );
 }
