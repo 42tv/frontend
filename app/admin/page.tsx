@@ -1,72 +1,51 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
+import PageHeader from './components-shared/ui/PageHeader';
+import StatCard from './components-shared/ui/StatCard';
+import StatusBadge from './components-shared/ui/StatusBadge';
+import DummyNotice from './components-shared/ui/DummyNotice';
+import { getPendingSettlements } from '@/app/_apis/admin/settlement';
+import { getLiveList } from '@/app/_apis/live/streams';
+import { dummyDashboardStats, dummyReports } from './_data/dummy';
+import type { Settlement } from '@/app/_types/settlement';
 
-interface StatCardProps {
-  title: string;
-  value: number | string;
-  color: 'blue' | 'green' | 'yellow' | 'purple' | 'red';
-  description?: string;
-}
-
-function StatCard({ title, value, color, description }: StatCardProps) {
-  const colorClasses = {
-    blue: 'border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20',
-    green: 'border-l-green-500 bg-green-50/50 dark:bg-green-950/20',
-    yellow: 'border-l-yellow-500 bg-yellow-50/50 dark:bg-yellow-950/20',
-    purple: 'border-l-purple-500 bg-purple-50/50 dark:bg-purple-950/20',
-    red: 'border-l-red-500 bg-red-50/50 dark:bg-red-950/20',
-  };
-
-  return (
-    <div className={`rounded-lg border border-l-4 p-6 ${colorClasses[color]} bg-card`}>
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{title}</h3>
-        <p className="text-3xl font-bold text-foreground">{value}</p>
-        {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SystemStatus({ status }: { status: 'healthy' | 'warning' | 'error' }) {
-  const statusConfig = {
-    healthy: { label: '정상', color: 'text-green-600', bg: 'bg-green-100 dark:bg-green-900/30', border: 'border-green-200 dark:border-green-800' },
-    warning: { label: '주의', color: 'text-yellow-600', bg: 'bg-yellow-100 dark:bg-yellow-900/30', border: 'border-yellow-200 dark:border-yellow-800' },
-    error: { label: '오류', color: 'text-red-600', bg: 'bg-red-100 dark:bg-red-900/30', border: 'border-red-200 dark:border-red-800' },
-  };
-
-  const config = statusConfig[status];
-
-  return (
-    <div className={`inline-flex items-center px-4 py-2 rounded-lg border ${config.bg} ${config.color} ${config.border}`}>
-      <span className="text-sm font-semibold">{config.label}</span>
-    </div>
-  );
-}
+const formatKrw = (value: number): string => `${value.toLocaleString('ko-KR')}원`;
 
 export default function AdminDashboard() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [pendingSettlements, setPendingSettlements] = useState<Settlement[]>([]);
+  const [liveCount, setLiveCount] = useState<number>(0);
+  const [totalViewers, setTotalViewers] = useState<number>(0);
 
-  // 더미 데이터로 UI 구현
-  const stats = {
-    total_users: 1234,
-    total_channels: 567,
-    active_streams: 89,
-    total_policies: 4,
-    system_status: 'healthy' as const,
-    last_updated: new Date().toISOString()
-  };
+  // 매출/후원/가입 통계는 관리자 집계 API(🔧) 연동 전까지 더미 데이터 사용
+  const stats = dummyDashboardStats;
+  const pendingReportCount = dummyReports.filter((r) => r.status === 'RECEIVED').length;
+
+  const fetchDashboard = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const [settlementRes, liveRes] = await Promise.allSettled([
+        getPendingSettlements(),
+        getLiveList(),
+      ]);
+
+      if (settlementRes.status === 'fulfilled') {
+        setPendingSettlements(settlementRes.value.data.settlements);
+      }
+      if (liveRes.status === 'fulfilled') {
+        const lives = liveRes.value.data ?? [];
+        setLiveCount(lives.length);
+        setTotalViewers(lives.reduce((sum, l) => sum + (l.viewerCount ?? 0), 0));
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // UI 개발을 위한 로딩 시뮬레이션
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, []);
+    fetchDashboard();
+  }, [fetchDashboard]);
 
   if (loading) {
     return (
@@ -81,91 +60,101 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">대시보드</h1>
-        <p className="text-muted-foreground">시스템 전체 현황을 확인하세요</p>
-      </div>
+      <PageHeader title="대시보드" description="실시간 방송 · 매출 · 정산 · 신고 현황 요약" />
 
-      {/* 통계 카드 그리드 */}
+      <DummyNotice api="매출/후원/가입 집계 관리자 API (라이브 현황·정산 대기는 실제 데이터)" />
+
+      {/* 실시간 방송 현황 (실 데이터) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard title="현재 라이브" value={liveCount.toLocaleString()} color="red" description="방송 중인 채널" />
+        <StatCard title="총 동시 시청자" value={totalViewers.toLocaleString()} color="blue" description="전체 라이브 합산" />
         <StatCard
-          title="총 사용자 수"
-          value={stats.total_users.toLocaleString()}
-          color="blue"
-          description="전체 등록된 사용자"
-        />
-        <StatCard
-          title="총 채널 수"
-          value={stats.total_channels.toLocaleString()}
-          color="green"
-          description="생성된 방송 채널"
-        />
-        <StatCard
-          title="현재 라이브 스트림"
-          value={stats.active_streams.toLocaleString()}
+          title="정산 대기"
+          value={`${pendingSettlements.length}건`}
           color="yellow"
-          description="실시간 방송 중"
+          description={formatKrw(pendingSettlements.reduce((sum, s) => sum + (s.total_value ?? 0), 0))}
         />
-        <StatCard
-          title="정책 문서 수"
-          value={stats.total_policies.toLocaleString()}
-          color="purple"
-          description="등록된 정책 문서"
-        />
+        <StatCard title="미처리 신고" value={`${pendingReportCount}건`} color="purple" description="신고 센터 확인 필요" />
       </div>
 
-      {/* 시스템 상태 */}
-      <div className="bg-card border border-border rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">시스템 상태</h2>
-          <SystemStatus status={stats.system_status} />
-        </div>
-        
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">마지막 업데이트:</span>
-            <span className="text-foreground">
-              {new Date(stats.last_updated).toLocaleString('ko-KR')}
-            </span>
+      {/* 매출/후원 요약 (더미) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">매출 요약</h2>
+            <Link href="/admin/payments" className="text-sm text-primary hover:underline">결제 내역 →</Link>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-            <div className="p-6 bg-background rounded-lg border">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">서버 상태</h4>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-medium text-foreground">웹 서버</span>
-                  <span className="text-green-600 font-semibold">온라인</span>
-                </div>
-                <div className="text-sm text-muted-foreground">응답 시간: 15ms</div>
-              </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">오늘</p>
+              <p className="text-xl font-bold text-foreground">{formatKrw(stats.todaySales)}</p>
             </div>
-
-            <div className="p-6 bg-background rounded-lg border">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">데이터베이스</h4>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-medium text-foreground">PostgreSQL</span>
-                  <span className="text-green-600 font-semibold">연결됨</span>
-                </div>
-                <div className="text-sm text-muted-foreground">연결 수: 12/100</div>
-              </div>
+            <div>
+              <p className="text-sm text-muted-foreground">이번 주</p>
+              <p className="text-xl font-bold text-foreground">{formatKrw(stats.weekSales)}</p>
             </div>
+            <div>
+              <p className="text-sm text-muted-foreground">이번 달</p>
+              <p className="text-xl font-bold text-foreground">{formatKrw(stats.monthSales)}</p>
+            </div>
+          </div>
+          <div className="pt-3 border-t border-border flex justify-between text-sm">
+            <span className="text-muted-foreground">오늘 환불</span>
+            <span className="text-destructive font-medium">-{formatKrw(stats.todayRefund)}</span>
+          </div>
+        </div>
 
-            <div className="p-6 bg-background rounded-lg border">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">스트리밍 서비스</h4>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-medium text-foreground">Amazon IVS</span>
-                  <span className="text-green-600 font-semibold">정상</span>
-                </div>
-                <div className="text-sm text-muted-foreground">활성 스트림: {stats.active_streams}개</div>
-              </div>
+        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">후원 · 가입 현황</h2>
+            <Link href="/admin/statistics" className="text-sm text-primary hover:underline">통계 →</Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">오늘 후원 코인</p>
+              <p className="text-xl font-bold text-foreground">{stats.todayDonationCoins.toLocaleString()} 코인</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">이번 주 후원 코인</p>
+              <p className="text-xl font-bold text-foreground">{stats.weekDonationCoins.toLocaleString()} 코인</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">오늘 신규 가입</p>
+              <p className="text-xl font-bold text-green-600">+{stats.todaySignups}명</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">오늘 탈퇴</p>
+              <p className="text-xl font-bold text-destructive">-{stats.todayWithdrawals}명</p>
             </div>
           </div>
         </div>
       </div>
 
+      {/* 승인 대기 정산 목록 (실 데이터) */}
+      <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground">승인 대기 정산</h2>
+          <Link href="/admin/settlement" className="text-sm text-primary hover:underline">정산 관리 →</Link>
+        </div>
+        {pendingSettlements.length === 0 ? (
+          <p className="text-muted-foreground text-sm py-4">승인 대기 중인 정산이 없습니다.</p>
+        ) : (
+          <div className="space-y-2">
+            {pendingSettlements.slice(0, 5).map((s) => (
+              <div
+                key={s.id}
+                className="flex items-center justify-between px-4 py-3 rounded-md border border-border bg-background"
+              >
+                <div className="flex items-center gap-3">
+                  <StatusBadge label="대기" tone="yellow" />
+                  <span className="font-medium text-foreground">정산 #{s.id}</span>
+                </div>
+                <span className="font-semibold text-foreground">{formatKrw(s.total_value ?? 0)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

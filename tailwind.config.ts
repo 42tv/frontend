@@ -29,9 +29,34 @@ export default {
       },
       colors: {
         // Base colors from CSS variables
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        
+        background: {
+          DEFAULT: "var(--background)",
+          dark: "var(--dark-bg-100)",
+        },
+        foreground: {
+          DEFAULT: "var(--foreground)",
+          dark: "var(--dark-text-100)",
+        },
+
+        // Semantic tokens (shadcn 스타일 — 관리자 콘솔 등에서 사용)
+        card: {
+          DEFAULT: "rgb(var(--card-rgb) / <alpha-value>)",
+          dark: "var(--dark-bg-200)",
+          foreground: "var(--text-primary)",
+        },
+        muted: {
+          DEFAULT: "rgb(var(--muted-rgb) / <alpha-value>)",
+          dark: "var(--dark-bg-300)",
+          foreground: {
+            DEFAULT: "var(--text-secondary)",
+            dark: "var(--dark-text-200)",
+          },
+        },
+        destructive: {
+          DEFAULT: "rgb(239 68 68 / <alpha-value>)", // red-500
+          foreground: "rgb(255 255 255)",
+        },
+
         // Primary brand colors
         primary: {
           DEFAULT: "var(--primary)",
@@ -118,6 +143,8 @@ export default {
         
         // Border colors
         border: {
+          DEFAULT: "var(--border-primary)",
+          dark: "var(--dark-bg-300)",
           primary: {
             DEFAULT: "rgb(229, 231, 235)", // gray-200
             dark: "rgb(75, 85, 99)", // gray-600
