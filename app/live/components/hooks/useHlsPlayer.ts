@@ -110,11 +110,12 @@ export const useHlsPlayer = ({ streamUrl, videoRef, onStreamEnded }: UseHlsPlaye
           return;
         }
 
-        console.error('HLS Player Event - ERROR:', data);
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
+            // 방송 종료 시 매니페스트 요청 실패로 도달하는 예상된 경로이므로 error 로그를 남기지 않는다
             if (networkRetryCount < MAX_NETWORK_RETRY) {
               networkRetryCount++;
+              console.warn('HLS Player Event - fatal NETWORK_ERROR, retrying:', data.details);
               hls?.startLoad();
             } else {
               // 재시도 한도 초과 → 방송 종료로 간주 (stream_end 소켓 이벤트 유실 대비 폴백)
@@ -123,9 +124,11 @@ export const useHlsPlayer = ({ streamUrl, videoRef, onStreamEnded }: UseHlsPlaye
             }
             break;
           case Hls.ErrorTypes.MEDIA_ERROR:
+            console.warn('HLS Player Event - fatal MEDIA_ERROR, recovering:', data.details);
             hls?.recoverMediaError();
             break;
           default:
+            console.error('HLS Player Event - ERROR:', data);
             hls?.destroy();
             break;
         }
