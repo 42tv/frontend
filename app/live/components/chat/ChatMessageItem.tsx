@@ -51,6 +51,34 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({ message, onChatClick,
         );
     }
     
+    if (message.type === 'notice') {
+        const noticeClassName = 'rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3';
+
+        const sentAt = new Date(message.sent_at);
+        const sentAtLabel = isNaN(sentAt.getTime())
+            ? ''
+            : sentAt.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+
+        return (
+            <div className={noticeClassName}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-red-400">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M13.9 3.2 6.6 7.4H3.5A1.5 1.5 0 0 0 2 8.9v6.2a1.5 1.5 0 0 0 1.5 1.5h3.1l7.3 4.2a1 1 0 0 0 1.5-.9V4.1a1 1 0 0 0-1.5-.9ZM18 9.5v5a2.5 2.5 0 0 0 0-5Z" />
+                        </svg>
+                        운영자 공지
+                    </div>
+                    {sentAtLabel && (
+                        <span className="text-[11px] text-red-400/60">{sentAtLabel}</span>
+                    )}
+                </div>
+                <div className="mt-1.5 text-sm font-medium text-white whitespace-pre-wrap break-words">
+                    {message.message}
+                </div>
+            </div>
+        );
+    }
+
     if (message.type === 'recommend') {
         const recommendClassName =
             chatStyle === 'bubble'

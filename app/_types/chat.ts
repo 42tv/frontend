@@ -1,6 +1,6 @@
-export type MessageType = 'chat' | 'donation' | 'recommend';
+export type MessageType = 'chat' | 'donation' | 'recommend' | 'notice';
 export type TabType = 'chat' | 'viewers';
-export type Message = ChatMessage | DonationMessage | RecommendMessage;
+export type Message = ChatMessage | DonationMessage | RecommendMessage | GlobalNoticeMessage;
 export type UserRole = 'broadcaster' | 'manager' | 'member' | 'viewer' | 'guest';
 
 export enum OpCode {
@@ -16,6 +16,13 @@ export enum OpCode {
   VIEWER_COUNT = 'viewer_count',
   VIEWER_LIST = 'viewer_list',
   STREAM_END = 'stream_end',
+  NOTICE = 'notice',
+}
+
+/** 관리자 전체 공지 WS payload (POST /admin/chat/broadcast → notice 이벤트) */
+export interface GlobalNoticePayload {
+  message: string;
+  sent_at: string; // ISO 8601
 }
 
 export enum RoleChangeType {
@@ -83,6 +90,12 @@ export interface DonationMessage extends BaseMessage {
 export interface RecommendMessage extends BaseMessage {
   type: 'recommend';
   nickname: string;
+}
+
+export interface GlobalNoticeMessage extends BaseMessage {
+  type: 'notice';
+  message: string;
+  sent_at: string;
 }
 
 export interface JwtDecode {

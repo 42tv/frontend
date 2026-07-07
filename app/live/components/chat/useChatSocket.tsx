@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { Message, Viewer, OpCode, ChatMessage, RoleChangePayload, KickPayload, MyRole } from '@/app/_types';
+import { Message, Viewer, OpCode, ChatMessage, RoleChangePayload, KickPayload, MyRole, GlobalNoticePayload } from '@/app/_types';
 
 // Handlers
 import { useChatHandlers } from './handlers/chatHandlers';
@@ -9,6 +9,7 @@ import { useViewerHandlers } from './handlers/viewerHandlers';
 import { useRoleHandlers } from './handlers/roleHandlers';
 import { useKickHandlers } from './handlers/kickHandlers';
 import { useRecommendHandlers } from './handlers/recommendHandlers';
+import { useNoticeHandlers } from './handlers/noticeHandlers';
 
 // Hooks
 import { useViewersManager } from './hooks/useViewersManager';
@@ -25,6 +26,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
     const { handleRoleChanged, startViewerListPolling } = useRoleHandlers(fetchViewersList, viewersIntervalRef, setCurrentMyRole);
     const { handleKickUser, handleKicked } = useKickHandlers();
     const { handleRecommend } = useRecommendHandlers();
+    const { handleGlobalNotice } = useNoticeHandlers();
 
     // 소켓 이벤트 등록
     useEffect(() => {
@@ -37,6 +39,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
             const wrappedHandleRoleChanged = (payload: RoleChangePayload) => handleRoleChanged(payload, setViewers, setMessages);
             const wrappedHandleKickUser = (payload: KickPayload) => handleKickUser(payload, setViewers);
             const wrappedHandleRecommend = (payload: { nickname: string }) => handleRecommend(payload, setMessages);
+            const wrappedHandleGlobalNotice = (payload: GlobalNoticePayload) => handleGlobalNotice(payload, setMessages);
 
             socket.on(OpCode.CHAT, wrappedHandleChatMessage);
             socket.on(OpCode.VIEWER_LIST, wrappedHandleViewersUpdate);
@@ -46,6 +49,7 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
             socket.on(OpCode.KICK, wrappedHandleKickUser);
             socket.on(OpCode.KICKED, handleKicked);
             socket.on(OpCode.RECOMMEND, wrappedHandleRecommend);
+            socket.on(OpCode.NOTICE, wrappedHandleGlobalNotice);
 
             return () => {
                 socket.off(OpCode.CHAT, wrappedHandleChatMessage);
@@ -56,9 +60,10 @@ export const useChatSocket = (socket: Socket | null, broadcasterId: string, setC
                 socket.off(OpCode.KICK, wrappedHandleKickUser);
                 socket.off(OpCode.KICKED, handleKicked);
                 socket.off(OpCode.RECOMMEND, wrappedHandleRecommend);
+                socket.off(OpCode.NOTICE, wrappedHandleGlobalNotice);
             };
         }
-    }, [socket, handleChatMessage, handleViewersUpdate, handleRoleChanged, handleViewerJoin, handleViewerLeave, handleKickUser, handleKicked, handleRecommend]);
+    }, [socket, handleChatMessage, handleViewersUpdate, handleRoleChanged, handleViewerJoin, handleViewerLeave, handleKickUser, handleKicked, handleRecommend, handleGlobalNotice]);
 
     // 초기 권한 체크 및 viewer list 갱신 시작
     useEffect(() => {
