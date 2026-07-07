@@ -1,12 +1,15 @@
 'use client';
 import { reqeustChat } from '@/app/_apis/live';
+import { getApiErrorMessage } from '@/app/_lib/api';
+import { isAxiosError } from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
 import { useUserStore } from "@/app/_lib/stores"
 import LoginComponent from '@/app/_components/modals/login_component';
 import UserActionsModal from '@/app/_components/modals/user_actions_modal';
+import ErrorMessage from '@/app/_components/modals/error_component';
 import SendMessageForm from '@/app/_components/common/SendMessageForm';
-import { openPopupModal, closeAllModals } from '@/app/_components/utils/overlay/overlayHelpers';
+import { openModal, openPopupModal, closeAllModals } from '@/app/_components/utils/overlay/overlayHelpers';
 import { ChatMessage, MyRole, TabType, Viewer } from '@/app/_types';
 
 // 분리된 컴포넌트들 import
@@ -130,10 +133,20 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
 
     // 메시지 전송 핸들러
     const handleSendMessage = async (message: string) => {
+        if (!currentUserIdx) {
+            openPopupModal(<LoginComponent />);
+            return;
+        }
+
         try {
             await reqeustChat(broadcasterId, message);
-        } catch {
-            openPopupModal(<LoginComponent />);
+        } catch (e) {
+            // 401(인증 필요)일 때만 로그인 유도, 그 외(금칙어 등)는 서버 에러 메시지 표시
+            if (isAxiosError(e) && e.response?.status === 401) {
+                openPopupModal(<LoginComponent />);
+                return;
+            }
+            openModal(<ErrorMessage message={getApiErrorMessage(e)} />, { closeButtonSize: "w-[16px] h-[16px]" });
         }
     };
 
