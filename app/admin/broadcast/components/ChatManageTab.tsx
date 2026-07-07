@@ -1,40 +1,86 @@
 'use client';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DataTable, { Column } from '../../components-shared/ui/DataTable';
 import StatusBadge from '../../components-shared/ui/StatusBadge';
-import DummyNotice from '../../components-shared/ui/DummyNotice';
-import { dummyBannedWords, dummyChatBans } from '../../_data/dummy';
-import type { BannedWord, BannedWordAction, ChatBan } from '@/app/_types/admin-console';
+import {
+  getBannedWords,
+  createBannedWord,
+  deleteBannedWord,
+  broadcastGlobalNotice,
+} from '@/app/_apis/admin/chat';
+import { extractAdminApiError } from '@/app/_apis/admin/user';
+import type { BannedWord, BannedWordAction } from '@/app/_types/admin-console';
 
 export default function ChatManageTab() {
-  const [bannedWords, setBannedWords] = useState<BannedWord[]>(dummyBannedWords);
+  const [bannedWords, setBannedWords] = useState<BannedWord[]>([]);
+  const [wordsLoading, setWordsLoading] = useState<boolean>(true);
+  const [wordsError, setWordsError] = useState<string>('');
   const [newWord, setNewWord] = useState<string>('');
   const [newAction, setNewAction] = useState<BannedWordAction>('MASK');
+  const [saving, setSaving] = useState<boolean>(false);
+
   const [broadcastMessage, setBroadcastMessage] = useState<string>('');
-  const [broadcastSent, setBroadcastSent] = useState<boolean>(false);
+  const [broadcastSending, setBroadcastSending] = useState<boolean>(false);
+  const [broadcastResult, setBroadcastResult] = useState<{ ok: boolean; text: string } | null>(null);
 
-  // 금칙어 추가 — 금칙어 CRUD API(❌) 연동 지점
-  const handleAddWord = (): void => {
+  const loadWords = useCallback(async (): Promise<void> => {
+    setWordsError('');
+    try {
+      setBannedWords(await getBannedWords());
+    } catch (e) {
+      setWordsError(extractAdminApiError(e, '금칙어 목록 조회 중 오류가 발생했습니다.'));
+    } finally {
+      setWordsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadWords();
+  }, [loadWords]);
+
+  const handleAddWord = async (): Promise<void> => {
     const word = newWord.trim();
-    if (!word || bannedWords.some((w) => w.word === word)) return;
-    setBannedWords([
-      { id: Math.max(0, ...bannedWords.map((w) => w.id)) + 1, word, action: newAction, created_at: new Date().toISOString(), admin_nickname: '나' },
-      ...bannedWords,
-    ]);
-    setNewWord('');
+    if (!word || saving) return;
+    setSaving(true);
+    setWordsError('');
+    try {
+      await createBannedWord(word, newAction);
+      setNewWord('');
+      await loadWords();
+    } catch (e) {
+      setWordsError(extractAdminApiError(e, '금칙어 등록 중 오류가 발생했습니다.'));
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeleteWord = (id: number): void => {
-    setBannedWords(bannedWords.filter((w) => w.id !== id));
+  const handleDeleteWord = async (id: number): Promise<void> => {
+    setWordsError('');
+    try {
+      await deleteBannedWord(id);
+      setBannedWords((words) => words.filter((w) => w.id !== id));
+    } catch (e) {
+      setWordsError(extractAdminApiError(e, '금칙어 삭제 중 오류가 발생했습니다.'));
+    }
   };
 
-  // 전체 공지 — 전 라이브 채팅방 시스템 메시지 발송 API(❌, Redis Pub/Sub 전파) 연동 지점
-  const handleBroadcast = (): void => {
-    if (!broadcastMessage.trim()) return;
-    console.info(`[전체 공지] ${broadcastMessage.trim()}`);
-    setBroadcastMessage('');
-    setBroadcastSent(true);
-    setTimeout(() => setBroadcastSent(false), 3000);
+  const handleBroadcast = async (): Promise<void> => {
+    const message = broadcastMessage.trim();
+    if (!message || broadcastSending) return;
+    setBroadcastSending(true);
+    setBroadcastResult(null);
+    try {
+      await broadcastGlobalNotice(message);
+      setBroadcastMessage('');
+      setBroadcastResult({ ok: true, text: '전체 공지가 발송되었습니다.' });
+    } catch (e) {
+      setBroadcastResult({
+        ok: false,
+        text: extractAdminApiError(e, '공지 발송 중 오류가 발생했습니다.'),
+      });
+    } finally {
+      setBroadcastSending(false);
+    }
   };
 
   const wordColumns: Column<BannedWord>[] = [
@@ -47,7 +93,6 @@ export default function ChatManageTab() {
           ? <StatusBadge label="마스킹" tone="yellow" />
           : <StatusBadge label="차단" tone="red" />,
     },
-    { key: 'admin', header: '등록자', render: (w) => w.admin_nickname },
     { key: 'created_at', header: '등록일', render: (w) => new Date(w.created_at).toLocaleDateString('ko-KR') },
     {
       key: 'actions',
@@ -63,38 +108,8 @@ export default function ChatManageTab() {
     },
   ];
 
-  const banColumns: Column<ChatBan>[] = [
-    {
-      key: 'user',
-      header: '대상',
-      render: (b) => (
-        <div>
-          <div className="font-medium">{b.nickname}</div>
-          <div className="text-xs text-muted-foreground font-mono">{b.user_id}</div>
-        </div>
-      ),
-    },
-    {
-      key: 'scope',
-      header: '범위',
-      render: (b) =>
-        b.scope === 'GLOBAL'
-          ? <StatusBadge label="플랫폼 전체" tone="red" />
-          : <StatusBadge label={`${b.broadcaster_id} 방송`} tone="yellow" />,
-    },
-    { key: 'reason', header: '사유', render: (b) => b.reason },
-    {
-      key: 'ends_at',
-      header: '해제 예정',
-      render: (b) =>
-        b.ends_at ? new Date(b.ends_at).toLocaleDateString('ko-KR') : <span className="text-destructive font-medium">영구</span>,
-    },
-  ];
-
   return (
     <div className="space-y-6">
-      <DummyNotice api="금칙어 CRUD · 채팅 금지 · 전체 공지 브로드캐스트 API" />
-
       {/* 전체 공지 */}
       <section className="bg-card border border-border rounded-lg p-6 space-y-3">
         <h3 className="text-lg font-semibold text-foreground">전체 공지 브로드캐스트</h3>
@@ -112,18 +127,25 @@ export default function ChatManageTab() {
           />
           <button
             onClick={handleBroadcast}
-            disabled={!broadcastMessage.trim()}
+            disabled={!broadcastMessage.trim() || broadcastSending}
             className="px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground disabled:opacity-50 hover:opacity-90 transition-opacity"
           >
-            발송
+            {broadcastSending ? '발송 중...' : '발송'}
           </button>
         </div>
-        {broadcastSent && <p className="text-sm text-green-600">공지가 발송되었습니다. (API 연동 후 실제 발송)</p>}
+        {broadcastResult && (
+          <p className={`text-sm ${broadcastResult.ok ? 'text-green-600' : 'text-red-500'}`}>
+            {broadcastResult.text}
+          </p>
+        )}
       </section>
 
       {/* 금칙어 관리 */}
       <section className="space-y-3">
         <h3 className="text-lg font-semibold text-foreground">금칙어 관리</h3>
+        <p className="text-sm text-muted-foreground">
+          등록/삭제 즉시 전 서버 채팅 필터에 반영됩니다.
+        </p>
         <div className="flex gap-2">
           <input
             type="text"
@@ -143,19 +165,24 @@ export default function ChatManageTab() {
           </select>
           <button
             onClick={handleAddWord}
-            disabled={!newWord.trim()}
+            disabled={!newWord.trim() || saving}
             className="px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground disabled:opacity-50 hover:opacity-90 transition-opacity"
           >
-            추가
+            {saving ? '등록 중...' : '추가'}
           </button>
         </div>
-        <DataTable columns={wordColumns} rows={bannedWords} rowKey={(w) => w.id} emptyMessage="등록된 금칙어가 없습니다" />
-      </section>
-
-      {/* 채팅 금지 목록 */}
-      <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">채팅 금지 현황</h3>
-        <DataTable columns={banColumns} rows={dummyChatBans} rowKey={(b) => b.id} emptyMessage="채팅 금지된 유저가 없습니다" />
+        {wordsError && (
+          <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-md px-4 py-3">
+            {wordsError}
+          </p>
+        )}
+        {wordsLoading ? (
+          <div className="py-16 flex justify-center bg-card border border-border rounded-lg">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+          </div>
+        ) : (
+          <DataTable columns={wordColumns} rows={bannedWords} rowKey={(w) => w.id} emptyMessage="등록된 금칙어가 없습니다" />
+        )}
       </section>
     </div>
   );

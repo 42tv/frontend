@@ -5,9 +5,6 @@ import type {
   AdminUserDetail,
   Sanction,
   AdminLiveStream,
-  AdminChannel,
-  BannedWord,
-  ChatBan,
   Report,
   AdminPaymentTransaction,
   AdminCoinLedger,
@@ -74,27 +71,6 @@ export const dummyLiveStreams: AdminLiveStream[] = [
   { broadcaster_idx: 103, broadcaster_id: 'mukbang_queen', broadcaster_nickname: '먹방여왕', title: '대왕 문어 먹방 🐙', thumbnail: '', category: 'MUKBANG', viewer_count: 2105, start_time: daysAgo(0, 1), is_adult: false, is_fan: true, is_pw: false },
   { broadcaster_idx: 107, broadcaster_id: 'music_lover', broadcaster_nickname: '노래하는밤', title: '새벽 감성 라이브 (비공개)', thumbnail: '', category: 'MUSIC', viewer_count: 45, start_time: daysAgo(0, 2), is_adult: false, is_fan: false, is_pw: true },
   { broadcaster_idx: 108, broadcaster_id: 'adult_bj99', broadcaster_nickname: '심야방송', title: '심야 성인 방송', thumbnail: '', category: 'ADULT', viewer_count: 312, start_time: daysAgo(0, 4), is_adult: true, is_fan: false, is_pw: false },
-];
-
-export const dummyChannels: AdminChannel[] = [
-  { idx: 1, user_id: 'streamer_kim', nickname: '김방송', title: '김방송의 채널', bookmark_cnt: 1520, recommend_cnt: 8400, play_cnt: 152000, total_time: 42300, ncp_channel_id: 'ncp-ch-a1b2c3', ncp_status: 'PUBLISHING', created_at: daysAgo(320) },
-  { idx: 2, user_id: 'game_master', nickname: '겜잘알', title: '겜잘알 게임채널', bookmark_cnt: 980, recommend_cnt: 5100, play_cnt: 89000, total_time: 30100, ncp_channel_id: 'ncp-ch-d4e5f6', ncp_status: 'PUBLISHING', created_at: daysAgo(210) },
-  { idx: 3, user_id: 'mukbang_queen', nickname: '먹방여왕', title: '먹방여왕 TV', bookmark_cnt: 2300, recommend_cnt: 12000, play_cnt: 240000, total_time: 51000, ncp_channel_id: 'ncp-ch-g7h8i9', ncp_status: 'PUBLISHING', created_at: daysAgo(180) },
-  { idx: 4, user_id: 'music_lover', nickname: '노래하는밤', title: '노래하는밤', bookmark_cnt: 120, recommend_cnt: 450, play_cnt: 5600, total_time: 1800, ncp_channel_id: 'ncp-ch-j1k2l3', ncp_status: 'READY', created_at: daysAgo(14) },
-  { idx: 5, user_id: 'adult_bj99', nickname: '심야방송', title: '심야방송', bookmark_cnt: 310, recommend_cnt: 900, play_cnt: 21000, total_time: 6200, ncp_channel_id: 'ncp-ch-m4n5o6', ncp_status: 'DISABLED', created_at: daysAgo(45) },
-];
-
-// ===== 채팅 =====
-
-export const dummyBannedWords: BannedWord[] = [
-  { id: 1, word: '도박사이트', action: 'BLOCK', created_at: daysAgo(30), admin_nickname: '에노' },
-  { id: 2, word: '욕설1', action: 'MASK', created_at: daysAgo(25), admin_nickname: '에노' },
-  { id: 3, word: '광고문의', action: 'BLOCK', created_at: daysAgo(12), admin_nickname: '에노' },
-];
-
-export const dummyChatBans: ChatBan[] = [
-  { id: 1, user_id: 'chat_spammer', nickname: '도배꾼', scope: 'GLOBAL', broadcaster_id: null, reason: '채팅 도배', ends_at: daysAgo(-4), created_at: daysAgo(3) },
-  { id: 2, user_id: 'troll_user01', nickname: '악성유저', scope: 'ROOM', broadcaster_id: 'streamer_kim', reason: '방송자 비하 발언', ends_at: null, created_at: daysAgo(7) },
 ];
 
 // ===== 신고 =====

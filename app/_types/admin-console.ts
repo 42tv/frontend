@@ -177,22 +177,6 @@ export interface AdminLiveStream {
   is_pw: boolean;
 }
 
-export type NcpChannelStatus = 'CREATING' | 'READY' | 'PUBLISHING' | 'DISABLED' | 'DELETED';
-
-export interface AdminChannel {
-  idx: number;
-  user_id: string;
-  nickname: string;
-  title: string;
-  bookmark_cnt: number;
-  recommend_cnt: number;
-  play_cnt: number;
-  total_time: number; // 분
-  ncp_channel_id: string;
-  ncp_status: NcpChannelStatus;
-  created_at: string;
-}
-
 // ===== 채팅 관리 (§5) =====
 
 export type BannedWordAction = 'MASK' | 'BLOCK';
@@ -201,18 +185,7 @@ export interface BannedWord {
   id: number;
   word: string;
   action: BannedWordAction;
-  created_at: string;
-  admin_nickname: string;
-}
-
-export interface ChatBan {
-  id: number;
-  user_id: string;
-  nickname: string;
-  scope: 'ROOM' | 'GLOBAL';
-  broadcaster_id: string | null;
-  reason: string;
-  ends_at: string | null;
+  created_by: number | null;
   created_at: string;
 }
 
