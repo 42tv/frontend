@@ -4,7 +4,6 @@ import type {
   AdminUserSummary,
   AdminUserDetail,
   Sanction,
-  AdminLiveStream,
   Report,
   AdminPaymentTransaction,
   AdminCoinLedger,
@@ -61,16 +60,6 @@ export const dummySanctions: Sanction[] = [
   { id: 2, user_idx: 105, user_id: 'chat_spammer', nickname: '도배꾼', type: 'WARNING', reason: '채팅 도배', admin_nickname: '에노', starts_at: daysAgo(3), status: 'ACTIVE', created_at: daysAgo(3) },
   { id: 3, user_idx: 108, user_id: 'adult_bj99', nickname: '심야방송', type: 'BROADCAST_BAN', reason: '성인 콘텐츠를 일반 카테고리로 송출', admin_nickname: '에노', starts_at: daysAgo(10), status: 'ACTIVE', created_at: daysAgo(10) },
   { id: 4, user_idx: 102, user_id: 'game_master', nickname: '겜잘알', type: 'WARNING', reason: '저작권 음원 사용 경고', admin_nickname: '에노', starts_at: daysAgo(40), status: 'RELEASED', created_at: daysAgo(40) },
-];
-
-// ===== 방송 =====
-
-export const dummyLiveStreams: AdminLiveStream[] = [
-  { broadcaster_idx: 101, broadcaster_id: 'streamer_kim', broadcaster_nickname: '김방송', title: '주말 저녁 토크 방송', thumbnail: '', category: 'TALK_DAILY', viewer_count: 1243, start_time: daysAgo(0, 3), is_adult: false, is_fan: false, is_pw: false },
-  { broadcaster_idx: 102, broadcaster_id: 'game_master', broadcaster_nickname: '겜잘알', title: '랭크 1위 도전 (시즌 막바지)', thumbnail: '', category: 'GAME', viewer_count: 867, start_time: daysAgo(0, 5), is_adult: false, is_fan: false, is_pw: false },
-  { broadcaster_idx: 103, broadcaster_id: 'mukbang_queen', broadcaster_nickname: '먹방여왕', title: '대왕 문어 먹방 🐙', thumbnail: '', category: 'MUKBANG', viewer_count: 2105, start_time: daysAgo(0, 1), is_adult: false, is_fan: true, is_pw: false },
-  { broadcaster_idx: 107, broadcaster_id: 'music_lover', broadcaster_nickname: '노래하는밤', title: '새벽 감성 라이브 (비공개)', thumbnail: '', category: 'MUSIC', viewer_count: 45, start_time: daysAgo(0, 2), is_adult: false, is_fan: false, is_pw: true },
-  { broadcaster_idx: 108, broadcaster_id: 'adult_bj99', broadcaster_nickname: '심야방송', title: '심야 성인 방송', thumbnail: '', category: 'ADULT', viewer_count: 312, start_time: daysAgo(0, 4), is_adult: true, is_fan: false, is_pw: false },
 ];
 
 // ===== 신고 =====

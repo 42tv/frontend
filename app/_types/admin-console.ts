@@ -163,18 +163,42 @@ export interface AdminUserDetailData {
 
 export type BroadcastCategory = 'GAME' | 'MUKBANG' | 'TALK_DAILY' | 'ADULT' | 'MUSIC';
 
-export interface AdminLiveStream {
-  broadcaster_idx: number;
-  broadcaster_id: string;
-  broadcaster_nickname: string;
-  title: string;
-  thumbnail: string;
-  category: BroadcastCategory;
-  viewer_count: number;
-  start_time: string;
+export interface AdminLiveBroadcastSetting {
   is_adult: boolean;
   is_fan: boolean;
   is_pw: boolean;
+  title: string;
+  fan_level: number;
+  category: BroadcastCategory;
+}
+
+export interface AdminLiveNcpChannel {
+  channel_id: string;
+  playback_url: string;
+  channel_status: string;
+}
+
+export interface AdminLiveBroadcaster {
+  idx: number;
+  user_id: string;
+  nickname: string;
+  profile_img: string;
+  broadcastSetting: AdminLiveBroadcastSetting;
+  ncpChannel: AdminLiveNcpChannel | null;
+}
+
+/** GET /admin/live 응답 항목 — Stream + broadcaster(nested) + Redis viewerCount */
+export interface AdminLiveStream {
+  idx: number;
+  stream_id: string;
+  /** NCP 고정 썸네일 URL — URL 뒤의 이미지가 주기적으로 갱신됨 */
+  thumbnail: string;
+  start_time: string;
+  play_cnt: number;
+  recommend_cnt: number;
+  broadcaster_idx: number;
+  viewerCount: number;
+  broadcaster: AdminLiveBroadcaster;
 }
 
 // ===== 채팅 관리 (§5) =====
