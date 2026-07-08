@@ -10,6 +10,7 @@ import PasswordField from "./components/PasswordField";
 import SaveButton from "./components/SaveButton";
 import HelpText from "./components/HelpText";
 import BroadcastSettingsSkeleton from "./components/BroadcastSettingsSkeleton";
+import SanctionNotice from "./components/SanctionNotice";
 import CategoryField from "./components/CategoryField";
 import ErrorMessage from "@/app/_components/modals/error_component";
 import { openModal } from "@/app/_components/utils/overlay/overlayHelpers";
@@ -21,6 +22,8 @@ export default function BroadcastSettings() {
     title,
     showStreamKey,
     isLoading,
+    isSanctioned,
+    sanctionMessage,
     isAdult,
     isPrivate,
     password,
@@ -58,6 +61,10 @@ export default function BroadcastSettings() {
 
   if (isLoading) {
     return <BroadcastSettingsSkeleton />;
+  }
+
+  if (isSanctioned) {
+    return <SanctionNotice message={sanctionMessage} />;
   }
 
   return (

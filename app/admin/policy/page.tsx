@@ -185,11 +185,6 @@ export default function PolicyManagement() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">정책 관리</h1>
-        <p className="text-muted-foreground">이용약관과 개인정보처리방침을 관리합니다</p>
-      </div>
-
       {/* 탭 네비게이션 */}
       <div className="border-b border-border">
         <nav className="flex space-x-8">
