@@ -13,9 +13,8 @@ import {
 import { extractAdminApiError } from '@/app/_apis/admin/user';
 import type { AdminLiveStream, BroadcastCategory } from '@/app/_types/admin-console';
 
-const POLL_INTERVAL_MS = 5000;
-// NCP 썸네일 원본이 약 10초 주기로 교체되므로 더 짧게 받으면 같은 이미지를 중복 수신함
-const THUMBNAIL_REFRESH_MS = 10000;
+// NCP 썸네일 원본이 약 10초 주기로 교체되므로 목록·썸네일 모두 10초 주기로 갱신
+const POLL_INTERVAL_S = 10;
 
 const categoryLabels: Record<BroadcastCategory, string> = {
   GAME: '게임',
@@ -24,6 +23,37 @@ const categoryLabels: Record<BroadcastCategory, string> = {
   ADULT: '성인',
   MUSIC: '음악',
 };
+
+// 다음 갱신까지 남은 시간을 원형 링 + 숫자로 표시
+function RefreshCountdown({ secondsLeft, total }: { secondsLeft: number; total: number }) {
+  const RADIUS = 8;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  return (
+    <div
+      className="relative h-7 w-7"
+      title={`${secondsLeft}초 후 자동 갱신`}
+      aria-label={`${secondsLeft}초 후 자동 갱신`}
+    >
+      <svg viewBox="0 0 20 20" className="h-full w-full -rotate-90">
+        <circle cx="10" cy="10" r={RADIUS} fill="none" strokeWidth="2" className="stroke-border" />
+        <circle
+          cx="10"
+          cy="10"
+          r={RADIUS}
+          fill="none"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={CIRCUMFERENCE * (1 - secondsLeft / total)}
+          className="stroke-primary transition-[stroke-dashoffset] duration-1000 ease-linear"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold tabular-nums text-foreground">
+        {secondsLeft}
+      </span>
+    </div>
+  );
+}
 
 type CurtainAction = 'start' | 'stop';
 interface ActionResult {
@@ -43,33 +73,52 @@ export default function LiveMonitorTab() {
   const [noticeText, setNoticeText] = useState<string>('');
   const [noticeSending, setNoticeSending] = useState<boolean>(false);
   const [actionResult, setActionResult] = useState<ActionResult | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState<number>(POLL_INTERVAL_S);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const fetchingRef = useRef<boolean>(false);
 
   const fetchLives = useCallback(async (): Promise<void> => {
     if (fetchingRef.current) return; // in-flight 가드
     fetchingRef.current = true;
+    setRefreshing(true);
     try {
       setStreams(await getAdminLiveList());
-      // 목록 조회 성공 시, 마지막 썸네일 갱신 후 10초가 지났을 때만 tick 갱신
-      setRefreshTick((prev) => (Date.now() - prev >= THUMBNAIL_REFRESH_MS ? Date.now() : prev));
+      setRefreshTick(Date.now());
       setError('');
     } catch (e) {
       // 첫 로드 실패만 표시하고 폴링 실패는 다음 주기에 재시도
       setError((prev) => prev || extractAdminApiError(e, '라이브 목록 조회 중 오류가 발생했습니다.'));
     } finally {
       fetchingRef.current = false;
+      setRefreshing(false);
       setLoading(false);
     }
   }, []);
 
-  // 5초 폴링 사이클 — 목록 + 썸네일 동시 갱신, 탭 백그라운드 시 요청 생략
+  // 목록 + 썸네일 갱신 후 카운트다운 리셋 — 수동 새로고침·폴링 공용
+  const refresh = useCallback(async (): Promise<void> => {
+    await fetchLives();
+    setSecondsLeft(POLL_INTERVAL_S);
+  }, [fetchLives]);
+
+  // 첫 로드
   useEffect(() => {
     fetchLives();
-    const timer = setInterval(() => {
-      if (document.visibilityState === 'visible') fetchLives();
-    }, POLL_INTERVAL_MS);
-    return () => clearInterval(timer);
   }, [fetchLives]);
+
+  // 1초 단위 카운트다운 — 탭 백그라운드 시 일시 정지
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      setSecondsLeft((prev) => (prev > 0 ? prev - 1 : prev));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 카운트다운이 0에 도달하면 갱신
+  useEffect(() => {
+    if (secondsLeft === 0) refresh();
+  }, [secondsLeft, refresh]);
 
   const openDetail = (stream: AdminLiveStream): void => {
     setSelected(stream);
@@ -84,7 +133,7 @@ export default function LiveMonitorTab() {
       await forceEndBroadcast(confirmEnd.broadcaster_idx);
       setConfirmEnd(null);
       setSelected(null);
-      await fetchLives();
+      await refresh();
     } catch (e) {
       setError(extractAdminApiError(e, '방송 강제 종료 중 오류가 발생했습니다.'));
       setConfirmEnd(null);
@@ -138,11 +187,34 @@ export default function LiveMonitorTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          비공개 방송 포함 전체 라이브 · 목록 5초 / 썸네일 10초 간격 갱신
+          비공개 방송 포함 전체 라이브 · 목록·썸네일 {POLL_INTERVAL_S}초 간격 갱신
         </p>
-        <span className="text-sm font-medium text-foreground">
-          진행 중 {streams.length}개
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-foreground">
+            진행 중 {streams.length}개
+          </span>
+          <RefreshCountdown secondsLeft={secondsLeft} total={POLL_INTERVAL_S} />
+          <button
+            onClick={refresh}
+            disabled={refreshing}
+            title="지금 갱신"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border border-border text-foreground disabled:opacity-50 hover:bg-muted transition-colors"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+            >
+              <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+              <path d="M21 3v6h-6" />
+            </svg>
+            새로고침
+          </button>
+        </div>
       </div>
 
       {error && (
