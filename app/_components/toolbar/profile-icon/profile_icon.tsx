@@ -2,7 +2,8 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/app/_lib/stores"
-import { FiUser, FiSettings } from "react-icons/fi";
+import { FiUser, FiSettings, FiMessageSquare } from "react-icons/fi";
+import { useUnreadInquiry } from "@/app/_hooks/useUnreadInquiry";
 import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { logout } from "@/app/_apis/user";
@@ -13,6 +14,7 @@ export default function ProfileIcon() {
     const profile_img = useUserStore((state) => state.profile_img);
     const nickname = useUserStore((state) => state.nickname) || "Guest";
     const coin = useUserStore((state) => state.coin);
+    const { count: unreadInquiryCount } = useUnreadInquiry();
     const [clicked, setClicked] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +68,9 @@ export default function ProfileIcon() {
                 </div>
                 // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
+            {unreadInquiryCount > 0 && (
+                <span className="absolute top-0 right-0 w-[10px] h-[10px] rounded-full bg-red-500 border-2 border-bg-primary" />
+            )}
             <div
                 className={`absolute w-[300px] h-[85vh] top-10 right-0 rounded-lg bg-bg-secondary border border-border-primary shadow-lg p-2 transition-opacity duration-100 z-10 ${clicked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={handleMenuClick}
@@ -101,6 +106,12 @@ export default function ProfileIcon() {
                         href="/channel"
                     />
                     <MenuItem
+                        icon={<FiMessageSquare className="text-text-secondary" />}
+                        text="1:1 문의"
+                        href="/my/inquiry"
+                        badge={unreadInquiryCount}
+                    />
+                    <MenuItem
                         icon={<FiSettings className="text-text-secondary" />}
                         text="설정"
                         href="/settings"
@@ -120,13 +131,13 @@ export default function ProfileIcon() {
     );
 }
 
-function MenuItem({ icon, text, href }: { icon: JSX.Element; text: string; href: string }) {
+function MenuItem({ icon, text, href, badge }: { icon: JSX.Element; text: string; href: string; badge?: number }) {
     const router = useRouter();
-    
+
     const handleClick = () => {
         router.push(href);
     };
-    
+
     return (
         <div
             className="flex items-center space-x-3 p-2 hover:bg-bg-tertiary rounded-lg cursor-pointer transition-colors"
@@ -134,6 +145,11 @@ function MenuItem({ icon, text, href }: { icon: JSX.Element; text: string; href:
         >
             {icon}
             <span className="text-sm text-text-secondary">{text}</span>
+            {badge !== undefined && badge > 0 && (
+                <span className="ml-auto min-w-[20px] h-[20px] px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-semibold">
+                    {badge > 99 ? '99+' : badge}
+                </span>
+            )}
         </div>
     );
 }
