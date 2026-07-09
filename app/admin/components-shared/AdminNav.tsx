@@ -7,6 +7,7 @@ import {
   FiUsers,
   FiVideo,
   FiFlag,
+  FiMessageSquare,
   FiCreditCard,
   FiFileText,
   FiBarChart2,
@@ -27,6 +28,7 @@ const navItems: NavItem[] = [
   { href: '/admin/users', label: '회원 관리', icon: FiUsers },
   { href: '/admin/broadcast', label: '방송 관리', icon: FiVideo },
   { href: '/admin/reports', label: '신고 센터', icon: FiFlag },
+  { href: '/admin/inquiries', label: '1:1 문의', icon: FiMessageSquare },
   {
     href: '/admin/payments',
     label: '결제/정산',
