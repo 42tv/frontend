@@ -44,6 +44,18 @@ export const getAdminInquiries = async (
 };
 
 /**
+ * 답변 대기 문의 건수 조회 — 목록 API의 pagination.total 활용 (별도 엔드포인트 불필요)
+ */
+export const getPendingInquiryCount = async (): Promise<number> => {
+  const result = await getAdminInquiries({
+    status: 'PENDING',
+    page: 1,
+    limit: 1,
+  });
+  return result.pagination.total;
+};
+
+/**
  * 문의 상세 조회 (작성자 정보 + 이미지 포함)
  * GET /admin/inquiries/:id
  */

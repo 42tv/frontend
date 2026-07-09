@@ -13,6 +13,7 @@ import {
 import { extractAdminApiError } from '@/app/_apis/admin/user';
 import type { Inquiry, InquiryStatus, InquiryType } from '@/app/_types/inquiry';
 import { inquiryTypeLabels } from '@/app/_types/inquiry';
+import { notifyAdminPendingRefresh } from '../_hooks/useAdminPendingCounts';
 
 const statusLabels: Record<InquiryStatus, { label: string; tone: BadgeTone }> = {
   PENDING: { label: '답변 대기', tone: 'yellow' },
@@ -89,6 +90,7 @@ export default function AdminInquiriesPage() {
       await answerInquiry(selected.id, answerText.trim());
       setSelected(null);
       await load();
+      notifyAdminPendingRefresh(); // 사이드바 미처리 뱃지 즉시 갱신
     } catch (err: unknown) {
       setAnswerError(extractAdminApiError(err, '답변 등록 중 오류가 발생했습니다.'));
     } finally {

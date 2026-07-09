@@ -14,12 +14,14 @@ import {
   FiSettings,
   FiArrowLeft,
 } from "react-icons/fi";
+import { useAdminPendingCounts } from "../_hooks/useAdminPendingCounts";
 
 interface NavItem {
   href: string;
   label: string;
   icon: IconType;
   match?: string[]; // href 외에 활성 상태로 취급할 경로 prefix
+  badgeKey?: 'reports' | 'inquiries'; // 미처리 건수 뱃지 매핑 키
 }
 
 // §15 프론트엔드 메뉴 구조 기준 (관리자 기능 정의서) — 하위 메뉴 없이 상위 메뉴만 노출
@@ -27,8 +29,8 @@ const navItems: NavItem[] = [
   { href: '/admin', label: '대시보드', icon: FiHome },
   { href: '/admin/users', label: '회원 관리', icon: FiUsers },
   { href: '/admin/broadcast', label: '방송 관리', icon: FiVideo },
-  { href: '/admin/reports', label: '신고 센터', icon: FiFlag },
-  { href: '/admin/inquiries', label: '1:1 문의', icon: FiMessageSquare },
+  { href: '/admin/reports', label: '신고 센터', icon: FiFlag, badgeKey: 'reports' },
+  { href: '/admin/inquiries', label: '1:1 문의', icon: FiMessageSquare, badgeKey: 'inquiries' },
   {
     href: '/admin/payments',
     label: '결제/정산',
@@ -42,6 +44,11 @@ const navItems: NavItem[] = [
 
 export default function AdminNav() {
   const pathname = usePathname();
+  const { pendingReports, pendingInquiries } = useAdminPendingCounts();
+  const badgeCounts: Record<NonNullable<NavItem['badgeKey']>, number> = {
+    reports: pendingReports,
+    inquiries: pendingInquiries,
+  };
 
   const isActivePath = (href: string): boolean =>
     href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
@@ -60,6 +67,7 @@ export default function AdminNav() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = isActiveItem(item);
+          const badge = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
           return (
             <li key={item.href}>
               <Link
@@ -76,6 +84,11 @@ export default function AdminNav() {
                   aria-hidden
                 />
                 {item.label}
+                {badge > 0 && (
+                  <span className="ml-auto min-w-[20px] h-[20px] px-1.5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-semibold">
+                    {badge > 99 ? '99+' : badge}
+                  </span>
+                )}
               </Link>
             </li>
           );
