@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { getPendingInquiryCount } from '@/app/_apis/admin/inquiry';
-import { dummyReports } from '../_data/dummy';
+import { getPendingReportCount } from '@/app/_apis/admin/report';
 
 /**
  * 관리자 미처리 건수 즉시 갱신 이벤트.
@@ -28,14 +28,15 @@ export interface AdminPendingCounts {
 export function useAdminPendingCounts(): AdminPendingCounts {
   const pathname = usePathname();
   const [pendingInquiries, setPendingInquiries] = useState<number>(0);
-
-  // 신고 시스템 API 미구현(더미 데이터) — API 연동 시 실 조회로 교체
-  const pendingReports = dummyReports.filter((r) => r.status === 'RECEIVED').length;
+  const [pendingReports, setPendingReports] = useState<number>(0);
 
   const refresh = useCallback((): void => {
     getPendingInquiryCount()
       .then(setPendingInquiries)
       .catch(() => setPendingInquiries(0));
+    getPendingReportCount()
+      .then(setPendingReports)
+      .catch(() => setPendingReports(0));
   }, []);
 
   useEffect(() => {

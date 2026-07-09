@@ -5,8 +5,9 @@ import StatCard from './components-shared/ui/StatCard';
 import StatusBadge from './components-shared/ui/StatusBadge';
 import DummyNotice from './components-shared/ui/DummyNotice';
 import { getPendingSettlements } from '@/app/_apis/admin/settlement';
+import { getPendingReportCount } from '@/app/_apis/admin/report';
 import { getLiveList } from '@/app/_apis/live/streams';
-import { dummyDashboardStats, dummyReports } from './_data/dummy';
+import { dummyDashboardStats } from './_data/dummy';
 import type { Settlement } from '@/app/_types/settlement';
 
 const formatKrw = (value: number): string => `${value.toLocaleString('ko-KR')}원`;
@@ -16,17 +17,18 @@ export default function AdminDashboard() {
   const [pendingSettlements, setPendingSettlements] = useState<Settlement[]>([]);
   const [liveCount, setLiveCount] = useState<number>(0);
   const [totalViewers, setTotalViewers] = useState<number>(0);
+  const [pendingReportCount, setPendingReportCount] = useState<number>(0);
 
   // 매출/후원/가입 통계는 관리자 집계 API(🔧) 연동 전까지 더미 데이터 사용
   const stats = dummyDashboardStats;
-  const pendingReportCount = dummyReports.filter((r) => r.status === 'RECEIVED').length;
 
   const fetchDashboard = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
-      const [settlementRes, liveRes] = await Promise.allSettled([
+      const [settlementRes, liveRes, reportRes] = await Promise.allSettled([
         getPendingSettlements(),
         getLiveList(),
+        getPendingReportCount(),
       ]);
 
       if (settlementRes.status === 'fulfilled') {
@@ -36,6 +38,9 @@ export default function AdminDashboard() {
         const lives = liveRes.value.data ?? [];
         setLiveCount(lives.length);
         setTotalViewers(lives.reduce((sum, l) => sum + (l.viewerCount ?? 0), 0));
+      }
+      if (reportRes.status === 'fulfilled') {
+        setPendingReportCount(reportRes.value);
       }
     } finally {
       setLoading(false);

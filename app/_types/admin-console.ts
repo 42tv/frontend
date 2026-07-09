@@ -216,22 +216,44 @@ export interface BannedWord {
 // ===== 신고 시스템 (§6) =====
 
 export type ReportTargetType = 'BROADCAST' | 'CHAT' | 'PROFILE' | 'POST' | 'ARTICLE';
-export type ReportStatus = 'RECEIVED' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
+export type ReportStatus = 'PENDING' | 'IN_REVIEW' | 'RESOLVED' | 'DISMISSED';
 export type ReportAction = 'DISMISS' | 'WARN' | 'END_BROADCAST' | 'SUSPEND';
+
+/** 신고자/피신고자 요약 — 탈퇴 시 null */
+export interface ReportUserSummary {
+  idx: number;
+  user_id: string;
+  nickname: string;
+}
 
 export interface Report {
   id: number;
+  reporter_idx: number | null;
+  reported_idx: number | null;
   target_type: ReportTargetType;
-  status: ReportStatus;
+  target_ref: string | null;
   reason: string;
-  detail: string;
-  reporter_nickname: string;
-  reported_user_id: string;
-  reported_nickname: string;
-  report_count: number; // 동일 대상 누적 신고 수
-  evidence: string | null;
+  evidence: Record<string, unknown> | null;
+  status: ReportStatus;
+  resolve_action: ReportAction | null;
+  resolve_reason: string | null;
+  resolved_by: number | null;
+  resolved_at: string | null;
   created_at: string;
-  resolved_action: ReportAction | null;
+  updated_at: string;
+  reporter: ReportUserSummary | null;
+  reported: ReportUserSummary | null;
+}
+
+/** GET admin/reports 목록 항목 — 피신고자 누적 신고 수(기각 제외) + 에스컬레이션 플래그 포함 */
+export interface ReportListItem extends Report {
+  report_count: number;
+  is_escalated: boolean;
+}
+
+/** GET admin/reports/:id 상세 — 피신고자 제재 이력 포함 */
+export interface ReportDetail extends Report {
+  reported_sanctions: AdminUserSanction[];
 }
 
 // ===== 결제/코인 (§7) =====
