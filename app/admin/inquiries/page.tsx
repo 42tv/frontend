@@ -1,6 +1,5 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import Image from 'next/image';
 import DataTable, { Column } from '../components-shared/ui/DataTable';
 import StatusBadge, { BadgeTone } from '../components-shared/ui/StatusBadge';
 import AdminModal from '../components-shared/ui/AdminModal';
@@ -13,6 +12,7 @@ import {
 import { extractAdminApiError } from '@/app/_apis/admin/user';
 import type { Inquiry, InquiryStatus, InquiryType } from '@/app/_types/inquiry';
 import { inquiryTypeLabels } from '@/app/_types/inquiry';
+import { getFileNameFromUrl } from '@/app/_lib/utils';
 import { notifyAdminPendingRefresh } from '../_hooks/useAdminPendingCounts';
 
 const statusLabels: Record<InquiryStatus, { label: string; tone: BadgeTone }> = {
@@ -265,22 +265,17 @@ export default function AdminInquiriesPage() {
             {selected.images.length > 0 && (
               <div>
                 <div className="text-muted-foreground mb-1.5">첨부 이미지</div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-1.5">
                   {selected.images.map((image) => (
                     <a
                       key={image.id}
                       href={image.image_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="relative w-20 h-20 rounded-md overflow-hidden border border-border hover:opacity-80 transition-opacity"
+                      className="inline-flex items-center gap-1.5 text-primary hover:underline w-fit"
                     >
-                      <Image
-                        src={image.image_url}
-                        alt={`첨부 이미지 ${image.image_order + 1}`}
-                        fill
-                        unoptimized
-                        className="object-cover"
-                      />
+                      <span aria-hidden>📎</span>
+                      <span className="break-all">{getFileNameFromUrl(image.image_url)}</span>
                     </a>
                   ))}
                 </div>

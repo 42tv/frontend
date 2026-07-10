@@ -5,6 +5,7 @@ import PostDetail from "@/app/my/info/components/tabs/post_tabs_component/post_d
 import SendMessageForm from "@/app/_components/common/SendMessageForm";
 import { useEffect, useState } from "react";
 import { openModal, closeAllModals, openPopupModal } from "@/app/_components/utils/overlay/overlayHelpers";
+import { notifyUnreadPostsRefresh } from "@/app/_hooks/useUnreadPosts";
 
 // Components
 import MessageActionButtons from "./components/MessageActionButtons";
@@ -182,10 +183,11 @@ export default function ReceiveMessage() {
             } : post);
             setPosts(updatedPosts);
             setFilteredPosts(filteredPosts.map(post => post.id === postId ? {
-                ...post, 
+                ...post,
                 readAt: new Date().toISOString(),
                 is_read: true
             } : post));
+            notifyUnreadPostsRefresh(); // 프로필 아이콘 미읽음 뱃지 즉시 갱신
         } catch (error) {
             // 읽음 처리 실패 시에도 모달은 열되, 에러는 로깅만
             console.error('Failed to mark post as read:', error);

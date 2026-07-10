@@ -7,7 +7,6 @@ import { RiHeartLine } from 'react-icons/ri';
 import Link from 'next/link';
 import { useUserStore } from '@/app/_lib/stores';
 import { requestBookmarkList } from '@/app/_apis/user';
-import { getSentDonations } from '@/app/_apis/donation';
 import { CardData } from '@/app/_types';
 
 /** 좌측 메뉴에 노출할 팔로우 BJ 최대 개수 (스크롤 방지) */
@@ -30,31 +29,6 @@ function getAvatarColor(str: string): string {
   return `hsl(${Math.abs(hash) % 360}, 40%, 35%)`;
 }
 
-/** 보낸 후원 내역을 BJ(user_id)별 총액으로 집계 */
-async function fetchDonationTotals(): Promise<Map<string, number>> {
-  const totals = new Map<string, number>();
-  try {
-    const res = await getSentDonations({ limit: 500 });
-    res.donations.forEach((d) => {
-      const key = d.streamer.user_id;
-      totals.set(key, (totals.get(key) ?? 0) + d.coin_amount);
-    });
-  } catch {
-    // 후원 내역 조회 실패 시 후원액 0으로 간주하고 라이브 우선 정렬만 적용
-  }
-  return totals;
-}
-
-/** 라이브 중인 BJ 우선, 그다음 내가 후원한 총액 순으로 정렬 후 상위 N개 반환 */
-function sortFollowBJs(bookmarks: CardData[], donationTotals: Map<string, number>): CardData[] {
-  return [...bookmarks]
-    .sort((a, b) => {
-      if (a.is_live !== b.is_live) return a.is_live ? -1 : 1;
-      return (donationTotals.get(b.user_id) ?? 0) - (donationTotals.get(a.user_id) ?? 0);
-    })
-    .slice(0, MAX_FOLLOW_BJS);
-}
-
 export default function Menu() {
   const nickname = useUserStore((s) => s.nickname);
   const [followBJs, setFollowBJs] = useState<CardData[]>([]);
@@ -66,12 +40,9 @@ export default function Menu() {
     }
     async function fetchFollowBJs(): Promise<void> {
       try {
-        const [bookmarkRes, donationTotals] = await Promise.all([
-          requestBookmarkList(),
-          fetchDonationTotals(),
-        ]);
+        const bookmarkRes = await requestBookmarkList();
         const bookmarks: CardData[] = bookmarkRes.data.lists ?? [];
-        setFollowBJs(sortFollowBJs(bookmarks, donationTotals));
+        setFollowBJs(bookmarks.slice(0, MAX_FOLLOW_BJS));
       } catch {
         setFollowBJs([]);
       }

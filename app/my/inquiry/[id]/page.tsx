@@ -1,9 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import MyLayOut from '@/app/my/info/components/layout';
 import { getInquiry } from '@/app/_apis/inquiry';
+import { notifyUnreadInquiryRefresh } from '@/app/_hooks/useUnreadInquiry';
+import { getFileNameFromUrl } from '@/app/_lib/utils';
 import type { Inquiry } from '@/app/_types/inquiry';
 import { inquiryStatusLabels, inquiryTypeLabels } from '@/app/_types/inquiry';
 
@@ -28,6 +29,9 @@ export default function InquiryDetailPage() {
                 // 답변이 있으면 백엔드가 이 조회 시점에 읽음 처리한다
                 const data = await getInquiry(inquiryId);
                 setInquiry(data);
+                if (data.status === 'ANSWERED') {
+                    notifyUnreadInquiryRefresh(); // 읽음 처리 반영해 뱃지 즉시 갱신
+                }
             } catch (err: unknown) {
                 console.error('Failed to fetch inquiry:', err);
                 const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
@@ -97,22 +101,17 @@ export default function InquiryDetailPage() {
                             <p className="text-sm text-text-primary whitespace-pre-wrap">{inquiry.content}</p>
 
                             {inquiry.images.length > 0 && (
-                                <div className="flex flex-wrap gap-3 mt-4">
+                                <div className="flex flex-col gap-1.5 mt-4">
                                     {inquiry.images.map((image) => (
                                         <a
                                             key={image.id}
                                             href={image.image_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="relative w-24 h-24 rounded-lg overflow-hidden border border-border-primary hover:opacity-80 transition-opacity"
+                                            className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline w-fit"
                                         >
-                                            <Image
-                                                src={image.image_url}
-                                                alt={`첨부 이미지 ${image.image_order + 1}`}
-                                                fill
-                                                unoptimized
-                                                className="object-cover"
-                                            />
+                                            <span aria-hidden>📎</span>
+                                            <span className="break-all">{getFileNameFromUrl(image.image_url)}</span>
                                         </a>
                                     ))}
                                 </div>

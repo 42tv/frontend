@@ -61,14 +61,3 @@ export const getInquiry = async (id: number): Promise<Inquiry> => {
   );
   return response.data.data;
 };
-
-/**
- * 미읽음 답변 개수 조회 (뱃지 표시용)
- * GET /inquiry/me/unread-count
- */
-export const getUnreadInquiryCount = async (): Promise<number> => {
-  const response = await api.get<ApiSuccessResponse<{ count: number }>>(
-    '/api/inquiry/me/unread-count',
-  );
-  return response.data.data?.count ?? 0;
-};

@@ -4,24 +4,25 @@ import { usePathname } from 'next/navigation';
 import { useUserStore, useNotificationStore } from '@/app/_lib/stores';
 
 /**
- * 미읽음 문의 답변 갱신 이벤트.
- * 문의 상세 진입(=읽음 처리) 직후 라우트 변경 없이도 뱃지를 갱신할 때 사용한다.
+ * 미읽음 쪽지 갱신 이벤트.
+ * 쪽지 읽음 처리 직후 라우트 변경 없이도 뱃지를 갱신할 때 사용한다.
  */
-export const UNREAD_INQUIRY_REFRESH_EVENT = 'unread-inquiry-refresh';
+export const UNREAD_POSTS_REFRESH_EVENT = 'unread-posts-refresh';
 
-export function notifyUnreadInquiryRefresh(): void {
-  window.dispatchEvent(new Event(UNREAD_INQUIRY_REFRESH_EVENT));
+export function notifyUnreadPostsRefresh(): void {
+  window.dispatchEvent(new Event(UNREAD_POSTS_REFRESH_EVENT));
 }
 
 /**
- * 미읽음 문의 답변 개수 훅.
+ * 미읽음 쪽지 개수 훅.
  * notificationStore의 뱃지 요약을 구독하며, 라우트 변경 시 TTL 내 중복 호출 없이 재조회하고
- * 읽음 처리 이벤트 시에는 즉시 재조회해 뱃지가 최신 상태를 유지하도록 한다.
+ * 읽음 처리 이벤트 시에는 즉시 재조회해 프로필 아이콘/메뉴 뱃지가 최신 상태를 유지하도록 한다.
  */
-export function useUnreadInquiry(): { count: number; refresh: () => void } {
+export function useUnreadPosts(): { count: number; loading: boolean; refresh: () => void } {
   const is_guest = useUserStore((state) => state.is_guest);
   const pathname = usePathname();
-  const count = useNotificationStore((state) => state.unread_inquiries);
+  const count = useNotificationStore((state) => state.unread_posts);
+  const loading = useNotificationStore((state) => state.loading);
   const storeRefresh = useNotificationStore((state) => state.refresh);
   const reset = useNotificationStore((state) => state.reset);
 
@@ -42,9 +43,9 @@ export function useUnreadInquiry(): { count: number; refresh: () => void } {
   }, [is_guest, pathname, storeRefresh, reset]);
 
   useEffect(() => {
-    window.addEventListener(UNREAD_INQUIRY_REFRESH_EVENT, refresh);
-    return () => window.removeEventListener(UNREAD_INQUIRY_REFRESH_EVENT, refresh);
+    window.addEventListener(UNREAD_POSTS_REFRESH_EVENT, refresh);
+    return () => window.removeEventListener(UNREAD_POSTS_REFRESH_EVENT, refresh);
   }, [refresh]);
 
-  return { count, refresh };
+  return { count, loading, refresh };
 }

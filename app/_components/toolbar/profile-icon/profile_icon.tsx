@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "@/app/_lib/stores"
 import { FiUser, FiSettings, FiMessageSquare } from "react-icons/fi";
 import { useUnreadInquiry } from "@/app/_hooks/useUnreadInquiry";
+import { useUnreadPosts } from "@/app/_hooks/useUnreadPosts";
 import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { logout } from "@/app/_apis/user";
@@ -15,6 +16,7 @@ export default function ProfileIcon() {
     const nickname = useUserStore((state) => state.nickname) || "Guest";
     const coin = useUserStore((state) => state.coin);
     const { count: unreadInquiryCount } = useUnreadInquiry();
+    const { count: unreadPostCount } = useUnreadPosts();
     const [clicked, setClicked] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +70,7 @@ export default function ProfileIcon() {
                 </div>
                 // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
             )}
-            {unreadInquiryCount > 0 && (
+            {unreadInquiryCount + unreadPostCount > 0 && (
                 <span className="absolute top-0 right-0 w-[10px] h-[10px] rounded-full bg-red-500 border-2 border-bg-primary" />
             )}
             <div
@@ -88,7 +90,7 @@ export default function ProfileIcon() {
                             <span>|</span>
                             <div className="flex items-center gap-1">
                                 <PostIcon size={24} />
-                                <span>0개</span>
+                                <span>{unreadPostCount}개</span>
                             </div>
                         </div>
                     </div>
@@ -104,6 +106,12 @@ export default function ProfileIcon() {
                         icon={<GrChannel className="text-text-secondary" />}
                         text="채널"
                         href="/channel"
+                    />
+                    <MenuItem
+                        icon={<PostIcon size={16} className="text-text-secondary" />}
+                        text="쪽지함"
+                        href="/my/post"
+                        badge={unreadPostCount}
                     />
                     <MenuItem
                         icon={<FiMessageSquare className="text-text-secondary" />}
