@@ -6,7 +6,7 @@ import StatusBadge from './components-shared/ui/StatusBadge';
 import { getPendingSettlements } from '@/app/_apis/admin/settlement';
 import { getAdminDashboardSummary } from '@/app/_apis/admin/dashboard';
 import type { AdminDashboardSummary } from '@/app/_apis/admin/dashboard';
-import { getLiveList } from '@/app/_apis/live/streams';
+import { getAdminLiveList } from '@/app/_apis/admin/live';
 import type { Settlement } from '@/app/_types/settlement';
 
 const formatKrw = (value: number): string => `${value.toLocaleString('ko-KR')}원`;
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
       const [summaryRes, settlementRes, liveRes] = await Promise.allSettled([
         getAdminDashboardSummary(),
         getPendingSettlements(),
-        getLiveList(),
+        getAdminLiveList(),
       ]);
 
       if (summaryRes.status === 'fulfilled') {
@@ -35,7 +35,7 @@ export default function AdminDashboard() {
         setPendingSettlements(settlementRes.value.data.settlements);
       }
       if (liveRes.status === 'fulfilled') {
-        const lives = liveRes.value.data ?? [];
+        const lives = liveRes.value;
         setLiveCount(lives.length);
         setTotalViewers(lives.reduce((sum, l) => sum + (l.viewerCount ?? 0), 0));
       }
