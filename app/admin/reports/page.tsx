@@ -56,6 +56,36 @@ const sanctionStatusLabels: Record<SanctionStatus, { label: string; tone: BadgeT
   EXPIRED: { label: '만료', tone: 'gray' },
 };
 
+/** 증거 자료 표시 — thumbnail_url(신고 시점 스냅샷)은 이미지로, 나머지 키는 JSON으로 */
+function EvidenceView({ evidence }: { evidence: Record<string, unknown> }) {
+  const { thumbnail_url: thumbnailUrl, ...rest } = evidence;
+  const hasThumbnail = typeof thumbnailUrl === 'string' && thumbnailUrl.length > 0;
+  const hasRest = Object.keys(rest).length > 0;
+
+  if (!hasThumbnail && !hasRest) {
+    return <div className="text-foreground">없음</div>;
+  }
+
+  return (
+    <div className="mt-1 space-y-2">
+      {hasThumbnail && (
+        // 신고 접수 시점에 백엔드가 보관한 스냅샷 — 외부 스토리지 URL이라 next/image 대신 img 사용
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={thumbnailUrl}
+          alt="신고 당시 방송 화면"
+          className="w-full max-w-sm aspect-video object-cover rounded-md border border-border bg-muted"
+        />
+      )}
+      {hasRest && (
+        <pre className="px-3 py-2 text-xs rounded-md border border-border bg-background text-foreground overflow-x-auto">
+          {JSON.stringify(rest, null, 2)}
+        </pre>
+      )}
+    </div>
+  );
+}
+
 type StatusFilter = 'ALL' | ReportStatus;
 type TargetFilter = 'ALL' | ReportTargetType;
 
@@ -335,9 +365,7 @@ export default function AdminReportsPage() {
             <div>
               <div className="text-muted-foreground">증거 자료</div>
               {current.evidence ? (
-                <pre className="mt-1 px-3 py-2 text-xs rounded-md border border-border bg-background text-foreground overflow-x-auto">
-                  {JSON.stringify(current.evidence, null, 2)}
-                </pre>
+                <EvidenceView evidence={current.evidence} />
               ) : (
                 <div className="text-foreground">없음</div>
               )}
