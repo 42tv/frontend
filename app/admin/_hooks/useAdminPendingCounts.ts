@@ -13,8 +13,6 @@ export function notifyAdminPendingRefresh(): void {
   window.dispatchEvent(new Event(ADMIN_PENDING_REFRESH_EVENT));
 }
 
-const POLL_INTERVAL_MS = 30_000;
-
 export interface AdminPendingCounts {
   pendingReports: number;
   pendingInquiries: number;
@@ -23,7 +21,7 @@ export interface AdminPendingCounts {
 /**
  * 관리자 미처리 건수(신고/문의) 훅.
  * 대시보드 집계 API 한 번으로 신고·문의 대기 건수를 함께 조회하며,
- * 라우트 변경·30초 폴링·갱신 이벤트로 재조회해 사이드바 뱃지를 최신 상태로 유지한다.
+ * 라우트 변경·갱신 이벤트로 재조회해 사이드바 뱃지를 최신 상태로 유지한다.
  */
 export function useAdminPendingCounts(): AdminPendingCounts {
   const pathname = usePathname();
@@ -47,12 +45,8 @@ export function useAdminPendingCounts(): AdminPendingCounts {
   }, [refresh, pathname]);
 
   useEffect(() => {
-    const intervalId = window.setInterval(refresh, POLL_INTERVAL_MS);
     window.addEventListener(ADMIN_PENDING_REFRESH_EVENT, refresh);
-    return () => {
-      window.clearInterval(intervalId);
-      window.removeEventListener(ADMIN_PENDING_REFRESH_EVENT, refresh);
-    };
+    return () => window.removeEventListener(ADMIN_PENDING_REFRESH_EVENT, refresh);
   }, [refresh]);
 
   return { pendingReports, pendingInquiries };

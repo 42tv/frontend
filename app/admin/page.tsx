@@ -3,11 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatCard from './components-shared/ui/StatCard';
 import StatusBadge from './components-shared/ui/StatusBadge';
-import DummyNotice from './components-shared/ui/DummyNotice';
 import { getPendingSettlements } from '@/app/_apis/admin/settlement';
-import { getPendingReportCount } from '@/app/_apis/admin/report';
+import { getAdminDashboardSummary } from '@/app/_apis/admin/dashboard';
+import type { AdminDashboardSummary } from '@/app/_apis/admin/dashboard';
 import { getLiveList } from '@/app/_apis/live/streams';
-import { dummyDashboardStats } from './_data/dummy';
 import type { Settlement } from '@/app/_types/settlement';
 
 const formatKrw = (value: number): string => `${value.toLocaleString('ko-KR')}원`;
@@ -17,20 +16,21 @@ export default function AdminDashboard() {
   const [pendingSettlements, setPendingSettlements] = useState<Settlement[]>([]);
   const [liveCount, setLiveCount] = useState<number>(0);
   const [totalViewers, setTotalViewers] = useState<number>(0);
-  const [pendingReportCount, setPendingReportCount] = useState<number>(0);
-
-  // 매출/후원/가입 통계는 관리자 집계 API(🔧) 연동 전까지 더미 데이터 사용
-  const stats = dummyDashboardStats;
+  const [summary, setSummary] = useState<AdminDashboardSummary | null>(null);
 
   const fetchDashboard = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
-      const [settlementRes, liveRes, reportRes] = await Promise.allSettled([
+      // 매출/후원/가입·미처리 신고는 집계 API 하나로, 라이브·정산 목록은 실시간/전체 목록이 필요해 분리 조회
+      const [summaryRes, settlementRes, liveRes] = await Promise.allSettled([
+        getAdminDashboardSummary(),
         getPendingSettlements(),
         getLiveList(),
-        getPendingReportCount(),
       ]);
 
+      if (summaryRes.status === 'fulfilled') {
+        setSummary(summaryRes.value);
+      }
       if (settlementRes.status === 'fulfilled') {
         setPendingSettlements(settlementRes.value.data.settlements);
       }
@@ -38,9 +38,6 @@ export default function AdminDashboard() {
         const lives = liveRes.value.data ?? [];
         setLiveCount(lives.length);
         setTotalViewers(lives.reduce((sum, l) => sum + (l.viewerCount ?? 0), 0));
-      }
-      if (reportRes.status === 'fulfilled') {
-        setPendingReportCount(reportRes.value);
       }
     } finally {
       setLoading(false);
@@ -65,9 +62,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
 
-      <DummyNotice api="매출/후원/가입 집계 관리자 API (라이브 현황·정산 대기는 실제 데이터)" />
-
-      {/* 실시간 방송 현황 (실 데이터) */}
+      {/* 실시간 방송 현황 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="현재 라이브" value={liveCount.toLocaleString()} color="red" description="방송 중인 채널" />
         <StatCard title="총 동시 시청자" value={totalViewers.toLocaleString()} color="blue" description="전체 라이브 합산" />
@@ -77,7 +72,7 @@ export default function AdminDashboard() {
           color="yellow"
           description={formatKrw(pendingSettlements.reduce((sum, s) => sum + (s.total_value ?? 0), 0))}
         />
-        <StatCard title="미처리 신고" value={`${pendingReportCount}건`} color="purple" description="신고 센터 확인 필요" />
+        <StatCard title="미처리 신고" value={`${summary?.reports.pending ?? 0}건`} color="purple" description="신고 센터 확인 필요" />
       </div>
 
       {/* 매출/후원 요약 (더미) */}
@@ -90,20 +85,20 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">오늘</p>
-              <p className="text-xl font-bold text-foreground">{formatKrw(stats.todaySales)}</p>
+              <p className="text-xl font-bold text-foreground">{formatKrw(summary?.sales.today ?? 0)}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">이번 주</p>
-              <p className="text-xl font-bold text-foreground">{formatKrw(stats.weekSales)}</p>
+              <p className="text-xl font-bold text-foreground">{formatKrw(summary?.sales.week ?? 0)}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">이번 달</p>
-              <p className="text-xl font-bold text-foreground">{formatKrw(stats.monthSales)}</p>
+              <p className="text-xl font-bold text-foreground">{formatKrw(summary?.sales.month ?? 0)}</p>
             </div>
           </div>
           <div className="pt-3 border-t border-border flex justify-between text-sm">
             <span className="text-muted-foreground">오늘 환불</span>
-            <span className="text-destructive font-medium">-{formatKrw(stats.todayRefund)}</span>
+            <span className="text-destructive font-medium">-{formatKrw(summary?.sales.todayRefund ?? 0)}</span>
           </div>
         </div>
 
@@ -115,19 +110,19 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">오늘 후원 코인</p>
-              <p className="text-xl font-bold text-foreground">{stats.todayDonationCoins.toLocaleString()} 코인</p>
+              <p className="text-xl font-bold text-foreground">{(summary?.donations.todayCoins ?? 0).toLocaleString()} 코인</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">이번 주 후원 코인</p>
-              <p className="text-xl font-bold text-foreground">{stats.weekDonationCoins.toLocaleString()} 코인</p>
+              <p className="text-xl font-bold text-foreground">{(summary?.donations.weekCoins ?? 0).toLocaleString()} 코인</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">오늘 신규 가입</p>
-              <p className="text-xl font-bold text-green-600">+{stats.todaySignups}명</p>
+              <p className="text-xl font-bold text-green-600">+{summary?.users.todaySignups ?? 0}명</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">오늘 탈퇴</p>
-              <p className="text-xl font-bold text-destructive">-{stats.todayWithdrawals}명</p>
+              <p className="text-xl font-bold text-destructive">-{summary?.users.todayWithdrawals ?? 0}명</p>
             </div>
           </div>
         </div>

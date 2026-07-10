@@ -126,33 +126,3 @@ export const dummyInfraStatus: InfraStatusItem[] = [
   { name: '본인인증 연동', description: 'Identity Verification', status: 'UNKNOWN', detail: '헬스체크 API 미연동' },
   { name: 'Graylog', description: '로그 수집', status: 'HEALTHY', detail: '대시보드 링크로 이동' },
 ];
-
-// ===== 대시보드 통계 =====
-
-export interface DashboardStats {
-  liveCount: number;
-  totalViewers: number;
-  todaySales: number;
-  weekSales: number;
-  monthSales: number;
-  todayRefund: number;
-  todayDonationCoins: number;
-  weekDonationCoins: number;
-  todaySignups: number;
-  todayWithdrawals: number;
-  pendingReports: number;
-}
-
-export const dummyDashboardStats: DashboardStats = {
-  liveCount: 5,
-  totalViewers: 4572,
-  todaySales: 1240000,
-  weekSales: 8620000,
-  monthSales: 32400000,
-  todayRefund: 55000,
-  todayDonationCoins: 182000,
-  weekDonationCoins: 1240000,
-  todaySignups: 42,
-  todayWithdrawals: 3,
-  pendingReports: 2,
-};
