@@ -1,27 +1,27 @@
 'use client';
 import { useState } from 'react';
 import TabNav from '../components-shared/ui/TabNav';
-import PaymentsTab from './components/PaymentsTab';
-import CoinsTab from './components/CoinsTab';
-import DonationsTab from './components/DonationsTab';
+import PaymentStatsTab from './components/PaymentStatsTab';
+import TopupsTab from './components/TopupsTab';
+import SettlementTab from '../settlement/components/SettlementTab';
 
-type PaymentsPageTab = 'payments' | 'coins' | 'donations';
+type PaymentsPageTab = 'stats' | 'topups' | 'settlements';
 
 const tabs = [
-  { key: 'payments', label: '결제 내역' },
-  { key: 'coins', label: '코인 관리' },
-  { key: 'donations', label: '후원 내역' },
+  { key: 'stats', label: '결제 통계' },
+  { key: 'topups', label: '충전 내역' },
+  { key: 'settlements', label: '정산 신청' },
 ] as const;
 
 export default function AdminPaymentsPage() {
-  const [activeTab, setActiveTab] = useState<PaymentsPageTab>('payments');
+  const [activeTab, setActiveTab] = useState<PaymentsPageTab>('stats');
 
   return (
     <div className="space-y-6">
       <TabNav tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-      {activeTab === 'payments' && <PaymentsTab />}
-      {activeTab === 'coins' && <CoinsTab />}
-      {activeTab === 'donations' && <DonationsTab />}
+      {activeTab === 'stats' && <PaymentStatsTab />}
+      {activeTab === 'topups' && <TopupsTab />}
+      {activeTab === 'settlements' && <SettlementTab />}
     </div>
   );
 }
