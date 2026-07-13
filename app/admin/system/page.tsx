@@ -27,7 +27,7 @@ export default function AdminSystemPage() {
     setSchedulerResult(null);
     try {
       const result = await refreshPayoutAvailability();
-      setSchedulerResult(`실행 완료 — 대상 ${result.total}건 중 가용 전환 ${result.matured}건, 차단 ${result.blocked}건`);
+      setSchedulerResult(`실행 완료 — 대상 ${result.total}건 중 가용 전환 ${result.available}건, 차단 ${result.blocked}건`);
     } catch {
       setSchedulerResult('실행에 실패했습니다. 백엔드 연결을 확인하세요.');
     } finally {

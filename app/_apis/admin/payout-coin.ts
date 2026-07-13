@@ -3,7 +3,7 @@ import type { PayoutCoin, PayoutStatus, PayoutCoinsResponse } from '../../_types
 
 export interface MatureResult {
   total: number;
-  matured: number;
+  available: number;
   blocked: number;
 }
 
