@@ -6,7 +6,6 @@ import StatusBadge from './components-shared/ui/StatusBadge';
 import { getPendingSettlements } from '@/app/_apis/admin/settlement';
 import { getAdminDashboardSummary } from '@/app/_apis/admin/dashboard';
 import type { AdminDashboardSummary } from '@/app/_apis/admin/dashboard';
-import { getAdminLiveList } from '@/app/_apis/admin/live';
 import type { Settlement } from '@/app/_types/settlement';
 
 const formatKrw = (value: number): string => `${value.toLocaleString('ko-KR')}원`;
@@ -14,18 +13,15 @@ const formatKrw = (value: number): string => `${value.toLocaleString('ko-KR')}�
 export default function AdminDashboard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [pendingSettlements, setPendingSettlements] = useState<Settlement[]>([]);
-  const [liveCount, setLiveCount] = useState<number>(0);
-  const [totalViewers, setTotalViewers] = useState<number>(0);
   const [summary, setSummary] = useState<AdminDashboardSummary | null>(null);
 
   const fetchDashboard = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
-      // 매출/후원/가입·미처리 신고는 집계 API 하나로, 라이브·정산 목록은 실시간/전체 목록이 필요해 분리 조회
-      const [summaryRes, settlementRes, liveRes] = await Promise.allSettled([
+      // 라이브 수/시청자 합산은 summary.live로 집계 API에 포함, 정산은 목록 렌더링이 필요해 분리 조회
+      const [summaryRes, settlementRes] = await Promise.allSettled([
         getAdminDashboardSummary(),
         getPendingSettlements(),
-        getAdminLiveList(),
       ]);
 
       if (summaryRes.status === 'fulfilled') {
@@ -33,11 +29,6 @@ export default function AdminDashboard() {
       }
       if (settlementRes.status === 'fulfilled') {
         setPendingSettlements(settlementRes.value.data.settlements);
-      }
-      if (liveRes.status === 'fulfilled') {
-        const lives = liveRes.value;
-        setLiveCount(lives.length);
-        setTotalViewers(lives.reduce((sum, l) => sum + (l.viewerCount ?? 0), 0));
       }
     } finally {
       setLoading(false);
@@ -64,8 +55,8 @@ export default function AdminDashboard() {
 
       {/* 실시간 방송 현황 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="현재 라이브" value={liveCount.toLocaleString()} color="red" description="방송 중인 채널" />
-        <StatCard title="총 동시 시청자" value={totalViewers.toLocaleString()} color="blue" description="전체 라이브 합산" />
+        <StatCard title="현재 라이브" value={(summary?.live.count ?? 0).toLocaleString()} color="red" description="방송 중인 채널" />
+        <StatCard title="총 동시 시청자" value={(summary?.live.totalViewers ?? 0).toLocaleString()} color="blue" description="전체 라이브 합산" />
         <StatCard
           title="정산 대기"
           value={`${pendingSettlements.length}건`}
