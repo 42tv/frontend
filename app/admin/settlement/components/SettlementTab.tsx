@@ -9,6 +9,7 @@ import {
   paySettlement,
   type AdminSettlementQuery,
 } from '@/app/_apis/admin/settlement';
+import { forcePayoutAvailability } from '@/app/_apis/admin/payout-coin';
 import SettlementDetailModal from './SettlementDetailModal';
 import ConfirmDialog from './ConfirmDialog';
 
@@ -195,6 +196,11 @@ export default function SettlementTab() {
   const [payingId, setPayingId] = useState<string | null>(null);
   const [payConfirm, setPayConfirm] = useState<Settlement | null>(null);
 
+  // 테스트용: 정산 대기(WAITING) 코인 강제 전환
+  const [forceConfirm, setForceConfirm] = useState(false);
+  const [forcing, setForcing] = useState(false);
+  const [forceResult, setForceResult] = useState('');
+
   const loadPending = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -239,6 +245,23 @@ export default function SettlementTab() {
     else loadAll();
   };
 
+  const handleForceAvailability = async () => {
+    setForceConfirm(false);
+    setForcing(true);
+    setError('');
+    setForceResult('');
+    try {
+      const result = await forcePayoutAvailability();
+      setForceResult(
+        `대기 코인 ${result.total}건 처리 — 정산 가능 ${result.available}건, 차단 ${result.blocked}건`,
+      );
+    } catch {
+      setError('정산 대기 코인 전환 중 오류가 발생했습니다.');
+    } finally {
+      setForcing(false);
+    }
+  };
+
   const handlePay = async (s: Settlement) => {
     setPayConfirm(null);
     setPayingId(s.id);
@@ -254,29 +277,43 @@ export default function SettlementTab() {
 
   return (
     <div className="space-y-5">
-      {/* 서브 탭 */}
-      <div className="flex gap-1 bg-muted rounded-lg p-1 w-fit">
-        {([
-          { key: 'pending', label: '승인 대기' },
-          { key: 'all', label: '전체 목록' },
-        ] as const).map((t) => (
+      {/* 서브 탭 + 테스트용 대기 코인 전환 */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex gap-1 bg-muted rounded-lg p-1 w-fit">
+          {([
+            { key: 'pending', label: '승인 대기' },
+            { key: 'all', label: '전체 목록' },
+          ] as const).map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setSubTab(t.key)}
+              className={`px-5 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                subTab === t.key
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t.label}
+              {t.key === 'pending' && total > 0 && subTab === 'pending' && (
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                  {total}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          {forceResult && (
+            <span className="text-xs text-green-700 dark:text-green-400">{forceResult}</span>
+          )}
           <button
-            key={t.key}
-            onClick={() => setSubTab(t.key)}
-            className={`px-5 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
-              subTab === t.key
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            onClick={() => setForceConfirm(true)}
+            disabled={forcing}
+            className="px-4 py-2 rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs font-semibold hover:bg-amber-100 dark:hover:bg-amber-900/30 disabled:opacity-50 transition-colors"
           >
-            {t.label}
-            {t.key === 'pending' && total > 0 && subTab === 'pending' && (
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
-                {total}
-              </span>
-            )}
+            {forcing ? '전환 중...' : '대기 코인 정산 가능 전환 (테스트)'}
           </button>
-        ))}
+        </div>
       </div>
 
       {/* 전체 탭 필터 */}
@@ -430,6 +467,17 @@ export default function SettlementTab() {
           settlement={selectedSettlement}
           onClose={() => setSelectedSettlement(null)}
           onUpdated={handleUpdated}
+        />
+      )}
+
+      {forceConfirm && (
+        <ConfirmDialog
+          title="대기 코인 정산 가능 전환"
+          message={'정산 가능일과 무관하게 모든 정산 대기(WAITING) 코인을 정산 가능(AVAILABLE) 상태로 전환합니다.\n테스트 용도로만 사용하세요. 계속하시겠습니까?'}
+          confirmText="전환"
+          loading={forcing}
+          onConfirm={handleForceAvailability}
+          onCancel={() => setForceConfirm(false)}
         />
       )}
 
