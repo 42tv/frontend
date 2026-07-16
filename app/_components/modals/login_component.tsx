@@ -23,11 +23,13 @@ export default function LoginComponent() {
         signupPassword,
         confirmPassword,
         nickname,
+        agreements,
         setSignupUserId,
         setSignupPassword,
         setConfirmPassword,
         setNickname,
-        
+        setAgreements,
+
         // Actions
         handleLogin,
         handleSignUp
@@ -72,10 +74,12 @@ export default function LoginComponent() {
                     signupPassword={signupPassword}
                     confirmPassword={confirmPassword}
                     nickname={nickname}
+                    agreements={agreements}
                     onSignupUserIdChange={setSignupUserId}
                     onSignupPasswordChange={setSignupPassword}
                     onConfirmPasswordChange={setConfirmPassword}
                     onNicknameChange={setNickname}
+                    onAgreementsChange={setAgreements}
                     onSignup={handleSignUpWithErrorHandling}
                 />
             )}

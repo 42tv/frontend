@@ -1,15 +1,18 @@
 import React from 'react';
 import TermsAgreement from './TermsAgreement';
+import { SignUpAgreements } from '@/app/_apis/user';
 
 interface SignupFormProps {
     signupUserId: string;
     signupPassword: string;
     confirmPassword: string;
     nickname: string;
+    agreements: SignUpAgreements;
     onSignupUserIdChange: (value: string) => void;
     onSignupPasswordChange: (value: string) => void;
     onConfirmPasswordChange: (value: string) => void;
     onNicknameChange: (value: string) => void;
+    onAgreementsChange: (next: SignUpAgreements) => void;
     onSignup: () => void;
 }
 
@@ -18,10 +21,12 @@ const SignupForm: React.FC<SignupFormProps> = ({
     signupPassword,
     confirmPassword,
     nickname,
+    agreements,
     onSignupUserIdChange,
     onSignupPasswordChange,
     onConfirmPasswordChange,
     onNicknameChange,
+    onAgreementsChange,
     onSignup
 }) => {
     return (
@@ -78,7 +83,7 @@ const SignupForm: React.FC<SignupFormProps> = ({
                 />
             </div>
 
-            <TermsAgreement />
+            <TermsAgreement agreements={agreements} onChange={onAgreementsChange} />
                 
             <button
                 type="submit"

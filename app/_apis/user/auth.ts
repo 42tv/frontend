@@ -3,17 +3,33 @@ import api from "../auto_refresh_axios";
 import { DeleteAccountRequest } from "@/app/_types/user";
 
 /**
+ * 회원가입 시 필수 동의 항목 (셋 다 true여야 서버가 가입을 허용)
+ */
+export interface SignUpAgreements {
+  termsAgreed: boolean;
+  privacyAgreed: boolean;
+  isOver14: boolean;
+}
+
+/**
  * 회원가입 함수
  * @param id
  * @param password
  * @param nickname
+ * @param agreements 필수 약관 동의 여부 (이용약관·개인정보·만14세)
  * @returns
  */
-export async function singUp(id: string, password: string, nickname: string) {
+export async function singUp(
+  id: string,
+  password: string,
+  nickname: string,
+  agreements: SignUpAgreements
+) {
   const requestBody = {
     id: id,
     password: password,
     nickname: nickname,
+    ...agreements,
   };
   const response = await axios.post("/api/user", requestBody, {
     withCredentials: true,
@@ -93,6 +109,7 @@ interface UserInfo {
   profile_img: string;
   nickname: string;
   identity_verified: boolean;
+  adult_verified: boolean;
   coin: CoinInfo;
 }
 
