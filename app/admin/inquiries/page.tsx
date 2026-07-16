@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import DataTable, { Column } from '../components-shared/ui/DataTable';
 import StatusBadge, { BadgeTone } from '../components-shared/ui/StatusBadge';
 import AdminModal from '../components-shared/ui/AdminModal';
+import ImageLightbox from '../components-shared/ui/ImageLightbox';
 import PageHeader from '../components-shared/ui/PageHeader';
 import {
   answerInquiry,
@@ -36,6 +37,8 @@ export default function AdminInquiriesPage() {
   const [error, setError] = useState<string>('');
 
   const [selected, setSelected] = useState<Inquiry | null>(null);
+  // 첨부 이미지 확대 보기 — 상세 모달 위에 라이트박스로 표시 (null이면 닫힘)
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
   const [answerText, setAnswerText] = useState<string>('');
   const [answerSubmitting, setAnswerSubmitting] = useState<boolean>(false);
@@ -65,8 +68,14 @@ export default function AdminInquiriesPage() {
     load();
   }, [load]);
 
+  const closeDetail = (): void => {
+    setSelected(null);
+    setPreviewIndex(null);
+  };
+
   const openDetail = async (inquiry: Inquiry): Promise<void> => {
     setSelected(inquiry);
+    setPreviewIndex(null);
     setAnswerText(inquiry.answer ?? '');
     setAnswerError('');
     setDetailLoading(true);
@@ -88,7 +97,7 @@ export default function AdminInquiriesPage() {
     setAnswerError('');
     try {
       await answerInquiry(selected.id, answerText.trim());
-      setSelected(null);
+      closeDetail();
       await load();
       notifyAdminPendingRefresh(); // 사이드바 미처리 뱃지 즉시 갱신
     } catch (err: unknown) {
@@ -212,7 +221,7 @@ export default function AdminInquiriesPage() {
       <AdminModal
         open={selected !== null}
         title={`문의 상세 #${selected?.id ?? ''}`}
-        onClose={() => setSelected(null)}
+        onClose={closeDetail}
         footer={
           selected ? (
             <button
@@ -266,17 +275,16 @@ export default function AdminInquiriesPage() {
               <div>
                 <div className="text-muted-foreground mb-1.5">첨부 이미지</div>
                 <div className="flex flex-col gap-1.5">
-                  {selected.images.map((image) => (
-                    <a
+                  {selected.images.map((image, imageIndex) => (
+                    <button
                       key={image.id}
-                      href={image.image_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      type="button"
+                      onClick={() => setPreviewIndex(imageIndex)}
                       className="inline-flex items-center gap-1.5 text-primary hover:underline w-fit"
                     >
                       <span aria-hidden>📎</span>
-                      <span className="break-all">{getFileNameFromUrl(image.image_url)}</span>
-                    </a>
+                      <span className="break-all text-left">{getFileNameFromUrl(image.image_url)}</span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -306,6 +314,19 @@ export default function AdminInquiriesPage() {
           </div>
         )}
       </AdminModal>
+
+      {/* 첨부 이미지 확대 보기 */}
+      {selected && previewIndex !== null && (
+        <ImageLightbox
+          images={selected.images.map((image) => ({
+            url: image.image_url,
+            name: getFileNameFromUrl(image.image_url),
+          }))}
+          index={previewIndex}
+          onClose={() => setPreviewIndex(null)}
+          onNavigate={setPreviewIndex}
+        />
+      )}
     </div>
   );
 }
