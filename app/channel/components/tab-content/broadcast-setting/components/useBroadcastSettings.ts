@@ -3,9 +3,12 @@ import axios from "axios";
 import { getBroadcastSetting, updateBroadcastSetting } from "@/app/_apis/user";
 import { reissueNcpStreamKey } from "@/app/_apis/ncp";
 import { getApiErrorMessage } from "@/app/_lib/api";
+import { useUserStore } from "@/app/_lib/stores";
 import { BroadcastCategory } from "@/app/_types/user";
 
 export const useBroadcastSettings = () => {
+    // 성인인증(연령 확인) 완료 여부 — 미완료면 성인방송 설정 불가 (서버도 403으로 거부)
+    const adultVerified = useUserStore((state) => state.adult_verified);
     const [streamKey, setStreamKey] = useState("");
     const [serverUrl, setServerUrl] = useState("");
     const [title, setTitle] = useState("test");
@@ -50,6 +53,14 @@ export const useBroadcastSettings = () => {
         }
         fetchBroadcastSetting();
     }, []);
+
+    // ADULT 카테고리는 성인방송 설정과 함께만 사용 가능 — 선택 시 isAdult를 강제로 켠다
+    const handleCategoryChange = (value: BroadcastCategory) => {
+        setCategory(value);
+        if (value === 'ADULT') {
+            setIsAdult(true);
+        }
+    };
 
     const toggleStreamKeyVisibility = () => {
         setShowStreamKey(!showStreamKey);
@@ -96,6 +107,12 @@ export const useBroadcastSettings = () => {
         if (title.length < 1 || title.length > 30) {
             return { error: "방송 제목은 1자 이상 30자 이하로 입력해주세요" };
         }
+        if (isAdult && !adultVerified) {
+            return { error: "성인 방송 설정은 성인인증 완료 후 가능합니다." };
+        }
+        if (category === 'ADULT' && !isAdult) {
+            return { error: "ADULT 카테고리는 성인 방송 설정과 함께만 사용할 수 있습니다." };
+        }
         if (isPrivate && (password.length < 4 || password.length > 8)) {
             return { error: "비밀번호는 4~8글자로 설정해주세요" };
         }
@@ -122,7 +139,8 @@ export const useBroadcastSettings = () => {
             return { success: true };
         } catch (e) {
             console.error(e);
-            return { error: "유효하지 않은 설정입니다" };
+            // 403(성인인증 미완료)/400(ADULT 카테고리 제약) 등 서버 메시지를 그대로 노출
+            return { error: getApiErrorMessage(e) };
         }
     };
 
@@ -134,6 +152,7 @@ export const useBroadcastSettings = () => {
         isLoading,
         isSanctioned,
         sanctionMessage,
+        adultVerified,
         isAdult,
         isPrivate,
         password,
@@ -148,7 +167,7 @@ export const useBroadcastSettings = () => {
         setPassword,
         setIsFanClub,
         setFanLevel,
-        setCategory,
+        setCategory: handleCategoryChange,
         toggleStreamKeyVisibility,
         copyToClipboard,
         reissueStreamKey,
