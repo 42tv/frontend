@@ -11,6 +11,8 @@ export interface AdminDashboardSummary {
   users: { todaySignups: number; todayWithdrawals: number };
   reports: { pending: number };
   inquiries: { pending: number };
+  /** 승인 대기 중인 코인 환불 요청 건수 */
+  refundRequests: { pending: number };
   /** 현재 라이브 집계 — 비공개 방송 포함, /admin/live 목록과 동일 소스 */
   live: { count: number; totalViewers: number };
 }
@@ -33,6 +35,8 @@ export const getAdminDashboardSummary = async (): Promise<AdminDashboardSummary>
 export interface AdminPendingCounts {
   reports: { pending: number };
   inquiries: { pending: number };
+  /** 승인 대기 중인 코인 환불 요청 건수 */
+  refundRequests: { pending: number };
 }
 
 /**

@@ -5,6 +5,10 @@ import type {
   AdminCoinTopupsResponse,
   AdminCoinTopupRefundResult,
   AdminPaymentStats,
+  AdminRefundRequestListQuery,
+  AdminRefundRequestsResponse,
+  AdminRefundApproveResult,
+  AdminRefundRejectResult,
 } from '@/app/_types/coin-topup';
 
 export interface AdminCoinTopupActionResponse {
@@ -55,6 +59,49 @@ export const refundCoinTopup = async (
 ): Promise<ApiSuccessResponse<AdminCoinTopupRefundResult>> => {
   const response = await api.post<ApiSuccessResponse<AdminCoinTopupRefundResult>>(
     `/api/admin/coin-topup/${topupId}/refund`,
+    { reason },
+  );
+  return response.data;
+};
+
+/**
+ * 환불 요청 목록 — requested_at 오름차순(오래 대기한 요청 우선, 접수 후 3영업일 내 환급 의무)
+ * GET /admin/coin-topup/refund-requests
+ */
+export const getAdminRefundRequests = async (
+  params?: AdminRefundRequestListQuery,
+): Promise<AdminRefundRequestsResponse> => {
+  const response = await api.get<AdminRefundRequestsResponse>(
+    '/api/admin/coin-topup/refund-requests',
+    { params },
+  );
+  return response.data;
+};
+
+/**
+ * 환불 요청 승인 — 실제 환불(Bootpay 취소) 실행.
+ * PG 취소 실패 시 400이 반환되며 요청은 PENDING으로 유지되어 재시도할 수 있다.
+ * POST /admin/coin-topup/refund-requests/:request_id/approve
+ */
+export const approveRefundRequest = async (
+  requestId: string,
+): Promise<ApiSuccessResponse<AdminRefundApproveResult>> => {
+  const response = await api.post<ApiSuccessResponse<AdminRefundApproveResult>>(
+    `/api/admin/coin-topup/refund-requests/${requestId}/approve`,
+  );
+  return response.data;
+};
+
+/**
+ * 환불 요청 거절 — 사유 필수, 충전 건은 다시 사용 가능 상태로 복원되고 사유가 사용자에게 노출된다.
+ * POST /admin/coin-topup/refund-requests/:request_id/reject
+ */
+export const rejectRefundRequest = async (
+  requestId: string,
+  reason: string,
+): Promise<ApiSuccessResponse<AdminRefundRejectResult>> => {
+  const response = await api.post<ApiSuccessResponse<AdminRefundRejectResult>>(
+    `/api/admin/coin-topup/refund-requests/${requestId}/reject`,
     { reason },
   );
   return response.data;

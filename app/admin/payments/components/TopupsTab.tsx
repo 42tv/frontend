@@ -13,12 +13,21 @@ const statusLabels: Record<TopupStatus, { label: string; tone: BadgeTone }> = {
   COMPLETED: { label: '완료', tone: 'green' },
   FAILED: { label: '실패', tone: 'red' },
   REFUNDED: { label: '환불됨', tone: 'yellow' },
+  REFUND_REQUESTED: { label: '환불 처리 중', tone: 'blue' },
   FROZEN: { label: '동결', tone: 'red' },
 };
 
 type StatusFilter = 'ALL' | TopupStatus;
 
-const statusFilters: readonly StatusFilter[] = ['ALL', 'COMPLETED', 'PENDING', 'FAILED', 'REFUNDED', 'FROZEN'];
+const statusFilters: readonly StatusFilter[] = [
+  'ALL',
+  'COMPLETED',
+  'PENDING',
+  'REFUND_REQUESTED',
+  'FAILED',
+  'REFUNDED',
+  'FROZEN',
+];
 
 /** 잔여 코인 기준 환불 예상 금액 (코인 단가 × 잔여 코인) */
 function estimateRefundAmount(topup: AdminCoinTopup): number {

@@ -22,7 +22,7 @@ interface NavItem {
   label: string;
   icon: IconType;
   match?: string[]; // href 외에 활성 상태로 취급할 경로 prefix
-  badgeKey?: 'reports' | 'inquiries'; // 미처리 건수 뱃지 매핑 키
+  badgeKey?: 'reports' | 'inquiries' | 'refundRequests'; // 미처리 건수 뱃지 매핑 키
 }
 
 // §15 프론트엔드 메뉴 구조 기준 (관리자 기능 정의서) — 하위 메뉴 없이 상위 메뉴만 노출
@@ -37,6 +37,7 @@ const navItems: NavItem[] = [
     label: '결제/정산',
     icon: FiCreditCard,
     match: ['/admin/settlement'],
+    badgeKey: 'refundRequests',
   },
   { href: '/admin/products', label: '상품 관리', icon: FiShoppingBag },
   { href: '/admin/content', label: '콘텐츠', icon: FiFileText, match: ['/admin/policy'] },
@@ -46,10 +47,11 @@ const navItems: NavItem[] = [
 
 export default function AdminNav() {
   const pathname = usePathname();
-  const { pendingReports, pendingInquiries } = useAdminPendingCounts();
+  const { pendingReports, pendingInquiries, pendingRefundRequests } = useAdminPendingCounts();
   const badgeCounts: Record<NonNullable<NavItem['badgeKey']>, number> = {
     reports: pendingReports,
     inquiries: pendingInquiries,
+    refundRequests: pendingRefundRequests,
   };
 
   const isActivePath = (href: string): boolean =>

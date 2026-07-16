@@ -87,9 +87,17 @@ export default function AdminDashboard() {
               <p className="text-xl font-bold text-foreground">{formatKrw(summary?.sales.month ?? 0)}</p>
             </div>
           </div>
-          <div className="pt-3 border-t border-border flex justify-between text-sm">
-            <span className="text-muted-foreground">오늘 환불</span>
-            <span className="text-destructive font-medium">-{formatKrw(summary?.sales.todayRefund ?? 0)}</span>
+          <div className="pt-3 border-t border-border space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">오늘 환불</span>
+              <span className="text-destructive font-medium">-{formatKrw(summary?.sales.todayRefund ?? 0)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">환불 요청 대기</span>
+              <Link href="/admin/payments" className="font-medium text-primary hover:underline">
+                {summary?.refundRequests?.pending ?? 0}건
+              </Link>
+            </div>
           </div>
         </div>
 
