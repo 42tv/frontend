@@ -55,15 +55,14 @@ export default function AdminDashboard() {
 
       {/* 실시간 방송 현황 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="현재 라이브" value={(summary?.live.count ?? 0).toLocaleString()} color="red" description="방송 중인 채널" />
-        <StatCard title="총 동시 시청자" value={(summary?.live.totalViewers ?? 0).toLocaleString()} color="blue" description="전체 라이브 합산" />
+        <StatCard title="현재 라이브" value={(summary?.live.count ?? 0).toLocaleString()} description="방송 중인 채널" />
+        <StatCard title="총 동시 시청자" value={(summary?.live.totalViewers ?? 0).toLocaleString()} description="전체 라이브 합산" />
         <StatCard
           title="정산 대기"
           value={`${pendingSettlements.length}건`}
-          color="yellow"
           description={formatKrw(pendingSettlements.reduce((sum, s) => sum + (s.total_value ?? 0), 0))}
         />
-        <StatCard title="미처리 신고" value={`${summary?.reports.pending ?? 0}건`} color="purple" description="신고 센터 확인 필요" />
+        <StatCard title="미처리 신고" value={`${summary?.reports.pending ?? 0}건`} description="신고 센터 확인 필요" />
       </div>
 
       {/* 매출/후원 요약 (더미) */}

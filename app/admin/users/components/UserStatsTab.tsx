@@ -54,10 +54,10 @@ export default function UserStatsTab() {
 
       {/* 회원 핵심 지표 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="전체 회원" value="15,832" color="blue" description="탈퇴 제외 누적" />
-        <StatCard title="오늘 신규 가입" value="42" color="green" description="탈퇴 3명 · 순증 +39" />
-        <StatCard title="본인인증 완료율" value="63%" color="purple" description="가입 대비 CI 인증 완료" />
-        <StatCard title="활성 제재" value={`${activeSanctionTotal}건`} color="red" description="계정 정지 · 방송 정지 · 경고" />
+        <StatCard title="전체 회원" value="15,832" description="탈퇴 제외 누적" />
+        <StatCard title="오늘 신규 가입" value="42" description="탈퇴 3명 · 순증 +39" />
+        <StatCard title="본인인증 완료율" value="63%" description="가입 대비 CI 인증 완료" />
+        <StatCard title="활성 제재" value={`${activeSanctionTotal}건`} description="계정 정지 · 방송 정지 · 경고" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

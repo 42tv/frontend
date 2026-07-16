@@ -37,10 +37,10 @@ export default function AdminStatisticsPage() {
 
       {/* 유저 핵심 지표 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="DAU" value="1,842" color="blue" description="일간 활성 유저" />
-        <StatCard title="MAU" value="12,304" color="purple" description="월간 활성 유저" />
-        <StatCard title="이번 달 순매출" value="3,240만원" color="green" description="결제 - 환불" />
-        <StatCard title="본인인증 전환율" value="63%" color="yellow" description="가입 대비 인증 완료" />
+        <StatCard title="DAU" value="1,842" description="일간 활성 유저" />
+        <StatCard title="MAU" value="12,304" description="월간 활성 유저" />
+        <StatCard title="이번 달 순매출" value="3,240만원" description="결제 - 환불" />
+        <StatCard title="본인인증 전환율" value="63%" description="가입 대비 인증 완료" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
