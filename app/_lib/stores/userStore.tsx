@@ -13,6 +13,7 @@ interface UserState {
   is_admin: boolean;
   coin: CoinInfo;
   identity_verified: boolean;
+  adult_verified: boolean;
 
   setNickname: (newNickname: string) => void;
   setProfileImg: (newProfileImg: string) => void;
@@ -32,6 +33,7 @@ const useUserStore = create<UserState>((set, get) => ({
   is_admin: false,
   coin: DEFAULT_COIN,
   identity_verified: false,
+  adult_verified: false,
 
   setNickname: (newNickname) => set(() => ({
     nickname: newNickname,
@@ -69,6 +71,7 @@ const useUserStore = create<UserState>((set, get) => ({
           is_admin: false,
           coin: DEFAULT_COIN,
           identity_verified: false,
+          adult_verified: false,
         });
       } else {
         // 인증된 사용자인 경우
@@ -81,6 +84,7 @@ const useUserStore = create<UserState>((set, get) => ({
           is_admin: response.data.is_admin,
           coin: response.data.user.coin,
           identity_verified: response.data.user.identity_verified ?? false,
+          adult_verified: response.data.user.adult_verified ?? false,
         });
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,6 +99,7 @@ const useUserStore = create<UserState>((set, get) => ({
         is_admin: false,
         coin: DEFAULT_COIN,
         identity_verified: false,
+        adult_verified: false,
       });
     }
   },

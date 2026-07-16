@@ -24,6 +24,7 @@ export default function BroadcastSettings() {
     isLoading,
     isSanctioned,
     sanctionMessage,
+    adultVerified,
     isAdult,
     isPrivate,
     password,
@@ -101,6 +102,8 @@ export default function BroadcastSettings() {
 
         <AdultBroadcastField
           isAdult={isAdult}
+          adultVerified={adultVerified}
+          isAdultCategory={category === 'ADULT'}
           onAdultChange={setIsAdult}
         />
         

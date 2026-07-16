@@ -21,13 +21,17 @@ export default function TabMenu() {
             name: '후원 내역',
             link: '/my/donation'
         },
+        {
+            name: '1:1 문의',
+            link: '/my/inquiry'
+        },
     ]
     return (
         <div className="w-full h-[60px] items-center justify-center text-center">
             <ul className="flex flex-row items-center text-center justify-center border-border-primary border-b py-4">
                 {
                     tabLists.map((tab, index) => {
-                        const isActive = pathname === tab.link
+                        const isActive = pathname === tab.link || pathname.startsWith(tab.link + '/')
                         return (
                             <li key={index} className="flex w-[100px] items-center justify-center">
                                 <Link

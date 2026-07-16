@@ -4,7 +4,6 @@ import type {
   AdminUserSummary,
   AdminUserDetail,
   Sanction,
-  Report,
   AdminPaymentTransaction,
   AdminCoinLedger,
   AdminDonation,
@@ -60,16 +59,6 @@ export const dummySanctions: Sanction[] = [
   { id: 2, user_idx: 105, user_id: 'chat_spammer', nickname: '도배꾼', type: 'WARNING', reason: '채팅 도배', admin_nickname: '에노', starts_at: daysAgo(3), status: 'ACTIVE', created_at: daysAgo(3) },
   { id: 3, user_idx: 108, user_id: 'adult_bj99', nickname: '심야방송', type: 'BROADCAST_BAN', reason: '성인 콘텐츠를 일반 카테고리로 송출', admin_nickname: '에노', starts_at: daysAgo(10), status: 'ACTIVE', created_at: daysAgo(10) },
   { id: 4, user_idx: 102, user_id: 'game_master', nickname: '겜잘알', type: 'WARNING', reason: '저작권 음원 사용 경고', admin_nickname: '에노', starts_at: daysAgo(40), status: 'RELEASED', created_at: daysAgo(40) },
-];
-
-// ===== 신고 =====
-
-export const dummyReports: Report[] = [
-  { id: 1, target_type: 'BROADCAST', status: 'RECEIVED', reason: '성인 콘텐츠 일반 카테고리 송출', detail: '19시경부터 일반 카테고리에서 성인 콘텐츠 방송 중', reporter_nickname: '시청자A', reported_user_id: 'adult_bj99', reported_nickname: '심야방송', report_count: 12, evidence: '스냅샷 3장', created_at: daysAgo(0, 2), resolved_action: null },
-  { id: 2, target_type: 'CHAT', status: 'RECEIVED', reason: '욕설/혐오 발언', detail: '채팅에서 반복적인 욕설', reporter_nickname: '시청자B', reported_user_id: 'troll_user01', reported_nickname: '악성유저', report_count: 8, evidence: '채팅 로그', created_at: daysAgo(0, 6), resolved_action: null },
-  { id: 3, target_type: 'PROFILE', status: 'IN_PROGRESS', reason: '부적절한 닉네임', detail: '닉네임에 비속어 포함', reporter_nickname: '시청자C', reported_user_id: 'chat_spammer', reported_nickname: '도배꾼', report_count: 3, evidence: null, created_at: daysAgo(1), resolved_action: null },
-  { id: 4, target_type: 'POST', status: 'RESOLVED', reason: '스팸 쪽지', detail: '홍보성 쪽지 대량 발송', reporter_nickname: '시청자D', reported_user_id: 'chat_spammer', reported_nickname: '도배꾼', report_count: 15, evidence: '쪽지 내용', created_at: daysAgo(4), resolved_action: 'WARN' },
-  { id: 5, target_type: 'CHAT', status: 'DISMISSED', reason: '단순 비방 신고', detail: '게임 실력 지적 (제재 사유 아님)', reporter_nickname: '시청자E', reported_user_id: 'game_master', reported_nickname: '겜잘알', report_count: 1, evidence: null, created_at: daysAgo(6), resolved_action: 'DISMISS' },
 ];
 
 // ===== 결제/코인 =====
@@ -137,33 +126,3 @@ export const dummyInfraStatus: InfraStatusItem[] = [
   { name: '본인인증 연동', description: 'Identity Verification', status: 'UNKNOWN', detail: '헬스체크 API 미연동' },
   { name: 'Graylog', description: '로그 수집', status: 'HEALTHY', detail: '대시보드 링크로 이동' },
 ];
-
-// ===== 대시보드 통계 =====
-
-export interface DashboardStats {
-  liveCount: number;
-  totalViewers: number;
-  todaySales: number;
-  weekSales: number;
-  monthSales: number;
-  todayRefund: number;
-  todayDonationCoins: number;
-  weekDonationCoins: number;
-  todaySignups: number;
-  todayWithdrawals: number;
-  pendingReports: number;
-}
-
-export const dummyDashboardStats: DashboardStats = {
-  liveCount: 5,
-  totalViewers: 4572,
-  todaySales: 1240000,
-  weekSales: 8620000,
-  monthSales: 32400000,
-  todayRefund: 55000,
-  todayDonationCoins: 182000,
-  weekDonationCoins: 1240000,
-  todaySignups: 42,
-  todayWithdrawals: 3,
-  pendingReports: 2,
-};

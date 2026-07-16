@@ -13,6 +13,7 @@ import { useEffect, useState, useRef, use } from "react";
 import { PlayData } from "@/app/_types";
 import { useUserStore } from "@/app/_lib/stores";
 import LoginComponent from "@/app/_components/modals/login_component";
+import ReportModal from "@/app/_components/modals/ReportModal";
 import { Socket, io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { OpCode } from "@/app/_types";
@@ -101,6 +102,24 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             return;
         }
         openModal(<SendMessageForm initialUserId={(await params).broadcasterId} />);
+    }
+
+    function handleReport() {
+        // 게스트라면 로그인 컴포넌트
+        if (is_guest) {
+            openModal(<LoginComponent />)
+            return;
+        }
+
+        if (!playDataState) return;
+
+        openModal(
+            <ReportModal
+                reportedIdx={playDataState.broadcaster.idx}
+                targetType="BROADCAST"
+                targetRef={playDataState.broadcaster.user_id}
+            />
+        );
     }
 
     async function handleRecommend() {
@@ -275,6 +294,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
                         onToggleBookmark={toggleBookmark}
                         onSendPost={handleSendPost}
                         onRecommend={handleRecommend}
+                        onReport={handleReport}
                     />
                 </div>
                 {/* 추가 컴포넌트 영역 */}

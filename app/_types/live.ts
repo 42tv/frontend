@@ -122,6 +122,7 @@ export interface StreamInfoProps {
   onToggleBookmark: () => void;
   onSendPost: () => void;
   onRecommend: () => void;
+  onReport: () => void;
 }
 
 // IVS Player 타입 정의

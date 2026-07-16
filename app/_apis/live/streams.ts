@@ -1,8 +1,4 @@
 import api from "../auto_refresh_axios";
-import { generateDummyLives } from "./dummyLives";
-
-/** dev 환경에서 라이브 목록에 더미 데이터를 추가할지 여부 */
-const IS_DEV: boolean = process.env.NEXT_ENV === "dev";
 
 /**
  * 방송 설정 정보 타입
@@ -60,12 +56,5 @@ export async function getLiveList(): Promise<GetLiveListResponse> {
     },
   });
   const result: GetLiveListResponse = response.data;
-
-  if (IS_DEV) {
-    return {
-      ...result,
-      data: [...(result.data ?? []), ...generateDummyLives()],
-    };
-  }
   return result;
 }

@@ -72,6 +72,17 @@ export const approveSettlement = async (id: string): Promise<Settlement> => {
 };
 
 /**
+ * 정산 지급 완료 처리 (APPROVED → PAID)
+ * POST /admin/settlement/:id/pay
+ */
+export const paySettlement = async (id: string): Promise<Settlement> => {
+  const response = await api.post<{ success: boolean; data: Settlement }>(
+    `/api/admin/settlement/${id}/pay`,
+  );
+  return response.data.data;
+};
+
+/**
  * 정산 거절 (PENDING → REJECTED, PayoutCoin 롤백)
  * POST /admin/settlement/:id/reject
  */

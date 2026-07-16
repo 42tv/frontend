@@ -6,6 +6,7 @@ import { AiOutlineClockCircle, AiOutlineLike } from "react-icons/ai";
 import { FiUser, FiMail } from "react-icons/fi";
 import { GiPresent } from "react-icons/gi";
 import { MdOutlineBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
+import { RiAlarmWarningLine } from "react-icons/ri";
 import Image from 'next/image';
 import { openPopupModal, openModal } from '@/app/_components/utils/overlay/overlayHelpers';
 import { useRouter } from 'next/navigation';
@@ -16,13 +17,15 @@ interface StreamInfoProps {
     onToggleBookmark: () => void;
     onSendPost: () => void;
     onRecommend: () => void;
+    onReport: () => void;
 }
 
-export default function StreamInfo({ 
-    playDataState, 
-    onToggleBookmark, 
-    onSendPost, 
-    onRecommend 
+export default function StreamInfo({
+    playDataState,
+    onToggleBookmark,
+    onSendPost,
+    onRecommend,
+    onReport
 }: StreamInfoProps) {
     const [elapsedTime, setElapsedTime] = useState<string>('');
     const router = useRouter();
@@ -142,6 +145,13 @@ export default function StreamInfo({
                     onClick={handleGiftClick}
                 >
                     <GiPresent/>
+                </button>
+                <button
+                    title="신고"
+                    className="hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
+                    onClick={onReport}
+                >
+                    <RiAlarmWarningLine/>
                 </button>
             </div>
         </div>

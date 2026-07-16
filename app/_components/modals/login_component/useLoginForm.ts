@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { login, singUp } from '@/app/_apis/user';
+import { login, singUp, SignUpAgreements } from '@/app/_apis/user';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from "@/app/_lib/stores";
 import { overlay } from 'overlay-kit';
@@ -18,6 +18,11 @@ export const useLoginForm = () => {
     const [signupPassword, setSignupPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [nickname, setNickname] = useState('');
+    const [agreements, setAgreements] = useState<SignUpAgreements>({
+        termsAgreed: false,
+        privacyAgreed: false,
+        isOver14: false,
+    });
 
     const handleLogin = async () => {
         try {
@@ -55,12 +60,19 @@ export const useLoginForm = () => {
         if (!validation.success) {
             return validation;
         }
-        
+
+        if (!agreements.termsAgreed || !agreements.privacyAgreed || !agreements.isOver14) {
+            return { error: '필수 약관에 모두 동의해야 가입할 수 있습니다.' };
+        }
+
         try {
-            await singUp(signupUserId, signupPassword, nickname);
+            await singUp(signupUserId, signupPassword, nickname, agreements);
             return { success: true, message: "회원가입이 완료되었습니다." };
         } catch (err: unknown) {
-            return { error: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || '회원가입에 실패했습니다.' };
+            // 검증 실패 시 message가 class-validator 문자열 배열로 내려올 수 있음
+            const message = (err as { response?: { data?: { message?: string | string[] } } })?.response?.data?.message;
+            const errorMessage: string | undefined = Array.isArray(message) ? message.join('\n') : message;
+            return { error: errorMessage || '회원가입에 실패했습니다.' };
         }
     };
 
@@ -78,11 +90,13 @@ export const useLoginForm = () => {
         signupPassword,
         confirmPassword,
         nickname,
+        agreements,
         setSignupUserId,
         setSignupPassword,
         setConfirmPassword,
         setNickname,
-        
+        setAgreements,
+
         // Actions
         handleLogin,
         handleSignUp

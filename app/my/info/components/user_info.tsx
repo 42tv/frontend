@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/app/_lib/stores";
 import UserProfileImg from "./user_profile_img";
-import { getPosts } from "@/app/_apis/posts";
-import type { Post } from "./tabs/post_tabs_component/types/message";
+import { useUnreadPosts } from "@/app/_hooks/useUnreadPosts";
 import { StarCoinIcon } from "@/app/_components/icons/StarCoinIcon";
 import { PostIcon } from "@/app/_components/icons/PostIcon";
 
@@ -15,8 +14,7 @@ export default function UserInfo() {
     const nickname = useUserStore(state => state.nickname);
     const coinBalance = useUserStore(state => state.coin.balance);
     const [isUserLoading, setIsUserLoading] = useState(() => !Boolean(useUserStore.getState().user_id));
-    const [isPostsLoading, setIsPostsLoading] = useState(true);
-    const [unreadCount, setUnreadCount] = useState<number>(0);
+    const { count: unreadCount, loading: isPostsLoading } = useUnreadPosts();
 
     useEffect(() => {
         let active = true;
@@ -39,30 +37,6 @@ export default function UserInfo() {
             active = false;
         };
     }, [fetchUser]);
-
-    useEffect(() => {
-        let active = true;
-
-        getPosts()
-            .then((posts: Post[]) => {
-                if (!active) return;
-                const count = posts.filter((p) => !p.is_read).length;
-                setUnreadCount(count);
-            })
-            .catch(() => {
-                if (!active) return;
-                setUnreadCount(0);
-            })
-            .finally(() => {
-                if (active) {
-                    setIsPostsLoading(false);
-                }
-            });
-
-        return () => {
-            active = false;
-        };
-    }, []);
 
     if (isUserLoading) {
         return <UserInfoSkeleton />;

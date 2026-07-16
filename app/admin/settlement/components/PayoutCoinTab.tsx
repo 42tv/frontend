@@ -123,7 +123,7 @@ export default function PayoutCoinTab() {
             <p className="text-sm font-semibold text-green-800 dark:text-green-400 mb-2">처리 완료</p>
             <div className="flex gap-6 text-sm text-green-700 dark:text-green-300">
               <span>총 <strong>{matureResult.total}</strong>건</span>
-              <span>성숙 <strong>{matureResult.matured}</strong>건</span>
+              <span>가용 전환 <strong>{matureResult.available}</strong>건</span>
               <span>차단 <strong>{matureResult.blocked}</strong>건</span>
             </div>
           </div>
