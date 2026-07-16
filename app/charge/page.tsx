@@ -223,6 +223,23 @@ export default function ChargePage() {
           </div>
         </div>
 
+        {/* 법적 고지 — 청약철회 제한이 효력을 가지려면 결제 전에 노출되어야 함 */}
+        <div className="mb-8 px-5 py-4 bg-card dark:bg-card-dark rounded-xl border border-border dark:border-border-dark text-sm text-muted-foreground dark:text-muted-foreground-dark">
+          <ul className="list-disc pl-4 space-y-1">
+            <li>미사용 코인은 결제일로부터 7일 이내 청약철회(환불)할 수 있습니다.</li>
+            <li>사용한 코인과 무상 지급된 보너스 코인은 환불 대상에서 제외됩니다.</li>
+            <li>만 19세 미만의 결제는 법정대리인 동의가 없으면 취소될 수 있습니다.</li>
+          </ul>
+          <a
+            href="/policy?type=refund"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-2 underline hover:text-yellow-500 transition-colors"
+          >
+            환불 정책 전문 보기
+          </a>
+        </div>
+
         {/* Package Grid */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
