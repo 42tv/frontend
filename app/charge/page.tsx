@@ -7,6 +7,7 @@ import { getActiveProducts, preparePayment } from '../_apis/product';
 import { Product, MockPurchaseData, RealPGPurchaseData } from '../_types/product';
 import { useBootpayStyles } from '../_hooks/useBootpayStyles';
 import { useUserStore } from '../_lib/stores';
+import { ensureAuthHydrated } from '../_lib/utils';
 import { openModal } from '../_components/utils/overlay/overlayHelpers';
 import PhoneVerificationModal from '../_components/modals/PhoneVerificationModal';
 
@@ -21,7 +22,6 @@ interface ChargeResult {
 export default function ChargePage() {
   useBootpayStyles();
   const fetchUser = useUserStore((state) => state.fetchUser);
-  const identityVerified = useUserStore((state) => state.identity_verified);
 
   // 본인인증이 필요한 경우 본인인증 모달로 유도
   const promptIdentityVerification = (): void => {
@@ -70,7 +70,9 @@ export default function ChargePage() {
     if (purchasing) return;
 
     // 본인인증이 완료되지 않은 경우 결제를 진행하지 않고 본인인증으로 유도
-    if (!identityVerified) {
+    // (하이드레이션 확정 후 판단 — 새로고침 직후 클릭 시 인증 완료자에게 인증 모달 오발 방지)
+    const { identity_verified } = await ensureAuthHydrated();
+    if (!identity_verified) {
       promptIdentityVerification();
       return;
     }
