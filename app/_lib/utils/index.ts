@@ -6,3 +6,6 @@ export * from './file';
 
 // Logging utilities
 export * from './logger';
+
+// Auth utilities
+export * from './auth';

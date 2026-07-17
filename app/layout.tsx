@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "./_components/theme-provider";
 import OverlayProviderWrapper from "./_components/providers/OverlayProviderWrapper";
+import AuthInitializer from "./_components/providers/AuthInitializer";
 import ConditionalLayout from "./_components/ConditionalLayout";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen">
         <ThemeProvider>
           <OverlayProviderWrapper>
+            <AuthInitializer />
             <ConditionalLayout>
               {children}
             </ConditionalLayout>
