@@ -12,6 +12,7 @@ import { usePlayStore } from "@/app/_lib/stores";
 import { useEffect, useState, useRef, use } from "react";
 import { PlayData } from "@/app/_types";
 import { useUserStore } from "@/app/_lib/stores";
+import { ensureAuthHydrated } from "@/app/_lib/utils";
 import LoginComponent from "@/app/_components/modals/login_component";
 import ReportModal from "@/app/_components/modals/ReportModal";
 import { Socket, io } from "socket.io-client";
@@ -24,7 +25,7 @@ interface LivePageProps {
 
 export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
     const {playData} = usePlayStore();
-    const {is_guest, idx} = useUserStore();
+    const {idx} = useUserStore();
     const [playDataState, setPlayDataState] = useState<PlayData | null>();
     const [socket, setSocket] = useState<Socket | null>(null); // 소켓 상태 추가
     const socketRef = useRef<Socket | null>(null); // 최신 소켓 인스턴스 추적을 위한 ref 추가
@@ -74,8 +75,8 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
             console.error("playDataState is undefined, cannot toggle bookmark.");
             return; 
         }
-        // 게스트라면 로그인 컴포넌트
-        if (is_guest) {
+        // 게스트라면 로그인 컴포넌트 (하이드레이션 확정 후 판단 — 새로고침 직후 클릭 오발 방지)
+        if ((await ensureAuthHydrated()).is_guest) {
             openModal(<LoginComponent />)
             return;
         }
@@ -97,16 +98,16 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     async function handleSendPost() {
         // 게스트라면 로그인 컴포넌트
-        if (is_guest) {
+        if ((await ensureAuthHydrated()).is_guest) {
             openModal(<LoginComponent />)
             return;
         }
         openModal(<SendMessageForm initialUserId={(await params).broadcasterId} />);
     }
 
-    function handleReport() {
+    async function handleReport() {
         // 게스트라면 로그인 컴포넌트
-        if (is_guest) {
+        if ((await ensureAuthHydrated()).is_guest) {
             openModal(<LoginComponent />)
             return;
         }
@@ -124,7 +125,7 @@ export default function LivePage({ params }: {params: Promise<LivePageProps>}) {
 
     async function handleRecommend() {
         // 게스트라면 로그인 컴포넌트
-        if (is_guest) {
+        if ((await ensureAuthHydrated()).is_guest) {
             openModal(<LoginComponent />)
             return;
         }

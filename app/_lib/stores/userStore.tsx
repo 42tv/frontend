@@ -14,6 +14,8 @@ interface UserState {
   coin: CoinInfo;
   identity_verified: boolean;
   adult_verified: boolean;
+  /** fetchUser가 최소 1회 완료되어 로그인 상태가 확정되었는가 (false면 아직 미확정) */
+  hydrated: boolean;
 
   setNickname: (newNickname: string) => void;
   setProfileImg: (newProfileImg: string) => void;
@@ -23,6 +25,9 @@ interface UserState {
   fetchUser: () => Promise<void>;
   isAdminUser: () => boolean;
 }
+
+// 동시 다발 fetchUser 호출(AuthInitializer, AdminGuard, 클릭 가드 등)이 요청 1건을 공유하도록 함
+let inflightFetchUser: Promise<void> | null = null;
 
 const useUserStore = create<UserState>((set, get) => ({
   idx: 0,
@@ -34,6 +39,7 @@ const useUserStore = create<UserState>((set, get) => ({
   coin: DEFAULT_COIN,
   identity_verified: false,
   adult_verified: false,
+  hydrated: false,
 
   setNickname: (newNickname) => set(() => ({
     nickname: newNickname,
@@ -56,12 +62,42 @@ const useUserStore = create<UserState>((set, get) => ({
   })),
 
   fetchUser: async () => {
-    try {
-      const response = await getLoginInfo();
-      console.log(response);
+    if (inflightFetchUser) return inflightFetchUser;
 
-      // 게스트 사용자인 경우
-      if (response.data.is_guest) {
+    inflightFetchUser = (async (): Promise<void> => {
+      try {
+        const response = await getLoginInfo();
+
+        // 게스트 사용자인 경우
+        if (response.data.is_guest) {
+          set({
+            idx: 0,
+            user_id: '',
+            nickname: '',
+            profile_img: '',
+            is_guest: true,
+            is_admin: false,
+            coin: DEFAULT_COIN,
+            identity_verified: false,
+            adult_verified: false,
+          });
+        } else {
+          // 인증된 사용자인 경우
+          set({
+            idx: response.data.user.idx,
+            user_id: response.data.user.user_id,
+            nickname: response.data.user.nickname,
+            profile_img: response.data.user.profile_img,
+            is_guest: false,
+            is_admin: response.data.is_admin,
+            coin: response.data.user.coin,
+            identity_verified: response.data.user.identity_verified ?? false,
+            adult_verified: response.data.user.adult_verified ?? false,
+          });
+        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        // 에러 발생 시 게스트 상태로 초기화
         set({
           idx: 0,
           user_id: '',
@@ -73,35 +109,13 @@ const useUserStore = create<UserState>((set, get) => ({
           identity_verified: false,
           adult_verified: false,
         });
-      } else {
-        // 인증된 사용자인 경우
-        set({
-          idx: response.data.user.idx,
-          user_id: response.data.user.user_id,
-          nickname: response.data.user.nickname,
-          profile_img: response.data.user.profile_img,
-          is_guest: false,
-          is_admin: response.data.is_admin,
-          coin: response.data.user.coin,
-          identity_verified: response.data.user.identity_verified ?? false,
-          adult_verified: response.data.user.adult_verified ?? false,
-        });
+      } finally {
+        set({ hydrated: true });
+        inflightFetchUser = null;
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      // 에러 발생 시 게스트 상태로 초기화
-      set({
-        idx: 0,
-        user_id: '',
-        nickname: '',
-        profile_img: '',
-        is_guest: true,
-        is_admin: false,
-        coin: DEFAULT_COIN,
-        identity_verified: false,
-        adult_verified: false,
-      });
-    }
+    })();
+
+    return inflightFetchUser;
   },
 
   isAdminUser: () => {

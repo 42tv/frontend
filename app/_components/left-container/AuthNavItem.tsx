@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useUserStore } from '@/app/_lib/stores';
+import { ensureAuthHydrated } from '@/app/_lib/utils';
 import LoginComponent from '../modals/login_component';
 import { openModal } from '../utils/overlay/overlayHelpers';
 
@@ -14,10 +14,11 @@ interface AuthNavItemProps {
 const AuthNavItem: React.FC<AuthNavItemProps> = ({ icon: Icon, label, href }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { user_id } = useUserStore();
   const active = pathname === href || (href !== '/' && pathname?.startsWith(href));
 
-  const handleClick = () => {
+  const handleClick = async (): Promise<void> => {
+    // 새로고침 직후 하이드레이션 전 클릭 시 로그인 모달 오발 방지
+    const { user_id } = await ensureAuthHydrated();
     if (user_id) {
       router.push(href);
     } else {

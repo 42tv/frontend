@@ -11,13 +11,24 @@ export default function ChannelMyLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const hydrated = useUserStore((s) => s.hydrated);
   const user_id = useUserStore((s) => s.user_id);
   const [channelData, setChannelData] = useState<GetChannelResponse | null>(null);
+  const [channelLoaded, setChannelLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!user_id) return;
-    getChannel({ user_id }).then(setChannelData).catch(() => {});
-  }, [user_id]);
+    // 로그인 상태 확정 전에는 게스트로 단정하지 않고 대기 (스켈레톤 유지)
+    if (!hydrated) return;
+    if (!user_id) {
+      // 게스트 확정 — 조회 없이 로딩 종료
+      setChannelLoaded(true);
+      return;
+    }
+    getChannel({ user_id })
+      .then(setChannelData)
+      .catch(() => {})
+      .finally(() => setChannelLoaded(true));
+  }, [hydrated, user_id]);
 
   return (
     <ChannelLayout>
@@ -25,6 +36,7 @@ export default function ChannelMyLayout({
         nickname={channelData?.user.nickname ?? null}
         profileImg={channelData?.user.profileImg ?? null}
         fanCount={channelData?.channel.fanCount ?? null}
+        loading={!channelLoaded}
       />
       <ChannelNav />
       {children}

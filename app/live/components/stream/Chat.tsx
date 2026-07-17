@@ -4,7 +4,7 @@ import { getApiErrorMessage } from '@/app/_lib/api';
 import { isAxiosError } from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client'; // Socket 타입 import
-import { useUserStore } from "@/app/_lib/stores"
+import { ensureAuthHydrated } from '@/app/_lib/utils';
 import LoginComponent from '@/app/_components/modals/login_component';
 import UserActionsModal from '@/app/_components/modals/user_actions_modal';
 import ErrorMessage from '@/app/_components/modals/error_component';
@@ -29,7 +29,6 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     const [activeTab, setActiveTab] = useState<TabType>('chat'); // 활성 탭 상태
     const [currentMyRole, setCurrentMyRole] = useState<MyRole>(myRole); // 현재 사용자 역할 상태
-    const {idx: currentUserIdx} = useUserStore();
 
     // myRole prop이 변경되면 currentMyRole 업데이트
     useEffect(() => {
@@ -55,9 +54,10 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     } = useUserActions(socket, broadcasterId);
 
     // 채팅 클릭 시 유저 정보 모달 열기
-    const handleChatClick = (message: ChatMessage) => {
+    const handleChatClick = async (message: ChatMessage): Promise<void> => {
+        // 하이드레이션 확정 후 판단 — 새로고침 직후 클릭 시 로그인 모달 오발 방지
+        const { idx: currentUserIdx } = await ensureAuthHydrated();
         if (!currentUserIdx) {
-            console.log('No current user, showing login modal');
             openPopupModal(<LoginComponent />);
             return;
         }
@@ -87,9 +87,9 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     };
 
     // 시청자 클릭 핸들러
-    const handleViewerClick = (viewer: Viewer) => {
+    const handleViewerClick = async (viewer: Viewer): Promise<void> => {
+        const { idx: currentUserIdx } = await ensureAuthHydrated();
         if (!currentUserIdx) {
-            console.log('No current user, showing login modal');
             openPopupModal(<LoginComponent />);
             return;
         }
@@ -132,7 +132,8 @@ const Chat: React.FC<ChatProps> = ({ broadcasterId, socket, myRole }) => {
     };
 
     // 메시지 전송 핸들러
-    const handleSendMessage = async (message: string) => {
+    const handleSendMessage = async (message: string): Promise<void> => {
+        const { idx: currentUserIdx } = await ensureAuthHydrated();
         if (!currentUserIdx) {
             openPopupModal(<LoginComponent />);
             return;

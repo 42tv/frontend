@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import ChargeButton from './buttons/ChargeButton';
 import Login from './buttons/loginButton';
@@ -8,12 +8,10 @@ import { useUserStore } from '@/app/_lib/stores';
 import { useRouter } from 'next/navigation';
 
 const Toolbar: React.FC = () => {
-  const fetchUser = useUserStore((state) => state.fetchUser);
+  const hydrated = useUserStore((state) => state.hydrated);
   const nickname = useUserStore((state) => state.nickname);
   const [searchString, setSearchString] = useState('');
   const router = useRouter();
-
-  useEffect(() => { fetchUser(); }, []);
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchString.trim())
@@ -42,8 +40,17 @@ const Toolbar: React.FC = () => {
         </div>
       </div>
       <div className="ml-auto flex items-center gap-3">
-        {nickname && <ChargeButton />}
-        {nickname ? <ProfileIcon /> : <Login />}
+        {!hydrated ? (
+          // 로그인 상태 확정 전에는 게스트/회원 어느 쪽도 단정하지 않고 스켈레톤 노출 (플래시 방지)
+          <div className="w-[40px] h-[40px] rounded-full bg-[#20202a] animate-pulse" />
+        ) : nickname ? (
+          <>
+            <ChargeButton />
+            <ProfileIcon />
+          </>
+        ) : (
+          <Login />
+        )}
       </div>
     </div>
   );
