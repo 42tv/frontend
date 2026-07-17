@@ -30,10 +30,13 @@ function getAvatarColor(str: string): string {
 }
 
 export default function Menu() {
+  const hydrated = useUserStore((s) => s.hydrated);
   const nickname = useUserStore((s) => s.nickname);
   const [followBJs, setFollowBJs] = useState<CardData[]>([]);
 
   useEffect(() => {
+    // 로그인 상태 확정 전에는 게스트로 단정하지 않고 대기 (불필요한 초기화/재조회 방지)
+    if (!hydrated) return;
     if (!nickname) {
       setFollowBJs([]);
       return;
@@ -48,7 +51,7 @@ export default function Menu() {
       }
     }
     fetchFollowBJs();
-  }, [nickname]);
+  }, [hydrated, nickname]);
 
   return (
     <div className="flex flex-col py-2">

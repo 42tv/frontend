@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useUserStore } from "@/app/_lib/stores";
 import UserProfileImg from "./user_profile_img";
 import { useUnreadPosts } from "@/app/_hooks/useUnreadPosts";
@@ -9,36 +8,14 @@ import { PostIcon } from "@/app/_components/icons/PostIcon";
 
 // UserInfo 컴포넌트는 사용자의 프로필 이미지와 닉네임, 코인, 메시지 수를 보여주는 컴포넌트입니다.
 export default function UserInfo() {
-    const fetchUser = useUserStore(state => state.fetchUser);
+    const hydrated = useUserStore(state => state.hydrated);
     const profile_img = useUserStore(state => state.profile_img);
     const nickname = useUserStore(state => state.nickname);
     const coinBalance = useUserStore(state => state.coin.balance);
-    const [isUserLoading, setIsUserLoading] = useState(() => !Boolean(useUserStore.getState().user_id));
     const { count: unreadCount, loading: isPostsLoading } = useUnreadPosts();
 
-    useEffect(() => {
-        let active = true;
-
-        async function loadUser() {
-            try {
-                if (!useUserStore.getState().user_id) {
-                    await fetchUser();
-                }
-            } finally {
-                if (active) {
-                    setIsUserLoading(false);
-                }
-            }
-        }
-
-        loadUser();
-
-        return () => {
-            active = false;
-        };
-    }, [fetchUser]);
-
-    if (isUserLoading) {
+    // 전역 AuthInitializer가 fetchUser를 수행하므로 hydrated 확정 전까지 스켈레톤만 노출
+    if (!hydrated) {
         return <UserInfoSkeleton />;
     }
 
