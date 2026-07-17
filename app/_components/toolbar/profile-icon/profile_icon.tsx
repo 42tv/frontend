@@ -5,11 +5,10 @@ import { useUserStore } from "@/app/_lib/stores"
 import { FiUser, FiSettings, FiMessageSquare } from "react-icons/fi";
 import { useUnreadInquiry } from "@/app/_hooks/useUnreadInquiry";
 import { useUnreadPosts } from "@/app/_hooks/useUnreadPosts";
-import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { logout } from "@/app/_apis/user";
 import { GrChannel } from "react-icons/gr";
-import { StarCoinIcon, PostIcon } from "@/app/_components/icons";
+import { StarCoinIcon, PostIcon, DefaultAvatar } from "@/app/_components/icons";
 
 export default function ProfileIcon() {
     const router = useRouter();
@@ -64,12 +63,7 @@ export default function ProfileIcon() {
                 </div>
                 
             ) : (
-                <div className="w-[40px] h-[40px] flex">
-                    <div className="flex w-full h-full rounded-full hover:bg-bg-tertiary items-center justify-center text-text-secondary">
-                        <CgProfile size={32}/>
-                    </div>
-                </div>
-                // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+                <DefaultAvatar size={40} />
             )}
             {unreadInquiryCount + unreadPostCount > 0 && (
                 <span className="absolute top-0 right-0 w-[10px] h-[10px] rounded-full bg-red-500 border-2 border-bg-primary" />

@@ -42,6 +42,8 @@
   --border-primary: var(--bg-300);
   --border-secondary: var(--primary-200);
   --border-hover: var(--primary-300);
+  --avatar-bg: #eceae4;
+  --avatar-fg: #a2a7b1;
 
   /* 시맨틱 토큰 (RGB 트리플릿 — Tailwind 투명도 수식어 지원용) */
   --card-rgb: 255 254 251; /* bg-100 */
@@ -66,6 +68,8 @@
   --border-primary: var(--dark-bg-300);
   --border-secondary: var(--dark-primary-200);
   --border-hover: var(--dark-primary-300);
+  --avatar-bg: #2c2c38;
+  --avatar-fg: #8d93a2;
 
   --card-rgb: 23 23 28; /* dark-bg-200 */
   --muted-rgb: 44 44 56; /* dark-bg-300 */
