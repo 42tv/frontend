@@ -1,5 +1,7 @@
 // Product 관련 타입 정의
 
+import { CoinTopup } from './coin-topup';
+
 export type ProductType = 'normal' | 'star';
 
 export interface Product {
@@ -25,16 +27,8 @@ export interface ProductsResponse {
 
 // 결제/충전 관련 타입
 export interface MockPurchaseData {
-  topup: {
-    id: string;
-    user_idx: number;
-    transaction_id: string;
-    product_id: number;
-    base_coins: number;
-    bonus_coins: number;
-    total_coins: number;
-    topup_at: string;
-  };
+  /** 유료 충전 건 CoinTopup 레코드 — 보너스 코인은 별도 topup으로 분리되어 여기 포함되지 않음 */
+  topup: CoinTopup;
   product: {
     id: number;
     name: string;
