@@ -98,7 +98,15 @@ export default function RefundRequestsTab() {
       const refunded = res.data;
       setSuccessMessage(
         refunded
-          ? `${refunded.refunded_coins.toLocaleString('ko-KR')}코인 / ${refunded.refunded_amount.toLocaleString('ko-KR')}원 환불이 완료되었습니다.`
+          ? [
+              `${refunded.refunded_coins.toLocaleString('ko-KR')}코인 / ${refunded.refunded_amount.toLocaleString('ko-KR')}원 환불이 완료되었습니다.`,
+              refunded.bonus_used_coins > 0 &&
+                `보너스 사용분 ${refunded.bonus_used_coins.toLocaleString('ko-KR')}코인이 환불액에서 차감되었습니다.`,
+              refunded.revoked_bonus_coins > 0 &&
+                `잔여 보너스 ${refunded.revoked_bonus_coins.toLocaleString('ko-KR')}코인이 회수되었습니다.`,
+            ]
+              .filter(Boolean)
+              .join(' ')
           : res.message || '환불 요청을 승인했습니다.',
       );
       closeApproveModal();
@@ -350,8 +358,9 @@ export default function RefundRequestsTab() {
               )}
             </div>
             <p className="text-muted-foreground text-xs">
-              승인 즉시 Bootpay 취소(실제 환불)가 실행됩니다. PG 취소에 실패하면 요청은 승인 대기 상태로 유지되어
-              재시도할 수 있습니다.
+              승인 즉시 Bootpay 취소(실제 환불)가 실행됩니다. 보너스로 사용한 코인은 유료 충전분에서 차감되며, 잔여
+              보너스 코인은 회수(REVOKED) 처리됩니다. PG 취소에 실패하면 요청은 승인 대기 상태로 유지되어 재시도할 수
+              있습니다.
             </p>
             {actionError && (
               <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-md px-3 py-2 whitespace-pre-line">

@@ -15,6 +15,7 @@ const statusLabels: Record<TopupStatus, { label: string; tone: BadgeTone }> = {
   REFUNDED: { label: '환불됨', tone: 'yellow' },
   REFUND_REQUESTED: { label: '환불 처리 중', tone: 'blue' },
   FROZEN: { label: '동결', tone: 'red' },
+  REVOKED: { label: '회수됨', tone: 'gray' },
 };
 
 type StatusFilter = 'ALL' | TopupStatus;
@@ -27,11 +28,16 @@ const statusFilters: readonly StatusFilter[] = [
   'FAILED',
   'REFUNDED',
   'FROZEN',
+  'REVOKED',
 ];
 
-/** 잔여 코인 기준 환불 예상 금액 (코인 단가 × 잔여 코인) */
-function estimateRefundAmount(topup: AdminCoinTopup): number {
-  return Math.floor(topup.remaining_coins * topup.coin_unit_price);
+/**
+ * 환불 상한 금액 — floor(결제액 × 잔여 코인 / 유료 코인 수).
+ * 보너스 사용량은 목록 응답만으로 알 수 없어 차감 전 상한만 표시하고, 실제 환불액은 서버가 계산한다.
+ */
+function estimateMaxRefundAmount(topup: AdminCoinTopup): number {
+  if (topup.coin_amount <= 0) return 0;
+  return Math.floor((topup.paid_amount * topup.remaining_coins) / topup.coin_amount);
 }
 
 export default function TopupsTab() {
@@ -87,7 +93,15 @@ export default function TopupsTab() {
       const refunded = res.data;
       setRefundResult(
         refunded
-          ? `잔여 코인 ${refunded.refunded_coins.toLocaleString('ko-KR')}개 / ${refunded.refunded_amount.toLocaleString('ko-KR')}원 환불이 처리되었습니다.`
+          ? [
+              `잔여 코인 ${refunded.refunded_coins.toLocaleString('ko-KR')}개 / ${refunded.refunded_amount.toLocaleString('ko-KR')}원 환불이 처리되었습니다.`,
+              refunded.bonus_used_coins > 0 &&
+                `보너스 사용분 ${refunded.bonus_used_coins.toLocaleString('ko-KR')}개가 환불액에서 차감되었습니다.`,
+              refunded.revoked_bonus_coins > 0 &&
+                `잔여 보너스 코인 ${refunded.revoked_bonus_coins.toLocaleString('ko-KR')}개가 회수되었습니다.`,
+            ]
+              .filter(Boolean)
+              .join(' ')
           : res.message || '환불이 처리되었습니다.',
       );
       load();
@@ -123,17 +137,20 @@ export default function TopupsTab() {
     {
       key: 'paid',
       header: '결제 금액',
-      render: (t) => <span className="font-semibold">{t.paid_amount.toLocaleString('ko-KR')}원</span>,
+      render: (t) =>
+        t.is_bonus ? (
+          <span className="text-muted-foreground">-</span>
+        ) : (
+          <span className="font-semibold">{t.paid_amount.toLocaleString('ko-KR')}원</span>
+        ),
     },
     {
       key: 'coins',
       header: '충전 코인',
       render: (t) => (
-        <div>
-          <div className="font-medium">{t.total_coins.toLocaleString('ko-KR')}</div>
-          {t.bonus_coins > 0 && (
-            <div className="text-xs text-muted-foreground">보너스 +{t.bonus_coins.toLocaleString('ko-KR')}</div>
-          )}
+        <div className="flex items-center gap-1.5">
+          <span className="font-medium">{t.coin_amount.toLocaleString('ko-KR')}</span>
+          {t.is_bonus && <StatusBadge label="보너스" tone="blue" />}
         </div>
       ),
     },
@@ -143,7 +160,7 @@ export default function TopupsTab() {
       render: (t) => (
         <div className="text-sm">
           <span className="text-muted-foreground">
-            {(t.total_coins - t.remaining_coins - t.refunded_coins).toLocaleString('ko-KR')}
+            {(t.coin_amount - t.remaining_coins - t.refunded_coins).toLocaleString('ko-KR')}
           </span>
           {' / '}
           <span className="font-semibold">{t.remaining_coins.toLocaleString('ko-KR')}</span>
@@ -166,8 +183,9 @@ export default function TopupsTab() {
     {
       key: 'actions',
       header: '',
+      // 보너스 지급 건은 환불 대상이 아님 — 유료 건 환불 시 함께 회수됨
       render: (t) =>
-        t.status === 'COMPLETED' && t.remaining_coins > 0 ? (
+        !t.is_bonus && t.status === 'COMPLETED' && t.remaining_coins > 0 ? (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -291,24 +309,24 @@ export default function TopupsTab() {
             <div className="rounded-md bg-muted/50 px-4 py-3 space-y-1.5">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">충전 코인</span>
-                <span>{refundTarget.total_coins.toLocaleString('ko-KR')}</span>
+                <span>{refundTarget.coin_amount.toLocaleString('ko-KR')}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">사용 코인</span>
-                <span>{(refundTarget.total_coins - refundTarget.remaining_coins).toLocaleString('ko-KR')}</span>
+                <span>{(refundTarget.coin_amount - refundTarget.remaining_coins).toLocaleString('ko-KR')}</span>
               </div>
               <div className="flex justify-between font-semibold">
                 <span>환불 대상 잔여 코인</span>
                 <span>{refundTarget.remaining_coins.toLocaleString('ko-KR')}</span>
               </div>
               <div className="flex justify-between font-semibold text-destructive">
-                <span>환불 예상 금액</span>
-                <span>{estimateRefundAmount(refundTarget).toLocaleString('ko-KR')}원</span>
+                <span>환불 상한 금액</span>
+                <span>{estimateMaxRefundAmount(refundTarget).toLocaleString('ko-KR')}원</span>
               </div>
             </div>
             <p className="text-muted-foreground text-xs">
-              Bootpay 부분 취소가 함께 실행되며, 중복 요청은 멱등성으로 방지됩니다. 보너스 코인 비중만큼 실제 환불액은
-              예상 금액과 다를 수 있습니다.
+              Bootpay 부분 취소가 함께 실행되며, 중복 요청은 멱등성으로 방지됩니다. 보너스로 사용한 코인은 유료
+              충전분에서 차감되어 실제 환불액은 상한 금액보다 적을 수 있고, 잔여 보너스 코인은 환불 시 회수됩니다.
             </p>
             <div className="space-y-1">
               <label className="text-muted-foreground">환불 사유 (필수)</label>

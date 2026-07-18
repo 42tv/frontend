@@ -6,7 +6,9 @@ export type TopupStatus =
   | 'FAILED'
   | 'REFUNDED'
   | 'REFUND_REQUESTED'
-  | 'FROZEN';
+  | 'FROZEN'
+  /** 유료 건 환불 시 딸린 보너스 충전 건이 전환되는 종결 상태 */
+  | 'REVOKED';
 
 /** 환불 요청 상태 — 접수(PENDING) 후 관리자 승인/거절 또는 사용자 취소 */
 export type RefundRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
@@ -17,14 +19,17 @@ export interface CoinTopup {
   user_idx: number;
   product_id: number;
   product_name: string;
-  base_coins: number;
-  bonus_coins: number;
-  total_coins: number;
+  /** 충전 코인 수 — 보너스 포함 상품은 유료 건/보너스 건 2행으로 분리되어 각 행의 코인 수 */
+  coin_amount: number;
   remaining_coins: number;
   /** 환불된 코인 수 (REFUNDED 시 환불 시점 잔여분이 이관됨) */
   refunded_coins: number;
+  /** 결제 금액 — 보너스 건은 0원 */
   paid_amount: number;
-  coin_unit_price: number;
+  /** 보너스 지급 건 여부 — true면 환불 신청 불가 */
+  is_bonus: boolean;
+  /** 보너스 건의 원본 유료 충전 ID (보너스 건에만 존재) */
+  source_topup_id?: string | null;
   status: TopupStatus;
   topped_up_at: string;
 }
@@ -46,7 +51,9 @@ export interface RefundRequest {
   status: RefundRequestStatus;
   /** 접수 시점 잔여 코인 (환불 대상) */
   remaining_coins: number;
-  /** 예상 환불액 (원) — 잔여코인 × 단가, 실결제액 상한 */
+  /** 접수 시점 보너스 사용 코인 수 — 유료분 사용으로 간주되어 환불액에서 차감 (백엔드 반영 전 응답에는 없음) */
+  bonus_used_coins?: number;
+  /** 예상 환불액 (원) — 보너스 사용분이 유료 충전분에서 차감된 금액 */
   expected_amount: number;
   user_reason: string | null;
   /** REJECTED일 때 거절 사유 — 사용자에게 노출 */
@@ -68,7 +75,7 @@ export interface RefundRequestResponse {
 export interface RefundRequestTopupSummary {
   id: string;
   product_name: string;
-  total_coins: number;
+  coin_amount: number;
   paid_amount: number;
   topped_up_at: string;
 }
@@ -142,6 +149,10 @@ export interface AdminCoinTopupRefundResult {
   topup_id: string;
   refunded_coins: number;
   refunded_amount: number;
+  /** 환불액 계산 시 유료 충전분에서 차감된 보너스 사용량 */
+  bonus_used_coins: number;
+  /** 회수된 보너스 잔여 코인 (보너스 건은 REVOKED로 전환) */
+  revoked_bonus_coins: number;
   status: TopupStatus;
 }
 
@@ -149,7 +160,7 @@ export interface AdminCoinTopupRefundResult {
 export interface AdminRefundRequestTopupSummary {
   id: string;
   product_name: string;
-  total_coins: number;
+  coin_amount: number;
   remaining_coins: number;
   paid_amount: number;
   status: TopupStatus;
@@ -188,6 +199,10 @@ export interface AdminRefundApproveResult {
   topup_id: string;
   refunded_coins: number;
   refunded_amount: number;
+  /** 환불액 계산 시 유료 충전분에서 차감된 보너스 사용량 */
+  bonus_used_coins: number;
+  /** 회수된 보너스 잔여 코인 (보너스 건은 REVOKED로 전환) */
+  revoked_bonus_coins: number;
   status: TopupStatus;
   request_id: string;
 }
