@@ -98,6 +98,11 @@ export default function RefundRequestList({ requests, onChanged }: RefundRequest
                                     </td>
                                     <td className="px-6 py-4 text-sm text-right text-text-secondary">
                                         {formatAmount(request.expected_amount)}원
+                                        {(request.bonus_used_coins ?? 0) > 0 && (
+                                            <p className="text-xs text-warning-dark whitespace-nowrap">
+                                                보너스 사용 {formatAmount(request.bonus_used_coins ?? 0)}개 차감
+                                            </p>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-center">
                                         <span className={`font-semibold ${statusLabels[request.status].className}`}>

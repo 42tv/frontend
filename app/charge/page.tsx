@@ -86,7 +86,7 @@ export default function ChargePage() {
         await fetchUser();
         setChargeResult({
           productName: mockData.product.name,
-          totalCoins: mockData.topup.total_coins,
+          totalCoins: mockData.product.total_coins,
           balance: mockData.wallet.coin_balance,
         });
         return;

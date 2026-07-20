@@ -5,13 +5,13 @@ import { useUserStore } from "@/app/_lib/stores"
 import { FiUser, FiSettings, FiMessageSquare } from "react-icons/fi";
 import { useUnreadInquiry } from "@/app/_hooks/useUnreadInquiry";
 import { useUnreadPosts } from "@/app/_hooks/useUnreadPosts";
-import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from "react-icons/bi";
 import { logout } from "@/app/_apis/user";
 import { GrChannel } from "react-icons/gr";
-import { StarCoinIcon, PostIcon } from "@/app/_components/icons";
+import { StarCoinIcon, PostIcon, DefaultAvatar } from "@/app/_components/icons";
 
 export default function ProfileIcon() {
+    const router = useRouter();
     const profile_img = useUserStore((state) => state.profile_img);
     const nickname = useUserStore((state) => state.nickname) || "Guest";
     const coin = useUserStore((state) => state.coin);
@@ -63,12 +63,7 @@ export default function ProfileIcon() {
                 </div>
                 
             ) : (
-                <div className="w-[40px] h-[40px] flex">
-                    <div className="flex w-full h-full rounded-full hover:bg-bg-tertiary items-center justify-center text-text-secondary">
-                        <CgProfile size={32}/>
-                    </div>
-                </div>
-                // <Image src="/icons/anonymouse1.svg" width={40} height={40} alt="profile icon" priority={true} className="rounded-full" />
+                <DefaultAvatar size={40} />
             )}
             {unreadInquiryCount + unreadPostCount > 0 && (
                 <span className="absolute top-0 right-0 w-[10px] h-[10px] rounded-full bg-red-500 border-2 border-bg-primary" />
@@ -78,21 +73,32 @@ export default function ProfileIcon() {
                 onClick={handleMenuClick}
             >
                 {/* 프로필 정보 */}
-                <div className="flex items-center border-b pb-3 border-border-primary">
-                    <FiUser className="w-10 h-10 text-accent" />
-                    <div className="ml-3 flex-1">
-                        <p className="text-lg font-semibold text-text-primary">{nickname}</p>
-                        <div className="flex items-center justify-center gap-2 text-sm text-text-secondary w-full">
-                            <div className="flex items-center gap-1">
-                                <StarCoinIcon size={30} />
-                                <span>{coin?.balance ?? 0}개</span>
-                            </div>
-                            <span>|</span>
-                            <div className="flex items-center gap-1">
-                                <PostIcon size={24} />
-                                <span>{unreadPostCount}개</span>
-                            </div>
-                        </div>
+                <div className="border-b pb-3 border-border-primary">
+                    <div className="flex items-center">
+                        <FiUser className="w-10 h-10 text-accent" />
+                        <p className="ml-3 text-lg font-semibold text-text-primary truncate">{nickname}</p>
+                    </div>
+                    <div className="mt-3 flex items-stretch rounded-lg border border-border-primary divide-x divide-border-primary overflow-hidden">
+                        <button
+                            type="button"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 hover:bg-bg-tertiary transition-colors"
+                            onClick={() => router.push("/my/gift")}
+                        >
+                            <StarCoinIcon size={18} className="shrink-0" />
+                            <span className="text-sm font-medium text-text-primary">
+                                {(coin?.balance ?? 0).toLocaleString()}
+                            </span>
+                        </button>
+                        <button
+                            type="button"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 hover:bg-bg-tertiary transition-colors"
+                            onClick={() => router.push("/my/post")}
+                        >
+                            <PostIcon size={16} className="shrink-0 text-text-secondary" />
+                            <span className="text-sm font-medium text-text-primary">
+                                {unreadPostCount > 99 ? '99+' : unreadPostCount}
+                            </span>
+                        </button>
                     </div>
                 </div>
                 {/* 메뉴 리스트 */}

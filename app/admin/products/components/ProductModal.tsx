@@ -45,7 +45,7 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
         formDataToSend.append('description', formData.description);
       }
       formDataToSend.append('base_coins', String(formData.base_coins));
-      formDataToSend.append('bonus_coins', '0');
+      formDataToSend.append('bonus_coins', String(formData.bonus_coins));
       formDataToSend.append('price', String(formData.price));
       formDataToSend.append('is_active', String(formData.is_active));
       formDataToSend.append('sort_order', String(formData.sort_order));
@@ -128,21 +128,39 @@ export default function ProductModal({ mode, product, onClose }: ProductModalPro
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  코인 *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.base_coins.toLocaleString()}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, '');
-                    setFormData({ ...formData, base_coins: parseInt(value) || 0 });
-                  }}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="0"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    기본 코인 *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.base_coins.toLocaleString()}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      setFormData({ ...formData, base_coins: parseInt(value) || 0 });
+                    }}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="0"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    보너스 코인
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.bonus_coins.toLocaleString()}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      setFormData({ ...formData, bonus_coins: parseInt(value) || 0 });
+                    }}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="0"
+                  />
+                </div>
               </div>
 
               <div>

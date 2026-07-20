@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { useState, useRef } from 'react'
 import { uploadProfileImage } from '@/app/_apis/user';
+import { DefaultAvatar } from '@/app/_components/icons';
 import { useUserStore } from "@/app/_lib/stores"
 import { showErrorNotification } from '@/app/_components/utils/overlay/notificationHelpers';
 import { getApiErrorMessage } from '@/app/_lib/api';
@@ -35,18 +36,22 @@ export default function UserProfileImg({profilePath, width, height} : {profilePa
 
     return (
         <div className="flex w-full h-full justify-center items-center relative">
-            <div
-                className="rounded-full overflow-hidden border-contentBg border-[1px]"
-                style={{ width: `${width}px`, height: `${height}px`, backgroundColor: 'white' }}
-            >
-                <Image
-                    src={profilePath || "/icons/anonymouse1.svg"} // 기본값 제공
-                    alt="Picture of the author"
-                    width={width}
-                    height={height}
-                    className="w-full h-full object-cover"
-                />
-            </div>
+            {profilePath ? (
+                <div
+                    className="rounded-full overflow-hidden border-contentBg border-[1px] bg-white"
+                    style={{ width: `${width}px`, height: `${height}px` }}
+                >
+                    <Image
+                        src={profilePath}
+                        alt="Picture of the author"
+                        width={width}
+                        height={height}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+            ) : (
+                <DefaultAvatar size={width} />
+            )}
 
             {/* Upload button */}
             <button

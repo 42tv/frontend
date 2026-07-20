@@ -23,9 +23,28 @@ const isWithinWithdrawalPeriod = (toppedUpAt: string): boolean => {
     return kstNow <= new Date(toppedUpAt).getTime() + WITHDRAWAL_PERIOD_MS;
 };
 
-/** 환불 예상액 — 보너스 코인은 무상 지급분이라 실결제액을 초과할 수 없음 */
-const estimateRefundAmount = (topup: CoinTopup): number => {
-    return Math.min(Math.floor(topup.remaining_coins * topup.coin_unit_price), topup.paid_amount);
+/** 환불 예상액 계산 내역 — 모달에 차감 과정을 단계별로 보여주기 위한 값 */
+interface RefundEstimate {
+    /** 연결된 보너스 topup에서 사용한 코인 수 — 유료분 사용으로 간주되어 차감 */
+    bonusUsedCoins: number;
+    /** 차감 후 실제 환불 대상 코인 수 */
+    refundableCoins: number;
+    /** 환불 예상액 (원) */
+    amount: number;
+}
+
+/**
+ * 환불 예상액 — floor(결제액 × max(0, 유료 잔여 − 보너스 사용량) / 유료 코인 수).
+ * 보너스로 사용한 코인은 유료 충전분에서 차감된다. 정확한 금액은 서버가 계산하므로 이 값은 안내용.
+ */
+const estimateRefund = (topup: CoinTopup, topups: CoinTopup[]): RefundEstimate => {
+    const bonus = topups.find((t) => t.is_bonus && t.source_topup_id === topup.id);
+    const bonusUsedCoins = bonus ? Math.max(0, bonus.coin_amount - bonus.remaining_coins) : 0;
+    const refundableCoins = Math.max(0, topup.remaining_coins - bonusUsedCoins);
+    const amount = topup.coin_amount > 0
+        ? Math.floor((topup.paid_amount * refundableCoins) / topup.coin_amount)
+        : 0;
+    return { bonusUsedCoins, refundableCoins, amount };
 };
 
 export default function GiftTab() {
@@ -44,6 +63,8 @@ export default function GiftTab() {
     const [refunding, setRefunding] = useState<boolean>(false);
     const [refundError, setRefundError] = useState<string | null>(null);
     const [refundResult, setRefundResult] = useState<RefundRequest | null>(null);
+
+    const refundEstimate: RefundEstimate | null = refundTarget ? estimateRefund(refundTarget, allTopups) : null;
 
     const itemsPerPage = 10;
 
@@ -148,6 +169,8 @@ export default function GiftTab() {
                 return '환불 처리 중';
             case 'FROZEN':
                 return '동결';
+            case 'REVOKED':
+                return '회수됨';
             default:
                 return status;
         }
@@ -167,13 +190,19 @@ export default function GiftTab() {
                 return 'text-warning-dark';
             case 'FROZEN':
                 return 'text-accent';
+            case 'REVOKED':
+                return 'text-text-secondary';
             default:
                 return 'text-text-secondary';
         }
     };
 
-    // 환불 요청 버튼/안내 셀 — 완료·잔여 코인 있음·7일 이내일 때만 버튼 노출
+    // 환불 요청 버튼/안내 셀 — 유료 건이면서 완료·잔여 코인 있음·7일 이내일 때만 버튼 노출
     const renderRefundCell = (topup: CoinTopup): React.ReactNode => {
+        // 보너스 지급 건은 환불 신청 대상이 아님 (유료 건 환불 시 함께 회수됨)
+        if (topup.is_bonus) {
+            return <span className="text-xs text-text-secondary">보너스 지급분</span>;
+        }
         if (topup.status === 'REFUND_REQUESTED') {
             return (
                 <span className="text-xs text-warning-dark">
@@ -301,18 +330,20 @@ export default function GiftTab() {
                                                 {topup.product_name}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-center font-semibold text-text-primary">
-                                                {formatAmount(topup.total_coins)}
+                                                {formatAmount(topup.coin_amount)}
+                                                {topup.is_bonus && (
+                                                    <span className="ml-1.5 inline-block px-1.5 py-0.5 text-[10px] font-medium rounded bg-bg-secondary text-accent align-middle">
+                                                        보너스
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-center">
                                                 <span className={topup.remaining_coins > 0 ? 'font-semibold text-text-primary' : 'text-text-secondary'}>
                                                     {formatAmount(topup.remaining_coins)}
                                                 </span>
-                                                {topup.refunded_coins > 0 && (
-                                                    <p className="text-xs text-text-secondary">환불 {formatAmount(topup.refunded_coins)}</p>
-                                                )}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-right text-text-secondary">
-                                                {formatAmount(topup.paid_amount)}원
+                                                {topup.is_bonus ? '-' : `${formatAmount(topup.paid_amount)}원`}
                                             </td>
                                             <td className={`px-6 py-4 text-sm text-center font-semibold ${getStatusColor(topup.status)}`}>
                                                 {getStatusText(topup.status)}
@@ -329,7 +360,7 @@ export default function GiftTab() {
 
                     <p className="mt-3 text-xs text-text-secondary">
                         미사용 코인은 결제일로부터 7일 이내 청약철회(환불)를 요청할 수 있으며, 승인 후 환불이 진행됩니다.
-                        사용한 코인과 무상 지급된 보너스 코인은 환불 대상에서 제외됩니다.
+                        무상 지급된 보너스 코인은 환불 대상이 아니며, 보너스로 사용한 코인은 유료 충전분에서 차감되고 잔여 보너스 코인은 환불 시 회수됩니다.
                         환불 요청 중인 충전분의 코인은 승인·거절·취소 전까지 사용할 수 없어, 보유 잔액보다 사용 가능한 코인이 적을 수 있습니다.
                     </p>
 
@@ -373,7 +404,7 @@ export default function GiftTab() {
             )}
 
             {/* 환불 요청 확인/접수 결과 모달 */}
-            {refundTarget && (
+            {refundTarget && refundEstimate && (
                 <div
                     className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
                     onClick={closeRefundModal}
@@ -390,6 +421,13 @@ export default function GiftTab() {
                                         <span className="text-text-secondary">환불 대상 코인</span>
                                         <span className="font-semibold text-text-primary">{formatAmount(refundResult.remaining_coins)}개</span>
                                     </div>
+                                    {/* 서버 스냅샷 우선, 미지원 시 프론트 계산값으로 대체 */}
+                                    {(refundResult.bonus_used_coins ?? refundEstimate.bonusUsedCoins) > 0 && (
+                                        <div className="flex justify-between">
+                                            <span className="text-text-secondary">보너스 사용 차감</span>
+                                            <span className="font-medium text-warning-dark">-{formatAmount(refundResult.bonus_used_coins ?? refundEstimate.bonusUsedCoins)}개</span>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between">
                                         <span className="text-text-secondary">예상 환불액</span>
                                         <span className="font-semibold text-text-primary">{formatAmount(refundResult.expected_amount)}원</span>
@@ -418,9 +456,21 @@ export default function GiftTab() {
                                         <span className="text-text-secondary">잔여 코인</span>
                                         <span className="font-medium text-text-primary">{formatAmount(refundTarget.remaining_coins)}개</span>
                                     </div>
+                                    {refundEstimate.bonusUsedCoins > 0 && (
+                                        <>
+                                            <div className="flex justify-between">
+                                                <span className="text-text-secondary">보너스 사용 차감</span>
+                                                <span className="font-medium text-warning-dark">-{formatAmount(refundEstimate.bonusUsedCoins)}개</span>
+                                            </div>
+                                            <div className="flex justify-between border-t border-border-primary pt-2 mt-1">
+                                                <span className="text-text-secondary">환불 대상 코인</span>
+                                                <span className="font-medium text-text-primary">{formatAmount(refundEstimate.refundableCoins)}개</span>
+                                            </div>
+                                        </>
+                                    )}
                                     <div className="flex justify-between">
                                         <span className="text-text-secondary">환불 예상액</span>
-                                        <span className="font-bold text-text-primary">{formatAmount(estimateRefundAmount(refundTarget))}원</span>
+                                        <span className="font-bold text-text-primary">{formatAmount(refundEstimate.amount)}원</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-1">
@@ -438,10 +488,11 @@ export default function GiftTab() {
                                     />
                                 </div>
                                 <p className="text-xs text-text-secondary">
-                                    요청 접수 후 승인되면 환불이 진행됩니다. 접수 중에는 해당 충전분의 코인을 사용할 수 없습니다.
-                                    {refundTarget.remaining_coins < refundTarget.total_coins && (
+                                    요청 접수 후 승인되면 환불이 진행됩니다. 접수 중에는 해당 결제의 코인(보너스 포함)을 사용할 수 없습니다.
+                                    {refundTarget.remaining_coins < refundTarget.coin_amount && (
                                         <> 사용한 코인을 제외한 잔여 코인만 환불됩니다.</>
                                     )}
+                                    {' '}보너스로 사용한 코인은 유료 충전분에서 차감되며, 잔여 보너스 코인은 환불 시 회수됩니다.
                                 </p>
                                 {refundError && (
                                     <div className="flex flex-col gap-1">
